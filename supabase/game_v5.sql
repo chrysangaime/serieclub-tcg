@@ -58,16 +58,22 @@ RETURNS trigger LANGUAGE plpgsql SET search_path=public,pg_temp AS $$
 DECLARE iconic text;
 BEGIN
  iconic:=public.official_iconic_rarity(NEW.name,NEW.premiered);
- IF TG_OP='UPDATE' AND OLD.rarity_source='manual' THEN
-  NEW.rarity:=OLD.rarity;
-  NEW.rarity_source:='manual';
+ IF TG_OP='INSERT' THEN
+  IF iconic IS NOT NULL THEN
+   NEW.rarity:=iconic;
+   NEW.rarity_source:='editorial';
+  ELSE
+   NEW.rarity:=public.popularity_to_rarity(NEW.popularity_weight);
+   NEW.rarity_source:=CASE WHEN NEW.popularity_weight IS NULL
+    THEN 'pending' ELSE 'popularity' END;
+  END IF;
+  RETURN NEW;
+ END IF;
+ -- OLD n'est consulté que pour une opération UPDATE.
+ IF OLD.rarity_source='manual' THEN
+  NEW.rarity:=OLD.rarity;NEW.rarity_source:='manual';
  ELSIF iconic IS NOT NULL THEN
-  NEW.rarity:=iconic;
-  NEW.rarity_source:='editorial';
- ELSIF TG_OP='INSERT' THEN
-  NEW.rarity:=public.popularity_to_rarity(NEW.popularity_weight);
-  NEW.rarity_source:=CASE WHEN NEW.popularity_weight IS NULL
-   THEN 'pending' ELSE 'popularity' END;
+  NEW.rarity:=iconic;NEW.rarity_source:='editorial';
  ELSIF OLD.rarity_source='pending' AND NEW.popularity_weight IS NOT NULL THEN
   NEW.rarity:=public.popularity_to_rarity(NEW.popularity_weight);
   NEW.rarity_source:='popularity';
