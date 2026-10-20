@@ -44,7 +44,7 @@ test('shows filmography with catalogued cards and direct series navigation',()=>
   actorSelected:{id:45,name:'Actress X'},actorShows:[{id:99,name:'Fiction A'},{id:98,name:'Fiction B'}],
   actorCatalogueIds:[99],actorOnlyClub:true,actorLoading:false,actorError:''
  });
- assert.match(onlyClub,/id="actorOnlyClub" type="checkbox"/);
+ assert.match(onlyClub,/type="checkbox" id="actorOnlyClub"/);
  assert.match(onlyClub,/Fiction A/);
  assert.doesNotMatch(onlyClub,/Fiction B/);
 });
