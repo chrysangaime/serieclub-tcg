@@ -14,8 +14,12 @@ test('sanitizes rich synopsis into text and safely truncates it',()=>{
   _embedded:{cast:[{person:{id:45,name:'Actor Example',image:{medium:'https://example.com/person.jpg'}},character:{name:'Detective'}}],seasons:[{},{}]}
  });
  assert.match(html,/data-person="45"/);
+ const castSection=html.split('class="sc5-cast-list"')[1].split('</section>')[0];
+ assert.doesNotMatch(castSection,/<img\b/,'distribution should be text-only');
+ assert.match(html,/sc5-compact-dialog/);
+ assert.match(html,/Informations complémentaires/);
  assert.match(html,/2 saisons/);
- assert.match(html,/L’histoire en quelques mots/);
+ assert.match(html,/En quelques mots/);
  assert.ok(!html.includes('onerror='));
  assert.ok(!html.includes('<i>Fake show</i>'));
  assert.match(html,/&lt;i&gt;Fake show&lt;\/i&gt;/);
@@ -27,6 +31,9 @@ test('shows filmography with catalogued cards and direct series navigation',()=>
   {id:98,name:'Fiction B',premiered:'2018-01-01'}
  ],new Set([99]),true);
  assert.match(people,/data-series="99"/);
+ assert.match(people,/sc5-actor-portrait/,'actor detail retains only a small portrait');
+ const actorList=people.split('class="sc5-credits"')[1].split('</section>')[0];
+ assert.doesNotMatch(actorList,/<img\b/,'actor show list should not contain pictures');
  assert.match(people,/Dans SérieClub/);
  assert.match(people,/Retour à la série/);
  const catalog=actorCatalogueView({
@@ -37,6 +44,8 @@ test('shows filmography with catalogued cards and direct series navigation',()=>
  });
  assert.match(catalog,/data-select-actor="45"/);
  assert.match(catalog,/data-series="99"/);
+ const catalogueList=catalog.split('class="sc5-filmography-grid"')[1].split('</div>')[0];
+ assert.doesNotMatch(catalogueList,/<img\b/,'actor filtering results should be text-only');
  assert.match(catalog,/Dans SérieClub/);
  assert.match(catalog,/Par acteur/);
  const onlyClub=actorCatalogueView({
