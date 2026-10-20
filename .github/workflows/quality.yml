@@ -16,6 +16,8 @@ jobs:
       - name: Vérifier la syntaxe JavaScript
         run: |
           node --check v3/views.js
+          node --check v3/discovery.js
+          node --check v3/config.js
           node --check v3/app.js
           node --check scripts/import-tvmaze.mjs
       - name: Tester les pages du TCG
@@ -25,7 +27,7 @@ jobs:
           import assert from 'node:assert/strict';
           import * as v from './v3/views.js';
           const html=fs.readFileSync('index.html','utf8');
-          for(const file of ['./v3/styles.css','./v3/app.js','./v3/icon.svg']){
+          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./manifest.webmanifest']){
             assert.ok(html.includes(file), 'Lien manquant : '+file);
             assert.ok(fs.existsSync(file.slice(2)), 'Fichier manquant : '+file);
           }
@@ -35,9 +37,13 @@ jobs:
           assert.equal(v.navItems.length,14);
           assert.equal(v.ranks.length,7);
           assert.match(v.foil('halloween'),/HALLOWEEN/);
+          assert.match(v.foil('halloween'),/M65 51 56 33/);
           assert.match(v.foil('classic'),/ORIGINAL/);
           const state={cards:[],stock:{stock:10,maximum:10,recharge_seconds:0},wallet:{credits:0},user:{id:'demo'},pack:'classic',catalog:[],wishes:[],rankings:[],fusionSelected:[],fusionRank:'Commune'};
-          const packets=v.packs(state);
+          const packets=v.packs({...state,seasonShows:[{id:12,name:'Horreur test',image_url:'https://example.com/poster.jpg',genres:['Horror']}]});
+          assert.match(packets,/La saison des frissons|À regarder la lumière allumée/);
+          assert.match(packets,/Netflix/);
+          assert.match(packets,/Prime Video/);
           assert.match(packets,/data-pack="classic"/);
           assert.match(packets,/data-pack="halloween"/);
           assert.match(packets,/id="openPack"/);
@@ -45,6 +51,12 @@ jobs:
           assert.match(v.fusions(state),/Fusionner 10/);
           assert.match(v.catalogue(state),/Catalogue/);
           assert.match(v.card({rarity:'Rare',series:{name:'Essai',image_url:'https://example.com/image.png'}}),/Essai/);
+          const d=await import('./v3/discovery.js');
+          assert.equal(d.amazonIsAffiliate(),false);
+          assert.ok(!d.amazonSearchLink('Test').includes('&tag='));
+          assert.match(d.seriesDetail({id:12,name:'Horreur test',image_url:'https://example.com/poster.jpg',genres:['Horror']}),/non affilié/);
+          assert.match(fs.readFileSync('v3/season.css','utf8'),/#111722/);
+          assert.match(fs.readFileSync('v3/nightfall.svg','utf8'),/<svg/);
           const migration=fs.readFileSync('supabase/game_v3.sql','utf8');
           for(const rpc of ['open_halloween_booster','set_card_locked']){
             assert.ok(migration.includes(rpc), 'RPC manquante : '+rpc);
