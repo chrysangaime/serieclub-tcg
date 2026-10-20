@@ -1,0 +1,10 @@
+{
+  "name": "serieclub-tcg",
+  "version": "4.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Application Web de collection de cartes de series TV",
+  "scripts": {
+    "check": "node --check v3/app.js && node --check v3/views.js && node --check v4/club.js && node --check v4/albums.js"
+  }
+}
