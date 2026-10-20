@@ -126,3 +126,11 @@ body.season-halloween .sc-season-tag{color:#f7b3ca}
 body.season-halloween .recent-strip{padding-top:30px}
 @media(max-width:1180px){.shelf-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){.hero-packs:before{background-position:60% 30%}.pack-option .foil{transform:scale(.76) rotate(-6deg)}.pack-option .foil.halloween{transform:scale(.76) rotate(6deg)}.pack-option:hover .foil{transform:scale(.78) rotate(-3deg)}.pack-option:hover .foil.halloween{transform:scale(.78) rotate(3deg)}.shelf-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.season-shelf,.stream-zone{padding:17px;margin-top:18px}.shelf-head{display:block}.shelf-head h2{font-size:29px}.platform-chip{flex:1;min-width:140px}.series-detail{grid-template-columns:1fr}.series-detail>img{width:130px}.foil-name{font-size:21px}}
+
+/* Badge d'événement discret et propre à SérieClub */
+.top-season-tag{font-size:9px;font-weight:900;letter-spacing:.13em;border:1px solid #916281;background:linear-gradient(115deg,#382642,#552c48);color:#ffd0e4;border-radius:100px;padding:5px 9px;white-space:nowrap}
+@media(max-width:1030px){.top-season-tag{display:none}}
+/* Lisibilité de l'emblème sur chaque taille d'écran */
+.foil-name,.foil-foot,.foil-mini{pointer-events:none}
+.foil.halloween .foil-emblem svg{filter:drop-shadow(0 4px 8px #1b0e23)}
+.pack-option .pack-art{position:relative;overflow:visible}
