@@ -36,7 +36,7 @@ jobs:
           for(const id of ['sidebar','topbar','page','overlay','toast']){
             assert.ok(html.includes('id="'+id+'"'), 'Bloc manquant : '+id);
           }
-          assert.equal(v.navItems.length,15);
+          assert.equal(v.navItems.length,13);
           assert.equal(v.ranks.length,7);
           assert.match(v.foil('halloween'),/HALLOWEEN/);
           assert.match(v.foil('halloween'),/M65 51 56 33/);
