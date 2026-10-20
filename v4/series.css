@@ -134,3 +134,9 @@
  .sc5-person-arrow{font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){.sc5-loading .sc5-loader-icon{animation:none}}
+
+/* Filtre croisé filmographie et catalogue réellement importé */
+.sc5-actor-controls{display:flex;align-items:center;justify-content:flex-end;gap:13px;flex-wrap:wrap}
+.sc5-actor-controls label{display:flex;align-items:center;gap:7px;color:#b6ddd9;font-size:11px;font-weight:700;cursor:pointer}
+.sc5-actor-controls input{accent-color:#87e1d3;cursor:pointer}
+@media(max-width:710px){.sc5-actor-controls{justify-content:flex-start}}
