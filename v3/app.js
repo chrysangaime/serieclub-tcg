@@ -9,7 +9,7 @@ const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'c
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions'};
 const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
-let toastTimer,clockTimer,searchTimer,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null;
+let toastTimer,clockTimer,searchTimer,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
 function loadRouteData(route){
@@ -327,16 +327,17 @@ async function openSeriesDetail(id){
   }
  }
 }
-async function openPersonDetail(id){
+async function openPersonDetail(id,fromShow=false){
  const numeric=Number(id);
  if(!Number.isSafeInteger(numeric)||numeric<=0)return;
  const token=++detailRequestId;
+ personReturnToShow=Boolean(fromShow);
  showDetailLoading('À la rencontre de la distribution…');
  try{
   const result=await getPersonFilmography(numeric);
   const ids=await catalogueMatches(result.shows);
   if(!detailReady(token))return;
-  $('overlay').innerHTML=actorDetailHTML(result.person,result.shows,new Set(ids));
+  $('overlay').innerHTML=actorDetailHTML(result.person,result.shows,new Set(ids),personReturnToShow);
   $('overlay').querySelector('[data-close]')?.focus();
  }catch(error){
   if(!detailReady(token))return;
@@ -503,9 +504,9 @@ function globalClick(e){
   return;
  }
  const actorButton=e.target.closest('[data-person]');
- if(actorButton){openPersonDetail(actorButton.dataset.person);return}
+ if(actorButton){openPersonDetail(actorButton.dataset.person,Boolean(actorButton.closest('.sc5-dialog')?.querySelector('.sc5-show-head')));return}
  if(e.target.closest('[data-person-back]')){
-  if(lastShowForBack)openSeriesDetail(lastShowForBack);else closeModal();
+  if(personReturnToShow&&lastShowForBack)openSeriesDetail(lastShowForBack);else closeModal();
   return;
  }
  const actorFilter=e.target.closest('[data-filter-actor]');
