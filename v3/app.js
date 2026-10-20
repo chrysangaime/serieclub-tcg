@@ -78,7 +78,7 @@ async function loadSession(){
   state.stock=status.data?.[0]||null;
   let [w,c,wi,tr]=await Promise.all([
    supa.from('player_wallets').select('*').eq('player_id',user.id).maybeSingle(),
-   supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
+   supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered,rarity,rarity_source)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
    supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500),
    supa.rpc('my_trade_offers')
   ]);
