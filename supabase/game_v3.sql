@@ -2,6 +2,11 @@
 -- Prerequis : schema.sql, game.sql et game_v2.sql executes.
 -- Migration idempotente : peut etre relancee en cas d'interruption.
 
+-- Index de lecture du catalogue, des genres et de l'inventaire
+create index if not exists sc_series_name_idx on public.series(name);
+create index if not exists sc_series_genres_idx on public.series using gin(genres);
+create index if not exists sc_cards_owner_recent_idx on public.player_cards(owner_id,obtained_at desc);
+
 create table if not exists public.player_wishlist (
  owner_id uuid not null references public.profiles(id) on delete cascade,
  series_id bigint not null references public.series(id) on delete cascade,
