@@ -166,14 +166,13 @@ end $$;
 
 create or replace function public.respond_card_trade(p_offer_id uuid,p_accept boolean)
 returns boolean language plpgsql security definer set search_path=public,pg_temp as $$
-declare uid uuid:=auth.uid(); l record; o record; offered record; listed record;
+declare uid uuid:=auth.uid(); l record; o record; offered record; listed record; listing_key uuid;
 begin
  if uid is null then raise exception 'Connexion requise'; end if;
  -- Trouver l'annonce sans verrou préalable, puis verrouiller annonce et offre dans cet ordre.
- select l.id into l from public.card_listings l
- join public.card_trade_offers o on o.listing_id=l.id where o.id=p_offer_id;
+ select t.listing_id into listing_key from public.card_trade_offers t where t.id=p_offer_id;
  if not found then raise exception 'Proposition introuvable'; end if;
- select * into l from public.card_listings where id=l.id for update;
+ select * into l from public.card_listings where id=listing_key for update;
  select * into o from public.card_trade_offers where id=p_offer_id for update;
  if o.status<>'pending' then raise exception 'Proposition déjà traitée'; end if;
  if uid<>l.seller_id and uid<>o.proposer_id then raise exception 'Accès interdit'; end if;
