@@ -79,9 +79,15 @@ async function loadSession(){
   let [w,c,wi,tr]=await Promise.all([
    supa.from('player_wallets').select('*').eq('player_id',user.id).maybeSingle(),
    supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
-   supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500),
+   supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500),
    supa.rpc('my_trade_offers')
   ]);
+  if(wi.error&&/rarity|column|schema cache/i.test(wi.error.message)){
+   const legacy=await supa.from('player_wishlist')
+    .select('series_id,series:series_id(id,name,image_url,premiered)')
+    .eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500);
+   if(!legacy.error)wi=legacy;
+  }
   if(c.error){const old=await supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000);if(!old.error)c={data:(old.data||[]).map(x=>({...x,reserved_trade_id:null})),error:null}}
   if(w.error)toast('Portefeuille : '+w.error.message,true);
   if(c.error)toast('Collection : '+c.error.message,true);
@@ -245,15 +251,27 @@ async function claimQuest(key){
 }
 async function loadCatalog(reset=false){
  if(state.catalogLoading)return;
- if(reset)state.catalogPage=0;
+ const page=reset?0:state.catalogPage;
  state.catalogLoading=true;state.catalogError='';
  if(state.route==='catalog')render();
+ const queryPage=withRarity=>{
+  let query=supa.from('series')
+    .select(withRarity?'id,name,image_url,premiered,genres,rarity,rarity_source':'id,name,image_url,premiered,genres')
+    .not('image_url','is',null).order('name')
+    .range(page*36,page*36+35);
+  if(state.catalogQuery.trim()){
+   query=query.ilike('name','%'+state.catalogQuery.trim().replace(/[%_]/g,'')+'%');
+  }
+  return query;
+ };
  try{
-  let query=supa.from('series').select('id,name,image_url,premiered,genres').not('image_url','is',null).order('name').range(state.catalogPage*36,state.catalogPage*36+35);
-  if(state.catalogQuery.trim())query=query.ilike('name','%'+state.catalogQuery.trim().replace(/[%_]/g,'')+'%');
-  const {data,error}=await query;if(error)throw error;
-  state.catalog=reset?[...data]:state.catalog.concat(data||[]);
-  state.catalogMore=(data||[]).length===36;state.catalogPage+=1;
+  let {data,error}=await queryPage(true);
+  if(error&&/rarity|column|schema cache/i.test(error.message)){
+   ({data,error}=await queryPage(false));
+  }
+  if(error)throw error;
+  state.catalog=reset?[...(data||[])]:state.catalog.concat(data||[]);
+  state.catalogMore=(data||[]).length===36;state.catalogPage=page+1;
  }catch(e){state.catalogError='Catalogue indisponible : '+e.message}
  finally{state.catalogLoading=false;if(state.route==='catalog')render()}
 }
