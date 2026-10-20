@@ -11,7 +11,7 @@ const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let toastTimer,clockTimer,searchTimer,refreshing=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
-function change(route){const r=routes[route]||route;if(!r)return;state.route=r;const next='#/'+(slug[r]||r);if(location.hash!==next)history.pushState(null,'',next);render();window.scrollTo({top:0,behavior:'instant'});document.body.classList.remove('drawer-open');if(['catalog','games'].includes(r)&&!state.catalog.length)loadCatalog(true);if(r==='rankings')loadRankings()}
+function change(route){const r=routes[route]||route;if(!r)return;state.route=r;const next='#/'+(slug[r]||r);if(location.hash!==next)history.pushState(null,'',next);render();window.scrollTo({top:0,behavior:'instant'});document.body.classList.remove('drawer-open');if(['catalog','games'].includes(r)&&!state.catalog.length)loadCatalog(true);if(r==='rankings')loadRankings();if(r==='market'&&state.user)loadMarket();if(r==='community'&&state.user)loadPeople();if(r==='quests'&&state.user)loadDaily();if(r==='market'&&state.user)loadMarket();if(r==='community'&&state.user)loadPeople();if(r==='quests'&&state.user)loadDaily()}
 window.addEventListener('popstate',()=>{state.route=safeRoute();render()});window.addEventListener('hashchange',()=>{const r=safeRoute();if(r!==state.route){state.route=r;render();if(['catalog','games'].includes(r)&&!state.catalog.length)loadCatalog(true);if(r==='rankings')loadRankings()}});
 function renderChrome(){
  const nav=navItems.map(([key,icon,title])=>'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico">'+esc(icon)+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':'')+'</button>').join('');
@@ -30,9 +30,10 @@ function render(){
  document.title=navName(state.route)+' — SérieClub TCG';
 }
 async function ensureProfile(user){
- const {data,error}=await supa.from('profiles').select('username').eq('id',user.id).maybeSingle();
+ let {data,error}=await supa.from('profiles').select('username,bio,favorite_genre').eq('id',user.id).maybeSingle();
+ if(error){const fallback=await supa.from('profiles').select('username').eq('id',user.id).maybeSingle();if(!fallback.error){data=fallback.data;error=null}}
  if(error){toast('Profil indisponible : '+error.message,true);return}
- if(data?.username){state.username=data.username;return}
+ if(data?.username){state.username=data.username;state.bio=data.bio||'';state.favoriteGenre=data.favorite_genre||'';return}
  const username=(user.user_metadata?.username||'').trim();
  if(username.length>=3&&username.length<=24){
   const out=await supa.from('profiles').upsert({id:user.id,username},{onConflict:'id'});
@@ -48,22 +49,26 @@ async function loadSession(){
   const {data:{user},error}=await supa.auth.getUser();
   if(error&&!/session missing/i.test(error.message))console.warn('Auth:',error.message);
   state.user=user||null;
-  if(!user){state.username='';state.cards=[];state.wallet=null;state.wishes=[];state.stock=null;render();return}
+  if(!user){state.username='';state.bio='';state.favoriteGenre='';state.cards=[];state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.daily=null;render();return}
   await ensureProfile(user);
   const status=await supa.rpc('get_booster_status');
   if(status.error)console.warn('Réserve:',status.error.message);
   state.stock=status.data?.[0]||null;
-  const [w,c,wi]=await Promise.all([
+  let [w,c,wi]=await Promise.all([
    supa.from('player_wallets').select('*').eq('player_id',user.id).maybeSingle(),
-   supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
+   supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
    supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500)
   ]);
+  if(c.error){const old=await supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000);if(!old.error)c={data:(old.data||[]).map(x=>({...x,reserved_trade_id:null})),error:null}}
   if(w.error)toast('Portefeuille : '+w.error.message,true);
   if(c.error)toast('Collection : '+c.error.message,true);
   state.wallet=w.data||null;state.cards=c.data||[];
   state.wishes=wi.error?[]:wi.data||[];
   if(wi.error&&wi.error.code!=='42P01')console.warn('Wishlist:',wi.error.message);
   render();
+  loadDaily();
+  if(state.route==='market')loadMarket();
+  if(state.route==='community')loadPeople();
  }catch(e){console.error('Session:',e);toast('Connexion au serveur momentanément indisponible.',true)}
  finally{refreshing=false}
 }
