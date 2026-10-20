@@ -133,6 +133,7 @@ export function showDetailHTML(source={},base={}){
  const cast=Array.isArray(show._embedded?.cast)?show._embedded.cast:[];
  const seasons=Array.isArray(show._embedded?.seasons)?show._embedded.seasons.length:null;
  const year=formatYear(show.premiered),status=show.status==='Ended'?'Terminée':show.status==='Running'?'En cours':show.status||'';
+ const officialRarity=base.rarity&&base.rarity_source!=='pending'?base.rarity:null;
  const poster=show.image?.medium||show.image?.original||show.image_url||base.image_url;
  const castRows=cast.filter(x=>x.person?.id&&x.person?.name).slice(0,24).map(x=>
   '<button class="sc5-cast-row" data-person="'+x.person.id+'" aria-label="Voir les séries de '+escapeHTML(x.person.name)+'">'+photo(x.person.image?.medium||x.person.image?.original,x.person.name,'sc5-cast-thumb')+'<b>'+escapeHTML(x.person.name)+'</b>'+
@@ -148,7 +149,7 @@ export function showDetailHTML(source={},base={}){
   '<div class="sc5-show-head">'+photo(poster,'Affiche de '+name,'sc5-poster')+
   '<div class="sc5-show-intro"><span class="caps">SÉRIECLUB · LA SÉRIE</span><h2>'+escapeHTML(name)+'</h2>'+
   '<div class="sc5-tagline">'+[year,status,seasons!=null?seasons+' saison'+(seasons>1?'s':''):null].filter(Boolean).map(v=>'<span>'+escapeHTML(v)+'</span>').join('')+'</div>'+
-  '<div class="detail-tags">'+genrePills(show.genres||base.genres)+'</div>'+
+  '<div class="detail-tags">'+genrePills(show.genres||base.genres)+(officialRarity?'<span class="sc5-official-rarity">✦ '+escapeHTML(officialRarity)+' · officielle</span>':'')+'</div>'+
   '<h3>En quelques mots</h3>'+
   (summary?'<p class="sc5-summary-short">'+escapeHTML(short)+'</p>'+
    (summary.length>short.length?'<p class="sc5-summary-long hidden">'+escapeHTML(summary)+'</p><button class="sc5-text-btn" data-summary-toggle aria-expanded="false">Lire la suite ↓</button>':''):
