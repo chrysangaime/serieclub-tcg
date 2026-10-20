@@ -31,7 +31,7 @@ do $$
 declare
  seller constant uuid:='00000000-0000-4000-8000-000000000001';
  buyer constant uuid:='00000000-0000-4000-8000-000000000002';
- listing1 uuid;listing2 uuid;offer uuid;moved uuid; follows_count bigint;
+ listing1 uuid;listing2 uuid;offer uuid;moved uuid;album uuid; follows_count bigint;
  is_following boolean; erroneous_success boolean;
 begin
  perform set_config('request.jwt.claim.sub',seller::text,false);
@@ -68,7 +68,22 @@ begin
  if public.toggle_player_follow(buyer) then raise exception 'Désabonnement impossible';end if;
  select count(*) into follows_count from public.player_directory();
  if follows_count<2 then raise exception 'Annuaire des joueurs indisponible';end if;
-end $$;
+ -- Album personnel créé et rempli par le propriétaire.
+ album:=public.create_personal_album('Mes séries culte','Ma première saison de cartes',true);
+ if album is null then raise exception 'Album non créé';end if;
+ if not public.add_card_to_album(album,'10000000-0000-4000-8000-000000000003') then
+  raise exception 'Impossible d’ajouter la carte reçue en échange à l’album';end if;
+ -- Autre joueur : consultation autorisée, modification refusée.
+ perform set_config('request.jwt.claim.sub',buyer::text,false);
+ if (select count(*) from public.album_card_data(album))<>1 then
+  raise exception 'Album public non consultable';end if;
+ erroneous_success:=false;
+ begin
+  perform public.delete_personal_album(album);
+  erroneous_success:=true;
+ exception when others then null;end;
+ if erroneous_success then raise exception 'Suppression étrangère autorisée';end if;
+end $;
 reset role;
 
 do $$
