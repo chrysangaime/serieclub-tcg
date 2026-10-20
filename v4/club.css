@@ -117,3 +117,7 @@
 .sc4-album-card small{font-size:10px;display:block;margin:3px 0 9px}.sc4-album-card .btn{font-size:10px}
 .sc4-box input[type=checkbox]{accent-color:#84e5dc}
 @media(max-width:600px){.sc4-album-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.sc4-album{min-height:200px;padding:13px}.sc4-album h3{font-size:16px}.sc4-album-cards{grid-template-columns:1fr}.sc4-album-dialog .sc4-album-add{flex-direction:column}}
+
+/* Notifications utiles : propositions de cartes reçues */
+.sc4-bell{position:relative;display:inline-flex;align-items:center;justify-content:center;font-size:17px;min-width:36px;line-height:1}
+.sc4-bell-number{position:absolute;top:-6px;right:-6px;background:#f2a2ae;border:2px solid #131c2b;border-radius:50%;min-width:19px;height:19px;display:grid;place-items:center;color:#28172d;font-size:10px;font-weight:900;padding:0 4px}
