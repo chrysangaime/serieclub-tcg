@@ -15,7 +15,7 @@ test('sanitizes rich synopsis into text and safely truncates it',()=>{
  });
  assert.match(html,/data-person="45"/);
  const castSection=html.split('class="sc5-cast-list"')[1].split('</section>')[0];
- assert.doesNotMatch(castSection,/<img\b/,'distribution should be text-only');
+ assert.match(castSection,/sc5-cast-thumb/,'compact cast rows should include small portrait');
  assert.match(html,/sc5-compact-dialog/);
  assert.match(html,/Informations complémentaires/);
  assert.match(html,/2 saisons/);
@@ -33,7 +33,7 @@ test('shows filmography with catalogued cards and direct series navigation',()=>
  assert.match(people,/data-series="99"/);
  assert.match(people,/sc5-actor-portrait/,'actor detail retains only a small portrait');
  const actorList=people.split('class="sc5-credits"')[1].split('</section>')[0];
- assert.doesNotMatch(actorList,/<img\b/,'actor show list should not contain pictures');
+ assert.match(actorList,/sc5-credit-thumb/,'compact actor filmography should include poster thumbnails');
  assert.match(people,/Dans SérieClub/);
  assert.match(people,/Retour à la série/);
  const catalog=actorCatalogueView({
@@ -45,7 +45,7 @@ test('shows filmography with catalogued cards and direct series navigation',()=>
  assert.match(catalog,/data-select-actor="45"/);
  assert.match(catalog,/data-series="99"/);
  const catalogueList=catalog.split('class="sc5-filmography-grid"')[1].split('</div>')[0];
- assert.doesNotMatch(catalogueList,/<img\b/,'actor filtering results should be text-only');
+ assert.match(catalogueList,/sc5-list-thumb/,'actor filters should include small series artwork');
  assert.match(catalog,/Dans SérieClub/);
  assert.match(catalog,/Par acteur/);
  const onlyClub=actorCatalogueView({
