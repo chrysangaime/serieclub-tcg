@@ -1,19 +1,19 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=4.2.0';
-import{seriesDetail}from'./discovery.js?v=3.1.0';
+import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML}from'../v4/series.js?v=4.3.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=4.2.1';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=4.2.0';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions'};
-const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
-let toastTimer,clockTimer,searchTimer,refreshing=false;
+let toastTimer,clockTimer,searchTimer,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
 function loadRouteData(route){
- if(['catalog','games'].includes(route)&&!state.catalog.length)loadCatalog(true);
+ if((route==='catalog'&&state.catalogMode==='series'||route==='games')&&!state.catalog.length)loadCatalog(true);
  if(route==='rankings')loadRankings();
  if(route==='market'&&state.user)loadMarket();
  if(route==='community'&&state.user)loadPeople();
@@ -270,16 +270,128 @@ async function loadSeasonShows(){
   if(state.route==='packs')render();
  }catch(e){console.warn('Sélection de saison indisponible :',e.message)}
 }
+
+function showDetailLoading(label='Préparation de la fiche…'){
+ const root=$('overlay');root.classList.remove('hidden');
+ root.innerHTML='<div class="dialog sc5-dialog sc5-loading" role="dialog" aria-modal="true" aria-label="Chargement de la fiche"><button class="close" data-close aria-label="Fermer">×</button><div class="sc5-loader-icon">✧</div><h2>'+esc(label)+'</h2><p>Informations fournies par TVmaze.</p></div>';
+ root.querySelector('[data-close]')?.focus();
+}
+function detailReady(token){
+ return token===detailRequestId && !$('overlay').classList.contains('hidden');
+}
+async function catalogueMatches(shows){
+ const ids=shows.map(show=>Number(show.id)).filter(id=>Number.isSafeInteger(id)&&id>0).slice(0,120);
+ if(!ids.length)return [];
+ try{
+  const {data,error}=await supa.from('series').select('id').in('id',ids);
+  return error?[]:(data||[]).map(x=>x.id);
+ }catch{return []}
+}
+function findLocalShow(id){
+ return state.seasonShows.find(x=>x.id===id)
+  ||state.catalog.find(x=>x.id===id)
+  ||state.cards.find(c=>c.series_id===id)?.series
+  ||state.wishes.find(w=>w.series_id===id)?.series
+  ||state.actorShows.find(x=>x.id===id)
+  ||null;
+}
 async function openSeriesDetail(id){
- const v=Number(id);if(!Number.isSafeInteger(v)||v<=0)return;
- let info=state.seasonShows.find(x=>x.id===v)||state.catalog.find(x=>x.id===v)||state.cards.find(c=>c.series_id===v)?.series||state.wishes.find(w=>w.series_id===v)?.series;
- if(!info){
-  const {data,error}=await supa.from('series').select('id,name,image_url,premiered,genres').eq('id',v).maybeSingle();
-  if(error){toast('Fiche série indisponible : '+error.message,true);return}
-  info=data;
+ const numeric=Number(id);
+ if(!Number.isSafeInteger(numeric)||numeric<=0)return;
+ const token=++detailRequestId;
+ lastShowForBack=numeric;
+ showDetailLoading('Une histoire à découvrir…');
+ let base=findLocalShow(numeric)||{};
+ try{
+  const loaded=await getShowDetails(numeric);
+  if(!detailReady(token))return;
+  if(!loaded&&!base?.name){
+   const {data,error}=await supa.from('series').select('id,name,image_url,premiered,genres').eq('id',numeric).maybeSingle();
+   if(!error&&data)base=data;
+  }
+  if(!loaded&&!base?.name){
+   $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close>×</button><h2>Série introuvable</h2><p>Aucune fiche disponible pour cet identifiant.</p></div>';
+   return;
+  }
+  $('overlay').innerHTML=showDetailHTML(loaded||{},base);
+  $('overlay').querySelector('[data-close]')?.focus();
+ }catch(error){
+  if(!detailReady(token))return;
+  if(base?.name){
+    $('overlay').innerHTML=showDetailHTML({},base);
+    const dialog=$('overlay').querySelector('.sc5-dialog');
+    dialog?.insertAdjacentHTML('afterbegin','<div class="notice sc5-fetch-warning">La distribution et le résumé détaillé ne sont pas accessibles momentanément sur TVmaze.</div>');
+    $('overlay').querySelector('[data-close]')?.focus();
+  }else{
+    $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close>×</button><h2>Fiche indisponible</h2><p>Le service TVmaze ne répond pas pour le moment. Réessaie.</p></div>';
+  }
  }
- if(!info){toast('Série indisponible pour le moment.',true);return}
- const root=$('overlay');root.classList.remove('hidden');root.innerHTML=seriesDetail(info);
+}
+async function openPersonDetail(id){
+ const numeric=Number(id);
+ if(!Number.isSafeInteger(numeric)||numeric<=0)return;
+ const token=++detailRequestId;
+ showDetailLoading('À la rencontre de la distribution…');
+ try{
+  const result=await getPersonFilmography(numeric);
+  const ids=await catalogueMatches(result.shows);
+  if(!detailReady(token))return;
+  $('overlay').innerHTML=actorDetailHTML(result.person,result.shows,new Set(ids));
+  $('overlay').querySelector('[data-close]')?.focus();
+ }catch(error){
+  if(!detailReady(token))return;
+  $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close>×</button><h2>Filmographie indisponible</h2><p>'+esc(error.message)+'</p><button class="btn subtle" data-person-back>Retour</button></div>';
+ }
+}
+async function searchCatalogueActors(){
+ const query=state.actorQuery.trim();
+ if(query.length<2){
+   state.actorError='Saisis au moins deux caractères pour rechercher un acteur.';
+   state.actorMatches=[];state.actorLoading=false;render();return;
+ }
+ const token=++actorSearchRequestId;
+ state.actorLoading=true;state.actorError='';state.actorMatches=[];
+ state.actorSelected=null;state.actorShows=[];state.actorCatalogueIds=[];
+ if(state.route==='catalog'&&state.catalogMode==='actors')render();
+ try{
+  const matches=await searchPeople(query);
+  if(token!==actorSearchRequestId)return;
+  state.actorMatches=matches;
+  state.actorError=matches.length?'':'Aucun artiste trouvé. Essaie un autre nom.';
+ }catch(error){
+  if(token!==actorSearchRequestId)return;
+  state.actorError='Recherche impossible : '+error.message;
+ }finally{
+  if(token===actorSearchRequestId){
+   state.actorLoading=false;
+   if(state.route==='catalog'&&state.catalogMode==='actors')render();
+  }
+ }
+}
+async function filterCatalogueByActor(id){
+ const numeric=Number(id);if(!Number.isSafeInteger(numeric)||numeric<=0)return;
+ const token=++actorSearchRequestId;
+ state.catalogMode='actors';state.actorLoading=true;state.actorError='';
+ if(state.route!=='catalog')change('catalog');else render();
+ try{
+  const result=await getPersonFilmography(numeric);
+  const ids=await catalogueMatches(result.shows);
+  if(token!==actorSearchRequestId)return;
+  state.actorSelected=result.person;
+  state.actorQuery=result.person.name;
+  state.actorShows=result.shows;
+  state.actorCatalogueIds=ids;
+  state.actorMatches=[];
+ }catch(error){
+  if(token!==actorSearchRequestId)return;
+  state.actorSelected=null;state.actorShows=[];
+  state.actorError='Filmographie indisponible : '+error.message;
+ }finally{
+  if(token===actorSearchRequestId){
+   state.actorLoading=false;
+   if(state.route==='catalog'&&state.catalogMode==='actors')render();
+  }
+ }
 }
 async function loadRankings(){
  const {data,error}=await supa.rpc('get_leaderboard');
@@ -355,7 +467,7 @@ async function authenticate(register){
  if(register&&!result.data.session){$('authFeedback').textContent='Inscription enregistrée. Vérifie ton e-mail pour confirmer le compte.';return}
  $('overlay').classList.add('hidden');await loadSession();toast('Bienvenue dans le club !')
 }
-function closeModal(){const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
+function closeModal(){detailRequestId++;const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
 async function exportData(){
  const payload={exported_at:new Date().toISOString(),username:state.username,wallet:state.wallet,cards:state.cards,wishlist:state.wishes};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -377,7 +489,43 @@ function chooseChallenge(type){
  }
 }
 function globalClick(e){
- const close=e.target.closest('[data-close]');if(close){closeModal()}
+ const close=e.target.closest('[data-close]');if(close){closeModal();return}
+ if(e.target.closest('[data-summary-toggle]')){
+  const dialog=e.target.closest('.sc5-dialog');
+  const short=dialog?.querySelector('.sc5-summary-short');
+  const long=dialog?.querySelector('.sc5-summary-long');
+  if(short&&long){
+   const expanded=long.classList.toggle('hidden')===false;
+   short.classList.toggle('hidden',expanded);
+   e.target.setAttribute('aria-expanded',String(expanded));
+   e.target.textContent=expanded?'Réduire le résumé ↑':'Lire le résumé complet ↓';
+  }
+  return;
+ }
+ const actorButton=e.target.closest('[data-person]');
+ if(actorButton){openPersonDetail(actorButton.dataset.person);return}
+ if(e.target.closest('[data-person-back]')){
+  if(lastShowForBack)openSeriesDetail(lastShowForBack);else closeModal();
+  return;
+ }
+ const actorFilter=e.target.closest('[data-filter-actor]');
+ if(actorFilter){closeModal();filterCatalogueByActor(actorFilter.dataset.filterActor);return}
+ const mode=e.target.closest('[data-catalog-mode]');
+ if(mode){
+  state.catalogMode=mode.dataset.catalogMode==='actors'?'actors':'series';
+  state.actorError='';render();
+  if(state.catalogMode==='series'&&!state.catalog.length)loadCatalog(true);
+  return;
+ }
+ if(e.target.closest('#actorSearchSubmit')){state.actorQuery=$('actorSearchQuery')?.value||'';searchCatalogueActors();return}
+ const personSelect=e.target.closest('[data-select-actor]');
+ if(personSelect){filterCatalogueByActor(personSelect.dataset.selectActor);return}
+ if(e.target.closest('[data-actor-reset]')){
+  actorSearchRequestId++;
+  state.actorSelected=null;state.actorShows=[];state.actorCatalogueIds=[];state.actorMatches=[];
+  state.actorQuery='';state.actorError='';state.actorLoading=false;render();return;
+ }
+
  const route=e.target.closest('[data-route]');if(route){e.preventDefault();change(route.dataset.route);return}
  if(e.target.closest('#menuToggle')){document.body.classList.toggle('drawer-open');return}
  if(e.target.closest('[data-auth]')){openAuth();return}
@@ -444,12 +592,13 @@ document.addEventListener('change',globalChange);
 document.addEventListener('input',e=>{
  if(e.target.id==='collectionSearch'){state.filter=e.target.value;const active=document.activeElement,position=active.selectionStart;render();const input=$('collectionSearch');input.focus();input.setSelectionRange(position,position)}
  if(e.target.id==='catalogQuery')state.catalogQuery=e.target.value;
+ if(e.target.id==='actorSearchQuery')state.actorQuery=e.target.value;
  if(e.target.id==='marketSearch'||e.target.id==='peopleSearch'){
   const type=e.target.id==='marketSearch'?'marketQuery':'peopleFilter';state[type]=e.target.value;
   const pos=e.target.selectionStart;render();const input=$(e.target.id);input?.focus();input?.setSelectionRange(pos,pos);
  }
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&e.target.id==='catalogQuery')loadCatalog(true)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&e.target.id==='catalogQuery')loadCatalog(true);if(e.key==='Enter'&&e.target.id==='actorSearchQuery')searchCatalogueActors()});
 $('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeModal()});
 supa.auth.onAuthStateChange(()=>setTimeout(loadSession,75));
 state.route=safeRoute();render();loadSession();if(['catalog','games'].includes(state.route))loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();
