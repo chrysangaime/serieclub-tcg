@@ -32,13 +32,21 @@ test('shows filmography with catalogued cards and direct series navigation',()=>
  const catalog=actorCatalogueView({
   catalogMode:'actors',actorQuery:'X',
   actorMatches:[{id:45,name:'Actress X',country:{name:'France'}}],
-  actorSelected:{id:45,name:'Actress X'},actorShows:[{id:99,name:'Fiction A'}],
+  actorSelected:{id:45,name:'Actress X'},actorShows:[{id:99,name:'Fiction A'},{id:98,name:'Fiction B'}],
   actorCatalogueIds:[99],actorLoading:false,actorError:''
  });
  assert.match(catalog,/data-select-actor="45"/);
  assert.match(catalog,/data-series="99"/);
  assert.match(catalog,/Dans SérieClub/);
  assert.match(catalog,/Par acteur/);
+ const onlyClub=actorCatalogueView({
+  catalogMode:'actors',actorQuery:'X',actorMatches:[],
+  actorSelected:{id:45,name:'Actress X'},actorShows:[{id:99,name:'Fiction A'},{id:98,name:'Fiction B'}],
+  actorCatalogueIds:[99],actorOnlyClub:true,actorLoading:false,actorError:''
+ });
+ assert.match(onlyClub,/id="actorOnlyClub" type="checkbox"/);
+ assert.match(onlyClub,/Fiction A/);
+ assert.doesNotMatch(onlyClub,/Fiction B/);
 });
 test('fetches genuine TVmaze cast and cross-series credits with one in-memory cache',async()=>{
  const original=globalThis.fetch;
