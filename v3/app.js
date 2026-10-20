@@ -12,8 +12,28 @@ const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let toastTimer,clockTimer,searchTimer,refreshing=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
-function change(route){const r=routes[route]||route;if(!r)return;state.route=r;const next='#/'+(slug[r]||r);if(location.hash!==next)history.pushState(null,'',next);render();window.scrollTo({top:0,behavior:'instant'});document.body.classList.remove('drawer-open');if(['catalog','games'].includes(r)&&!state.catalog.length)loadCatalog(true);if(r==='rankings')loadRankings();if(r==='market'&&state.user)loadMarket();if(r==='community'&&state.user)loadPeople();if(r==='quests'&&state.user)loadDaily();if(r==='albums'&&state.user)loadAlbums()}
-window.addEventListener('popstate',()=>{state.route=safeRoute();render()});window.addEventListener('hashchange',()=>{const r=safeRoute();if(r!==state.route){state.route=r;render();if(['catalog','games'].includes(r)&&!state.catalog.length)loadCatalog(true);if(r==='rankings')loadRankings();if(r==='market'&&state.user)loadMarket();if(r==='community'&&state.user)loadPeople();if(r==='quests'&&state.user)loadDaily();if(r==='albums'&&state.user)loadAlbums();}});
+function loadRouteData(route){
+ if(['catalog','games'].includes(route)&&!state.catalog.length)loadCatalog(true);
+ if(route==='rankings')loadRankings();
+ if(route==='market'&&state.user)loadMarket();
+ if(route==='community'&&state.user)loadPeople();
+ if(route==='quests'&&state.user)loadDaily();
+ if(route==='albums'&&state.user)loadAlbums();
+}
+function change(route){
+ const nextRoute=routes[route]||route;if(!nextRoute)return;
+ state.route=nextRoute;
+ const next='#/'+(slug[nextRoute]||nextRoute);
+ if(location.hash!==next)history.pushState(null,'',next);
+ render();loadRouteData(nextRoute);
+ window.scrollTo({top:0,behavior:'instant'});
+ document.body.classList.remove('drawer-open');
+}
+function syncBrowserRoute(){
+ state.route=safeRoute();render();loadRouteData(state.route);
+}
+window.addEventListener('popstate',syncBrowserRoute);
+window.addEventListener('hashchange',()=>{if(safeRoute()!==state.route)syncBrowserRoute()});
 function renderChrome(){
  const nav=navItems.map(([key,icon,title])=>'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico">'+esc(icon)+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':'')+'</button>').join('');
  $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark">S</span><span>SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav><div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div><div class="side-account" data-route="profile"><div class="avatar">'+esc((state.username||'S').slice(0,1).toUpperCase())+'</div><div><b>'+esc(state.username||'Mon compte')+'</b><small>'+money(state.cards.length)+' cartes dans ma collection</small></div></div>';
@@ -285,7 +305,7 @@ async function claimDaily(){
 }
 function showOpening(data){
  const overlay=$('overlay');overlay.classList.remove('hidden');
- overlay.innerHTML='<div class="dialog opening-dialog" role="dialog" aria-modal="true" aria-label="Paquet ouvert"><button class="close" data-close aria-label="Fermer">×</button><div class="caps">SÉRIECLUB · OUVERTURE DE PAQUET</div><div id="openingPack">'+foil(state.pack)+'</div><div class="opening-status" id="openingText">Les cartes se dévoilent…</div><div class="opening-result hidden" id="openingCards"></div><button class="btn primary hidden" id="openingDone">Ajouter à ma collection ✓</button></div>';
+ overlay.innerHTML='<div class="dialog opening-dialog" role="dialog" aria-modal="true" aria-label="Paquet ouvert"><button class="close" data-close aria-label="Fermer">×</button><div class="caps">SÉRIECLUB · OUVERTURE DE PAQUET</div><div id="openingPack">'+foil(state.pack)+'</div><div class="opening-status" id="openingText">Les cartes se dévoilent…</div><div class="opening-result hidden" id="openingCards"></div><button class="btn primary hidden" id="openingDone">Voir mes nouvelles cartes ✓</button></div>';
  $('openingPack').querySelector('.foil').classList.add('shaking');
  const show=()=>{const f=$('openingPack')?.querySelector('.foil');if(f)f.classList.add('opened')};
  const reveal=()=>{if(!$('openingCards'))return;$('openingPack').classList.add('hidden');$('openingCards').classList.remove('hidden');$('openingCards').innerHTML=data.map(c=>card({rarity:c.rarity,series:{id:c.series_id,name:c.name,image_url:c.image_url}})).join('');$('openingText').textContent='Cinq nouvelles cartes ! +25 crédits · +50 XP';$('openingDone').classList.remove('hidden')};
