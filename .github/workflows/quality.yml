@@ -21,6 +21,8 @@ jobs:
           node --check v3/app.js
           node --check v4/club.js
           node --check v4/albums.js
+          node --check v4/series.js
+          node --test tests/series.test.mjs
           node --check scripts/import-tvmaze.mjs
       - name: Tester les pages du TCG
         run: |
@@ -29,7 +31,7 @@ jobs:
           import assert from 'node:assert/strict';
           import * as v from './v3/views.js';
           const html=fs.readFileSync('index.html','utf8');
-          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./v4/club.css','./v4/club.js','./manifest.webmanifest']){
+          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./v4/club.css','./v4/club.js','./v4/series.css','./v4/series.js','./manifest.webmanifest']){
             assert.ok(html.includes(file), 'Lien manquant : '+file);
             assert.ok(fs.existsSync(file.slice(2)), 'Fichier manquant : '+file);
           }
@@ -52,6 +54,7 @@ jobs:
           assert.match(v.collection(state),/Ma collection/);
           assert.match(v.fusions(state),/Fusionner 10/);
           assert.match(v.catalogue(state),/Catalogue/);
+          assert.match(v.catalogue({...state,catalogMode:'actors',actorQuery:'',actorMatches:[],actorShows:[],actorCatalogueIds:[],actorSelected:null}),/Recherche par acteur/);
           assert.match(v.card({rarity:'Rare',series:{name:'Essai',image_url:'https://example.com/image.png'}}),/Essai/);
           const d=await import('./v3/discovery.js');
           assert.match(d.seasonShelf([{id:12,name:'Horreur test',image_url:'https://example.com/poster.jpg',genres:['Horror']}]),/Horreur test/);
