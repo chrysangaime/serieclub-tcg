@@ -135,7 +135,7 @@ export function showDetailHTML(source={},base={}){
  const year=formatYear(show.premiered),status=show.status==='Ended'?'Terminée':show.status==='Running'?'En cours':show.status||'';
  const poster=show.image?.medium||show.image?.original||show.image_url||base.image_url;
  const castRows=cast.filter(x=>x.person?.id&&x.person?.name).slice(0,24).map(x=>
-  '<button class="sc5-cast-row" data-person="'+x.person.id+'" aria-label="Voir les séries de '+escapeHTML(x.person.name)+'"><b>'+escapeHTML(x.person.name)+'</b>'+
+  '<button class="sc5-cast-row" data-person="'+x.person.id+'" aria-label="Voir les séries de '+escapeHTML(x.person.name)+'">'+photo(x.person.image?.medium||x.person.image?.original,x.person.name,'sc5-cast-thumb')+'<b>'+escapeHTML(x.person.name)+'</b>'+
   (x.character?.name?'<small>'+escapeHTML(x.character.name)+'</small>':'')+'<span class="sc5-row-arrow" aria-hidden="true">↗</span></button>').join('');
  const more=[
   ['Diffusion',show.webChannel?.name||show.network?.name],['Langue',show.language],
@@ -166,7 +166,7 @@ export function actorDetailHTML(person,shows=[],catalogueIds=new Set(),fromShow=
  const birth=person?.birthday?new Date(person.birthday+'T12:00:00').toLocaleDateString('fr-FR'):'';
  const rows=shows.map(show=>
   '<button class="sc5-credit-row" data-series="'+show.id+'" aria-label="Ouvrir la série '+escapeHTML(show.name)+'">'+
-  '<b>'+escapeHTML(show.name)+'</b>'+
+  photo(show.image?.medium||show.image?.original,show.name,'sc5-credit-thumb')+'<b>'+escapeHTML(show.name)+'</b>'+
   (formatYear(show.premiered)?'<small>'+escapeHTML(formatYear(show.premiered))+'</small>':'')+
   (show.role?'<small class="sc5-credit-role">'+escapeHTML(show.role)+'</small>':'')+
   (catalogueIds.has(show.id)?'<em>Dans SérieClub</em>':'')+
@@ -200,15 +200,13 @@ export function actorCatalogueView(state) {
     (state.actorLoading?'<div class="sc5-empty">Recherche de la distribution en cours…</div>':'')+
     (state.actorError?'<div class="notice">'+escapeHTML(state.actorError)+'</div>':'')+
     (!state.actorLoading&&people.length?'<div class="sc5-person-results">'+people.map(person=>
-      '<button class="sc5-person-result" data-select-actor="'+person.id+'">'+
-      
-      '<span><b>'+escapeHTML(person.name)+'</b>'+
+      '<button class="sc5-person-result" data-select-actor="'+person.id+'">'+photo(person.image?.medium||person.image?.original,person.name,'sc5-search-thumb')+'<span><b>'+escapeHTML(person.name)+'</b>'+
       (person.country?.name?'<small>'+escapeHTML(person.country.name)+'</small>':'')+'</span>'+
       '<span class="sc5-person-arrow">Voir ses séries →</span></button>').join('')+'</div>':'')+
     (chosen?'<div class="sc5-filmography-top"><div><span class="caps">FILTRÉ PAR ARTISTE</span><h2>'+escapeHTML(chosen.name)+'</h2><p>'+shows.length+' série'+(shows.length>1?'s':'')+' trouvée'+(shows.length>1?'s':'')+' sur TVmaze. Les mentions « Dans SérieClub » concernent le catalogue jouable.</p></div>'+
       '<div class="sc5-actor-controls"><label><input type="checkbox" id="actorOnlyClub" '+(onlyClub?'checked':'')+'> Dans SérieClub uniquement</label><button class="btn subtle" data-person="'+chosen.id+'">Fiche acteur ↗</button></div></div>'+
       (visibleShows.length?'<div class="sc5-filmography-grid">'+visibleShows.map(show=>
-        '<button class="sc5-filmography-item" data-series="'+show.id+'"><b>'+escapeHTML(show.name)+'</b><small>'+escapeHTML(formatYear(show.premiered))+'</small>'+
+        '<button class="sc5-filmography-item" data-series="'+show.id+'">'+photo(show.image?.medium||show.image?.original,show.name,'sc5-list-thumb')+'<b>'+escapeHTML(show.name)+'</b><small>'+escapeHTML(formatYear(show.premiered))+'</small>'+
         (inCatalogue.has(show.id)?'<span class="sc5-available">Dans SérieClub</span>':'')+
         '<span class="sc5-row-arrow" aria-hidden="true">↗</span></button>').join('')+'</div>':'<div class="sc5-empty">'+(onlyClub?'Aucune série présente dans le catalogue SérieClub. Désactive le filtre pour voir sa filmographie TVmaze.':'Aucune série référencée pour cet acteur.')+'</div>')+
       '</div>':'')+
