@@ -173,6 +173,7 @@ returns boolean language plpgsql security definer set search_path=public,pg_temp
 declare uid uuid:=auth.uid(); l record; o record; offered record; listed record; listing_key uuid;
 begin
  if uid is null then raise exception 'Connexion requise'; end if;
+ if p_accept is null then raise exception 'Réponse invalide'; end if;
  -- Trouver l'annonce sans verrou préalable, puis verrouiller annonce et offre dans cet ordre.
  select t.listing_id into listing_key from public.card_trade_offers t where t.id=p_offer_id;
  if not found then raise exception 'Proposition introuvable'; end if;
@@ -191,8 +192,10 @@ begin
  if l.status<>'active' then raise exception 'Annonce indisponible'; end if;
  select * into listed from public.player_cards where id=l.card_id for update;
  select * into offered from public.player_cards where id=o.offered_card_id for update;
- if listed.owner_id<>l.seller_id or listed.locked or listed.reserved_trade_id is not null
-    or offered.owner_id<>o.proposer_id or offered.locked or offered.reserved_trade_id<>o.id then
+ if listed.id is null or offered.id is null
+    or listed.owner_id is distinct from l.seller_id or listed.locked or listed.reserved_trade_id is not null
+    or offered.owner_id is distinct from o.proposer_id or offered.locked
+    or offered.reserved_trade_id is distinct from o.id then
    raise exception 'Une des cartes a changé de statut'; end if;
  update public.player_cards set owner_id=o.proposer_id,locked=false where id=l.card_id;
  update public.player_cards set owner_id=l.seller_id,locked=false,reserved_trade_id=null where id=o.offered_card_id;
