@@ -74,6 +74,16 @@ jobs:
           assert.match(alb.personalAlbumsPage({...state,personalAlbums:[],publicAlbums:[]}),/Mes saisons personnalisées/);
           assert.match(alb.albumDialog({...state,personalAlbums:[],publicAlbums:[]},{album_id:'demo',title:'Saisons cultes'},[]),/Saisons cultes/);
           assert.ok(fs.readFileSync('v3/app.js','utf8').includes('v4/albums.js'));
+          const raritySql=fs.readFileSync('supabase/game_v5.sql','utf8');
+          for(const name of ['assign_series_official_rarity','enforce_card_series_rarity',
+                             'pick_official_pack','open_starter_booster','open_halloween_booster',
+                             'fuse_cards']){
+            assert.ok(raritySql.includes(name),'Composant V5 manquant : '+name);
+          }
+          assert.match(raritySql,/stranger things/i);
+          assert.match(raritySql,/the x-files/i);
+          assert.match(raritySql,/lost/i);
+          assert.equal((raritySql.match(/\$\$/g)||[]).length%2,0,'Corps SQL V5 incomplet');
           const marketSql=fs.readFileSync('supabase/game_v4.sql','utf8');
           for(const rpc of ['create_card_listing','buy_card_listing','propose_card_trade','respond_card_trade','toggle_player_follow','claim_quest_reward','create_personal_album','album_card_data']){
             assert.ok(marketSql.includes(rpc),'RPC V4 manquante : '+rpc);
@@ -118,5 +128,9 @@ jobs:
           for sql in supabase/schema.sql supabase/game.sql supabase/game_v2.sql supabase/game_v3.sql supabase/game_v4.sql; do
             psql -v ON_ERROR_STOP=1 -f "$sql"
           done
-      - name: Exécuter les scénarios fonctionnels et anti-fraude
+      - name: Exécuter les scénarios fonctionnels et anti-fraude V4
         run: psql -v ON_ERROR_STOP=1 -f tests/v4_integration.sql
+      - name: Activer le catalogue à rareté fixe V5
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v5.sql
+      - name: Tester les raretés uniques, fusions et nouveaux boosters
+        run: psql -v ON_ERROR_STOP=1 -f tests/v5_rarity.sql
