@@ -50,7 +50,7 @@ end $$;
 
 create or replace function public.player_directory()
 returns table(player_id uuid,username text,bio text,favorite_genre text,
- cards_count bigint,followers_count bigint,following boolean)
+ cards_count bigint,followers_count bigint,is_following boolean)
 language sql security definer set search_path=public,pg_temp as $$
  select p.id,p.username,p.bio,p.favorite_genre,
   (select count(*) from public.player_cards c where c.owner_id=p.id)::bigint,
@@ -123,3 +123,29 @@ grant execute on function public.toggle_player_follow(uuid) to authenticated;
 grant execute on function public.claim_quest_reward(text) to authenticated;
 
 -- Lecture personnelle de la progression : transactions et récompenses sont sous RLS.
+
+create or replace function public.get_daily_progress()
+returns table(packs_today bigint,pack1_claimed boolean,pack3_claimed boolean,reset_at timestamptz)
+language sql security definer set search_path=public,pg_temp as $$
+ with d as (
+  select (now() at time zone 'Europe/Paris')::date as local_day
+ )
+ select (
+   select count(*)::bigint from public.game_transactions t
+   where t.player_id=auth.uid() and t.kind in ('booster','halloween')
+   and t.created_at>=((d.local_day)::timestamp at time zone 'Europe/Paris')
+   and t.created_at<((d.local_day+1)::timestamp at time zone 'Europe/Paris')
+ ),
+ exists(
+   select 1 from public.player_quest_claims q
+   where q.player_id=auth.uid() and q.quest_day=d.local_day and q.quest_key='pack1'
+ ),
+ exists(
+   select 1 from public.player_quest_claims q
+   where q.player_id=auth.uid() and q.quest_day=d.local_day and q.quest_key='pack3'
+ ),
+ ((d.local_day+1)::timestamp at time zone 'Europe/Paris')
+ from d;
+$$;
+revoke all on function public.get_daily_progress() from public;
+grant execute on function public.get_daily_progress() to authenticated;
