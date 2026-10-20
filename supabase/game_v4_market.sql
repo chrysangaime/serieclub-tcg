@@ -257,3 +257,63 @@ grant execute on function public.cancel_card_listing(uuid) to authenticated;
 grant execute on function public.buy_card_listing(uuid) to authenticated;
 grant execute on function public.propose_card_trade(uuid,uuid) to authenticated;
 grant execute on function public.respond_card_trade(uuid,boolean) to authenticated;
+
+-- Le client ne peut pas lire l'inventaire privé des autres joueurs.
+-- Seules les annonces volontairement publiées exposent ici leurs données.
+create or replace function public.marketplace_feed()
+returns table(
+ listing_id uuid,seller_id uuid,seller_username text,card_id uuid,
+ series_id bigint,series_name text,image_url text,rarity text,
+ price integer,created_at timestamptz
+) language sql security definer set search_path=public,pg_temp as $$
+ select l.id,l.seller_id,p.username,l.card_id,c.series_id,s.name,s.image_url,c.rarity,
+  l.price,l.created_at
+ from public.card_listings l
+ join public.player_cards c on c.id=l.card_id and c.owner_id=l.seller_id
+ join public.series s on s.id=c.series_id
+ join public.profiles p on p.id=l.seller_id
+ where l.status='active'
+ order by l.created_at desc limit 80;
+$$;
+
+create or replace function public.my_marketplace_activity()
+returns table(listing_id uuid,seller_id uuid,card_id uuid,series_name text,rarity text,
+ price integer,status text,created_at timestamptz,closed_at timestamptz)
+language sql security definer set search_path=public,pg_temp as $$
+ select l.id,l.seller_id,l.card_id,s.name,c.rarity,l.price,l.status,l.created_at,l.closed_at
+ from public.card_listings l
+ join public.player_cards c on c.id=l.card_id
+ join public.series s on s.id=c.series_id
+ where l.seller_id=auth.uid() or l.buyer_id=auth.uid()
+ order by l.created_at desc limit 80;
+$$;
+
+create or replace function public.my_trade_offers()
+returns table(offer_id uuid,listing_id uuid,proposer_id uuid,seller_id uuid,
+ proposer_username text,seller_username text,offered_card_id uuid,
+ offered_name text,offered_image text,offered_rarity text,
+ requested_name text,requested_image text,requested_rarity text,
+ status text,created_at timestamptz)
+language sql security definer set search_path=public,pg_temp as $$
+ select o.id,o.listing_id,o.proposer_id,l.seller_id,p1.username,p2.username,o.offered_card_id,
+  s1.name,s1.image_url,c1.rarity,
+  s2.name,s2.image_url,c2.rarity,
+  o.status,o.created_at
+ from public.card_trade_offers o
+ join public.card_listings l on l.id=o.listing_id
+ join public.player_cards c1 on c1.id=o.offered_card_id
+ join public.series s1 on s1.id=c1.series_id
+ join public.player_cards c2 on c2.id=l.card_id
+ join public.series s2 on s2.id=c2.series_id
+ join public.profiles p1 on p1.id=o.proposer_id
+ join public.profiles p2 on p2.id=l.seller_id
+ where o.proposer_id=auth.uid() or l.seller_id=auth.uid()
+ order by o.created_at desc limit 90;
+$$;
+
+revoke all on function public.marketplace_feed() from public;
+revoke all on function public.my_marketplace_activity() from public;
+revoke all on function public.my_trade_offers() from public;
+grant execute on function public.marketplace_feed() to authenticated;
+grant execute on function public.my_marketplace_activity() to authenticated;
+grant execute on function public.my_trade_offers() to authenticated;
