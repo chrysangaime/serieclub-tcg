@@ -1,7 +1,7 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=4.2.0';
 import{seriesDetail}from'./discovery.js?v=3.1.0';
-import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=4.2.0';
+import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=4.2.1';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=4.2.0';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 const $=id=>document.getElementById(id);
