@@ -1,4 +1,4 @@
-import {platformStrip,seasonShelf} from './discovery.js';
+import {platformStrip,seasonShelf} from './discovery.js?v=3.1.0';
 export const navItems=[
  ['packs','▤','Paquets'],['premiere','✧','Première'],['collection','▣','Collection'],
  ['games','♜','Jeux & défis'],['rankings','♙','Classement'],['wishlist','☆','Liste de souhaits'],
