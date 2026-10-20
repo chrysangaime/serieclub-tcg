@@ -72,6 +72,101 @@ async function loadSession(){
  }catch(e){console.error('Session:',e);toast('Connexion au serveur momentanément indisponible.',true)}
  finally{refreshing=false}
 }
+async function loadMarket(){
+ if(!state.user){state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];if(state.route==='market')render();return}
+ const [feed,activity,offers]=await Promise.all([
+  supa.rpc('marketplace_feed'),supa.rpc('my_marketplace_activity'),supa.rpc('my_trade_offers')
+ ]);
+ const errors=[feed,activity,offers].filter(r=>r.error).map(r=>r.error.message);
+ state.marketError=errors.length?'Active les migrations SQL V4 du Comptoir : '+errors[0]:'';
+ state.marketListings=feed.data||[];
+ state.marketActivity=activity.data||[];
+ state.tradeOffers=offers.data||[];
+ if(state.route==='market')render();
+}
+async function loadPeople(){
+ if(!state.user){state.players=[];if(state.route==='community')render();return}
+ const {data,error}=await supa.rpc('player_directory');
+ state.players=data||[];
+ if(error)toast('Annuaire du club : '+error.message,true);
+ if(state.route==='community')render();
+}
+async function loadDaily(){
+ if(!state.user){state.daily=null;return}
+ const {data,error}=await supa.rpc('get_daily_progress');
+ state.daily=error?null:data?.[0]||null;
+ if(state.route==='quests')render();
+}
+async function executeMarket(action,params,success){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {data,error}=await supa.rpc(action,params);
+  if(error)throw error;
+  toast(success||'Opération enregistrée.');
+  await loadSession();
+  await loadMarket();
+  return data;
+ }catch(e){toast('Le Comptoir : '+e.message,true)}
+ finally{state.busy=false}
+}
+function openTradeDialog(listingId){
+ if(!state.user){openAuth();return}
+ const listing=state.marketListings.find(l=>l.listing_id===listingId);
+ if(!listing)return toast('Annonce indisponible. Actualise le Comptoir.',true);
+ if(listing.seller_id===state.user.id)return toast('Tu ne peux pas échanger avec toi-même.',true);
+ $('overlay').classList.remove('hidden');
+ $('overlay').innerHTML=tradeDialog(state,listing);
+}
+async function createListing(){
+ if(!state.user){openAuth();return}
+ const id=$('listingCard')?.value,price=Number($('listingPrice')?.value);
+ if(!id||!Number.isInteger(price)||price<10||price>50000)return toast('Choisis une carte et un prix entre 10 et 50 000 crédits.',true);
+ await executeMarket('create_card_listing',{p_card_id:id,p_price:price},'Ta carte est désormais en vente.');
+}
+async function purchaseListing(id){
+ const listing=state.marketListings.find(l=>l.listing_id===id);
+ if(!listing)return toast('Annonce introuvable.',true);
+ if(!confirm('Acheter '+listing.series_name+' pour '+listing.price+' crédits virtuels ?'))return;
+ await executeMarket('buy_card_listing',{p_listing_id:id},'Achat effectué : carte ajoutée à ta collection.');
+}
+async function submitTradeOffer(id){
+ const cardId=$('offerCard')?.value;
+ if(!cardId)return toast('Sélectionne une carte à proposer.',true);
+ if(!confirm('Réserver cette carte pour proposer un échange ?'))return;
+ closeModal();
+ await executeMarket('propose_card_trade',{p_listing_id:id,p_offered_card_id:cardId},'Proposition envoyée, ta carte est réservée.');
+}
+async function respondTradeOffer(id,accept){
+ if(accept&&!confirm('Accepter cet échange ? Les deux cartes changeront de propriétaire.'))return;
+ await executeMarket('respond_card_trade',{p_offer_id:id,p_accept:accept},accept?'Échange sécurisé terminé.':'Proposition clôturée.');
+}
+async function toggleFollow(id){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {data,error}=await supa.rpc('toggle_player_follow',{p_target:id});
+  if(error)throw error;
+  toast(data?'Collectionneur ajouté à tes abonnements.':'Tu ne suis plus ce collectionneur.');
+  await loadPeople();
+ }catch(e){toast('Abonnements : '+e.message,true)}
+ finally{state.busy=false}
+}
+async function claimQuest(key){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {data,error}=await supa.rpc('claim_quest_reward',{p_quest_key:key});
+  if(error)throw error;
+  toast('Mission accomplie : +'+data+' crédits et expérience !');
+  await loadSession();
+  await loadDaily();
+ }catch(e){toast('Mission : '+e.message,true)}
+ finally{state.busy=false}
+}
 async function loadCatalog(reset=false){
  if(state.catalogLoading)return;
  if(reset)state.catalogPage=0;
