@@ -216,6 +216,8 @@ export function actorCatalogueView(state) {
   const people=state.actorMatches||[];
   const shows=state.actorShows||[];
   const inCatalogue=new Set(state.actorCatalogueIds||[]);
+  const onlyClub=Boolean(state.actorOnlyClub);
+  const visibleShows=onlyClub?shows.filter(show=>inCatalogue.has(show.id)):shows;
   return '<div class="page-content sc5-catalog"><div class="page-title"><span class="caps">SÉRIECLUB · LA DISTRIBUTION</span><h1>Recherche par acteur</h1><p>Retrouve les séries dans lesquelles joue un acteur ou une actrice, même si elles ne figurent pas encore dans les boosters.</p></div>'+
     '<div class="sc5-mode"><button class="btn subtle" data-catalog-mode="series">▦ Par série</button>'+
     '<button class="btn primary" data-catalog-mode="actors">♙ Par acteur</button></div>'+
@@ -231,12 +233,12 @@ export function actorCatalogueView(state) {
       (person.country?.name?'<small>'+escapeHTML(person.country.name)+'</small>':'')+'</span>'+
       '<span class="sc5-person-arrow">Voir ses séries →</span></button>').join('')+'</div>':'')+
     (chosen?'<div class="sc5-filmography-top"><div><span class="caps">FILTRÉ PAR ARTISTE</span><h2>'+escapeHTML(chosen.name)+'</h2><p>'+shows.length+' série'+(shows.length>1?'s':'')+' trouvée'+(shows.length>1?'s':'')+' sur TVmaze. Les mentions « Dans SérieClub » concernent le catalogue jouable.</p></div>'+
-      '<button class="btn subtle" data-person="'+chosen.id+'">Voir sa fiche complète ↗</button></div>'+
-      (shows.length?'<div class="sc5-filmography-grid">'+shows.map(show=>
+      '<div class="sc5-actor-controls"><label><input type="checkbox" id="actorOnlyClub" '+(onlyClub?'checked':'')+'> Dans SérieClub uniquement</label><button class="btn subtle" data-person="'+chosen.id+'">Fiche acteur ↗</button></div></div>'+
+      (visibleShows.length?'<div class="sc5-filmography-grid">'+visibleShows.map(show=>
         '<article class="sc5-filmography-item"><button data-series="'+show.id+'" class="sc5-filmography-image">'+photo(show.image?.medium,show.name,'')+'</button>'+
         '<div><b>'+escapeHTML(show.name)+'</b><small>'+escapeHTML(formatYear(show.premiered))+'</small>'+
         (inCatalogue.has(show.id)?'<span class="sc5-available">◈ Dans SérieClub</span>':'<span class="sc5-remote">Source TVmaze</span>')+
-        '<button class="sc5-text-btn" data-series="'+show.id+'">Voir la fiche →</button></div></article>').join('')+'</div>':'<div class="sc5-empty">Aucune série référencée pour cet acteur.</div>')+
+        '<button class="sc5-text-btn" data-series="'+show.id+'">Voir la fiche →</button></div></article>').join('')+'</div>':'<div class="sc5-empty">'+(onlyClub?'Aucune série présente dans le catalogue SérieClub. Désactive le filtre pour voir sa filmographie TVmaze.':'Aucune série référencée pour cet acteur.')+'</div>')+
       '</div>':'')+
     (!chosen&&!state.actorLoading&&!people.length?'<div class="sc5-search-invitation"><span>✧</span><h2>Toutes les séries, un visage à la fois.</h2><p>Saisis un nom pour retrouver les artistes et accéder à leur filmographie.</p></div>':'')+
     '<p class="sc5-api-credit">Les biographies, distributions et filmographies sont fournies par <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVmaze ↗</a>. Les crédits peuvent être incomplets.</p></div>';
