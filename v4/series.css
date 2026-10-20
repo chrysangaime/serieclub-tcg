@@ -362,3 +362,11 @@
   width:28px!important;height:38px!important;min-width:28px!important;max-width:28px!important;
  }
 }
+
+/* Rang affiché sur la fiche de série : une seule classification par titre. */
+.sc5-compact-dialog .detail-tags .sc5-official-rarity{
+ border:1px solid #64b2a5;
+ background:linear-gradient(120deg,#205249,#234556);
+ color:#c5f9ef;
+ font-weight:800;
+}
