@@ -74,6 +74,56 @@ async function loadSession(){
  }catch(e){console.error('Session:',e);toast('Connexion au serveur momentanément indisponible.',true)}
  finally{refreshing=false}
 }
+async function loadAlbums(){
+ if(!state.user){state.personalAlbums=[];state.publicAlbums=[];if(state.route==='albums')render();return}
+ const [own,shared]=await Promise.all([
+  supa.rpc('my_personal_albums'),supa.rpc('public_personal_albums')
+ ]);
+ const errors=[own,shared].filter(v=>v.error).map(v=>v.error.message);
+ state.albumError=errors.length?'Active la migration SQL V4 des albums : '+errors[0]:'';
+ state.personalAlbums=own.data||[];state.publicAlbums=shared.data||[];
+ if(state.route==='albums')render();
+}
+async function openAlbum(id){
+ if(!state.user){openAuth();return}
+ const album=state.personalAlbums.find(a=>a.album_id===id)||state.publicAlbums.find(a=>a.album_id===id);
+ if(!album){toast('Album introuvable, actualise la page.',true);return}
+ const {data,error}=await supa.rpc('album_card_data',{p_album_id:id});
+ if(error){toast('Album : '+error.message,true);return}
+ $('overlay').classList.remove('hidden');
+ $('overlay').innerHTML=albumDialog(state,album,data||[]);
+}
+async function albumMutation(rpc,args,msg,id){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {error}=await supa.rpc(rpc,args);if(error)throw error;
+  toast(msg);await loadAlbums();
+  if(id)await openAlbum(id);
+ }catch(e){toast('Album : '+e.message,true)}
+ finally{state.busy=false}
+}
+async function createAlbum(){
+ const title=$('newAlbumTitle')?.value.trim(),description=$('newAlbumDescription')?.value.trim()||'';
+ const visible=Boolean($('newAlbumPublic')?.checked);
+ if(!title||title.length<3||title.length>48||description.length>160){
+  toast('Choisis un titre de 3 à 48 caractères et une description courte.',true);return
+ }
+ await albumMutation('create_personal_album',{p_title:title,p_description:description,p_public:visible},'Nouvelle saison personnelle créée.');
+}
+async function deleteAlbum(id){
+ if(!confirm('Supprimer cet album et ses sélections ? Tes cartes ne seront pas supprimées.'))return;
+ await albumMutation('delete_personal_album',{p_album_id:id},'Album personnel supprimé.');
+}
+async function addAlbumCard(id){
+ const cardId=$('albumCardSelect')?.value;
+ if(!cardId)return toast('Choisis une carte à ajouter.',true);
+ await albumMutation('add_card_to_album',{p_album_id:id,p_card_id:cardId},'Carte ajoutée à la saison.',id);
+}
+async function removeAlbumCard(id,cardId){
+ await albumMutation('remove_card_from_album',{p_album_id:id,p_card_id:cardId},'Carte retirée de l’album.',id);
+}
 async function loadMarket(){
  if(!state.user){state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];if(state.route==='market')render();return}
  const [feed,activity,offers]=await Promise.all([
@@ -312,6 +362,11 @@ function globalClick(e){
  if(e.target.closest('#authSignout')){supa.auth.signOut().then(()=>{closeModal();loadSession();toast('Compte déconnecté.')});return}
  if(e.target.closest('#motionToggle')){state.reduceMotion=!state.reduceMotion;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render();return}
 
+ if(e.target.closest('#createAlbum')){createAlbum();return}
+ const viewAlbum=e.target.closest('[data-view-album]');if(viewAlbum){openAlbum(viewAlbum.dataset.viewAlbum);return}
+ const deleteAlb=e.target.closest('[data-delete-album]');if(deleteAlb){deleteAlbum(deleteAlb.dataset.deleteAlbum);return}
+ const addAlb=e.target.closest('#albumAddCard');if(addAlb){addAlbumCard(addAlb.dataset.albumId);return}
+ const removeAlb=e.target.closest('[data-album-remove]');if(removeAlb){removeAlbumCard(removeAlb.dataset.albumId,removeAlb.dataset.albumRemove);return}
  if(e.target.closest('#createListing')){createListing();return}
  if(e.target.closest('#refreshMarket')){loadMarket();return}
  if(e.target.closest('#refreshPeople')){loadPeople();return}
