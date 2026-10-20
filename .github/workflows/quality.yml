@@ -15,7 +15,7 @@ jobs:
           node-version: '22'
       - name: Vérifier les scripts JavaScript
         run: |
-          for file in auth.js game.js club.js editorial.js polish.js scripts/import-tvmaze.mjs; do
+          for file in auth.js game.js club.js editorial.js polish.js game-v2.js scripts/import-tvmaze.mjs; do
             node --check "$file"
           done
       - name: Vérifier les références HTML
@@ -23,7 +23,7 @@ jobs:
           node --input-type=module -e "
           import fs from 'node:fs';
           const html=fs.readFileSync('index.html','utf8');
-          for(const file of ['auth.js','game.js','club.js','editorial.js','polish.js','editorial.css']){
+          for(const file of ['auth.js','game.js','club.js','editorial.js','polish.js','game-v2.js','editorial.css']){
             if(!html.includes('./'+file)||!fs.existsSync(file))throw Error('Ressource absente: '+file);
           }
           for(const id of ['home','catalog','boosters','collection']){
