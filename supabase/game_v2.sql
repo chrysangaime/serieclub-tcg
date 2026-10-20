@@ -21,7 +21,7 @@ begin
  else
   update public.player_wallets set booster_stock=available,booster_anchor=w.booster_anchor+make_interval(secs=>steps*600) where player_id=uid;
   stock:=available;maximum:=10;
-  recharge_seconds:=greatest(0,ceil(600-extract(epoch from (now_at-(w.booster_anchor+make_interval(secs=>steps*600))))))::integer);
+  recharge_seconds:=greatest(0,ceil(600 - extract(epoch from (now_at - (w.booster_anchor + make_interval(secs => steps * 600)))))::integer);
  end if;
  return next;
 end $$;
