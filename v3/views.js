@@ -19,7 +19,7 @@ export function foil(type='classic'){
  return '<div class="foil '+(horror?'halloween':'')+'" aria-label="Pochette '+(horror?'Halloween':'Classique')+'"><div class="foil-face"><div class="foil-shimmer"></div><div class="foil-name">SÉRIECLUB<small>TRADING CARD GAME</small></div><div class="foil-emblem">'+art+'</div><div class="foil-foot">'+(horror?'HALLOWEEN':'ORIGINAL')+'</div><span class="foil-mini">5 CARTES • 7 RARETÉS</span></div></div>';
 }
 export function card(c,action=''){
- const s=c.series||c;const title=s.name||'Série inconnue';const rank=c.rarity||'Commune';
+ const s=c.series||c;const title=s.name||'Série inconnue';const rank=(s.rarity_source==='pending'?'À classer':(c.rarity||s.rarity||'Non classée'));
  const rankClass=rank.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\W/g,'');
  return '<article class="collect-card"><img loading="lazy" src="'+photo(s.image_url||s.image?.medium)+'" alt="Affiche de '+esc(title)+'"><div class="card-title">'+esc(title)+'</div><div class="card-meta"><span class="rarity rarity--'+rankClass+'">'+(c.locked?'🔒 ':'')+esc(rank)+'</span><small>'+esc(String(s.premiered||'').slice(0,4))+'</small></div>'+action+'</article>';
 }
