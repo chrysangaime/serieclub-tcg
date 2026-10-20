@@ -70,7 +70,7 @@ jobs:
           const alb=await import('./v4/albums.js');
           assert.match(alb.personalAlbumsPage({...state,personalAlbums:[],publicAlbums:[]}),/Mes saisons personnalisées/);
           assert.match(alb.albumDialog({...state,personalAlbums:[],publicAlbums:[]},{album_id:'demo',title:'Saisons cultes'},[]),/Saisons cultes/);
-          assert.match(fs.readFileSync('v3/app.js','utf8'),/v4\\/albums.js/);
+          assert.ok(fs.readFileSync('v3/app.js','utf8').includes('v4/albums.js'));
           const marketSql=fs.readFileSync('supabase/game_v4.sql','utf8');
           for(const rpc of ['create_card_listing','buy_card_listing','propose_card_trade','respond_card_trade','toggle_player_follow','claim_quest_reward','create_personal_album','album_card_data']){
             assert.ok(marketSql.includes(rpc),'RPC V4 manquante : '+rpc);
