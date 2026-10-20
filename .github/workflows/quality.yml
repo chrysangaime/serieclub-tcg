@@ -1,0 +1,33 @@
+name: Vérification qualité SérieClub
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Vérifier les scripts JavaScript
+        run: |
+          for file in auth.js game.js club.js editorial.js polish.js scripts/import-tvmaze.mjs; do
+            node --check "$file"
+          done
+      - name: Vérifier les références HTML
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          const html=fs.readFileSync('index.html','utf8');
+          for(const file of ['auth.js','game.js','club.js','editorial.js','polish.js','editorial.css']){
+            if(!html.includes('./'+file)||!fs.existsSync(file))throw Error('Ressource absente: '+file);
+          }
+          for(const id of ['home','catalog','boosters','collection']){
+            if(!html.includes('id=\"'+id+'\"'))throw Error('Section manquante: '+id);
+          }
+          console.log('Ressources et sections présentes');
+          "
