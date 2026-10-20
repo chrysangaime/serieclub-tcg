@@ -149,3 +149,145 @@ language sql security definer set search_path=public,pg_temp as $$
 $$;
 revoke all on function public.get_daily_progress() from public;
 grant execute on function public.get_daily_progress() to authenticated;
+
+-- Albums personnels SérieClub : chaque joueur compose ses propres "saisons".
+create table if not exists public.player_albums (
+ id uuid primary key default gen_random_uuid(),
+ owner_id uuid not null references public.profiles(id) on delete cascade,
+ title text not null check(char_length(title) between 3 and 48),
+ description text not null default '' check(char_length(description)<=160),
+ visibility text not null default 'private' check(visibility in ('private','public')),
+ created_at timestamptz not null default now()
+);
+create index if not exists sc_album_owner on public.player_albums(owner_id,created_at desc);
+create table if not exists public.player_album_cards(
+ album_id uuid not null references public.player_albums(id) on delete cascade,
+ card_id uuid not null references public.player_cards(id) on delete cascade,
+ created_at timestamptz not null default now(),
+ primary key(album_id,card_id)
+);
+create index if not exists sc_album_card_id on public.player_album_cards(card_id);
+alter table public.player_albums enable row level security;
+alter table public.player_album_cards enable row level security;
+drop policy if exists "Read published and own albums" on public.player_albums;
+create policy "Read published and own albums" on public.player_albums for select to authenticated
+ using(owner_id=auth.uid() or visibility='public');
+drop policy if exists "Read visible album contents" on public.player_album_cards;
+create policy "Read visible album contents" on public.player_album_cards for select to authenticated
+ using(exists(select 1 from public.player_albums a
+  where a.id=album_id and (a.owner_id=auth.uid() or a.visibility='public')));
+revoke all on public.player_albums from anon,authenticated;
+revoke all on public.player_album_cards from anon,authenticated;
+grant select on public.player_albums,public.player_album_cards to authenticated;
+
+create or replace function public.create_personal_album(p_title text,p_description text default '',p_public boolean default false)
+returns uuid language plpgsql security definer set search_path=public,pg_temp as $$
+declare uid uuid:=auth.uid(); aid uuid;
+begin
+ if uid is null then raise exception 'Connexion requise';end if;
+ if p_title is null or char_length(trim(p_title)) not between 3 and 48 then
+  raise exception 'Titre de 3 à 48 caractères requis';end if;
+ if char_length(coalesce(p_description,''))>160 then
+  raise exception 'Description limitée à 160 caractères';end if;
+ perform 1 from public.profiles where id=uid for update;
+ if not found then raise exception 'Profil requis';end if;
+ if (select count(*) from public.player_albums where owner_id=uid)>=20 then
+  raise exception 'Maximum de 20 albums personnels';end if;
+ insert into public.player_albums(owner_id,title,description,visibility)
+ values(uid,trim(p_title),coalesce(trim(p_description),''),case when p_public then 'public' else 'private' end)
+ returning id into aid;
+ return aid;
+end $$;
+
+create or replace function public.delete_personal_album(p_album_id uuid)
+returns boolean language plpgsql security definer set search_path=public,pg_temp as $$
+declare uid uuid:=auth.uid(); removed integer;
+begin
+ if uid is null then raise exception 'Connexion requise';end if;
+ delete from public.player_albums where id=p_album_id and owner_id=uid;
+ get diagnostics removed=row_count;
+ if removed<>1 then raise exception 'Album introuvable ou inaccessible';end if;
+ return true;
+end $$;
+
+create or replace function public.add_card_to_album(p_album_id uuid,p_card_id uuid)
+returns boolean language plpgsql security definer set search_path=public,pg_temp as $$
+declare uid uuid:=auth.uid(); a record; c record;
+begin
+ if uid is null then raise exception 'Connexion requise';end if;
+ select id,owner_id into a from public.player_albums where id=p_album_id for update;
+ if not found or a.owner_id<>uid then raise exception 'Album inaccessible';end if;
+ select id,owner_id into c from public.player_cards where id=p_card_id for update;
+ if not found or c.owner_id<>uid then raise exception 'La carte ne t’appartient pas';end if;
+ if (select count(*) from public.player_album_cards where album_id=a.id)>=100 then
+  raise exception 'Maximum de 100 cartes par album';end if;
+ insert into public.player_album_cards(album_id,card_id)
+ values(a.id,c.id) on conflict(album_id,card_id) do nothing;
+ return true;
+end $$;
+
+create or replace function public.remove_card_from_album(p_album_id uuid,p_card_id uuid)
+returns boolean language plpgsql security definer set search_path=public,pg_temp as $$
+declare uid uuid:=auth.uid(); removed integer;
+begin
+ if uid is null then raise exception 'Connexion requise';end if;
+ if not exists(select 1 from public.player_albums where id=p_album_id and owner_id=uid) then
+  raise exception 'Album inaccessible';end if;
+ delete from public.player_album_cards where album_id=p_album_id and card_id=p_card_id;
+ get diagnostics removed=row_count;
+ return removed>0;
+end $$;
+
+create or replace function public.my_personal_albums()
+returns table(album_id uuid,title text,description text,visibility text,cards_count bigint,created_at timestamptz)
+language sql security definer set search_path=public,pg_temp as $$
+ select a.id,a.title,a.description,a.visibility,
+  (select count(*) from public.player_album_cards ac
+   join public.player_cards c on c.id=ac.card_id
+   where ac.album_id=a.id and c.owner_id=a.owner_id)::bigint,
+  a.created_at
+ from public.player_albums a where a.owner_id=auth.uid()
+ order by a.created_at desc limit 20;
+$$;
+create or replace function public.public_personal_albums()
+returns table(album_id uuid,title text,username text,cards_count bigint,created_at timestamptz)
+language sql security definer set search_path=public,pg_temp as $$
+ select a.id,a.title,p.username,
+  (select count(*) from public.player_album_cards ac
+   join public.player_cards c on c.id=ac.card_id
+   where ac.album_id=a.id and c.owner_id=a.owner_id)::bigint,
+  a.created_at
+ from public.player_albums a join public.profiles p on p.id=a.owner_id
+ where a.visibility='public'
+ order by a.created_at desc limit 30;
+$$;
+create or replace function public.album_card_data(p_album_id uuid)
+returns table(card_id uuid,series_id bigint,series_name text,image_url text,rarity text)
+language plpgsql security definer set search_path=public,pg_temp as $$
+declare uid uuid:=auth.uid(); a record;
+begin
+ if uid is null then raise exception 'Connexion requise';end if;
+ select id,owner_id,visibility into a from public.player_albums where id=p_album_id;
+ if not found or (a.owner_id<>uid and a.visibility<>'public') then
+  raise exception 'Album inaccessible';end if;
+ return query
+ select c.id,c.series_id,s.name,s.image_url,c.rarity from public.player_album_cards ac
+ join public.player_cards c on c.id=ac.card_id and c.owner_id=a.owner_id
+ join public.series s on s.id=c.series_id
+ where ac.album_id=a.id order by ac.created_at desc limit 100;
+end $$;
+
+revoke all on function public.create_personal_album(text,text,boolean) from public;
+revoke all on function public.delete_personal_album(uuid) from public;
+revoke all on function public.add_card_to_album(uuid,uuid) from public;
+revoke all on function public.remove_card_from_album(uuid,uuid) from public;
+revoke all on function public.my_personal_albums() from public;
+revoke all on function public.public_personal_albums() from public;
+revoke all on function public.album_card_data(uuid) from public;
+grant execute on function public.create_personal_album(text,text,boolean) to authenticated;
+grant execute on function public.delete_personal_album(uuid) to authenticated;
+grant execute on function public.add_card_to_album(uuid,uuid) to authenticated;
+grant execute on function public.remove_card_from_album(uuid,uuid) to authenticated;
+grant execute on function public.my_personal_albums() to authenticated;
+grant execute on function public.public_personal_albums() to authenticated;
+grant execute on function public.album_card_data(uuid) to authenticated;
