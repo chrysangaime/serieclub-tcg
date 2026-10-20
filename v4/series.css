@@ -311,3 +311,54 @@
  .sc5-filmography-grid .sc5-filmography-item b{font-size:11px}
  .sc5-filmography-grid .sc5-available{font-size:9px}
 }
+
+/* V4.3.3 — Petites photos rétablies, hauteur de ligne maîtrisée.
+   Portraits et affiches : miniatures uniquement, pas de grandes cartes. */
+.sc5-compact-dialog .sc5-cast-row,
+.sc5-compact-dialog .sc5-credit-row,
+.sc5-filmography-grid .sc5-filmography-item,
+.sc5-person-results .sc5-person-result {align-items:center}
+.sc5-cast-thumb,.sc5-credit-thumb,.sc5-list-thumb,.sc5-search-thumb{
+ display:block;flex:0 0 auto;
+ width:29px!important;height:39px!important;
+ min-width:29px!important;max-width:29px!important;
+ aspect-ratio:auto!important;
+ object-fit:cover;object-position:center top;
+ border-radius:5px;background:#283b4c;
+ border:1px solid #49677a;
+ font-size:12px!important;
+}
+.sc5-compact-dialog .sc5-cast-list{max-height:237px}
+.sc5-compact-dialog .sc5-cast-row{
+ min-height:49px;gap:9px;padding:4px 7px;
+}
+.sc5-compact-dialog .sc5-cast-row .sc5-cast-thumb{
+ width:30px!important;height:39px!important;min-width:30px!important;max-width:30px!important
+}
+.sc5-compact-dialog .sc5-credit-row{
+ min-height:51px;gap:10px;padding:4px 10px;
+}
+.sc5-compact-dialog .sc5-credit-row .sc5-credit-thumb{
+ width:31px!important;height:42px!important;min-width:31px!important;max-width:31px!important
+}
+.sc5-filmography-grid .sc5-filmography-item{
+ min-height:54px;gap:12px;padding:5px 11px
+}
+.sc5-filmography-grid .sc5-filmography-item .sc5-list-thumb{
+ width:32px!important;height:44px!important;min-width:32px!important;max-width:32px!important
+}
+.sc5-person-results .sc5-person-result .sc5-search-thumb{
+ width:33px!important;height:43px!important;min-width:33px!important;max-width:33px!important
+}
+.sc5-compact-dialog .sc5-credit-row b,
+.sc5-filmography-grid .sc5-filmography-item b{flex:1;min-width:0}
+@media(max-width:620px){
+ .sc5-compact-dialog .sc5-cast-list{max-height:225px}
+ .sc5-compact-dialog .sc5-cast-row{min-height:47px}
+ .sc5-compact-dialog .sc5-credit-row{flex-wrap:nowrap;min-height:49px}
+ .sc5-compact-dialog .sc5-credit-role{display:none}
+ .sc5-filmography-grid .sc5-filmography-item{min-height:52px;display:flex}
+ .sc5-cast-thumb,.sc5-credit-thumb,.sc5-list-thumb,.sc5-search-thumb{
+  width:28px!important;height:38px!important;min-width:28px!important;max-width:28px!important;
+ }
+}
