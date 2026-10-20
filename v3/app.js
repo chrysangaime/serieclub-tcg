@@ -1,10 +1,11 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js';
+import{seriesDetail}from'./discovery.js';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage'};
-const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],catalog:[],catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],catalog:[],catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let toastTimer,clockTimer,searchTimer,refreshing=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
@@ -13,11 +14,13 @@ function change(route){const r=routes[route]||route;if(!r)return;state.route=r;c
 window.addEventListener('popstate',()=>{state.route=safeRoute();render()});window.addEventListener('hashchange',()=>{const r=safeRoute();if(r!==state.route){state.route=r;render();if(['catalog','games'].includes(r)&&!state.catalog.length)loadCatalog(true);if(r==='rankings')loadRankings()}});
 function renderChrome(){
  const nav=navItems.map(([key,icon,title])=>'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico">'+esc(icon)+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':'')+'</button>').join('');
- $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark">S</span><span>SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav><div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Une édition Halloween à collectionner, disponible ce mois-ci.</div><div class="side-account" data-route="profile"><div class="avatar">'+esc((state.username||'S').slice(0,1).toUpperCase())+'</div><div><b>'+esc(state.username||'Mon compte')+'</b><small>'+money(state.cards.length)+' cartes dans ma collection</small></div></div>';
+ $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark">S</span><span>SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav><div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div><div class="side-account" data-route="profile"><div class="avatar">'+esc((state.username||'S').slice(0,1).toUpperCase())+'</div><div><b>'+esc(state.username||'Mon compte')+'</b><small>'+money(state.cards.length)+' cartes dans ma collection</small></div></div>';
  $('topbar').innerHTML='<div class="row"><button class="top-btn mobile-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><span class="crumb">'+esc(navName(state.route)).toUpperCase()+'</span></div><div class="top-actions"><button class="top-btn hide-mobile" data-route="rules">Règles du jeu</button><span class="credit-pill">Ⓒ &nbsp;'+money(state.wallet?.credits)+'<span>crédits</span></span><button class="top-btn" data-auth>'+(state.user?'Mon compte':'Connexion')+'</button><button class="top-btn hide-mobile" id="motionToggle" title="Animations">◐</button><span class="top-btn" aria-label="Langue : français">🇫🇷 FR</span></div>';
 }
 function render(){
- document.body.classList.toggle('reduce-motion',state.reduceMotion);renderChrome();
+ document.body.classList.toggle('reduce-motion',state.reduceMotion);
+ document.body.classList.toggle('season-halloween',monthHalloween());
+ renderChrome();
  const view={packs,collection,catalog:catalogue,wishlist,albums,rankings,fusion:fusions,profile,games,rules,settings}[state.route];
  $('page').innerHTML=(view?view(state):placeholder(state.route))+'<footer class="app-footer">SÉRIECLUB TCG · Données de séries : TVmaze · Visuels : ayants droit respectifs · Projet indépendant</footer>';
  document.title=navName(state.route)+' — SérieClub TCG';
@@ -73,6 +76,30 @@ async function loadCatalog(reset=false){
   state.catalogMore=(data||[]).length===36;state.catalogPage+=1;
  }catch(e){state.catalogError='Catalogue indisponible : '+e.message}
  finally{state.catalogLoading=false;if(state.route==='catalog')render()}
+}
+async function loadSeasonShows(){
+ if(!monthHalloween())return;
+ try{
+  const desired=['Wednesday','Stranger Things','The Haunting of Hill House','Midnight Mass','From','American Horror Story','The Last of Us','Penny Dreadful','The Walking Dead'];
+  const [curated,genre]=await Promise.all([
+   supa.from('series').select('id,name,image_url,premiered,genres').in('name',desired).not('image_url','is',null).limit(12),
+   supa.from('series').select('id,name,image_url,premiered,genres').overlaps('genres',['Horror','Thriller','Supernatural','Mystery']).not('image_url','is',null).order('premiered',{ascending:false}).limit(30)
+  ]);
+  const pool=[...(curated.data||[]),...(genre.data||[])];
+  const seen=new Set();state.seasonShows=pool.filter(x=>x?.image_url&&(!seen.has(x.id))&&seen.add(x.id)).slice(0,6);
+  if(state.route==='packs')render();
+ }catch(e){console.warn('Sélection de saison indisponible :',e.message)}
+}
+async function openSeriesDetail(id){
+ const v=Number(id);if(!Number.isSafeInteger(v)||v<=0)return;
+ let info=state.seasonShows.find(x=>x.id===v)||state.catalog.find(x=>x.id===v)||state.cards.find(c=>c.series_id===v)?.series||state.wishes.find(w=>w.series_id===v)?.series;
+ if(!info){
+  const {data,error}=await supa.from('series').select('id,name,image_url,premiered,genres').eq('id',v).maybeSingle();
+  if(error){toast('Fiche série indisponible : '+error.message,true);return}
+  info=data;
+ }
+ if(!info){toast('Série indisponible pour le moment.',true);return}
+ const root=$('overlay');root.classList.remove('hidden');root.innerHTML=seriesDetail(info);
 }
 async function loadRankings(){
  const {data,error}=await supa.rpc('get_leaderboard');
@@ -183,6 +210,7 @@ function globalClick(e){
  if(e.target.closest('[data-daily]')){claimDaily();return}
  if(e.target.closest('#openingDone')){closeModal();change('collection');return}
  const lock=e.target.closest('[data-lock]');if(lock){toggleLock(lock.dataset.lock,lock.dataset.next==='true');return}
+ const series=e.target.closest('[data-series]');if(series){openSeriesDetail(series.dataset.series);return}
  const wish=e.target.closest('[data-wish]');if(wish){toggleWishlist(Number(wish.dataset.wish));return}
  if(e.target.closest('#catalogSearch')){state.catalogQuery=$('catalogQuery').value;loadCatalog(true);return}
  if(e.target.closest('#catalogMore')){loadCatalog(false);return}
@@ -216,6 +244,6 @@ document.addEventListener('input',e=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&e.target.id==='catalogQuery')loadCatalog(true)});
 $('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeModal()});
 supa.auth.onAuthStateChange(()=>setTimeout(loadSession,75));
-state.route=safeRoute();render();loadSession();if(['catalog','games'].includes(state.route))loadCatalog(true);if(state.route==='rankings')loadRankings();
+state.route=safeRoute();render();loadSession();if(['catalog','games'].includes(state.route))loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();
 clockTimer=setInterval(()=>{if(state.stock&&state.stock.stock<10){if(state.stock.recharge_seconds>0)state.stock.recharge_seconds-=1;else{state.stock.stock=Math.min(10,state.stock.stock+1);state.stock.recharge_seconds=state.stock.stock===10?0:600}
  const t=$('packTimer');if(t)t.textContent=state.stock.stock===10?'Réserve pleine':'Prochain paquet dans '+timecode(state.stock.recharge_seconds)}},1000);
