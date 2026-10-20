@@ -1,0 +1,128 @@
+/* SérieClub : identité originale "Midnight Signal" — octobre, saison Les Nuits */
+:root{
+ --bg:#111722;--panel:#1b2432;--panel2:#222e3d;--sidebar:#141d2b;--line:#354559;
+ --muted:#a1b2bf;--text:#f3f4f5;--gold:#75dbc9;--goldlight:#a6f1e1;--orange:#dd784d;
+ --signal:#70d7c8;--signal-hi:#b0fff2;--copper:#cf9875;--violet:#b59dd4;
+}
+body{background:linear-gradient(130deg,#101724,#151c2a 45%,#1d2032);color:#f4f4f8}
+h1,h2,h3{letter-spacing:.025em}p,.note{color:#b3beca}
+.caps{color:#91cbd1;font-family:'DM Sans',sans-serif;letter-spacing:.17em}
+.section-title,.quest-title{font-family:'DM Sans',sans-serif!important;font-weight:800!important;letter-spacing:-.045em!important}
+#sidebar{background:linear-gradient(180deg,#141d2b,#192032);border-right:1px solid #36475b}
+.logo{font-family:'DM Sans',sans-serif;font-size:17px;letter-spacing:-.055em;font-weight:900}
+.logo-mark{border:0;border-radius:9px;width:30px;height:30px;background:linear-gradient(135deg,#86f4df,#237c8e);color:#102631;font-family:'DM Sans',sans-serif;font-size:22px;transform:rotate(-8deg)}
+.logo strong{color:#89e2d3}.logo em{color:#829fac;font-size:9px;font-weight:800}
+.side-link{color:#b9c4ce;font-size:12px;border-radius:9px}
+.side-link.active{background:#153a45;color:#d8fff5;border-left:0;box-shadow:inset 3px 0 0 #75ddce}
+.side-link:hover{background:#2c3a4b}.side-link.featured{border-color:#5b476e;color:#d5bbef}
+.side-link.featured.active{border-color:#608b85}
+.side-note{background:linear-gradient(145deg,#26233e,#192c3d);border-color:#655078;color:#aeb6d8}
+.side-note b{color:#e5bcde}.side-account{border-color:#3b4a5c}
+.avatar{background:linear-gradient(130deg,#a7d8d2,#7890bd);color:#192738}
+#topbar{background:#121a29ef;border-color:#354458}.crumb{color:#9bd8d5}
+.top-btn{background:#202b3b;border-color:#35465a;color:#d5e1ed}
+.top-btn:hover{background:#2f4056}.credit-pill{background:#18313c;border-color:#3d7f81;color:#b4faea}.credit-pill span{color:#91b4b7}
+.btn{border-radius:10px;border-color:#3c7180;background:#1e3a49;color:#e6fcf8}
+.btn:hover{background:#295469}.btn.primary{background:linear-gradient(125deg,#a6f5e5,#63c9c2);border-color:#a5f7e7;color:#0f2735}
+.btn.primary:hover{filter:brightness(1.08);box-shadow:0 0 18px #67d9cd35}
+.btn.subtle{background:#253246;border-color:#435569;color:#dce4ed}.btn.selected{background:#71d9cb;color:#112731}
+.panel,.metric,.collect-card,.album,.guide-item{background:#1a2636;border-color:#35465a}
+.input,select{background:#1c2a3b;border-color:#46556b}.input:focus,select:focus{border-color:#77e2d4}
+.page-title{border-bottom-color:#35465a}.page-title h1{background:linear-gradient(110deg,#f2f8fc 35%,#b0d6dc);-webkit-background-clip:text;background-clip:text;color:transparent}
+.gold{color:#82e3d6}.notice{background:#203540;border-color:#477f8b;color:#bff8ef}.metric strong{color:#7de1d2}
+.collect-card:hover{transform:translateY(-4px);border-color:#7bcabc;box-shadow:0 12px 25px #0004;transition:transform .2s,border-color .2s}
+.collect-card .card-title{letter-spacing:-.015em}
+.collect-card .card-action{background:#1c3041;color:#bdece6}.collect-card .card-action:hover{background:#2c4858}
+.ranking-table th,.album:hover{color:#a4f1dc;border-color:#8adbd1}
+.album{background:linear-gradient(160deg,#26354d,#1b2838)}
+.quest-strip{background:linear-gradient(105deg,#162938e8,#252139aa)!important;border-color:#456574!important}
+.mini-progress span{background:#77dbc9}
+.hero-packs{background:linear-gradient(115deg,#122132f0,#1f2434e8 70%,#261f32ef),url('./nightfall.svg') center top/cover no-repeat;min-height:800px}
+.hero-packs:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0f1a2aca,#17233577 53%,#17152780),url('./nightfall.svg') center center/cover no-repeat;z-index:-1;pointer-events:none}
+.hero-packs:after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,#11172289 70%,#101724);pointer-events:none;z-index:-1}
+.pack-section{position:relative;z-index:1}
+.pack-heading{border-color:#93a8b052}.pack-heading h1{font-size:clamp(36px,4vw,52px);letter-spacing:.06em}.pack-heading small{color:#c9a8d4}
+.pack-option{border:1px solid #53637c8e;background:linear-gradient(150deg,#19243bbb,#2d2b44b5);border-radius:18px;backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 #ffffff0e}
+.pack-option:hover{background:linear-gradient(150deg,#1c3345e8,#34324ced);border-color:#7fdcce}
+.pack-option.active{border-color:#7ee4d6;box-shadow:0 0 0 1px #66c9b926,0 25px 45px #0814207a;background:linear-gradient(130deg,#214551bd,#30263fc2)}
+.pack-option[data-pack="halloween"]{background:linear-gradient(150deg,#35213eaf,#47283bc7);border-color:#87527480}
+.pack-option[data-pack="halloween"].active{border-color:#e6a07e;background:linear-gradient(145deg,#4e2d4fcc,#532b3ccc);box-shadow:0 0 0 1px #ef9b8f22,0 18px 35px #22102970}
+.pack-option .badge{color:#ffbdab}.pack-option .pack-sub{color:#b4bfcc}
+.open-area{background:linear-gradient(180deg,#1328391f,transparent);border-radius:14px}
+.reserve-large{color:#c7fff6}.reserve-large small{color:#9bafc1}
+.timer{color:#b7d4e0}.open-area .progress-line{background:#7fa8b853}
+.open-area .daily-link{color:#8ff0db}
+.promo-area{border-color:#577a8b77}.promo-area h2{font-family:'DM Sans',sans-serif;font-size:29px;font-weight:800;line-height:1.03;letter-spacing:-.05em;color:#f6d9e7}
+.promo-area .promo-illustration{border-color:#87536a;background:radial-gradient(ellipse at center,#ba536440,transparent 75%);color:#f0b3c7}
+.promo-area .promo-stars{color:#ffb1a5}.promo-area .gold-line{background:#97617e7c}
+.quest-strip .gold{color:#91e0d5}
+.recent-card img{border:1px solid #85c8cd}.recent-card small{color:#abb9c7}
+.app-footer{border-color:#36485c}
+#toast{background:#1b3744;border-color:#58c1bd;color:#c3ffec}
+.dialog{background:linear-gradient(138deg,#253145,#172638);border-color:#526e82}
+.dialog .close{color:#cdebe9}
+.opening-dialog{background:radial-gradient(ellipse at 50% 35%,#22515a,#1d2536 60%,#151b2d);border-color:#7dc5c1}
+.opening-status{font-family:'DM Sans',sans-serif;font-weight:800;color:#a9f9e8}
+body.season-halloween .hero-packs{background:linear-gradient(105deg,#10172cc9,#2019368c 58%,#29152da1),url('./nightfall.svg') center top/cover no-repeat}
+body.season-halloween .hero-packs:before{background:linear-gradient(90deg,#121d2bc9,#271f3b77 60%,#17192ab9),url('./nightfall.svg') center/cover no-repeat}
+body.season-halloween .hero-packs:after{background:linear-gradient(180deg,#211b3425 0%,transparent 45%,#111722c9 96%)}
+body.season-halloween #topbar .crumb:before{content:'✦ ';color:#d990be}
+body.season-halloween .side-note{border-color:#8d6284;box-shadow:inset 3px 0 #b474ba50}
+body.season-halloween #sidebar{background:linear-gradient(180deg,#151d2e 40%,#261c35)}
+body.season-halloween .hero-packs .pack-heading:before{content:'';display:block;position:absolute;width:78px;height:78px;right:18%;top:90px;border-radius:50%;background:radial-gradient(circle at 45% 35%,#fff2cc,#f8b36c 52%,#bd6582);box-shadow:0 0 70px #e373876b;opacity:.28;pointer-events:none}
+body.season-halloween .hero-packs .pack-heading small{background:#45263f;border:1px solid #8d5a7b;color:#f4bcd3;border-radius:100px;padding:6px 10px;font-size:10px;white-space:nowrap}
+body.season-halloween .pack-option[data-pack="halloween"] .pack-art:before{content:'✦';position:absolute;color:#ed8e99;font-size:23px;transform:translate(12px,-16px)}
+body.season-halloween .opening-dialog:has(.foil.halloween){background:radial-gradient(ellipse at 50% 35%,#683248,#231d34 64%,#161827)}
+body.season-halloween .opening-dialog:has(.foil.halloween) .opening-status{color:#f2b0cd}
+body.season-halloween .pack-heading h1:after{content:'✧';font-size:24px;vertical-align:top;margin-left:15px;color:#ca9abf}
+body.season-halloween .sc-season-tag{color:#f7b3ca}
+.foil{width:177px;height:265px;border-radius:10px;clip-path:polygon(4% 0,96% 0,100% 5%,98% 96%,96% 100%,4% 100%,2% 96%,0 5%);filter:drop-shadow(9px 19px 14px #03060bc9);background:linear-gradient(98deg,#081b27 0%,#7891a1 4%,#1b2d38 8%,#29434a 14%,#0e1829 25%,#42616a 34%,#0d1d2b 54%,#567c81 72%,#0c2233 89%,#678b9e 96%,#091424);transform:rotate(-6deg);transition:transform .3s}
+.foil.halloween{background:linear-gradient(98deg,#201124,#995f80 4%,#2c1630 8%,#5a3052 14%,#150e24 25%,#7a3d61 35%,#2b172e 53%,#a05b7c 76%,#23152b 89%,#ab6d86 96%,#20102c);transform:rotate(6deg);filter:drop-shadow(12px 23px 17px #0e0515e2)}
+.pack-option:hover .foil{transform:rotate(-2deg) translateY(-4px)}
+.pack-option:hover .foil.halloween{transform:rotate(2deg) translateY(-4px)}
+.foil:before,.foil:after{height:13px;background:repeating-linear-gradient(90deg,#101f2b 0 2px,#82a5b5 2px 3px,#233b4d 3px 6px)}
+.foil.halloween:before,.foil.halloween:after{background:repeating-linear-gradient(90deg,#2c1533 0 2px,#e1a0b6 2px 3px,#56304e 3px 6px)}
+.foil-face{inset:13px 7px;border:1px solid #5a879487;background:radial-gradient(circle at 52% 45%,#4e9b965e,transparent 58%),linear-gradient(117deg,#ffffff3c,transparent 19%,#ffffff08 54%,#ffffff20 82%),linear-gradient(147deg,#1e3746,#102333)}
+.foil.halloween .foil-face{background:radial-gradient(circle at 50% 52%,#d16a574f,transparent 54%),linear-gradient(118deg,#ffffff27,transparent 22%,#ffffff10 74%,transparent),linear-gradient(130deg,#4a2949,#20182d);border-color:#a26894}
+.foil-name{position:absolute;top:27px;left:0;right:0;text-align:center;font-family:'DM Sans',sans-serif;font-weight:900;font-size:21px;letter-spacing:-.085em;color:#d1fff5;text-shadow:0 2px 6px #03121e}
+.foil.halloween .foil-name{font-size:21px;color:#ffe0df}
+.foil-name small{font-size:8px;letter-spacing:.2em;margin-top:8px;color:#a8d4d3}
+.foil.halloween .foil-name small{color:#d5acc3}
+.foil-emblem{position:absolute;top:89px;left:50%;transform:translateX(-50%);width:112px;height:107px;margin:0;color:#a4fbec;display:grid;place-items:center}
+.foil.halloween .foil-emblem{width:124px;height:110px;top:84px;color:#ffd0a5}
+.foil-emblem svg{width:100%;height:100%;filter:drop-shadow(0 4px 10px #000)}
+.foil-foot{position:absolute;left:0;right:0;bottom:38px;font-family:'DM Sans',sans-serif;font-size:11px;text-align:center;font-weight:900;letter-spacing:.24em;color:#b8fff1;white-space:nowrap}
+.foil.halloween .foil-foot{color:#ffb6c9}
+.foil-mini{position:absolute;left:0;right:0;bottom:19px;text-align:center;font-size:7px;letter-spacing:.07em;color:#d8f7f2;white-space:nowrap}
+.foil.halloween .foil-mini{color:#fbd4e0}
+.foil-shimmer{animation-duration:9s;opacity:.7}
+.season-shelf{border:1px solid #6c54748c;background:linear-gradient(120deg,#181e34ef,#311e3bdb 62%,#1a2a3bdc);border-radius:20px;padding:25px;margin-top:25px;position:relative;overflow:hidden}
+.season-shelf:before{content:'';position:absolute;right:-70px;top:-100px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#a64a6885,transparent 68%);pointer-events:none}
+.shelf-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:22px}
+.shelf-head h2{font-size:36px;margin:8px 0}
+.shelf-head p{max-width:480px;font-size:12px}
+.shelf-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-top:21px}
+.shelf-item{border:1px solid #ffffff24;border-radius:10px;overflow:hidden;background:#172135;text-align:left;color:#eff4f5;padding:0;min-width:0;transition:transform .15s,border .15s}
+.shelf-item:hover{transform:translateY(-4px);border-color:#d18fba}
+.shelf-item img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;background:#272638}
+.shelf-item span{display:block;font-size:11px;font-weight:700;padding:9px 10px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.shelf-item small{display:block;font-size:9px;color:#c5a6cc;padding:0 10px 10px}
+.stream-zone{padding:23px 25px;background:#142433;border:1px solid #344e5d;border-radius:17px;margin:23px 0}
+.stream-zone .platform-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.stream-zone h2{font:800 22px/1.1 'DM Sans',sans-serif;text-transform:none;letter-spacing:-.04em;margin:0 0 4px}
+.stream-zone p{font-size:11px;margin:0}
+.platform-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.platform-chip{display:inline-flex;align-items:center;gap:8px;background:#1d2d40;border:1px solid #41566b;border-radius:12px;padding:11px 13px;text-decoration:none;font-size:12px;font-weight:800;color:#e9f4fa;transition:transform .16s,background .16s}
+.platform-chip:hover{background:#2a4157;transform:translateY(-2px)}
+.platform-mark{width:25px;height:25px;border-radius:7px;display:grid;place-items:center;font-weight:950;font-size:11px;flex:none;background:#37475e;color:#fff}
+.platform-mark.netflix{background:#e50914;color:#fff}.platform-mark.prime{background:#13699b}.platform-mark.max{background:#5736ba}.platform-mark.disney{background:#203c91}.platform-mark.apple{background:#464c59}.platform-mark.canal{background:#232329}.platform-mark.paramount{background:#2476b4}
+.platform-disclaimer{font-size:10px;color:#91a6b6;margin-top:12px}
+.series-detail{max-width:790px;display:grid;grid-template-columns:210px 1fr;gap:23px;text-align:left}
+.series-detail>img{width:210px;aspect-ratio:2/3;object-fit:cover;border-radius:11px;border:1px solid #42556b}
+.series-detail h2{font-size:36px;color:#f5f8fa}
+.detail-tags{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0}.detail-tags span{padding:4px 8px;background:#233c4b;border:1px solid #426370;border-radius:7px;color:#b9eee6;font-size:10px}
+.external-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.ad-label{font-size:10px;line-height:1.5;color:#96afbd}
+body.season-halloween .recent-strip{padding-top:30px}
+@media(max-width:1180px){.shelf-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.hero-packs:before{background-position:60% 30%}.pack-option .foil{transform:scale(.76) rotate(-6deg)}.pack-option .foil.halloween{transform:scale(.76) rotate(6deg)}.pack-option:hover .foil{transform:scale(.78) rotate(-3deg)}.pack-option:hover .foil.halloween{transform:scale(.78) rotate(3deg)}.shelf-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.season-shelf,.stream-zone{padding:17px;margin-top:18px}.shelf-head{display:block}.shelf-head h2{font-size:29px}.platform-chip{flex:1;min-width:140px}.series-detail{grid-template-columns:1fr}.series-detail>img{width:130px}.foil-name{font-size:21px}}
