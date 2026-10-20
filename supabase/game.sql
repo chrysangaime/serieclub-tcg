@@ -32,9 +32,9 @@ begin
  if w.last_booster_at is not null and w.last_booster_at + interval '10 minutes' > now() then
    raise exception 'Booster indisponible jusqu’au %', w.last_booster_at + interval '10 minutes';
  end if;
- if (select count(*) from public.series where image_url is not null) < 5 then raise exception 'Catalogue serveur insuffisant : importer au moins cinq séries'; end if;
+ if (select count(*) from public.series  ) < 5 then raise exception 'Catalogue serveur insuffisant : importer au moins cinq séries'; end if;
  next_at := now()+interval '10 minutes';
- for s in select id, public.series.name as title, public.series.image_url as poster from public.series where image_url is not null order by random() limit 5 loop
+ for s in select id, public.series.name as title, public.series.image_url as poster from public.series order by random() limit 5 loop
    r:=random()*100;
    rarity_name:=case when r<0.3 then 'Unique' when r<1.5 then 'Mythique' when r<4 then 'Légendaire' when r<10 then 'Épique' when r<22 then 'Rare' when r<45 then 'Peu commune' else 'Commune' end;
    insert into public.player_cards(owner_id,series_id,rarity) values(uid,s.id,rarity_name) returning id into card_uuid;
@@ -78,3 +78,15 @@ group by p.id,p.username order by count(c.id) desc,p.username limit 30
 $$;
 revoke all on function public.get_leaderboard() from public;
 grant execute on function public.get_leaderboard() to anon,authenticated;
+
+-- Première sélection de séries vérifiées dans l'ordre du catalogue TVmaze.
+-- Ces lignes servent à tester les tirages ; le catalogue complet reste à importer.
+insert into public.series(id,name,premiered,genres) values
+(1,'Under the Dome','2013-06-24',array['Drama','Science-Fiction']),
+(2,'Person of Interest','2011-09-22',array['Action','Crime']),
+(3,'Bitten','2014-01-11',array['Drama','Horror']),
+(4,'Arrow','2012-10-10',array['Drama','Action']),
+(5,'True Detective','2014-01-12',array['Drama','Crime']),
+(6,'The 100','2014-03-19',array['Action','Adventure']),
+(7,'Homeland','2011-10-02',array['Drama','Thriller'])
+on conflict(id) do nothing;
