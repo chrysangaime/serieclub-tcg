@@ -1,4 +1,4 @@
-import{esc,photo,money,heading}from'../v3/views.js?v=4.1.0';
+import{esc,photo,money,heading}from'../v3/views.js?v=4.2.0';
 export function personalAlbumsPage(s){
  const genreCounts=new Map();
  for(const c of s.cards)for(const g of c.series?.genres||[])genreCounts.set(g,(genreCounts.get(g)||0)+1);
