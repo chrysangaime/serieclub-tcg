@@ -7,7 +7,7 @@ const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishab
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions'};
-const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let toastTimer,clockTimer,searchTimer,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
@@ -352,7 +352,7 @@ async function searchCatalogueActors(){
  }
  const token=++actorSearchRequestId;
  state.actorLoading=true;state.actorError='';state.actorMatches=[];
- state.actorSelected=null;state.actorShows=[];state.actorCatalogueIds=[];
+ state.actorSelected=null;state.actorShows=[];state.actorCatalogueIds=[];state.actorOnlyClub=false;
  if(state.route==='catalog'&&state.catalogMode==='actors')render();
  try{
   const matches=await searchPeople(query);
@@ -372,7 +372,7 @@ async function searchCatalogueActors(){
 async function filterCatalogueByActor(id){
  const numeric=Number(id);if(!Number.isSafeInteger(numeric)||numeric<=0)return;
  const token=++actorSearchRequestId;
- state.catalogMode='actors';state.actorLoading=true;state.actorError='';
+ state.catalogMode='actors';state.actorLoading=true;state.actorError='';state.actorOnlyClub=false;
  if(state.route!=='catalog')change('catalog');else render();
  try{
   const result=await getPersonFilmography(numeric);
@@ -523,7 +523,7 @@ function globalClick(e){
  if(personSelect){filterCatalogueByActor(personSelect.dataset.selectActor);return}
  if(e.target.closest('[data-actor-reset]')){
   actorSearchRequestId++;
-  state.actorSelected=null;state.actorShows=[];state.actorCatalogueIds=[];state.actorMatches=[];
+  state.actorSelected=null;state.actorShows=[];state.actorCatalogueIds=[];state.actorMatches=[];state.actorOnlyClub=false;
   state.actorQuery='';state.actorError='';state.actorLoading=false;render();return;
  }
 
@@ -582,6 +582,7 @@ async function saveUsername(){
  state.username=name;state.bio=bio;state.favoriteGenre=favoriteGenre;render();toast('Profil enregistré et visible dans Le Signal.')
 }
 function globalChange(e){
+ if(e.target.id==='actorOnlyClub'){state.actorOnlyClub=e.target.checked;render();return}
  if(e.target.id==='marketRarity'){state.marketRarity=e.target.value;render();return}
  if(e.target.id==='rarityFilter'){state.rank=e.target.value;render();return}
  if(e.target.id==='fusionRank'){state.fusionRank=e.target.value;state.fusionSelected=[];render();return}
