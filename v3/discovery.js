@@ -1,4 +1,4 @@
-import {commerce} from './config.js';
+import {commerce} from './config.js?v=3.1.0';
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const photo = value => /^https:\/\//i.test(value || '') ? esc(value) : '';
 
