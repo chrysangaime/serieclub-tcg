@@ -1,5 +1,6 @@
 import {commerce} from './config.js';
-import {esc,photo} from './views.js';
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const photo = value => /^https:\/\//i.test(value || '') ? esc(value) : '';
 
 /**
  * Plateformes = points de découverte, PAS confirmation d'un catalogue local.
