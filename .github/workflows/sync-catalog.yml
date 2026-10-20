@@ -1,0 +1,27 @@
+name: Synchroniser le catalogue TVmaze
+on:
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: 'Nombre de pages TVmaze (1-100, 250 séries environ/page)'
+        required: false
+        default: '20'
+  schedule:
+    - cron: '25 3 * * 0'
+permissions:
+  contents: read
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Importer les séries et affiches
+        env:
+          SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          TVMAZE_PAGES: ${{ inputs.pages || '20' }}
+        run: node scripts/import-tvmaze.mjs
