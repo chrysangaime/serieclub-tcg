@@ -1,0 +1,93 @@
+/* SérieClub V4 — Le Signal : interface originale autour des univers TV et des échanges */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{--electric:#7fe5df;--deep:#111f30;--coral:#f3a08a;--orchid:#bda1ec}
+.sc4-page h1,.sc4-page h2,.sc4-page h3,.sc4-hero b{font-family:'Space Grotesk','DM Sans',sans-serif;letter-spacing:-.045em;text-transform:none}
+.sc4-hero{min-height:257px;position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(113deg,#143744 0%,#17283d 47%,#282446 100%);border:1px solid #397f88;border-radius:21px;padding:35px 40px;margin-bottom:19px}
+.sc4-hero:before{content:'';position:absolute;right:-120px;top:-95px;width:410px;height:410px;border:1px solid #8bf6e551;border-radius:50%;box-shadow:0 0 0 28px #7bdefb0c,0 0 0 60px #7bdefb0a,0 0 0 95px #8fffee07;pointer-events:none;z-index:-1}
+.sc4-hero:after{content:'◉';position:absolute;right:94px;top:39px;color:#83f1e325;font-size:150px;line-height:1;pointer-events:none}
+.sc4-hero h1{font-size:clamp(43px,6vw,70px);line-height:.99;margin:12px 0}
+.sc4-hero h1 em{font-style:normal;color:#a6f8ea}
+.sc4-hero p{max-width:660px;color:#bfd6e2;line-height:1.7;margin:0}
+.sc4-pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.sc4-pillrow span{border:1px solid #568996;padding:6px 10px;background:#1035458c;color:#a9e5e1;border-radius:30px;font-size:10px;letter-spacing:.04em;font-weight:800}
+.sc4-community-hero{background:linear-gradient(110deg,#232740 0%,#2c264e 62%,#14454c)}
+.sc4-community-hero:after{content:'✦';color:#c3a6e827}
+.sc4-community-hero h1 em{color:#d5baeb}
+.sc4-quest-hero{background:linear-gradient(110deg,#223b3d,#1b3242 57%,#36243d)}
+.sc4-quest-hero:after{content:'✧';color:#ffb4cf26}
+.sc4-quest-hero h1 em{color:#f8b2a5}
+.sc4-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:0 0 25px}
+.sc4-stats>div{background:linear-gradient(120deg,#1c2b3c,#202d40);border:1px solid #3b566b;border-radius:14px;padding:20px}
+.sc4-stats b{display:block;color:#9af4e4;font:700 32px/1 'Space Grotesk',sans-serif}
+.sc4-stats small{color:#9badbc;font-size:11px}
+.sc4-split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.sc4-box{padding:24px;border:1px solid #41566c;border-radius:17px;background:linear-gradient(132deg,#1c2c3d,#1b2637);min-width:0}
+.sc4-box h2{font-size:26px;margin:8px 0 10px}
+.sc4-box h3{font-size:17px;margin:14px 0}
+.sc4-box p{font-size:12px;line-height:1.7}
+.sc4-box label{display:block;color:#d9eef2;font-size:11px;font-weight:800;margin:13px 0 6px}
+.sc4-box select,.sc4-box input:not([type=checkbox]){width:100%;display:block}
+.sc4-box .btn.primary{margin-top:14px}
+.sc4-guide-item{display:flex;gap:15px;margin:18px 0;padding:9px 0;border-bottom:1px solid #ffffff16}
+.sc4-guide-item>b{font-family:'Space Grotesk',sans-serif;font-size:35px;color:#79dcca}
+.sc4-guide-item strong{font-size:13px;color:#d9faf2}
+.sc4-guide-item p{margin-top:4px;margin-bottom:0}
+.sc4-box .notice{font-size:11px}
+.sc4-market{margin-top:33px}
+.sc4-market .section-head h2{font-size:31px;margin:5px 0 0}
+.sc4-market .row input{min-width:150px;max-width:230px}
+.sc4-market .row select{max-width:210px}
+.sc4-listing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(182px,1fr));gap:16px}
+.sc4-listing{background:linear-gradient(150deg,#22344b,#20293e);border:1px solid #42546c;border-radius:15px;overflow:hidden;transition:transform .17s,border-color .17s;min-width:0}
+.sc4-listing:hover{border-color:#8bddd5;transform:translateY(-3px)}
+.sc4-poster{display:block;width:100%;background:#192638;border:0;padding:0;cursor:pointer;overflow:hidden}
+.sc4-poster img{aspect-ratio:2/3;object-fit:cover;display:block;width:100%;transition:transform .24s}
+.sc4-listing:hover .sc4-poster img{transform:scale(1.025)}
+.sc4-listing-body{padding:14px}
+.sc4-identity{font-size:9px;color:#8ee6d6;letter-spacing:.12em;text-transform:uppercase;font-weight:800}
+.sc4-listing h3{font-size:16px;line-height:1.2;min-height:37px;margin:6px 0}
+.sc4-seller{font-size:11px;color:#9eafc2;min-height:27px}
+.sc4-price{font-size:21px;font-weight:900;font-family:'Space Grotesk',sans-serif;color:#c4fced;padding:9px 0;border-top:1px solid #425366}
+.sc4-price small{font-size:10px;color:#96b9c2;font-family:'DM Sans';font-weight:500}
+.sc4-yours{padding:9px 12px;border:1px solid #5a6c83;background:#304256;display:inline-block;border-radius:8px;color:#c5d9e6;font-size:11px}
+.sc4-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sc4-actions .btn{font-size:11px;padding:10px 5px}
+.sc4-rows{display:grid;gap:6px}
+.sc4-line{display:flex;gap:14px;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff15;padding:10px 0;font-size:12px;flex-wrap:wrap}
+.sc4-line strong{font-size:13px}.sc4-line>span:nth-child(2){color:#9aeada;font-weight:700}
+.sc4-trades{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.sc4-trade{background:#162639;border:1px solid #364b63;border-radius:12px;padding:12px;margin-bottom:12px}
+.sc4-trade-photos{display:flex;align-items:center;gap:9px}
+.sc4-mini{display:flex;gap:8px;align-items:center;flex:1;min-width:0}
+.sc4-mini img{width:35px;height:50px;object-fit:cover;border-radius:5px;border:1px solid #ffffff18}
+.sc4-mini div{min-width:0}.sc4-mini b{font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block}
+.sc4-mini small{font-size:9px;display:block}.sc4-trade-arrow{color:#80e4ce}
+.sc4-trade>small{display:block;margin:10px 0}.sc4-trade .btn{font-size:10px}
+.sc4-offer-modal{max-width:580px}.sc4-offer-preview{background:#1a3040;border:1px solid #42647a;border-radius:11px;padding:9px;margin:15px 0}
+.sc4-offer-modal select{width:100%;margin:9px 0}
+.sc4-people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.sc4-person{display:flex;align-items:flex-start;gap:15px;background:#1e2e42;border:1px solid #405973;border-radius:15px;padding:19px;min-width:0}
+.sc4-person .btn{margin-left:auto;white-space:nowrap}
+.sc4-avatar{height:49px;width:49px;flex:none;background:linear-gradient(145deg,#92e5d4,#7779ca);border-radius:15px;display:grid;place-items:center;font-size:25px;font-weight:900;font-family:'Space Grotesk',sans-serif;color:#14263a;transform:rotate(-5deg)}
+.sc4-person-info{flex:1;min-width:0}
+.sc4-person-info h3{font-size:18px;margin:0 0 5px;color:#e8fcf8}
+.sc4-person-info p{font-size:11px;margin:0 0 8px;line-height:1.6;overflow-wrap:anywhere}
+.sc4-person-tags{display:flex;flex-wrap:wrap;gap:6px}
+.sc4-person-tags span{padding:4px 7px;background:#2a4055;color:#b6dbdf;border-radius:7px;font-size:9px}
+.sc4-quests{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.sc4-quest{display:grid;grid-template-columns:60px 1fr;gap:12px;padding:23px;background:linear-gradient(125deg,#1f3242,#282740);border:1px solid #4d6374;border-radius:15px;align-items:start}
+.sc4-quest-symbol{font-size:42px;line-height:1;color:#edabb5}
+.sc4-quest h2{margin:5px 0 8px;font-size:23px}
+.sc4-quest p{font-size:12px}
+.sc4-quest>div:last-child{grid-column:2}
+.sc4-quest strong{display:block;color:#9af2dc;font-size:17px;margin-bottom:12px}
+.sc4-progress{background:#314457;border-radius:9px;height:6px;margin-bottom:8px;overflow:hidden}
+.sc4-progress span{display:block;height:100%;background:linear-gradient(90deg,#5dc7cc,#c79ddc);transition:width .3s}
+.sc4-quest .btn{width:100%}
+#topbar .sc4-app-label{font-size:10px;color:#85e1d9;letter-spacing:.12em;font-weight:900;margin-left:12px}
+.sc4-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 19px;background:linear-gradient(100deg,#123f4a,#252c53);border:1px solid #39858a;border-radius:12px;margin-bottom:19px}
+.sc4-banner p{margin:0;color:#c3e5e7;font-size:12px}
+.sc4-banner strong{font-family:'Space Grotesk';color:#a7ffec}
+@media(max-width:1100px){.sc4-people{grid-template-columns:1fr}.sc4-trades{grid-template-columns:1fr}.sc4-split{grid-template-columns:1fr}}
+@media(max-width:900px){.sc4-stats{grid-template-columns:repeat(2,1fr)}.sc4-quests{grid-template-columns:1fr}}
+@media(max-width:620px){.sc4-hero{padding:25px 21px;min-height:230px}.sc4-hero h1{font-size:45px}.sc4-hero:before{right:-230px;top:-160px}.sc4-stats{gap:8px}.sc4-stats>div{padding:13px}.sc4-stats b{font-size:24px}.sc4-listing-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sc4-listing-body{padding:10px}.sc4-actions{grid-template-columns:1fr}.sc4-box{padding:18px}.sc4-person{padding:12px;gap:10px}.sc4-avatar{width:37px;height:37px;font-size:20px}.sc4-quest{grid-template-columns:45px 1fr;padding:16px}.sc4-banner{display:block}.sc4-market .section-head{display:block}}
