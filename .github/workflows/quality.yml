@@ -19,6 +19,7 @@ jobs:
           node --check v3/discovery.js
           node --check v3/config.js
           node --check v3/app.js
+          node --check v4/club.js
           node --check scripts/import-tvmaze.mjs
       - name: Tester les pages du TCG
         run: |
@@ -27,14 +28,14 @@ jobs:
           import assert from 'node:assert/strict';
           import * as v from './v3/views.js';
           const html=fs.readFileSync('index.html','utf8');
-          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./manifest.webmanifest']){
+          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./v4/club.css','./v4/club.js','./manifest.webmanifest']){
             assert.ok(html.includes(file), 'Lien manquant : '+file);
             assert.ok(fs.existsSync(file.slice(2)), 'Fichier manquant : '+file);
           }
           for(const id of ['sidebar','topbar','page','overlay','toast']){
             assert.ok(html.includes('id="'+id+'"'), 'Bloc manquant : '+id);
           }
-          assert.equal(v.navItems.length,14);
+          assert.equal(v.navItems.length,15);
           assert.equal(v.ranks.length,7);
           assert.match(v.foil('halloween'),/HALLOWEEN/);
           assert.match(v.foil('halloween'),/M65 51 56 33/);
@@ -59,6 +60,16 @@ jobs:
           assert.match(fs.readFileSync('v3/season.css','utf8'),/#111722/);
           assert.match(fs.readFileSync('v3/nightfall.svg','utf8'),/<svg/);
           assert.match(fs.readFileSync('v3/season.css','utf8'),/top-season-tag/);
+          const mod=await import('./v4/club.js');
+          const market=mod.marketPage({...state,marketListings:[{listing_id:'demo',seller_id:'friend',series_id:101,series_name:'From',seller_username:'friend',image_url:'https://example.org/from.jpg',rarity:'Rare',price:100}],marketActivity:[],tradeOffers:[],marketQuery:'',marketRarity:''});
+          assert.match(market,/data-buy="demo"/);
+          assert.match(market,/data-offer="demo"/);
+          assert.match(mod.communityPage({...state,players:[{player_id:'friend',username:'fandom',cards_count:40,followers_count:2,is_following:false}],peopleFilter:''}),/data-follow="friend"/);
+          assert.match(mod.questsPage({...state,daily:{packs_today:3,pack1_claimed:false,pack3_claimed:false}}),/data-claim-quest="pack3"/);
+          const marketSql=fs.readFileSync('supabase/game_v4.sql','utf8');
+          for(const rpc of ['create_card_listing','buy_card_listing','propose_card_trade','respond_card_trade','toggle_player_follow','claim_quest_reward']){
+            assert.ok(marketSql.includes(rpc),'RPC V4 manquante : '+rpc);
+          }
           const migration=fs.readFileSync('supabase/game_v3.sql','utf8');
           for(const rpc of ['open_halloween_booster','set_card_locked']){
             assert.ok(migration.includes(rpc), 'RPC manquante : '+rpc);
@@ -66,3 +77,38 @@ jobs:
           assert.equal((migration.match(/\$\$/g)||[]).length%2,0,'Délimiteurs SQL incomplets');
           console.log('Contrôles des pages et du SQL réussis');
           JS
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: serieclub
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: serieclub_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d serieclub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      PGHOST: localhost
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: serieclub_ci
+      PGDATABASE: serieclub
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer le client PostgreSQL
+        run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
+      - name: Initialiser les rôles Supabase simulés
+        run: psql -v ON_ERROR_STOP=1 -f tests/pg_bootstrap.sql
+      - name: Appliquer les migrations réelles
+        run: |
+          for sql in supabase/schema.sql supabase/game.sql supabase/game_v2.sql supabase/game_v3.sql supabase/game_v4.sql; do
+            psql -v ON_ERROR_STOP=1 -f "$sql"
+          done
+      - name: Exécuter les scénarios fonctionnels et anti-fraude
+        run: psql -v ON_ERROR_STOP=1 -f tests/v4_integration.sql
