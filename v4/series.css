@@ -140,3 +140,174 @@
 .sc5-actor-controls label{display:flex;align-items:center;gap:7px;color:#b6ddd9;font-size:11px;font-weight:700;cursor:pointer}
 .sc5-actor-controls input{accent-color:#87e1d3;cursor:pointer}
 @media(max-width:710px){.sc5-actor-controls{justify-content:flex-start}}
+
+
+/* V4.3.2 — Fiches compactes, distribution et filmographies sans vignettes */
+.modal .sc5-dialog.sc5-compact-dialog{
+  max-width:740px;width:min(740px,100%);max-height:min(84dvh,730px);
+  padding:19px 22px 16px;border-radius:17px
+}
+.sc5-compact-dialog .close{
+  position:absolute;top:12px;right:13px;float:none;
+  width:30px;height:30px;font-size:20px
+}
+.sc5-compact-dialog .sc5-show-head{
+  display:grid;grid-template-columns:108px minmax(0,1fr);
+  gap:17px;align-items:start;clear:none;padding-right:18px
+}
+.sc5-compact-dialog .sc5-poster{
+  width:108px!important;height:161px!important;object-fit:cover;
+  border-radius:9px;box-shadow:0 9px 20px #06152070
+}
+.sc5-compact-dialog h2{font-size:clamp(23px,3vw,30px);line-height:1.13;margin:3px 0 8px}
+.sc5-compact-dialog .sc5-show-intro h3{font-size:12px;margin:9px 0 4px}
+.sc5-compact-dialog .sc5-tagline{gap:5px;margin-bottom:8px}
+.sc5-compact-dialog .sc5-tagline span{font-size:9px;padding:3px 6px}
+.sc5-compact-dialog .detail-tags{gap:5px;margin:5px 0 9px}
+.sc5-compact-dialog .detail-tags span{font-size:9px;padding:3px 6px}
+.sc5-compact-dialog .sc5-summary-short,.sc5-compact-dialog .sc5-summary-long{
+  font-size:11px;line-height:1.55;margin:5px 0
+}
+.sc5-compact-dialog .sc5-text-btn{font-size:10px;padding:4px 0}
+.sc5-compact-dialog .sc5-meta-more{border-top:1px solid #394e5f;margin-top:12px;padding-top:8px}
+.sc5-compact-dialog .sc5-meta-more summary{
+  color:#9ceadf;cursor:pointer;font-size:11px;font-weight:750
+}
+.sc5-compact-dialog .sc5-meta-more .sc5-facts{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:4px;margin:8px 0 0;padding:8px;border-radius:8px
+}
+.sc5-compact-dialog .sc5-facts>div{padding:3px 6px;border-right:0}
+.sc5-compact-dialog .sc5-facts small{font-size:9px}
+.sc5-compact-dialog .sc5-facts strong{font-size:10px}
+.sc5-compact-dialog .sc5-cast-section{
+  margin-top:12px;padding-top:11px;border-top:1px solid #415469
+}
+.sc5-compact-dialog .sc5-section-head{
+  margin-bottom:8px;gap:12px;align-items:baseline
+}
+.sc5-compact-dialog .sc5-section-head h3{font-size:15px;line-height:1.2;margin:1px 0}
+.sc5-compact-dialog .sc5-section-head .caps{font-size:9px}
+.sc5-compact-dialog .sc5-section-head .sc5-muted{font-size:10px!important}
+.sc5-compact-dialog .sc5-cast-list{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-flow:row;grid-auto-columns:auto;gap:5px 8px;
+  overflow-y:auto;overflow-x:hidden;
+  padding:0;max-height:184px;scroll-snap-type:none
+}
+.sc5-compact-dialog .sc5-cast-row,.sc5-compact-dialog .sc5-credit-row{
+  display:flex;align-items:center;gap:7px;min-width:0;min-height:33px;
+  padding:7px 9px;background:#1c3041;border:1px solid #344f61;
+  border-radius:7px;text-align:left;color:#e9f5f5;
+  cursor:pointer;transition:background .16s,border-color .16s
+}
+.sc5-compact-dialog .sc5-cast-row:hover,.sc5-compact-dialog .sc5-credit-row:hover{
+  background:#29485b;border-color:#8fdfd1
+}
+.sc5-compact-dialog .sc5-cast-row b,.sc5-compact-dialog .sc5-credit-row b{
+  font-size:11px;font-weight:700;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.sc5-compact-dialog .sc5-cast-row small,
+.sc5-compact-dialog .sc5-credit-row small{
+  min-width:0;color:#a3b4c3;font-size:10px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.sc5-compact-dialog .sc5-row-arrow{margin-left:auto;font-size:11px;color:#9becdb;flex:none}
+.sc5-compact-dialog .sc5-compact-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:9px;flex-wrap:wrap;border-top:1px solid #3e5263;
+  margin-top:13px;padding-top:9px
+}
+.sc5-compact-dialog .sc5-external{display:flex;gap:7px;margin:0}
+.sc5-compact-dialog .sc5-external .btn{font-size:10px;padding:7px 10px}
+.sc5-compact-dialog .sc5-compact-footer .ad-label{
+  order:3;flex:1 0 100%;margin:0;
+  font-size:9px;line-height:1.4;color:#8fa6b5
+}
+.sc5-compact-dialog .sc5-bottom{
+  display:flex;gap:10px;flex-wrap:wrap;border:0;margin:0;padding:0
+}
+.sc5-compact-dialog .sc5-bottom a{font-size:10px}
+.modal .sc5-dialog.sc5-actor-dialog.sc5-compact-dialog{
+  max-width:660px;width:min(660px,100%)
+}
+.sc5-compact-dialog .sc5-back{font-size:10px;padding:5px 9px;margin:0 0 12px}
+.sc5-compact-dialog .sc5-actor-head{
+  display:grid;grid-template-columns:68px minmax(0,1fr);
+  gap:13px;align-items:start;clear:none;
+  margin:0 24px 12px 0
+}
+.sc5-compact-dialog .sc5-actor-portrait{
+  width:68px!important;height:90px!important;object-fit:cover;
+  border-radius:9px;box-shadow:none
+}
+.sc5-compact-dialog .sc5-actor-intro{min-width:0}
+.sc5-compact-dialog .sc5-actor-intro h2{font-size:25px;margin:4px 0 6px}
+.sc5-compact-dialog .sc5-actor-intro p{font-size:10px;margin:2px 0 6px}
+.sc5-compact-dialog .sc5-actor-series{
+  margin-top:10px;border-top:1px solid #3f5668;padding-top:11px
+}
+.sc5-compact-dialog .sc5-credits{
+  display:block;max-height:330px;overflow-y:auto;padding:0;
+  border:1px solid #3c5367;border-radius:9px;background:#172638
+}
+.sc5-compact-dialog .sc5-credit-row{
+  display:flex;width:100%;border:0;border-bottom:1px solid #35495d;
+  border-radius:0;background:transparent;padding:9px 11px;
+  min-height:34px;gap:9px
+}
+.sc5-compact-dialog .sc5-credit-row:last-child{border-bottom:0}
+.sc5-compact-dialog .sc5-credit-row b{flex:1}
+.sc5-compact-dialog .sc5-credit-row em{
+  font-style:normal;color:#91e8dc;
+  font-size:9px;white-space:nowrap
+}
+.sc5-compact-dialog .sc5-credit-role{max-width:140px}
+.sc5-compact-dialog.sc5-actor-dialog>.sc5-bottom{
+  justify-content:flex-end;border:0;margin-top:10px;padding-top:5px
+}
+/* Catalogue acteur : une liste de séries, aucun poster */
+.sc5-filmography-grid{
+  display:grid;grid-template-columns:1fr;gap:4px;
+  border:1px solid #3a566c;border-radius:12px;overflow:hidden
+}
+.sc5-filmography-grid .sc5-filmography-item{
+  display:flex;align-items:center;gap:12px;width:100%;min-height:41px;
+  padding:9px 13px;border:0;border-bottom:1px solid #33495b;
+  border-radius:0;text-align:left;background:#1d3042;color:#eef8fa;
+  cursor:pointer
+}
+.sc5-filmography-grid .sc5-filmography-item:last-child{border-bottom:0}
+.sc5-filmography-grid .sc5-filmography-item:hover{background:#294c5c}
+.sc5-filmography-grid .sc5-filmography-item b{
+  flex:1;font-size:12px;white-space:normal;overflow:visible
+}
+.sc5-filmography-grid .sc5-filmography-item small{margin:0;font-size:10px;color:#b3c2cf}
+.sc5-filmography-grid .sc5-available{margin:0;white-space:nowrap;font-size:10px}
+.sc5-person-results .sc5-person-result{padding:9px 13px;min-height:42px}
+@media(max-width:620px){
+ .modal .sc5-dialog.sc5-compact-dialog{
+   max-height:calc(100dvh - 18px);padding:17px 14px;border-radius:13px
+ }
+ .sc5-compact-dialog .sc5-show-head{
+   grid-template-columns:75px minmax(0,1fr);gap:11px;padding-right:12px
+ }
+ .sc5-compact-dialog .sc5-poster{width:75px!important;height:112px!important}
+ .sc5-compact-dialog h2{font-size:23px}
+ .sc5-compact-dialog .sc5-tagline span{font-size:8px}
+ .sc5-compact-dialog .sc5-cast-list{grid-template-columns:1fr;max-height:195px}
+ .sc5-compact-dialog .sc5-cast-row{min-height:31px}
+ .sc5-compact-dialog .sc5-meta-more .sc5-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sc5-compact-dialog .sc5-actor-head{grid-template-columns:56px minmax(0,1fr)}
+ .sc5-compact-dialog .sc5-actor-portrait{width:56px!important;height:74px!important}
+ .sc5-compact-dialog .sc5-actor-intro h2{font-size:21px}
+ .sc5-compact-dialog .sc5-credit-row{flex-wrap:wrap;gap:5px}
+ .sc5-compact-dialog .sc5-credit-role{display:none}
+ .sc5-compact-dialog .sc5-external{width:100%}
+ .sc5-compact-dialog .sc5-external .btn{min-width:0;flex:1}
+ .sc5-filmography-grid{grid-template-columns:1fr}
+ .sc5-filmography-grid .sc5-filmography-item{display:flex;padding:9px 11px}
+ .sc5-filmography-grid .sc5-filmography-item b{font-size:11px}
+ .sc5-filmography-grid .sc5-available{font-size:9px}
+}
