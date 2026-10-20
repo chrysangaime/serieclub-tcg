@@ -74,6 +74,8 @@ begin
   raise exception 'Compte joueur requis'; end if;
  if p_price is null or p_price<10 or p_price>50000 then
   raise exception 'Prix autorisé : de 10 à 50 000 crédits'; end if;
+ -- Limite d'annonces sérialisée pour éviter deux créations simultanées.
+ perform 1 from public.profiles where id=uid for update;
  -- Bloquer la carte avant toute vérification de disponibilité.
  select id,locked,reserved_trade_id into c from public.player_cards
  where id=p_card_id and owner_id=uid for update;
@@ -146,6 +148,8 @@ returns uuid language plpgsql security definer set search_path=public,pg_temp as
 declare uid uuid:=auth.uid(); l record; c record; offer_id uuid;
 begin
  if uid is null then raise exception 'Connexion requise'; end if;
+ -- Sérialise le quota de propositions entre onglets.
+ perform 1 from public.profiles where id=uid for update;
  -- SHARE empêche vente et annulation simultanées.
  select id,seller_id,status into l from public.card_listings where id=p_listing_id for share;
  if not found or l.status<>'active' then raise exception 'Annonce clôturée'; end if;
