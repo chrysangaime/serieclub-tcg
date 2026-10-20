@@ -11,6 +11,13 @@ const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
 }[c]));
 const imageURL = value => /^https:\/\//i.test(value || '') ? escapeHTML(value) : '';
+const tvmazeLink = value => {
+  try {
+    const u=new URL(String(value||''));
+    return u.protocol==='https:'&&(u.hostname==='tvmaze.com'||u.hostname==='www.tvmaze.com')
+      ? escapeHTML(u.href) : 'https://www.tvmaze.com/';
+  } catch { return 'https://www.tvmaze.com/'; }
+};
 const validId = value => Number.isSafeInteger(Number(value)) && Number(value) > 0 ? Number(value) : null;
 const apiRoot = 'https://api.tvmaze.com';
 const cache = new Map();
@@ -171,13 +178,13 @@ export function showDetailHTML(source = {},base = {}) {
     '<section class="sc5-cast-section"><div class="sc5-section-head"><div><span class="caps">DISTRIBUTION</span><h3>Les visages de la série</h3></div><span class="sc5-muted">Clique sur un acteur pour découvrir ses autres séries</span></div>'+
     (castCards?'<div class="sc5-cast-list">'+castCards+'</div>':
       '<div class="sc5-empty">Distribution non renseignée sur TVmaze pour cette série.</div>')+
-    '</section><div class="sc5-bottom"><a href="'+escapeHTML(show.url||'https://www.tvmaze.com/')+
+    '</section><div class="sc5-bottom"><a href="'+tvmazeLink(show.url)+
     '" target="_blank" rel="noopener noreferrer">Source et crédits : TVmaze ↗</a>'+
     (imdb?'<a href="'+imdb+'" target="_blank" rel="noopener noreferrer">Fiche IMDb ↗</a>':'')+
     '</div></div>';
 }
 
-export function actorDetailHTML(person,shows=[],catalogueIds=new Set()) {
+export function actorDetailHTML(person,shows=[],catalogueIds=new Set(),fromShow=false) {
   const name=person?.name||'Artiste';
   const birth=person?.birthday?new Date(person.birthday+'T12:00:00').toLocaleDateString('fr-FR'):'';
   const country=person?.country?.name||'';
@@ -189,13 +196,13 @@ export function actorDetailHTML(person,shows=[],catalogueIds=new Set()) {
       (catalogueIds.has(show.id)?'<em>Dans SérieClub</em>':'<em class="sc5-not-collected">Référence TVmaze</em>')+
       '</span></button>').join('');
   return '<div class="dialog sc5-dialog sc5-actor-dialog" role="dialog" aria-modal="true" aria-label="Acteur '+escapeHTML(name)+'">'+
-    '<button class="close" data-close aria-label="Fermer">×</button><button class="sc5-back" data-person-back>← Retour à la série</button>'+
+    '<button class="close" data-close aria-label="Fermer">×</button><button class="sc5-back" data-person-back>← '+(fromShow?'Retour à la série':'Fermer la fiche')+'</button>'+
     '<div class="sc5-actor-head">'+photo(person.image?.original||person.image?.medium,name,'sc5-actor-portrait')+
     '<div><span class="caps">SÉRIECLUB · VISAGES DES SÉRIES</span><h2>'+escapeHTML(name)+'</h2>'+
     '<p>'+[birth?('Né(e) le '+birth):'',country].filter(Boolean).map(escapeHTML).join(' · ')+'</p>'+
     '<strong>'+shows.length+' série'+(shows.length>1?'s':'')+' référencée'+(shows.length>1?'s':'')+' dans sa filmographie TVmaze</strong>'+
     '<div class="sc5-actor-actions"><button class="btn primary" data-filter-actor="'+validId(person.id)+'">Filtrer le catalogue par cet acteur →</button>'+
-    (person.url?'<a class="btn subtle" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(person.url)+'">Source TVmaze ↗</a>':'')+
+    (person.url?'<a class="btn subtle" target="_blank" rel="noopener noreferrer" href="'+tvmazeLink(person.url)+'">Source TVmaze ↗</a>':'')+
     '</div></div></div>'+
     '<div class="sc5-section-head"><div><span class="caps">FILMOGRAPHIE</span><h3>Ses autres séries</h3></div>'+
     '<span class="sc5-muted">Sélectionne une série pour ouvrir sa fiche</span></div>'+
