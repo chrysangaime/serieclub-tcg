@@ -1,10 +1,10 @@
 import {platformStrip,seasonShelf} from './discovery.js?v=3.1.0';
 export const navItems=[
- ['packs','▤','Paquets'],['premiere','✧','Première'],['collection','▣','Collection'],
- ['games','♜','Jeux & défis'],['quests','✦','Missions'],['rankings','♙','Classement'],['wishlist','☆','Liste de souhaits'],
- ['catalog','⌕','Catalogue'],['albums','▤','Albums'],['fusion','⚒','Fusions'],
- ['market','◇','Le Comptoir'],['community','♧','Le Signal'],['profile','♙','Profil'],
- ['settings','☷','Paramètres'],['referral','♧','Parrainage']
+ ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
+ ['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits'],['market','◇','Le Comptoir'],
+ ['community','♧','Le Signal'],['games','♜','Jeux & défis'],['quests','✦','Missions'],
+ ['fusion','⚒','Fusions'],['rankings','♙','Classement'],['profile','♙','Profil'],
+ ['settings','☷','Paramètres']
 ];
 export const ranks=['Commune','Peu commune','Rare','Épique','Légendaire','Mythique','Unique'];
 export const esc=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
