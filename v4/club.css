@@ -91,3 +91,29 @@
 @media(max-width:1100px){.sc4-people{grid-template-columns:1fr}.sc4-trades{grid-template-columns:1fr}.sc4-split{grid-template-columns:1fr}}
 @media(max-width:900px){.sc4-stats{grid-template-columns:repeat(2,1fr)}.sc4-quests{grid-template-columns:1fr}}
 @media(max-width:620px){.sc4-hero{padding:25px 21px;min-height:230px}.sc4-hero h1{font-size:45px}.sc4-hero:before{right:-230px;top:-160px}.sc4-stats{gap:8px}.sc4-stats>div{padding:13px}.sc4-stats b{font-size:24px}.sc4-listing-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sc4-listing-body{padding:10px}.sc4-actions{grid-template-columns:1fr}.sc4-box{padding:18px}.sc4-person{padding:12px;gap:10px}.sc4-avatar{width:37px;height:37px;font-size:20px}.sc4-quest{grid-template-columns:45px 1fr;padding:16px}.sc4-banner{display:block}.sc4-market .section-head{display:block}}
+
+/* Mes Saisons : albums libres, thèmes de séries et partage éditorial */
+.sc4-album-hero{background:linear-gradient(112deg,#183a49,#203a53 50%,#453358)}
+.sc4-album-hero:after{content:'▦';color:#b8a5ea2b}
+.sc4-album-hero h1 em{color:#baf4eb}
+.sc4-album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.sc4-album{display:flex;flex-direction:column;gap:11px;min-height:199px;padding:20px;background:radial-gradient(circle at 90% -10%,#6a559443,transparent 58%),linear-gradient(140deg,#213c4e,#22283d);border:1px solid #4d6b83;border-radius:15px;color:#eef8fc;min-width:0;text-align:left}
+.sc4-album-top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#a6e6da;font-size:10px}
+.sc4-album h3{font-family:'Space Grotesk',sans-serif;font-size:20px;line-height:1.2;margin:7px 0 0}
+.sc4-album p{font-size:11px;line-height:1.6;margin:0;flex:1}
+.sc4-album .row{margin-top:auto}
+.sc4-album .btn{margin-top:0}
+.sc4-album-public{cursor:pointer;transition:transform .17s,border-color .17s}
+.sc4-album-public:hover{transform:translateY(-4px);border-color:#8be1d6}
+.sc4-album-open{font-size:11px;font-weight:800;color:#9ff6e8}
+.sc4-album-dialog{max-width:790px;max-height:calc(100vh - 50px);overflow-y:auto}
+.sc4-album-dialog h2{margin:10px 0}
+.sc4-album-dialog .sc4-album-add{display:flex;gap:9px;margin:15px 0}
+.sc4-album-add select{flex:1;min-width:0}
+.sc4-album-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:19px}
+.sc4-album-card{display:flex;gap:11px;align-items:center;background:#1b2f43;border:1px solid #426177;border-radius:11px;padding:9px}
+.sc4-album-card img{width:56px;height:78px;object-fit:cover;flex:none;border-radius:6px}
+.sc4-album-card div{min-width:0}.sc4-album-card b{font-size:12px;line-height:1.3;display:block}
+.sc4-album-card small{font-size:10px;display:block;margin:3px 0 9px}.sc4-album-card .btn{font-size:10px}
+.sc4-box input[type=checkbox]{accent-color:#84e5dc}
+@media(max-width:600px){.sc4-album-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.sc4-album{min-height:200px;padding:13px}.sc4-album h3{font-size:16px}.sc4-album-cards{grid-template-columns:1fr}.sc4-album-dialog .sc4-album-add{flex-direction:column}}
