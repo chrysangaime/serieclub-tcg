@@ -35,9 +35,10 @@ function syncBrowserRoute(){
 window.addEventListener('popstate',syncBrowserRoute);
 window.addEventListener('hashchange',()=>{if(safeRoute()!==state.route)syncBrowserRoute()});
 function renderChrome(){
- const nav=navItems.map(([key,icon,title])=>'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico">'+esc(icon)+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':'')+'</button>').join('');
+ const pending=state.tradeOffers.filter(o=>o.status==='pending'&&o.seller_id===state.user?.id).length;
+ const nav=navItems.map(([key,icon,title])=>'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico">'+esc(icon)+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':key==='market'&&pending?'<span class="count">'+pending+'</span>':'')+'</button>').join('');
  $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark">S</span><span>SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav><div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div><div class="side-account" data-route="profile"><div class="avatar">'+esc((state.username||'S').slice(0,1).toUpperCase())+'</div><div><b>'+esc(state.username||'Mon compte')+'</b><small>'+money(state.cards.length)+' cartes dans ma collection</small></div></div>';
- $('topbar').innerHTML='<div class="row"><button class="top-btn mobile-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><span class="crumb">'+esc(navName(state.route)).toUpperCase()+'</span></div><div class="top-actions"><button class="top-btn hide-mobile" data-route="rules">Règles du jeu</button><span class="credit-pill">Ⓒ &nbsp;'+money(state.wallet?.credits)+'<span>crédits</span></span><button class="top-btn" data-auth>'+(state.user?'Mon compte':'Connexion')+'</button><button class="top-btn hide-mobile" id="motionToggle" title="Animations">◐</button><span class="top-btn" aria-label="Langue : français">🇫🇷 FR</span></div>';
+ $('topbar').innerHTML='<div class="row"><button class="top-btn mobile-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><span class="crumb">'+esc(navName(state.route)).toUpperCase()+'</span></div><div class="top-actions"><button class="top-btn sc4-bell" data-route="market" aria-label="Offres d’échange reçues">✧'+(pending?'<span class="sc4-bell-number">'+pending+'</span>':'')+'</button><button class="top-btn hide-mobile" data-route="rules">Règles du jeu</button><span class="credit-pill">Ⓒ &nbsp;'+money(state.wallet?.credits)+'<span>crédits</span></span><button class="top-btn" data-auth>'+(state.user?'Mon compte':'Connexion')+'</button><button class="top-btn hide-mobile" id="motionToggle" title="Animations">◐</button><span class="top-btn" aria-label="Langue : français">🇫🇷 FR</span></div>';
  if(monthHalloween()){
   $('topbar').querySelector('.crumb')?.insertAdjacentHTML('afterend','<span class="top-season-tag hide-mobile">☾ LES NUITS D’OCTOBRE</span>');
  }
@@ -75,16 +76,18 @@ async function loadSession(){
   const status=await supa.rpc('get_booster_status');
   if(status.error)console.warn('Réserve:',status.error.message);
   state.stock=status.data?.[0]||null;
-  let [w,c,wi]=await Promise.all([
+  let [w,c,wi,tr]=await Promise.all([
    supa.from('player_wallets').select('*').eq('player_id',user.id).maybeSingle(),
    supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
-   supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500)
+   supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500),
+   supa.rpc('my_trade_offers')
   ]);
   if(c.error){const old=await supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000);if(!old.error)c={data:(old.data||[]).map(x=>({...x,reserved_trade_id:null})),error:null}}
   if(w.error)toast('Portefeuille : '+w.error.message,true);
   if(c.error)toast('Collection : '+c.error.message,true);
   state.wallet=w.data||null;state.cards=c.data||[];
   state.wishes=wi.error?[]:wi.data||[];
+  state.tradeOffers=tr.error?[]:tr.data||[];
   if(wi.error&&wi.error.code!=='42P01')console.warn('Wishlist:',wi.error.message);
   render();
   loadDaily();
