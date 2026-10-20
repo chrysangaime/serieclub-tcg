@@ -4,7 +4,7 @@ const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishab
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage'};
-const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],catalog:[],catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],catalog:[],catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let toastTimer,clockTimer,searchTimer,refreshing=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
@@ -157,7 +157,7 @@ async function exportData(){
 function chooseChallenge(type){
  const pool=state.catalog.filter(c=>c.image_url&&c.premiered);
  const stage=$('challengeStage');
- if(pool.length<2){stage.innerHTML='<div class="panel">Chargement des séries…</div>';loadCatalog(true).then(()=>{if(state.route==='games')chooseChallenge(type)});return}
+ if(pool.length<2){stage.innerHTML='<div class="panel">Le jeu nécessite au moins deux séries datées et illustrées dans le catalogue. Vérifie la synchronisation TVmaze.</div>';return}
  const choice=()=>pool[Math.floor(Math.random()*pool.length)];
  const a=choice();let b=choice();let guard=0;while((a.id===b.id||a.premiered?.slice(0,4)===b.premiered?.slice(0,4))&&guard++<100)b=choice();
  if(type==='poster'){
@@ -192,7 +192,8 @@ function globalClick(e){
  if(e.target.closest('#signout')){supa.auth.signOut().then(()=>loadSession());return}
  if(e.target.closest('#exportData')){exportData();return}
  const ch=e.target.closest('[data-challenge]');if(ch){chooseChallenge(ch.dataset.challenge);return}
- const album=e.target.closest('[data-album]');if(album){state.filter='';state.rank='';change('collection');toast('Album '+album.dataset.album+' : retrouve tes cartes dans ta collection.');return}
+ if(e.target.closest('[data-clear-genre]')){state.genre='';render();return}
+ const album=e.target.closest('[data-album]');if(album){state.filter='';state.rank='';state.genre=album.dataset.album;change('collection');return}
 }
 async function saveUsername(){
  const name=$('usernameInput')?.value.trim();if(!state.user||!name||name.length<3||name.length>24){toast('Pseudonyme entre 3 et 24 caractères.',true);return}
