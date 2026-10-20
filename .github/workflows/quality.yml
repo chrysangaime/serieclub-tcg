@@ -13,21 +13,42 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Vérifier les scripts JavaScript
+      - name: Vérifier la syntaxe JavaScript
         run: |
-          for file in auth.js game.js club.js editorial.js polish.js game-v2.js scripts/import-tvmaze.mjs; do
-            node --check "$file"
-          done
-      - name: Vérifier les références HTML
+          node --check v3/views.js
+          node --check v3/app.js
+          node --check scripts/import-tvmaze.mjs
+      - name: Tester les pages du TCG
         run: |
-          node --input-type=module -e "
+          node --input-type=module <<'JS'
           import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          import * as v from './v3/views.js';
           const html=fs.readFileSync('index.html','utf8');
-          for(const file of ['auth.js','game.js','club.js','editorial.js','polish.js','game-v2.js','editorial.css']){
-            if(!html.includes('./'+file)||!fs.existsSync(file))throw Error('Ressource absente: '+file);
+          for(const file of ['./v3/styles.css','./v3/app.js','./v3/icon.svg']){
+            assert.ok(html.includes(file), 'Lien manquant : '+file);
+            assert.ok(fs.existsSync(file.slice(2)), 'Fichier manquant : '+file);
           }
-          for(const id of ['home','catalog','boosters','collection']){
-            if(!html.includes('id=\"'+id+'\"'))throw Error('Section manquante: '+id);
+          for(const id of ['sidebar','topbar','page','overlay','toast']){
+            assert.ok(html.includes('id="'+id+'"'), 'Bloc manquant : '+id);
           }
-          console.log('Ressources et sections présentes');
-          "
+          assert.equal(v.navItems.length,14);
+          assert.equal(v.ranks.length,7);
+          assert.match(v.foil('halloween'),/HALLOWEEN/);
+          assert.match(v.foil('classic'),/ORIGINAL/);
+          const state={cards:[],stock:{stock:10,maximum:10,recharge_seconds:0},wallet:{credits:0},user:{id:'demo'},pack:'classic',catalog:[],wishes:[],rankings:[],fusionSelected:[],fusionRank:'Commune'};
+          const packets=v.packs(state);
+          assert.match(packets,/data-pack="classic"/);
+          assert.match(packets,/data-pack="halloween"/);
+          assert.match(packets,/id="openPack"/);
+          assert.match(v.collection(state),/Ma collection/);
+          assert.match(v.fusions(state),/Fusionner 10/);
+          assert.match(v.catalogue(state),/Catalogue/);
+          assert.match(v.card({rarity:'Rare',series:{name:'Essai',image_url:'https://example.com/image.png'}}),/Essai/);
+          const migration=fs.readFileSync('supabase/game_v3.sql','utf8');
+          for(const rpc of ['open_halloween_booster','set_card_locked']){
+            assert.ok(migration.includes(rpc), 'RPC manquante : '+rpc);
+          }
+          assert.equal((migration.match(/\$\$/g)||[]).length%2,0,'Délimiteurs SQL incomplets');
+          console.log('Contrôles des pages et du SQL réussis');
+          JS
