@@ -1,0 +1,19 @@
+{
+  "name": "SérieClub TCG — Le club des séries",
+  "short_name": "SérieClub",
+  "description": "Collection de cartes des séries TV, paquets Halloween, albums et défis.",
+  "start_url": "./index.html#/paquets",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#17171b",
+  "theme_color": "#1e1f24",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "./v3/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
