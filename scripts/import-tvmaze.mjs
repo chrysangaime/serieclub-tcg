@@ -17,11 +17,27 @@ for(let page=0;page<maxPages;page++){
  if(response.status===404){console.log('Reached final TVmaze page',page);break}
  if(!response.ok)throw Error('TVmaze page '+page+' HTTP '+response.status);
  const raw=await response.json();
- const rows=raw.filter(x=>x.id&&x.name&&x.image?.medium).map(x=>({id:x.id,name:x.name,premiered:/^\d{4}-\d{2}-\d{2}$/.test(x.premiered||'')?x.premiered:null,genres:x.genres||[],image_url:x.image.medium,source:'tvmaze'}));
+ const rows=raw.filter(x=>x.id&&x.name&&x.image?.medium).map(x=>({
+  id:x.id,name:x.name,
+  premiered:/^\d{4}-\d{2}-\d{2}$/.test(x.premiered||'')?x.premiered:null,
+  genres:x.genres||[],image_url:x.image.medium,source:'tvmaze',
+  popularity_weight:typeof x.weight==='number'&&Number.isFinite(x.weight)?x.weight:null,
+  rating_average:typeof x.rating?.average==='number'&&Number.isFinite(x.rating.average)?x.rating.average:null
+}));
  for(let offset=0;offset<rows.length;offset+=100){
   const batch=rows.slice(offset,offset+100);
-  const r=await fetch(base+'/rest/v1/series?on_conflict=id',{method:'POST',headers,body:JSON.stringify(batch)});
-  if(!r.ok)throw Error('Supabase upsert page '+page+': '+r.status+' '+(await r.text()).slice(0,180));
+  let r=await fetch(base+'/rest/v1/series?on_conflict=id',{method:'POST',headers,body:JSON.stringify(batch)});
+  if(!r.ok){
+   const message=await r.text();
+   if(r.status===400&&/popularity_weight|rating_average/i.test(message)){
+    const legacy=batch.map(({popularity_weight,rating_average,...series})=>series);
+    r=await fetch(base+'/rest/v1/series?on_conflict=id',{
+      method:'POST',headers,body:JSON.stringify(legacy)
+    });
+    if(!r.ok)throw Error('Supabase legacy upsert page '+page+': '+r.status+' '+(await r.text()).slice(0,180));
+    console.warn('Scores non importés : exécute game_v5.sql avant le prochain import.');
+   }else throw Error('Supabase upsert page '+page+': '+r.status+' '+message.slice(0,180));
+  }
   imported+=batch.length;
  }
  console.log('Page '+page+': '+rows.length+' series, total '+imported);
