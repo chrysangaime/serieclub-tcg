@@ -55,10 +55,10 @@ begin
  if extract(month from (current_at at time zone 'Europe/Paris'))<>10 then
    raise exception 'Edition Halloween disponible du 1er au 31 octobre';
  end if;
- if not exists(select 1 from public.series where image_url is not null and genres && array['Horror','Thriller','Supernatural']::text[]) then
+ if not exists(select 1 from public.series where public.series.image_url is not null and genres && array['Horror','Thriller','Supernatural']::text[]) then
    raise exception 'Importe les series horreur et thriller avant de jouer';
  end if;
- if (select count(*) from public.series where image_url is not null)<5 then
+ if (select count(*) from public.series where public.series.image_url is not null)<5 then
    raise exception 'Catalogue insuffisant pour ouvrir cinq cartes';
  end if;
  insert into public.player_wallets(player_id) values(uid) on conflict(player_id) do nothing;
@@ -78,11 +78,11 @@ begin
  for s in
    with halloween as (
       select id from public.series
-      where image_url is not null and genres && array['Horror','Thriller','Supernatural']::text[]
+      where public.series.image_url is not null and genres && array['Horror','Thriller','Supernatural']::text[]
       order by random() limit 1
    ), other_shows as (
       select id from public.series
-      where image_url is not null and id not in (select id from halloween)
+      where public.series.image_url is not null and id not in (select id from halloween)
       order by random() limit 4
    ), picked as (
       select id from halloween union all select id from other_shows
