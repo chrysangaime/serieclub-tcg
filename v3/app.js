@@ -346,7 +346,8 @@ async function saveUsername(){
  const name=$('usernameInput')?.value.trim();if(!state.user||!name||name.length<3||name.length>24){toast('Pseudonyme entre 3 et 24 caractères.',true);return}
  const bio=($('bioInput')?.value||'').trim(),favoriteGenre=$('favoriteGenre')?.value||'';
  if(bio.length>160||favoriteGenre.length>32){toast('Biographie trop longue.',true);return}
- const {error}=await supa.from('profiles').upsert({id:state.user.id,username:name,bio,favorite_genre:favoriteGenre},{onConflict:'id'});
+ let {error}=await supa.from('profiles').upsert({id:state.user.id,username:name,bio,favorite_genre:favoriteGenre},{onConflict:'id'});
+ if(error&&(/bio|favorite_genre|schema cache|column/i.test(error.message))){const fallback=await supa.from('profiles').upsert({id:state.user.id,username:name},{onConflict:'id'});if(!fallback.error){toast('Pseudonyme sauvegardé. Active la migration V4 pour enregistrer la biographie.');state.username=name;render();return}error=fallback.error}
  if(error){toast(error.code==='23505'?'Ce pseudonyme est déjà utilisé.':error.message,true);return}
  state.username=name;state.bio=bio;state.favoriteGenre=favoriteGenre;render();toast('Profil enregistré et visible dans Le Signal.')
 }
