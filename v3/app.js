@@ -988,7 +988,15 @@ document.addEventListener('keydown',e=>{
   $('catalogQuery')?.focus({preventScroll:true});
  }
 });
-$('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeModal()});
+// Délégation dédiée : la croix du booster doit rester actionnable sur mobile
+// même si le contenu de la modale est entièrement reconstruit à chaque carte.
+$('overlay').addEventListener('click',e=>{
+ const close=e.target.closest?.('[data-close]');
+ if(close){
+  e.preventDefault();e.stopPropagation();closeModal();return;
+ }
+ if(e.target===$('overlay'))closeModal();
+});
 supa.auth.onAuthStateChange(()=>setTimeout(loadSession,75));
 state.route=safeRoute();render();loadSession();if(state.route==='catalog')loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();
 clockTimer=setInterval(()=>{if(state.stock&&state.stock.stock<10){if(state.stock.recharge_seconds>0)state.stock.recharge_seconds-=1;else{state.stock.stock=Math.min(10,state.stock.stock+1);state.stock.recharge_seconds=state.stock.stock===10?0:600}
