@@ -12,13 +12,14 @@ permissions:
   contents: read
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
       - name: Importer les séries et affiches
         env:
           SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
