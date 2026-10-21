@@ -120,7 +120,7 @@ export async function getPersonFilmography(id) {
 }
 function externalLinks(title){
   return '<div class="sc5-external">'+
-    '<a class="btn subtle" target="_blank" rel="noopener noreferrer" href="'+whereToWatchLink(title)+'">JustWatch France ↗</a>'+
+
     '<a class="btn subtle" target="_blank" rel="noopener noreferrer" href="'+amazonSearchLink(title)+'">Rechercher un coffret ↗</a>'+
     '</div><p class="ad-label">'+(amazonIsAffiliate()
       ? 'Lien marchand pouvant générer une commission pour SérieClub.'
