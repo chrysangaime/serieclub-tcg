@@ -6,7 +6,39 @@ if(!base||!key)throw Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
 const maxPages=Math.max(1,Math.min(100,Number(process.env.TVMAZE_PAGES||20)));
 const headers={'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'};
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-let imported=0;
+let imported=0,frVerified=0,frEligibleEnabled=null;
+async function enableFranceVerification(){
+ if(frEligibleEnabled!==null)return frEligibleEnabled;
+ const r=await fetch(base+'/rest/v1/series?select=id,fr_verified&limit=1',{
+  headers:{apikey:key,Authorization:'Bearer '+key}
+ });
+ if(!r.ok){
+  const message=await r.text();
+  if(/fr_verified|schema cache|column/i.test(message)){
+   console.warn('Validation France inactive : exécuter supabase/game_v5_4_fr.sql.');
+   frEligibleEnabled=false;return false;
+  }
+  throw Error('Vérification du schéma Supabase : HTTP '+r.status+' '+message.slice(0,160));
+ }
+ frEligibleEnabled=true;return true;
+}
+async function recordFranceOrigin(x){
+ // TVmaze's country identifies the original channel, not foreign broadcasts.
+ const country=x.network?.country?.code||x.webChannel?.country?.code;
+ if(country!=='FR'||!Number.isSafeInteger(x.id))return;
+ const source=String(x.url||'');
+ if(!/^https:\/\/www\.tvmaze\.com\/shows\/\d+\//.test(source))return;
+ const r=await fetch(base+'/rest/v1/series?id=eq.'+x.id+'&fr_verified=is.false',{
+  method:'PATCH',headers:{apikey:key,Authorization:'Bearer '+key,
+   'Content-Type':'application/json','Prefer':'return=minimal'},
+  body:JSON.stringify({
+   fr_verified:true,fr_verification_method:'tvmaze_fr_origin',
+   fr_evidence_url:source,fr_verified_at:new Date().toISOString()
+  })
+ });
+ if(!r.ok)throw Error('Preuve France TVmaze '+x.id+': HTTP '+r.status+' '+(await r.text()).slice(0,180));
+ frVerified++;
+}
 for(let page=0;page<maxPages;page++){
  let response;
  for(let attempt=0;attempt<4;attempt++){
@@ -40,7 +72,16 @@ for(let page=0;page<maxPages;page++){
   }
   imported+=batch.length;
  }
- console.log('Page '+page+': '+rows.length+' series, total '+imported);
+ if(await enableFranceVerification()){
+  const frenchShows=raw.filter(x=>x?.image?.medium&&
+   (x.network?.country?.code==='FR'||x.webChannel?.country?.code==='FR'));
+  // Handle in small batches to avoid excessive requests.
+  for(let offset=0;offset<frenchShows.length;offset+=8){
+   await Promise.all(frenchShows.slice(offset,offset+8).map(recordFranceOrigin));
+  }
+ }
+ console.log('Page '+page+': '+rows.length+' series, total '+imported+
+  ', preuves d’origine française enregistrées '+frVerified);
  await pause(350);
 }
-console.log('Imported '+imported+' series.');
+console.log('Imported '+imported+' series. France-origin verified updates: '+frVerified);
