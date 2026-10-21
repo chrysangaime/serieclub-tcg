@@ -4,7 +4,7 @@
  * Les doublons sont des exemplaires au-delà de la première copie d'une même
  * série. Une copie engagée ne peut pas être conseillée pour la vente.
  */
-import {card,esc,money,ranks,photo,officialRarity,raritySlug} from '../v3/views.js?v=5.5.0';
+import {card,esc,money,ranks,photo,officialRarity,raritySlug} from '../v3/views.js?v=5.6.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 
 export const COLLECTION_PAGE_SIZE=48;
