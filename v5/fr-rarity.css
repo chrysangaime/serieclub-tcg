@@ -82,3 +82,29 @@
  border-color:#aa8750;color:#f2d7a1;background:#423c31;
  font-size:11px;line-height:1.55;margin:12px 0
 }
+
+/* V5.4 — Périmètre France certifié et cartes de collection historiques */
+.sc54-fr-intro{
+ padding:12px 15px;border:1px solid #448c84;border-radius:10px;
+ background:linear-gradient(120deg,#214449,#203449);
+ color:#bfeee3;font-size:12px;line-height:1.5;margin:13px 0 18px
+}
+.sc54-fr-intro b{color:#e6fff5}
+.sc54-fr-pending{
+ position:absolute;bottom:8px;right:7px;padding:4px 7px;
+ border-radius:5px;border:1px solid #d8a76a;
+ background:#252a36e8;color:#ffdb99;font:800 9px/1.3 "Space Grotesk",sans-serif;
+ text-align:right;max-width:calc(100% - 14px)
+}
+.sc54-fr-cert,.sc54-fr-unverified{
+ margin:11px 0;border-radius:8px;padding:9px 11px;
+ border:1px solid #4d9b8a;background:#21423f;
+ display:flex;gap:7px;align-items:center;flex-wrap:wrap
+}
+.sc54-fr-cert b,.sc54-fr-unverified b{color:#bbf9e5;font-size:11px}
+.sc54-fr-cert small,.sc54-fr-unverified small{color:#b9d0d2;font-size:10px;line-height:1.45;flex:1 0 100%}
+.sc54-fr-cert a{color:#abf7e3;text-decoration:underline;font-size:10px}
+.sc54-fr-unverified{background:#453a36;border-color:#9a7766}
+.sc54-fr-unverified b{color:#f7d49d}
+.sc54-collection-pending{display:block;color:#f9ce90!important;font-size:9px;line-height:1.5;margin-top:7px}
+@media(max-width:600px){.sc54-fr-intro{font-size:11px}.sc54-fr-cert,.sc54-fr-unverified{padding:8px 9px}}
