@@ -238,5 +238,7 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f tests/v5_5_fr.sql
       - name: Installer l’arène à crédits sécurisés V7
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v7_quiz.sql
-      - name: Vérifier cinq manches, récompenses, limites quotidiennes et anti-fraude
+      - name: Activer le délai de 24 h par défi V7.1
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v7_1_24h.sql
+      - name: Vérifier cinq manches, délai de 24 h par jeu et anti-fraude
         run: psql -v ON_ERROR_STOP=1 -f tests/v7_rewarded_quiz.sql
