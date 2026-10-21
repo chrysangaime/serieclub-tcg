@@ -3,7 +3,16 @@
 const base=process.env.SUPABASE_URL;
 const key=process.env.SUPABASE_SERVICE_ROLE_KEY;
 if(!base||!key)throw Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
-const maxPages=Math.max(1,Math.min(100,Number(process.env.TVMAZE_PAGES||20)));
+import fs from 'node:fs/promises';
+const CURSOR_FILE='data/tvmaze-import-state.json';
+const maxPages=Math.max(1,Math.min(400,Number(process.env.TVMAZE_PAGES||100)));
+const oldCursor=JSON.parse(await fs.readFile(CURSOR_FILE,'utf8').catch(()=>'{"next_page":0}'));
+let page=Number.isInteger(Number(process.env.TVMAZE_START_PAGE))&&
+ process.env.TVMAZE_START_PAGE!==undefined&&process.env.TVMAZE_START_PAGE!==''
+ ?Number(process.env.TVMAZE_START_PAGE):Number(oldCursor.next_page||0);
+page=Math.max(0,Math.min(5000,Math.floor(page)));
+const startPage=page;
+let reachedEnd=false;
 const headers={'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'};
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 let imported=0,frVerified=0,frEligibleEnabled=null;
@@ -39,14 +48,14 @@ async function recordFranceOrigin(x){
  if(!r.ok)throw Error('Preuve France TVmaze '+x.id+': HTTP '+r.status+' '+(await r.text()).slice(0,180));
  frVerified++;
 }
-for(let page=0;page<maxPages;page++){
+for(let step=0;step<maxPages;step++,page++){
  let response;
  for(let attempt=0;attempt<4;attempt++){
   response=await fetch('https://api.tvmaze.com/shows?page='+page);
   if(response.ok||response.status===404)break;
   await pause((attempt+1)*1500);
  }
- if(response.status===404){console.log('Reached final TVmaze page',page);break}
+ if(response.status===404){console.log('Reached final TVmaze page',page);reachedEnd=true;break}
  if(!response.ok)throw Error('TVmaze page '+page+' HTTP '+response.status);
  const raw=await response.json();
  const rows=raw.filter(x=>x.id&&x.name&&x.image?.medium).map(x=>({
@@ -84,4 +93,13 @@ for(let page=0;page<maxPages;page++){
   ', preuves d’origine française enregistrées '+frVerified);
  await pause(350);
 }
-console.log('Imported '+imported+' series. France-origin verified updates: '+frVerified);
+// Reprise au prochain passage : parcours de l'index complet, pas seulement
+// les 5 000 premiers titres. Une 404 marque la fin : recommencer à zéro.
+const nextPage=reachedEnd?0:page;
+await fs.mkdir('data',{recursive:true});
+await fs.writeFile(CURSOR_FILE,JSON.stringify({
+ next_page:nextPage,updated_at:new Date().toISOString(),
+ previous_start:startPage, imported,france_verified_updates:frVerified
+},null,2)+'\\n');
+console.log('Imported '+imported+' series. France-origin verified updates: '+
+ frVerified+'. Next TVmaze page: '+nextPage);
