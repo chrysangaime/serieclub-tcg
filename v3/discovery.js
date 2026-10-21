@@ -1,4 +1,5 @@
 import {commerce} from './config.js?v=3.1.0';
+import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const photo = value => /^https:\/\//i.test(value || '') ? esc(value) : '';
 
@@ -30,7 +31,7 @@ export function seasonShelf(series=[]){
  }
  return '<section class="season-shelf" aria-label="La sélection Halloween">'+
  '<div class="shelf-head"><div><span class="caps sc-season-tag">LA SÉLECTION D’OCTOBRE</span><h2>À regarder la lumière allumée.</h2><p>Horreur, suspense, mystère et fantastique : découvre de vraies séries du catalogue, puis explore où les regarder.</p></div><span class="note">Sélection éditoriale · pas un indicateur de disponibilité</span></div>'+
- '<div class="shelf-grid">'+series.slice(0,6).map(s=>'<button class="shelf-item" data-series="'+esc(s.id)+'" aria-label="Découvrir '+esc(s.name)+'"><img src="'+photo(s.image_url)+'" alt="Affiche de '+esc(s.name)+'" loading="lazy"><span>'+esc(s.name)+'</span><small>'+(Array.isArray(s.genres)?s.genres.slice(0,2).map(esc).join(' · '):'Série')+'</small></button>').join('')+'</div></section>';
+ '<div class="shelf-grid">'+series.slice(0,6).map(s=>'<button class="shelf-item" data-series="'+esc(s.id)+'" aria-label="Découvrir '+esc(s.name)+'"><img src="'+photo(s.image_url)+'" alt="Affiche de '+esc(s.name)+'" loading="lazy"><span>'+esc(s.name)+'</span><small>'+(Array.isArray(s.genres)?s.genres.slice(0,2).map(g=>esc(genreFR(g))).join(' · '):'Série')+'</small></button>').join('')+'</div></section>';
 }
 
 export function whereToWatchLink(title){
