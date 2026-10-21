@@ -6,6 +6,22 @@
 -- Les cartes existantes sont uniformisées. Les annonces d'une carte dont la
 -- rareté change sont annulées et les propositions associées libérées.
 BEGIN;
+-- Préflight : ne pas démarrer la reclassification si la V4 manque.
+-- Le diagnostic est volontairement explicite et la transaction reste atomique.
+DO $
+BEGIN
+ IF to_regclass('public.card_trade_offers') IS NULL
+    OR to_regclass('public.card_listings') IS NULL
+    OR NOT EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='player_cards'
+        AND column_name='reserved_trade_id'
+    ) THEN
+  RAISE EXCEPTION USING
+    MESSAGE='SérieClub : migration V4 absente (marché ou échanges non créés).',
+    HINT='Exécute d’abord supabase/game_v4.sql, puis relance game_v5.sql. Ou utilise le fichier install_v4_v5.sql.';
+ END IF;
+END $;
 ALTER TABLE public.series ADD COLUMN IF NOT EXISTS rarity text NOT NULL DEFAULT 'Commune';
 ALTER TABLE public.series ADD COLUMN IF NOT EXISTS popularity_weight numeric(7,2);
 ALTER TABLE public.series ADD COLUMN IF NOT EXISTS rating_average numeric(4,2);
