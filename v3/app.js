@@ -1,6 +1,7 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=5.0.0';
-import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML}from'../v4/series.js?v=5.0.0';
+import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=5.1.0';
+import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=4.2.1';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=4.2.0';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
@@ -331,12 +332,30 @@ async function openSeriesDetail(id){
    $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close>×</button><h2>Série introuvable</h2><p>Aucune fiche disponible pour cet identifiant.</p></div>';
    return;
   }
+  const show=loaded||base;
   $('overlay').innerHTML=showDetailHTML(loaded||{},base);
   $('overlay').querySelector('[data-close]')?.focus();
+  // Localized synopsis is loaded independently: never blocks cast or navigation.
+  getFrenchSynopsis(show,stripSummary(show.summary||base.summary))
+    .then(result=>{
+      if(!detailReady(token))return;
+      const target=$('overlay').querySelector('[data-synopsis]');
+      if(target)target.innerHTML=frenchSynopsisHTML(result,show.summary||base.summary);
+    })
+    .catch(()=>{
+      if(!detailReady(token))return;
+      const target=$('overlay').querySelector('[data-synopsis]');
+      if(target)target.innerHTML=frenchSynopsisHTML({source:'unavailable',text:''},show.summary||base.summary);
+    });
  }catch(error){
   if(!detailReady(token))return;
   if(base?.name){
     $('overlay').innerHTML=showDetailHTML({},base);
+    getFrenchSynopsis(base,stripSummary(base.summary)).then(result=>{
+      if(!detailReady(token))return;
+      const target=$('overlay').querySelector('[data-synopsis]');
+      if(target)target.innerHTML=frenchSynopsisHTML(result,base.summary);
+    }).catch(()=>{if(detailReady(token)){const target=$('overlay').querySelector('[data-synopsis]');if(target)target.innerHTML=frenchSynopsisHTML({source:'unavailable',text:''},base.summary)}});
     const dialog=$('overlay').querySelector('.sc5-dialog');
     dialog?.insertAdjacentHTML('afterbegin','<div class="notice sc5-fetch-warning">La distribution et le résumé détaillé ne sont pas accessibles momentanément sur TVmaze.</div>');
     $('overlay').querySelector('[data-close]')?.focus();
