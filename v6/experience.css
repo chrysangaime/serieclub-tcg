@@ -1,0 +1,114 @@
+/* SérieClub V6 — fusion et arène : cohérence avec le thème sombre et l'or du club. */
+.sc60-games-hero,.sc60-fusion-hero{display:flex;justify-content:space-between;align-items:center;gap:20px;
+ padding:25px;border:1px solid #705842;border-radius:16px;margin:18px 0 22px;
+ background:radial-gradient(circle at 85% 15%,#5c422e70,transparent 43%),linear-gradient(120deg,#332b27,#222228)}
+.sc60-games-hero h2,.sc60-fusion-hero h2{font:700 clamp(30px,4vw,51px)/1.03 'Barlow Condensed',sans-serif;letter-spacing:.02em;text-transform:uppercase;margin:6px 0 9px}
+.sc60-games-hero p,.sc60-fusion-hero p{margin:0;max-width:520px}
+.sc60-games-hero-stat,.sc60-fusion-ring{min-width:145px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.sc60-games-hero-stat strong{font:800 34px 'Barlow Condensed',sans-serif;color:#f5cb88}
+.sc60-games-hero-stat span,.sc60-fusion-ring>span{font-size:11px;color:#d8c3a9}
+.sc60-games-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.sc60-game-tile{padding:23px;min-height:275px;border-radius:15px;border:1px solid #544b46;
+ background:linear-gradient(155deg,#2e2b2c,#232327);display:flex;flex-direction:column;align-items:flex-start}
+.sc60-game-icon{width:58px;height:58px;display:grid;place-items:center;border:1px solid #ab815d;border-radius:14px;
+ background:#40342a;font:38px Georgia,serif;color:#f2c88d;margin-bottom:16px}
+.sc60-game-tile h2{font-size:31px;margin:5px 0 10px}
+.sc60-game-tile p{margin-bottom:18px;flex:1}
+.sc60-game-meta{font-size:11px;color:#cbb6a6;margin-bottom:14px}
+.sc60-game-tile .btn{min-width:148px}
+.sc60-games-note{margin-top:20px;padding:18px;border:1px solid #46434a;border-radius:12px;background:#25242a}
+.sc60-games-note strong{color:#f4d6ad}
+.sc60-games-note p{margin:5px 0 0}
+.sc60-quiz{max-width:770px;margin:10px auto;padding:25px;border:1px solid #736049;border-radius:16px;background:#28262a}
+.sc60-quiz-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.sc60-quiz-top>div{display:flex;flex-direction:column;gap:2px}
+.sc60-quiz-top strong{font-size:17px}
+.sc60-score{border:1px solid #a88759;border-radius:20px;padding:7px 11px;color:#f5ce96;font-weight:800}
+.sc60-progress{height:9px;border-radius:9px;background:#3b3635;overflow:hidden;margin:17px 0}
+.sc60-progress>span{display:block;height:100%;background:linear-gradient(90deg,#cb894a,#f6d2a1);border-radius:9px;transition:width .2s}
+.sc60-quiz h2{text-transform:none;font:700 clamp(22px,3vw,30px)/1.22 'DM Sans',sans-serif;margin:20px 0}
+.sc60-mystery{display:flex;justify-content:center;margin:0 0 18px;overflow:hidden}
+.sc60-mystery img{width:150px;max-width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:11px;border:1px solid #a08160;box-shadow:0 10px 29px #0006}
+.sc60-mystery .sc60-blurred{filter:blur(12px) brightness(.83);transform:scale(.95)}
+.sc60-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:14px 0}
+.sc60-choice{display:flex;align-items:center;justify-content:center;gap:11px;min-height:66px;text-align:left;
+ border-radius:11px;border:1px solid #5a5152;background:#353236;color:#f8eee1;padding:12px;font-weight:750}
+.sc60-choice:not(:disabled):hover{border-color:#e0b884;background:#494039}
+.sc60-choice:focus-visible{outline:2px solid #ffe2b2}
+.sc60-choice:disabled{opacity:1}
+.sc60-choice.is-correct{border-color:#88cea7;background:#274a3e;color:#e6fff0}
+.sc60-choice.is-wrong{border-color:#d8877c;background:#54322f;color:#ffe0db}
+.sc60-choice img{width:52px;aspect-ratio:2/3;object-fit:cover;border-radius:5px;flex:none}
+.sc60-answer{padding:14px;margin:18px 0;background:#323d36;border-left:3px solid #a4d1a7;border-radius:7px}
+.sc60-answer span{color:#e9d2a8;font-weight:800}
+.sc60-quit{display:block;margin:18px 0 0;border:0;background:transparent;color:#e9cb9e;text-decoration:underline;font-size:12px}
+.sc60-caveat{font-size:10px;color:#b6a9a8;margin-top:14px}
+.sc60-finish{text-align:center;padding:36px 15px}
+.sc60-finish h2{font-size:35px;margin:7px 0}
+.sc60-finish strong{display:block;font:800 70px 'Barlow Condensed',sans-serif;color:#f5cc8d}
+.sc60-finish .btn{margin:5px}
+.sc60-medal{font-size:50px;color:#efc185}
+.sc60-quiz-empty,.sc60-loading{padding:24px;border-radius:12px;border:1px solid #574e49;text-align:center}
+.sc60-fusion-hero h2 span{color:#dfad67;padding:0 8px}
+.sc60-fusion-ring{width:130px;height:130px;border-radius:50%;border:6px solid #b48b5c;flex:none;background:#292423}
+.sc60-fusion-ring strong{font:800 40px 'Barlow Condensed',sans-serif;color:#ffdb9e}
+.sc60-fusion-ring strong small{font-size:19px;color:#ab9f95}
+.sc60-rank-row{display:flex;gap:7px;overflow-x:auto;padding:4px 1px 15px;scrollbar-width:thin}
+.sc60-rank-chip{min-width:122px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;padding:13px 12px;
+ background:#2d2b2d;border:1px solid #514745;border-radius:12px;color:#ddd1c4;font-weight:800;font-size:12px;white-space:nowrap}
+.sc60-rank-chip small{font-size:10px;color:#a99d99}
+.sc60-rank-chip.active{border-color:#e6b97c;background:#48372a;color:#ffe1a8}
+.sc60-rank-chip.active small{color:#ead0a8}
+.sc60-fusion-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#2b2a2c;
+ padding:17px;border:1px solid #524746;border-radius:12px;margin:5px 0 14px}
+.sc60-fusion-tools>div:first-child{flex:1 1 180px}
+.sc60-fusion-tools strong{font-size:14px;color:#f4d2a1}
+.sc60-fusion-tools p{font-size:11px;margin:2px 0 0}
+.sc60-protect{display:flex;gap:8px;align-items:center;font-size:12px;font-weight:700}
+.sc60-protect input{accent-color:#dba96d;width:17px;height:17px}
+.sc60-fusion-notice{padding:13px;border:1px solid #685843;border-radius:10px;margin-bottom:16px;color:#f0d8b6;font-size:12px}
+.sc60-fuse-grid{grid-template-columns:repeat(auto-fill,minmax(152px,1fr))}
+.sc60-fuse-grid .collect-card{min-width:0}
+.sc60-fuse-select{display:block;width:100%;min-height:42px;border:1px solid #73604e;border-radius:8px;
+ background:#342e2b;color:#f4d8b8;margin-top:8px;font-weight:750}
+.sc60-fuse-select.picked{background:#47604c;border-color:#9dd0a2;color:#fff}
+.sc60-fuse-last,.sc60-fuse-spare{font-size:10px;padding:5px 7px;border-radius:6px;text-align:center;margin-top:5px}
+.sc60-fuse-last{background:#693e34;color:#ffe1ce}
+.sc60-fuse-spare{background:#2c4738;color:#bdedcf}
+.sc60-fuse-pages{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:20px 0;color:#b8aca4;font-size:11px}
+.sc60-fuse-pages>div{display:flex;gap:7px}
+.sc60-empty{padding:30px;text-align:center;border:1px dashed #62554a;border-radius:12px}
+.sc60-fuse-action{position:sticky;bottom:8px;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:15px;
+ border:1px solid #947551;background:#282629f2;backdrop-filter:blur(10px);border-radius:12px;padding:16px;margin-top:22px;box-shadow:0 14px 35px #0007}
+.sc60-fuse-action>div{display:flex;flex-direction:column;gap:3px}
+.sc60-fuse-action strong{font-size:17px}
+.sc60-fuse-action small{font-size:11px;color:#c1b6a9}
+.sc60-confirm{max-width:590px;max-height:min(85vh,750px);overflow:auto}
+.sc60-confirm h2{font-size:30px;margin:8px 0 15px}
+.sc60-confirm ol{max-height:250px;overflow:auto;padding:14px 14px 14px 38px;background:#1e1f22;border-radius:8px}
+.sc60-confirm li{margin:3px 0}
+.sc60-danger{color:#ffc3b4;font-weight:800}
+.sc60-safe{color:#a3e8bd;font-weight:800}
+@media(max-width:800px){
+ .sc60-games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sc60-fuse-action{bottom:calc(68px + env(safe-area-inset-bottom,0px))}
+}
+@media(max-width:570px){
+ .sc60-games-grid{grid-template-columns:1fr}
+ .sc60-game-tile{min-height:200px}
+ .sc60-games-hero,.sc60-fusion-hero{padding:17px;align-items:flex-start}
+ .sc60-games-hero-stat{min-width:80px}
+ .sc60-fusion-ring{width:96px;height:96px}
+ .sc60-fusion-ring strong{font-size:29px}
+ .sc60-fusion-hero h2{font-size:29px}
+ .sc60-quiz{padding:15px}
+ .sc60-choice{min-height:54px;padding:8px;font-size:12px}
+ .sc60-choices{gap:7px}
+ .sc60-fuse-action{flex-direction:column;align-items:stretch}
+ .sc60-fuse-action .btn{width:100%}
+ .sc60-fuse-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sc60-fuse-pages{flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){
+ .sc60-progress>span{transition:none}
+}
