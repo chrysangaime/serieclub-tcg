@@ -85,8 +85,8 @@ jobs:
             ['supabase/game_v5.sql',fs.readFileSync('supabase/game_v5.sql','utf8')],
             ['supabase/install_v4_v5.sql',oneStep]
           ]){
-            assert.doesNotMatch(sql,/^\\s*DO\\s+\\$(?!\\$)/gm, path+' contient DO $ au lieu de DO $');
-            assert.doesNotMatch(sql,/^\\s*END\\s+\\$(?!\\$)/gm, path+' contient END $; au lieu de END $;');
+            assert.doesNotMatch(sql,/^\s*DO\s+\$(?!\$)/gm, path+' contient un délimiteur DO invalide');
+            assert.doesNotMatch(sql,/^\s*END\s+\$(?!\$)/gm, path+' contient un délimiteur END invalide');
           }
           assert.equal((oneStep.match(/^BEGIN;/gm)||[]).length,1,'Installateur : transaction unique');
           assert.equal((oneStep.match(/^COMMIT;/gm)||[]).length,1,'Installateur : commit unique');
