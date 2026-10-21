@@ -1,0 +1,70 @@
+/* SérieClub V5.3 — rareté visible, diffusion française sans sponsors supposés */
+.sc53-card,.sc53-detail{--sc53-color:#b1bdca;--sc53-glow:#a6b7ce25;--sc53-fill:#283644}
+.sc53-rarity-commune,.sc53-tier-commune{--sc53-color:#b0bfc8;--sc53-glow:#aebecd21;--sc53-fill:#394350}
+.sc53-rarity-peu-commune,.sc53-tier-peu-commune{--sc53-color:#8cddb9;--sc53-glow:#91e6b825;--sc53-fill:#254a3f}
+.sc53-rarity-rare,.sc53-tier-rare{--sc53-color:#80c9ff;--sc53-glow:#71bdff35;--sc53-fill:#244b6f}
+.sc53-rarity-epique,.sc53-tier-epique{--sc53-color:#cda6ff;--sc53-glow:#b57dff43;--sc53-fill:#423469}
+.sc53-rarity-legendaire,.sc53-tier-legendaire{--sc53-color:#ffce72;--sc53-glow:#ffc46e49;--sc53-fill:#72532e}
+.sc53-rarity-mythique,.sc53-tier-mythique{--sc53-color:#ff92bc;--sc53-glow:#ff80bc42;--sc53-fill:#783659}
+.sc53-rarity-unique,.sc53-tier-unique{--sc53-color:#fff09c;--sc53-glow:#f6d35c60;--sc53-fill:#726434}
+.sc53-rarity-unclassified,.sc53-tier-unclassified{--sc53-color:#9dabb6;--sc53-glow:#808ea821;--sc53-fill:#344556}
+.collect-card.sc53-card{
+ border:2px solid var(--sc53-color)!important;
+ background:linear-gradient(160deg,var(--sc53-glow),#26394b 48%,#202b3b)!important;
+ box-shadow:0 0 17px var(--sc53-glow);overflow:hidden
+}
+.sc53-card .sc53-poster-wrap{position:relative}
+.sc53-card .sc53-poster-wrap img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;margin:0}
+.sc53-card .sc53-rank-label{
+ position:absolute;top:7px;left:7px;max-width:calc(100% - 14px);
+ color:#112131;background:var(--sc53-color);
+ padding:5px 9px;border:1px solid #ffffff90;border-radius:6px;
+ font-weight:900;font-size:10px;text-transform:uppercase;letter-spacing:.035em;
+ text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ box-shadow:0 3px 9px #08132280
+}
+.sc53-card .rarity{color:var(--sc53-color)!important;font-size:10px;letter-spacing:.07em}
+.sc53-card .card-title{color:#f0f8f7}
+.sc53-detail.sc5-compact-dialog{
+ border:2px solid var(--sc53-color);
+ box-shadow:0 0 35px var(--sc53-glow),0 18px 44px #09101db5
+}
+.sc53-detail .sc53-official-rank{
+ display:inline-flex;align-items:center;
+ background:var(--sc53-fill);border:2px solid var(--sc53-color);
+ color:var(--sc53-color);border-radius:7px;padding:6px 10px;
+ font:900 11px/1.4 "Space Grotesk","DM Sans",sans-serif;
+ letter-spacing:.015em;text-transform:uppercase;
+ box-shadow:0 0 17px var(--sc53-glow)
+}
+.sc53-detail .sc53-rank-unknown{color:#a7b5c0;font-size:10px}
+.sc53-detail .sc5-poster{border:2px solid var(--sc53-color);box-shadow:0 0 13px var(--sc53-glow)}
+.sc53-fr-watch{
+ background:linear-gradient(140deg,#1a3744,#1a3042);
+ border:1px solid #3f7781;border-radius:11px;padding:12px 15px;margin:14px 0 3px;
+}
+.sc53-watch-title{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.sc53-watch-title b{font:800 15px "Space Grotesk",sans-serif;color:#d9fcf2}
+.sc53-watch-title small{font-size:10px;color:#a3d6d2}
+.sc53-watch-note{font-size:11px!important;line-height:1.55;color:#b7cdd1;margin:8px 0}
+.sc53-offer-group{display:flex;align-items:flex-start;gap:11px;margin:9px 0}
+.sc53-offer-group>strong{font-size:10px;color:#addbd7;flex:0 0 88px;padding-top:10px}
+.sc53-offers{display:flex;gap:7px;flex-wrap:wrap}
+.sc53-provider{display:flex;align-items:center;gap:6px;border:1px solid #4a7181;background:#223e4e;border-radius:7px;padding:5px 7px;font-size:10px;font-weight:750;color:#e9f5f4}
+.sc53-provider img{width:23px;height:23px;object-fit:contain;border-radius:5px}
+.sc53-watch-actions{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0 6px}
+.sc53-watch-actions .btn{font-size:10px;margin:0;padding:8px 10px}
+.sc53-watch-actions .sc53-jw-btn{background:#273d50;color:#c0f1e8;border:1px solid #60858e}
+.sc53-watch-attribution{font-size:9px!important;line-height:1.4;color:#9eafba;margin:7px 0}
+.sc53-broadcast{border-top:1px solid #3c6270;padding:9px 0 0;margin-top:9px}
+.sc53-broadcast strong{font-size:10px;color:#abd8d8}
+.sc53-broadcast p{font-size:10px;line-height:1.5;margin:4px 0;color:#afc0c8}
+@media(max-width:620px){
+ .sc53-offer-group{display:block}
+ .sc53-offer-group>strong{display:block;padding:0 0 5px}
+ .sc53-watch-title{display:block}
+ .sc53-watch-title small{display:block;margin-top:3px}
+ .sc53-card .sc53-rank-label{font-size:9px;padding:4px 6px}
+ .sc53-detail .sc53-official-rank{font-size:10px}
+ .sc53-fr-watch{padding:11px}
+}
