@@ -18,8 +18,8 @@ DECLARE s jsonb;r jsonb;chosen bigint;game_id uuid;
 BEGIN
  SELECT credits INTO first_credit FROM public.player_wallets WHERE player_id=auth.uid();
  IF public.rewarded_quiz_status()->>'enabled'<>'true' THEN RAISE EXCEPTION 'Arène non activée';END IF;
- FOR starts IN 1..3 LOOP
-  s:=public.start_rewarded_quiz(CASE WHEN starts=1 THEN 'poster' WHEN starts=2 THEN 'pixel' ELSE 'timeline' END);
+ FOR starts IN 1..4 LOOP
+  s:=public.start_rewarded_quiz(CASE WHEN starts=1 THEN 'poster' WHEN starts=2 THEN 'pixel' WHEN starts=3 THEN 'timeline' ELSE 'year' END);
   IF s->>'status'<>'active' OR s?'answer' OR (s->'question')?'answer'
     OR jsonb_array_length(s->'question'->'options')<>4 THEN
    RAISE EXCEPTION 'Le serveur a dévoilé une réponse ou une partie invalide';
@@ -41,14 +41,16 @@ BEGIN
   IF (public.submit_rewarded_quiz_answer(game_id,chosen)->>'earned')::integer<>0 THEN
    RAISE EXCEPTION 'Une réponse a été récompensée deux fois';
   END IF;
+  IF (public.start_rewarded_quiz(CASE WHEN starts=1 THEN 'poster' WHEN starts=2 THEN 'pixel' WHEN starts=3 THEN 'timeline' ELSE 'year' END)->>'status')<>'limit' THEN
+   RAISE EXCEPTION 'Rejeu du même mode autorisé avant le délai de 24 h';END IF;
  END LOOP;
  IF public.start_rewarded_quiz('year')->>'status'<>'limit' THEN
-  RAISE EXCEPTION 'Quatrième partie acceptée dans la même journée';END IF;
+  RAISE EXCEPTION 'Une cinquième partie du même mode acceptée dans les 24 h';END IF;
  IF (public.rewarded_quiz_status()->>'remaining_today')::integer<>0 THEN
   RAISE EXCEPTION 'Quota quotidien erroné';END IF;
  SELECT credits INTO last_credit FROM public.player_wallets WHERE player_id=auth.uid();
- IF last_credit<first_credit OR last_credit-first_credit>240 THEN
-  RAISE EXCEPTION 'Récompenses incompatibles avec le plafond de 240 crédits';END IF;
+ IF last_credit<first_credit OR last_credit-first_credit>320 THEN
+  RAISE EXCEPTION 'Récompenses incompatibles avec le plafond de 320 crédits';END IF;
  -- Les entrées restent serveur, pas d'UPDATE public du portefeuille.
 END $$;
 RESET ROLE;
@@ -65,4 +67,4 @@ BEGIN
  IF NOT blocked THEN RAISE EXCEPTION 'La table des réponses est visible du client';END IF;
 END $$;
 RESET ROLE;
-SELECT 'V7 vérifiée : cinq manches, points serveur, quota quotidien, non-rejeu et secret' AS resultat;
+SELECT 'V7.1 vérifiée : 4 modes indépendants, 24 h glissantes, points serveur et anti-rejeu' AS resultat;
