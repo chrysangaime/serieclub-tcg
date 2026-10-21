@@ -82,8 +82,8 @@ async function loadSession(){
   state.stock=status.data?.[0]||null;
   let [w,c,wi,tr]=await Promise.all([
    supa.from('player_wallets').select('*').eq('player_id',user.id).maybeSingle(),
-   supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered,rarity,rarity_source)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
-   supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500),
+   supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
+   supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500),
    supa.rpc('my_trade_offers')
   ]);
   if(wi.error&&/rarity|column|schema cache/i.test(wi.error.message)){
@@ -164,7 +164,7 @@ async function loadCollectionGoal(){
  loadCollectionGoal.pending=true;
  try{
   const {count,error}=await supa.from('series').select('id',{count:'exact',head:true})
-   .neq('rarity_source','pending').not('image_url','is',null);
+   .neq('rarity_source','pending').eq('fr_verified',true).not('image_url','is',null);
   state.collectionEligibleTotal=!error&&Number.isFinite(count)?count:0;
  }catch{state.collectionEligibleTotal=0}
  finally{
@@ -283,7 +283,8 @@ async function loadCatalog(reset=false){
  if(state.route==='catalog')render();
  const queryPage=withRarity=>{
   let query=supa.from('series')
-    .select(withRarity?'id,name,image_url,premiered,genres,rarity,rarity_source':'id,name,image_url,premiered,genres')
+    .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url')
+    .eq('fr_verified',true).neq('rarity_source','pending')
     .not('image_url','is',null).order('name')
     .range(page*36,page*36+35);
   if(state.catalogQuery.trim()){
@@ -292,14 +293,14 @@ async function loadCatalog(reset=false){
   return query;
  };
  try{
-  let {data,error}=await queryPage(true);
-  if(error&&/rarity|column|schema cache/i.test(error.message)){
-   ({data,error}=await queryPage(false));
-  }
+  // Fail closed: never return unverified series if the migration is missing.
+  const {data,error}=await queryPage(true);
   if(error)throw error;
   state.catalog=reset?[...(data||[])]:state.catalog.concat(data||[]);
   state.catalogMore=(data||[]).length===36;state.catalogPage=page+1;
- }catch(e){state.catalogError='Catalogue indisponible : '+e.message}
+ }catch(e){state.catalogError=/fr_verified|schema cache|column/i.test(e.message)
+  ?'Active la migration France V5.4 pour afficher uniquement les séries diffusées en France.'
+  :'Catalogue indisponible : '+e.message}
  finally{state.catalogLoading=false;if(state.route==='catalog')render()}
 }
 async function loadSeasonShows(){
@@ -307,8 +308,8 @@ async function loadSeasonShows(){
  try{
   const desired=['Wednesday','Stranger Things','The Haunting of Hill House','Midnight Mass','From','American Horror Story','The Last of Us','Penny Dreadful','The Walking Dead'];
   const [curated,genre]=await Promise.all([
-   supa.from('series').select('id,name,image_url,premiered,genres').in('name',desired).not('image_url','is',null).limit(12),
-   supa.from('series').select('id,name,image_url,premiered,genres').overlaps('genres',['Horror','Thriller','Supernatural','Mystery']).not('image_url','is',null).order('premiered',{ascending:false}).limit(30)
+   supa.from('series').select('id,name,image_url,premiered,genres').in('name',desired).eq('fr_verified',true).neq('rarity_source','pending').not('image_url','is',null).limit(12),
+   supa.from('series').select('id,name,image_url,premiered,genres').overlaps('genres',['Horror','Thriller','Supernatural','Mystery']).eq('fr_verified',true).neq('rarity_source','pending').not('image_url','is',null).order('premiered',{ascending:false}).limit(30)
   ]);
   const pool=[...(curated.data||[]),...(genre.data||[])];
   const seen=new Set();state.seasonShows=pool.filter(x=>x?.image_url&&(!seen.has(x.id))&&seen.add(x.id)).slice(0,6);
@@ -328,7 +329,7 @@ async function catalogueMatches(shows){
  const ids=shows.map(show=>Number(show.id)).filter(id=>Number.isSafeInteger(id)&&id>0).slice(0,120);
  if(!ids.length)return [];
  try{
-  const {data,error}=await supa.from('series').select('id').in('id',ids);
+  const {data,error}=await supa.from('series').select('id').in('id',ids).eq('fr_verified',true).neq('rarity_source','pending');
   return error?[]:(data||[]).map(x=>x.id);
  }catch{return []}
 }
@@ -351,7 +352,7 @@ async function openSeriesDetail(id){
   const loaded=await getShowDetails(numeric);
   if(!detailReady(token))return;
   if(!loaded&&!base?.name){
-   const {data,error}=await supa.from('series').select('id,name,image_url,premiered,genres,rarity,rarity_source').eq('id',numeric).maybeSingle();
+   const {data,error}=await supa.from('series').select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url').eq('id',numeric).maybeSingle();
    if(!error&&data)base=data;
   }
   if(!loaded&&!base?.name){
@@ -360,7 +361,7 @@ async function openSeriesDetail(id){
   }
   // The canonical series rank is stored in Supabase, never derived from a
   // card's historic rarity, a TVmaze popularity weight or a selected filter.
-  if(!base.rarity){
+  if(!base.rarity||base.fr_verified===undefined){
     const {data:canonical,error:catalogError}=await supa.from('series')
       .select('id,name,image_url,premiered,genres,rarity,rarity_source')
       .eq('id',numeric).maybeSingle();
@@ -484,6 +485,11 @@ async function loadRankings(){
 async function toggleWishlist(id){
  if(!state.user){openAuth();return}
  const exists=state.wishes.some(w=>String(w.series_id)===String(id));
+ if(!exists){
+  const check=await supa.from('series').select('id')
+   .eq('id',id).eq('fr_verified',true).neq('rarity_source','pending').maybeSingle();
+  if(check.error||!check.data){toast('Cette série attend une preuve de diffusion française avant d’être ajoutée aux souhaits.',true);return}
+ }
  const reply=exists?await supa.from('player_wishlist').delete().eq('owner_id',state.user.id).eq('series_id',id):await supa.from('player_wishlist').insert({owner_id:state.user.id,series_id:id});
  if(reply.error){toast('Liste de souhaits : '+reply.error.message,true);return}
  const {data}=await supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered)').eq('owner_id',state.user.id).order('created_at',{ascending:false});
