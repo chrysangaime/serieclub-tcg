@@ -1,11 +1,11 @@
 {
   "name": "serieclub-tcg",
-  "version": "5.4.1",
+  "version": "5.5.0",
   "private": true,
   "type": "module",
   "description": "Application Web de collection de cartes de series TV",
   "scripts": {
-    "check": "node --check v3/app.js && node --check v3/views.js && node --check v4/club.js && node --check v4/albums.js && node --check v4/series.js && node --check v4/synopsis-fr.js && node --check v5/collection.js && node --check v5/fr-watch.js && node --check scripts/sync-fr-providers.mjs && node --check v5/fr-text.js",
-    "test": "node --test tests/series.test.mjs tests/synopsis-fr.test.mjs tests/collection.test.mjs tests/france-rarity.test.mjs tests/fr-eligibility.test.mjs"
+    "check": "node --check v3/app.js && node --check v3/views.js && node --check v4/club.js && node --check v4/albums.js && node --check v4/series.js && node --check v4/synopsis-fr.js && node --check v5/collection.js && node --check v5/fr-watch.js && node --check scripts/sync-fr-providers.mjs && node --check v5/fr-text.js && node --check v5/fr-collection.js",
+    "test": "node --test tests/series.test.mjs tests/synopsis-fr.test.mjs tests/collection.test.mjs tests/france-rarity.test.mjs tests/fr-eligibility.test.mjs tests/fr-archive-watch.test.mjs"
   }
 }
