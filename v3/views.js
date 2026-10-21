@@ -155,13 +155,13 @@ export function profile(s){
  return '<div class="page-content">'+heading('Mon profil','Ton identité et ta progression au sein du club.')+'<div class="metric-row"><div class="metric"><strong>'+money(s.cards.length)+'</strong><span>Cartes</span></div><div class="metric"><strong>'+money(s.wallet?.boosters_opened)+'</strong><span>Paquets ouverts</span></div><div class="metric"><strong>'+money(s.wallet?.credits)+'</strong><span>Crédits</span></div><div class="metric"><strong>'+money(s.wallet?.experience)+'</strong><span>XP</span></div></div><div class="panel"><h2>'+esc(s.username||'Bienvenue dans le club')+'</h2><p>'+(s.user?esc(s.user.email):'Connecte-toi pour jouer et sauvegarder ta progression.')+'</p>'+(s.user?'<div class="row"><input class="input" id="usernameInput" maxlength="24" value="'+esc(s.username||'')+'" placeholder="Pseudonyme"></div><div class="row" style="margin:12px 0"><input class="input" id="bioInput" maxlength="160" style="width:100%" value="'+esc(s.bio||'')+'" placeholder="Une phrase sur tes séries favorites (160 caractères)"></div><div class="row"><label for="favoriteGenre">Genre favori</label><select id="favoriteGenre"><option value="">À découvrir</option>'+['Drama','Comedy','Action','Horror','Thriller','Mystery','Science-Fiction','Fantasy','Animation','Crime','Romance','Family'].map(g=>'<option value="'+esc(g)+'" '+(s.favoriteGenre===g?'selected':'')+'>'+esc(genreFR(g))+'</option>').join('')+'</select><button class="btn primary" id="usernameSave">Enregistrer mon profil</button><button class="btn subtle" id="signout">Déconnexion</button></div>':'<button class="btn primary" data-auth>Connexion / inscription</button>')+'</div></div>';
 }
 export function games(s){
- const online=s.rewardStatus?.enabled===true;
- const remaining=Number(s.rewardStatus?.remaining_today??3);
+ const online=s.rewardStatus?.enabled===true&&s.rewardStatus?.limit_per_mode_hours===24;
+ const remaining=Number(s.rewardStatus?.remaining_today??4);
  const menu=gameCards(s.rewardStatus||{},s.quizRecords||{});
  const intro=online?
    '<div class="sc7-rewards-bar"><strong>✦ +10 crédits par bonne réponse</strong><strong>+30 pour un sans-faute</strong><span>'+
-    remaining+' partie'+(remaining===1?'':'s')+' récompensée'+(remaining===1?'':'s')+' restante'+(remaining===1?'':'s')+' aujourd’hui</span></div>':
-   '<div class="sc7-rewards-bar"><strong>Défis libres</strong><span>Les récompenses en crédits seront disponibles prochainement.</span></div>';
+    remaining+' défi'+(remaining===1?'':'s')+' disponible'+(remaining===1?'':'s')+' · 1 tentative par jeu toutes les 24 heures</span></div>':
+   '<div class="sc7-rewards-bar"><strong>Entraînement</strong><span>Une tentative par jeu toutes les 24 h. Aucun crédit distribué dans ce mode.</span></div>';
  const playing=s.rewardQuiz
   ?rewardQuizHTML(s.rewardQuiz,s.rewardFeedback,s.rewardBusy)
   :s.quiz?quizHTML(s.quiz):menu;
@@ -179,7 +179,7 @@ export function games(s){
  '</div>';
 }
 export function rules(){
- const data=[['01','PAQUETS','5 cartes par ouverture. Dix paquets maximum en réserve, recharge de 10 minutes.'],['02','RARETÉS','Chaque série a un seul rang officiel, identique pour tous les exemplaires. Sept niveaux, de Commune à Unique.'],['03','FUSIONS','Dix cartes de même rareté sont consommées pour obtenir une carte officielle du rang supérieur. La sélection intelligente protège par défaut les derniers exemplaires et une confirmation précède toute fusion.'],['04','HALLOWEEN','Paquet saisonnier du 1er au 31 octobre, au moins une série d’horreur ou thriller.'],['05','RÉCOMPENSES','25 crédits et 50 XP par ouverture. 100 crédits une fois par jour.'],['06','COMPTE','Cartes sauvegardées sur Supabase, protégées par contrôle de propriétaire.'],['07','LE STUDIO','Retrouve tes séries, doublons, cartes protégées et souhaits pour organiser ta collection.'],['08','JEUX & DÉFIS','Quatre défis de culture séries : récompenses en crédits après activation de l’arène sécurisée, limitées à trois parties par jour.']];
+ const data=[['01','PAQUETS','5 cartes par ouverture. Dix paquets maximum en réserve, recharge de 10 minutes.'],['02','RARETÉS','Chaque série a un seul rang officiel, identique pour tous les exemplaires. Sept niveaux, de Commune à Unique.'],['03','FUSIONS','Dix cartes de même rareté sont consommées pour obtenir une carte officielle du rang supérieur. La sélection intelligente protège par défaut les derniers exemplaires et une confirmation précède toute fusion.'],['04','HALLOWEEN','Paquet saisonnier du 1er au 31 octobre, au moins une série d’horreur ou thriller.'],['05','RÉCOMPENSES','25 crédits et 50 XP par ouverture. 100 crédits une fois par jour.'],['06','COMPTE','Cartes sauvegardées sur Supabase, protégées par contrôle de propriétaire.'],['07','LE STUDIO','Retrouve tes séries, doublons, cartes protégées et souhaits pour organiser ta collection.'],['08','JEUX & DÉFIS','Quatre défis de culture séries : récompenses en crédits après activation de l’arène sécurisée, limitées à une tentative par jeu toutes les 24 heures côté serveur.']];
  return '<div class="page-content">'+heading('Règles du jeu','Comment commencer ta collection.')+'<div class="guide-grid">'+data.map(([n,t,d])=>'<div class="guide-item"><div class="big">'+n+'</div><h2>'+t+'</h2><p>'+d+'</p></div>').join('')+'</div></div>';
 }
 export function settings(s){
