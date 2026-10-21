@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {sameSeries,collectFrenchOffers} from '../scripts/expand-fr-catalog.mjs';
+import {renderFranceAvailability} from '../v5/fr-watch.js';
 
 const french={id:991,name:'The X-Files',original_name:'The X-Files',first_air_date:'1993-09-10'};
 const tvmaze={id:430,name:'The X-Files',premiered:'1993-09-10',image:{medium:'https://static.tvmaze.com/a.jpg'}};
@@ -39,4 +40,15 @@ test('aucune carte n’est supprimée : on enrichit la base existante de manièr
  assert.match(importer,/tvmaze-import-state\.json/);
  assert.match(importer,/reachedEnd\?0:page/);
  assert.match(workflow,/tvmaze-import-state\.json/);
+});
+
+test('une diffusion française à venir est présentée comme annoncée, pas déjà passée',()=>{
+ const details={fr_verified:true,premiered:'2999-01-01',
+  network:{name:'France 2',country:{code:'FR'}}};
+ const future=renderFranceAvailability(null,details);
+ assert.match(future,/Diffusion annoncée en France/);
+ assert.match(future,/France 2/);
+ assert.doesNotMatch(future,/France · diffusion attestée/);
+ const past=renderFranceAvailability(null,{...details,premiered:'2020-01-01'});
+ assert.match(past,/France · diffusion attestée/);
 });
