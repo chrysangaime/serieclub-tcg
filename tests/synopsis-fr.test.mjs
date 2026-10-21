@@ -80,7 +80,7 @@ test('TVmaze translations are labeled automated and do not expose English first'
 test('if French sources are unavailable, English is hidden in an opt-in disclosure',()=>{
  const html=frenchSynopsisHTML({source:'unavailable',text:''},
    'A young protagonist discovers the secrets of a mysterious city.');
- assert.match(html,/Résumé français fiable/);
+ assert.match(html,/résumé français fiable/i);
  assert.match(html,/<details class="sc5-english-original">/);
  assert.match(html,/<summary>Consulter le synopsis original en anglais<\/summary>/);
  const loading=showDetailHTML({
