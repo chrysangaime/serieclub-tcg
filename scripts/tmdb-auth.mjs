@@ -10,7 +10,7 @@ export function tmdbRequest(endpoint,secret) {
   const raw=String(secret||'').trim().replace(/^Bearer\s+/i,'').trim();
   if(!raw)throw Error('Identifiant TMDB manquant dans les secrets GitHub.');
   // URL construite uniquement pour l'hôte officiel : aucun secret transmis ailleurs.
-  if(!/^\/(?:discover\/tv|tv\/\d+\/external_ids|tv\/\d+\/watch\/providers|search\/tv)(?:\?|$)/.test(endpoint)){
+  if(!/^\/(?:discover\/tv|tv\/\d+\/external_ids|tv\/\d+\/watch\/providers|tv\/\d+\/aggregate_credits|search\/tv)(?:\?|$)/.test(endpoint)){
     throw Error('Chemin TMDB non autorisé');
   }
   const url=new URL('https://api.themoviedb.org/3'+endpoint);
