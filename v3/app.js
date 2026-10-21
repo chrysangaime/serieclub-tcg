@@ -1,11 +1,11 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=6.0.1';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=6.0.1';
-import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=6.0.1';
-import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=5.6.1';
+import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=6.1.0';
+import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
-import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.8.0';
-import{getFrenchCastByShow}from'../v5/cast-fr.js?v=5.10.0';
+import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6.1.0';
+import{getFrenchCastByShow}from'../v5/cast-fr.js?v=6.1.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.6.1';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.6.1';
@@ -368,7 +368,7 @@ async function loadSeasonShows(){
 
 function showDetailLoading(label='Préparation de la fiche…'){
  const root=$('overlay');root.classList.remove('hidden');
- root.innerHTML='<div class="dialog sc5-dialog sc5-loading" role="dialog" aria-modal="true" aria-label="Chargement de la fiche"><button class="close" data-close aria-label="Fermer">×</button><div class="sc5-loader-icon">✧</div><h2>'+esc(label)+'</h2><p>Informations fournies par TVmaze.</p></div>';
+ root.innerHTML='<div class="dialog sc5-dialog sc5-loading" role="dialog" aria-modal="true" aria-label="Chargement de la fiche"><button class="close" data-close aria-label="Fermer">×</button><div class="sc5-loader-icon">✧</div><h2>'+esc(label)+'</h2></div>';
  root.querySelector('[data-close]')?.focus();
 }
 function detailReady(token){
