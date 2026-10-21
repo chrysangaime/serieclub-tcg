@@ -8,7 +8,7 @@
 import {whereToWatchLink,amazonSearchLink,amazonIsAffiliate} from '../v3/discovery.js?v=6.1.0';
 import {renderFranceAvailability,getFrenchOriginChannel} from '../v5/fr-watch.js?v=6.1.0';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
-import {castFallbackHTML} from '../v5/cast-fr.js?v=5.10.0';
+import {castFallbackHTML} from '../v5/cast-fr.js?v=6.1.0';
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
