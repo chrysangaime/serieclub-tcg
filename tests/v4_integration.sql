@@ -83,7 +83,7 @@ begin
   erroneous_success:=true;
  exception when others then null;end;
  if erroneous_success then raise exception 'Suppression étrangère autorisée';end if;
-end $;
+end $$;
 reset role;
 
 do $$
