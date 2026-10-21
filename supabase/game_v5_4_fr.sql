@@ -191,14 +191,14 @@ GRANT EXECUTE ON FUNCTION public.fuse_cards(uuid[]) TO authenticated;
 -- de souhaits n'admet que des titres français vérifiés.
 CREATE OR REPLACE FUNCTION public.enforce_new_wishlist_fr()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
-SET search_path=public,pg_temp AS $
+SET search_path=public,pg_temp AS $$
 BEGIN
  IF NOT EXISTS (SELECT 1 FROM public.series s WHERE s.id=NEW.series_id
   AND s.fr_verified IS TRUE AND s.rarity_source<>'pending') THEN
   RAISE EXCEPTION 'Série à vérifier pour une diffusion en France';
  END IF;
  RETURN NEW;
-END $;
+END $$;
 DROP TRIGGER IF EXISTS sc_enforce_new_wishlist_fr ON public.player_wishlist;
 CREATE TRIGGER sc_enforce_new_wishlist_fr
  BEFORE INSERT ON public.player_wishlist FOR EACH ROW
