@@ -15,7 +15,14 @@ const year=s=>Number(String(s?.premiered||'').slice(0,4));
 const valid=s=>Number.isSafeInteger(Number(s?.id))&&s?.name&&/^https:\/\//.test(s?.image_url||'')&&year(s)>=1900&&Date.parse(String(s.premiered))<=Date.now()&&s.fr_verified===true;
 const pick=(items,n,rng)=>shuffle(items,rng).slice(0,n);
 export function quizQuestion(type,pool,rng=Math.random){
- const list=pool.filter(valid);
+ // Éviter les intitulés identiques et les années équivalentes :
+ // chaque question ne doit admettre qu'une seule réponse correcte.
+ const known=new Set();
+ const list=pool.filter(valid).filter(item=>{
+  const key=String(item.name).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase();
+  if(known.has(key))return false;
+  known.add(key);return true;
+ });
  if(list.length<4)return null;
  if(type==='timeline'){
   const pairs=pick(list,Math.min(list.length,18),rng);
@@ -28,10 +35,21 @@ export function quizQuestion(type,pool,rng=Math.random){
   }
   return null;
  }
- const choices=pick(list,4,rng);
- if(choices.length<4)return null;
- const target=choices[0];
- const options=shuffle(choices,rng);
+ let options,target;
+ if(type==='year'){
+  const byYear=new Map();
+  for(const item of shuffle(list,rng)){
+   const y=year(item);
+   if(!byYear.has(y))byYear.set(y,item);
+  }
+  options=pick([...byYear.values()],4,rng);
+  if(options.length<4)return null;
+  target=options[0];
+ }else{
+  options=pick(list,4,rng);
+  target=options[0];
+ }
+ options=shuffle(options,rng);
  if(type==='poster')return {type,items:options,target,answer:String(target.id),
   description:'Reconnais cette affiche de série.'};
  if(type==='year')return {type,items:options,target,answer:String(target.id),
