@@ -1,15 +1,12 @@
--- SérieClub TCG — INSTALLATION SIMPLIFIÉE V4 + V5
--- Copier ce fichier ENTIER dans une nouvelle requête Supabase SQL Editor.
--- Une seule transaction : V4 crée les tables de marché, V5 fige la rareté des séries.
--- Si une instruction échoue, AUCUN des deux blocs n'est validé.
+-- SérieClub TCG — V4+V5 : INSTALLATION EN UNE SEULE REQUÊTE SQL
+-- Copier tout ce fichier dans Supabase SQL Editor (nouvelle requête).
 -- Prérequis : schema.sql, game.sql, game_v2.sql, game_v3.sql.
--- Attention : la rareté des cartes existantes est uniformisée et les annonces
--- dont le rang change peuvent être annulées pour protéger les échanges.
+-- Tout est transactionnel : une erreur annule V4 ET V5 dans cette exécution.
+-- Attention : les raretés anciennes sont uniformisées ; seules les annonces
+-- concernées par un changement de rareté sont clôturées.
 BEGIN;
 
--- ===== V4 : MARCHÉ, ÉCHANGES, PROFILS, ALBUMS, QUÊTES =====
--- SérieClub TCG V4 — migration unique et transactionnelle, après V3.
--- Le Comptoir, Le Signal, les missions et Mes Saisons.
+-- V4 : MARCHÉ ET ÉCHANGES
 -- SérieClub V4 — Marché P2P et transferts atomiques.
 -- Prérequis : schema.sql, game.sql, game_v2.sql et game_v3.sql.
 -- Les crédits sont strictement virtuels, non achetables et non retirables.
@@ -631,14 +628,7 @@ grant execute on function public.my_personal_albums() to authenticated;
 grant execute on function public.public_personal_albums() to authenticated;
 grant execute on function public.album_card_data(uuid) to authenticated;
 
--- ===== V5 : RARETÉ OFFICIELLE UNIQUE PAR SÉRIE =====
--- SERIECLUB V5 : UNE RARETÉ PAR SÉRIE, JAMAIS PAR EXEMPLAIRE.
--- Exécuter APRÈS game_v4.sql (et ses prérequis). Aucune clé secrète requise.
--- TVmaze weight : indicateur de popularité, pas une audience TV certifiée.
--- Les trois références exigées : Lost (2004), Stranger Things et
--- The X-Files (1993) sont toutes LÉGENDAIRES (ni Commune ni Mythique).
--- Les cartes existantes sont uniformisées. Les annonces d'une carte dont la
--- rareté change sont annulées et les propositions associées libérées.
+-- V5 : UNE RARETÉ OFFICIELLE PAR SÉRIE
 -- Préflight : ne pas démarrer la reclassification si la V4 manque.
 -- Le diagnostic est volontairement explicite et la transaction reste atomique.
 DO $
@@ -781,23 +771,32 @@ CREATE TRIGGER sc_sync_series_rarity
  WHEN (OLD.rarity IS DISTINCT FROM NEW.rarity)
  EXECUTE FUNCTION public.reclassify_owned_cards();
 
--- Anciens exemplaires : un rang unique à partir de maintenant.
--- Annuler les transactions en cours pour ne pas changer leur valeur
--- alors que l'offre est déjà diffusée.
-DO $$
-BEGIN
- IF EXISTS(
-   SELECT 1 FROM public.player_cards c JOIN public.series s ON s.id=c.series_id
-   WHERE c.rarity IS DISTINCT FROM s.rarity
- ) THEN
-  UPDATE public.card_trade_offers SET status='declined',closed_at=now()
-   WHERE status='pending';
-  UPDATE public.card_listings SET status='cancelled',closed_at=now()
-   WHERE status='active';
-  UPDATE public.player_cards SET reserved_trade_id=NULL
-   WHERE reserved_trade_id IS NOT NULL;
- END IF;
-END $$;
+-- Anciennes cartes : ne clôturer QUE les transactions utilisant un
+-- exemplaire dont la rareté va changer. Préserver les annonces sans rapport.
+WITH changed_cards AS MATERIALIZED (
+ SELECT c.id FROM public.player_cards c
+ JOIN public.series s ON s.id=c.series_id
+ WHERE c.rarity IS DISTINCT FROM s.rarity
+), revoked AS (
+ UPDATE public.card_trade_offers o
+ SET status='declined',closed_at=now()
+ WHERE o.status='pending' AND (
+  o.offered_card_id IN (SELECT id FROM changed_cards)
+  OR EXISTS (
+   SELECT 1 FROM public.card_listings l
+   WHERE l.id=o.listing_id AND l.card_id IN (SELECT id FROM changed_cards)
+  )
+ )
+ RETURNING o.id
+)
+UPDATE public.player_cards c SET reserved_trade_id=NULL
+WHERE c.reserved_trade_id IN (SELECT id FROM revoked);
+UPDATE public.card_listings l SET status='cancelled',closed_at=now()
+WHERE l.status='active' AND EXISTS (
+ SELECT 1 FROM public.player_cards c
+ JOIN public.series s ON s.id=c.series_id
+ WHERE c.id=l.card_id AND c.rarity IS DISTINCT FROM s.rarity
+);
 UPDATE public.player_cards c SET rarity=s.rarity
 FROM public.series s WHERE c.series_id=s.id AND c.rarity IS DISTINCT FROM s.rarity;
 
