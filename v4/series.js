@@ -6,7 +6,7 @@
  * résumés et crédits sont chargés uniquement à la demande.
  */
 import {whereToWatchLink,amazonSearchLink,amazonIsAffiliate} from '../v3/discovery.js?v=5.3.1';
-import {renderFranceAvailability,getFrenchOriginChannel} from '../v5/fr-watch.js?v=5.6.0';
+import {renderFranceAvailability,getFrenchOriginChannel} from '../v5/fr-watch.js?v=5.6.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({
