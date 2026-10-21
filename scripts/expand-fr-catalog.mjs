@@ -1,0 +1,194 @@
+/**
+ * Extension automatique du catalogue jouable SérieClub.
+ * Découverte : TMDB avec offres effectivement répertoriées en France.
+ * Identifiants, affiches et métadonnées : TVmaze, sans casser les cartes existantes.
+ * Un titre sans correspondance sûre ou sans offre FR vérifiée n'est JAMAIS ajouté.
+ * Exécution serveur GitHub Actions uniquement : les clés ne vont pas au navigateur.
+ */
+import fs from 'node:fs/promises';
+import {pathToFileURL} from 'node:url';
+import {resolve} from 'node:path';
+
+const TMDB='https://api.themoviedb.org/3';
+const MAZE='https://api.tvmaze.com';
+const STATE='data/catalog-fr-state.json';
+const WATCH='data/watch-fr.json';
+const ALLOWED=['flatrate','free','ads','rent','buy'];
+const pause=ms=>new Promise(r=>setTimeout(r,ms));
+const clean=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const year=v=>Number(String(v||'').slice(0,4))||null;
+const validId=v=>Number.isSafeInteger(Number(v))&&Number(v)>0;
+const limit=(v,def,max)=>Math.max(1,Math.min(max,Number(v)||def));
+
+/** Refuse les homonymes et les séries au millésime incorrect. */
+export function sameSeries(tmdb,maze,byExternalId=false){
+ if(!validId(maze?.id)||!maze?.name||!maze?.image?.medium)return false;
+ const a=year(tmdb?.first_air_date),b=year(maze?.premiered);
+ if(!a||!b||Math.abs(a-b)>1)return false;
+ if(byExternalId)return true; // concordance TVDB/IMDb + millésime
+ const wanted=[tmdb.original_name,tmdb.name].map(clean).filter(Boolean);
+ return wanted.includes(clean(maze.name));
+}
+
+/** L'éligibilité France exige une vraie catégorie d'offre dans results.FR. */
+export function collectFrenchOffers(region){
+ if(!region||typeof region!=='object')return [];
+ const seen=new Set(),offers=[];
+ for(const type of ALLOWED){
+  for(const p of Array.isArray(region[type])?region[type]:[]){
+   if(!validId(p?.provider_id)||!p.provider_name)continue;
+   const id=type+':'+p.provider_id;
+   if(seen.has(id))continue;
+   seen.add(id);
+   offers.push({type,provider_id:Number(p.provider_id),
+    name:String(p.provider_name).slice(0,65),
+    logo_path:/^\/[A-Za-z0-9_-]+\.(png|jpe?g|webp)$/i.test(p.logo_path||'')?p.logo_path:null});
+  }
+ }
+ return offers.slice(0,45);
+}
+
+async function requestJSON(url,headers={},allow404=false){
+ for(let attempt=0;attempt<4;attempt++){
+  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),12000);
+  try{
+   const res=await fetch(url,{headers:{Accept:'application/json',...headers},signal:ctl.signal});
+   if(res.status===404&&allow404)return null;
+   if(res.ok)return await res.json();
+   if(![429,500,502,503,504].includes(res.status))throw Error('HTTP '+res.status+' '+new URL(url).pathname);
+  }catch(err){
+   if(attempt===3)throw err;
+  }finally{clearTimeout(timer)}
+  await pause(800*(attempt+1));
+ }
+ throw Error('Échec API après plusieurs tentatives');
+}
+async function tmdb(path,token){return requestJSON(TMDB+path,{Authorization:'Bearer '+token})}
+async function tvmaze(path){return requestJSON(MAZE+path,{},true)}
+
+async function resolveTVmaze(candidate,token){
+ const external=await tmdb('/tv/'+candidate.id+'/external_ids',token);
+ for(const [parameter,id] of [['thetvdb',external?.tvdb_id],['imdb',external?.imdb_id]]){
+  if(!id)continue;
+  const found=await tvmaze('/lookup/shows?'+parameter+'='+encodeURIComponent(id));
+  if(sameSeries(candidate,found,true))return found;
+ }
+ // Le titre localisé seul n'est PAS une identité suffisante.
+ // Réexamen de l'original avec validation titre + année, sans devinette.
+ for(const title of new Set([candidate.original_name,candidate.name].filter(Boolean))){
+  const found=await tvmaze('/singlesearch/shows?q='+encodeURIComponent(title));
+  if(sameSeries(candidate,found,false))return found;
+ }
+ return null;
+}
+
+async function supaJSON(url,key,options={}){
+ const result=await fetch(url,{
+  ...options,headers:{apikey:key,Authorization:'Bearer '+key,
+    'Content-Type':'application/json',...(options.headers||{})}
+ });
+ if(!result.ok){
+  const info=(await result.text()).slice(0,240);
+  throw Error('Supabase HTTP '+result.status+': '+info);
+ }
+ if(result.status===204)return null;
+ return result.headers.get('content-type')?.includes('json')?result.json():null;
+}
+
+async function upsertConfirmed(show,candidate,offers,supabase,key,when){
+ // Ne PAS réécrire les colonnes de rareté ni les preuves déjà validées.
+ const row={
+  id:show.id,name:show.name,
+  premiered:/^\d{4}-\d{2}-\d{2}$/.test(show.premiered||'')?show.premiered:null,
+  genres:Array.isArray(show.genres)?show.genres:[],
+  image_url:show.image.medium,source:'tvmaze',
+  popularity_weight:Number.isFinite(show.weight)?show.weight:null,
+  rating_average:Number.isFinite(show.rating?.average)?show.rating.average:null
+ };
+ await supaJSON(supabase+'/rest/v1/series?on_conflict=id',key,{
+  method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},
+  body:JSON.stringify([row])
+ });
+ const evidence='https://www.themoviedb.org/tv/'+candidate.id+'/watch?locale=FR';
+ await supaJSON(supabase+'/rest/v1/series?id=eq.'+show.id+'&fr_verified=is.false',key,{
+  method:'PATCH',headers:{Prefer:'return=minimal'},
+  body:JSON.stringify({fr_verified:true,fr_verification_method:'tmdb_fr_offer',
+   fr_evidence_url:evidence,fr_verified_at:when})
+ });
+ return {
+  country:'FR',tmdb_id:candidate.id,checked_at:when,
+  url:'https://www.themoviedb.org/tv/'+candidate.id+'/watch?locale=FR',
+  offers
+ };
+}
+
+export async function run(){
+ const token=process.env.TMDB_READ_ACCESS_TOKEN;
+ const key=process.env.SUPABASE_SERVICE_ROLE_KEY;
+ const base=(process.env.SUPABASE_URL||'https://anjfidksqbqlaggttdop.supabase.co').replace(/\/$/,'');
+ if(!token||!key)throw Error('Secrets TMDB_READ_ACCESS_TOKEN et SUPABASE_SERVICE_ROLE_KEY indispensables');
+ if(!/^https:\/\/[a-z0-9.-]+$/i.test(base))throw Error('URL Supabase invalide');
+ const pageCount=limit(process.env.FR_DISCOVERY_PAGES,20,60);
+ const budget=limit(process.env.FR_DISCOVERY_BUDGET,400,1000);
+ const [stateFile,watchFile]=await Promise.all([
+  fs.readFile(STATE,'utf8').catch(()=>'{"next_page":1}'),
+  fs.readFile(WATCH,'utf8')
+ ]);
+ const state=JSON.parse(stateFile),watch=JSON.parse(watchFile);
+ if(!watch.titles||typeof watch.titles!=='object')throw Error('Cache FR incorrect');
+ let nextPage=limit(process.env.FR_START_PAGE||state.next_page,1,500);
+ const checked_at=new Date().toISOString();
+ let discovered=0,approved=0,noMatch=0,withoutOffers=0,errors=0,processedPages=0;
+ let totalPages=500;
+ for(let j=0;j<pageCount&&discovered<budget;j++){
+  const params=new URLSearchParams({language:'fr-FR',watch_region:'FR',
+   with_watch_monetization_types:'flatrate|free|ads|rent|buy',
+   include_adult:'false',sort_by:'popularity.desc',page:String(nextPage)});
+  const page=await tmdb('/discover/tv?'+params,token);
+  totalPages=Math.max(1,Math.min(500,Number(page.total_pages)||500));
+  if(nextPage>totalPages){nextPage=1;j--;continue}
+  for(const candidate of Array.isArray(page.results)?page.results:[]){
+   if(discovered>=budget)break;
+   if(!validId(candidate.id)||!year(candidate.first_air_date)||!candidate.original_name)continue;
+   discovered++;
+   try{
+    const show=await resolveTVmaze(candidate,token);
+    if(!show){noMatch++;continue}
+    const region=(await tmdb('/tv/'+candidate.id+'/watch/providers',token))?.results?.FR;
+    const offers=collectFrenchOffers(region);
+    if(!offers.length){withoutOffers++;continue}
+    // Même TVmaze ID => mise à jour, jamais de nouvelle identité pour le doublon.
+    const cached=watch.titles[String(show.id)];
+    const record=await upsertConfirmed(show,candidate,offers,base,key,checked_at);
+    if(cached?.source==='justwatch_fr_editorial'&&Array.isArray(cached.offers)&&
+       cached.offers.length){
+      // Ne jamais effacer les relevés éditoriaux attribués avec leurs liens directs.
+    }else watch.titles[String(show.id)]=record;
+    approved++;
+   }catch(e){
+    errors++; console.warn('Série TMDB',candidate.id,':',e.message);
+    if(errors>=25)throw Error('Arrêt prudent : trop d’erreurs API. Progression non publiée.');
+   }
+   await pause(550); // rester courtois envers TVmaze et TMDB
+  }
+  processedPages++;
+  nextPage=nextPage>=totalPages?1:nextPage+1;
+  console.log('Découverte FR : page',processedPages+'/'+pageCount,
+   '| vérifiées',approved,'| sans correspondance',noMatch);
+ }
+ if(processedPages===0)throw Error('Aucune page de découverte traitée');
+ watch.updated_at=checked_at;
+ state.next_page=nextPage;state.updated_at=checked_at;
+ state.last_run={pages:processedPages,examined:discovered,confirmed:approved,
+  no_match:noMatch,no_fr_offer:withoutOffers,errors};
+ await Promise.all([
+  fs.writeFile(WATCH,JSON.stringify(watch)+'\n'),
+  fs.writeFile(STATE,JSON.stringify(state,null,2)+'\n')
+ ]);
+ console.log('Terminé :',JSON.stringify(state.last_run),
+  '| page suivante',nextPage,'| titres FR historiques en cache',Object.keys(watch.titles).length);
+}
+if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
+ run().catch(e=>{console.error(e.message);process.exitCode=1});
+}
