@@ -26,7 +26,7 @@ export function gameCards(status={},records={}){
     (active?'DÉFI RÉCOMPENSÉ':'ENTRAÎNEMENT')+'</span><h2>'+esc(title)+'</h2><p>'+esc(description)+'</p>'+
    '<div class="sc7-mode-meta"><span>5 questions</span><span>'+(active?'80 crédits max':'Sans crédits')+'</span></div>'+ 
    (locked?'<p class="sc8-retry">Disponible le '+esc(next)+'</p>':'')+
-   '<button class="btn primary" data-challenge="'+type+'"'+(locked?' disabled':'')+'>'+(resume?'Reprendre':locked?'À demain':'Jouer')+' <span aria-hidden="true">↗</span></button></div></article>'
+   '<button class="btn primary" data-challenge="'+type+'"'+(locked?' disabled':'')+'>'+(resume?'Reprendre':locked?'Indisponible':'Jouer')+' <span aria-hidden="true">↗</span></button></div></article>'
  }).join('')+'</div>';
 }
 export function rewardQuizHTML(session,feedback=null,busy=false){
