@@ -46,13 +46,13 @@ test('known verified French broadcasts show the official source in the series sh
  const html=showDetailHTML({},verified,{
   source:'editorial',text:'Une série située dans les années 80.'
  });
- assert.match(html,/Série diffusée en France/);
+ assert.match(html,/diffusion attestée/);
  assert.match(html,/https:\/\/www\.netflix\.com\/fr\/title\/80057281/);
  assert.match(html,/Légendaire/);
- assert.doesNotMatch(html,/Diffusion française à vérifier/);
+ assert.doesNotMatch(html,/France · diffusion à vérifier/);
  const other=showDetailHTML({},pending,{source:'unavailable'});
- assert.match(other,/Diffusion française à vérifier/);
- assert.match(other,/pas encore éligible aux nouveaux boosters/);
+ assert.match(other,/France · diffusion à vérifier/);
+ assert.match(other,/Plateformes françaises non encore renseignées/);
 });
 test('no historic series is deleted by server eligibility migration',()=>{
  const sql=fs.readFileSync('supabase/game_v5_4_fr.sql','utf8');
