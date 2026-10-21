@@ -3,6 +3,7 @@ import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,co
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=5.4.0';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.3.0';
+import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.4.0';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.4.0';
 import{collectionStudio,collectionCSV}from'../v5/collection.js?v=5.4.1';
@@ -96,11 +97,11 @@ async function loadSession(){
   state.wallet=w.data||null;
   const allCards=c.error?[]:c.data||[];
   const allWishes=wi.error?[]:wi.data||[];
-  const isPlayable=x=>x?.series?.fr_verified===true&&x?.series?.rarity_source!=='pending';
-  state.cards=allCards.filter(isPlayable);
-  state.excludedCardsCount=allCards.length-state.cards.length;
-  state.wishes=allWishes.filter(isPlayable);
-  state.excludedWishesCount=allWishes.length-state.wishes.length;
+  const france=partitionFrenchInventory(allCards,allWishes);
+  state.cards=france.cards;
+  state.wishes=france.wishes;
+  state.excludedCardsCount=france.excludedCardsCount;
+  state.excludedWishesCount=france.excludedWishesCount;
   state.fusionSelected=state.fusionSelected.filter(id=>state.cards.some(c=>c.id===id));
   state.tradeOffers=tr.error?[]:tr.data||[];
   if(wi.error&&wi.error.code!=='42P01')console.warn('Wishlist:',wi.error.message);
