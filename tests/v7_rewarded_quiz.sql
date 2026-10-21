@@ -1,13 +1,13 @@
 -- SérieClub V7 : tests SQL réels dans PostgreSQL éphémère de GitHub Actions.
 -- Catalogue supplémentaire fictif, jamais en production.
-INSERT INTO public.series(id,name,premiered,genres,image_url,fr_verified,fr_verification_method,fr_evidence_url)
+INSERT INTO public.series(id,name,premiered,genres,image_url,fr_verified,fr_verification_method,fr_evidence_url,fr_verified_at)
 VALUES
- (989101,'Épreuve 1996','1996-04-09',ARRAY['Drama'],'https://example.org/v7a.jpg',true,'editorial_fr_history','https://example.org/fr-v7'),
- (989102,'Épreuve 1999','1999-04-09',ARRAY['Drama'],'https://example.org/v7b.jpg',true,'editorial_fr_history','https://example.org/fr-v7'),
- (989103,'Épreuve 2002','2002-04-09',ARRAY['Drama'],'https://example.org/v7c.jpg',true,'editorial_fr_history','https://example.org/fr-v7'),
- (989104,'Épreuve 2008','2008-04-09',ARRAY['Drama'],'https://example.org/v7d.jpg',true,'editorial_fr_history','https://example.org/fr-v7'),
- (989105,'Épreuve 2014','2014-04-09',ARRAY['Drama'],'https://example.org/v7e.jpg',true,'editorial_fr_history','https://example.org/fr-v7'),
- (989106,'Épreuve 2018','2018-04-09',ARRAY['Drama'],'https://example.org/v7f.jpg',true,'editorial_fr_history','https://example.org/fr-v7')
+ (989101,'Épreuve 1996','1996-04-09',ARRAY['Drama'],'https://example.org/v7a.jpg',true,'editorial_fr_history','https://example.org/fr-v7',now()),
+ (989102,'Épreuve 1999','1999-04-09',ARRAY['Drama'],'https://example.org/v7b.jpg',true,'editorial_fr_history','https://example.org/fr-v7',now()),
+ (989103,'Épreuve 2002','2002-04-09',ARRAY['Drama'],'https://example.org/v7c.jpg',true,'editorial_fr_history','https://example.org/fr-v7',now()),
+ (989104,'Épreuve 2008','2008-04-09',ARRAY['Drama'],'https://example.org/v7d.jpg',true,'editorial_fr_history','https://example.org/fr-v7',now()),
+ (989105,'Épreuve 2014','2014-04-09',ARRAY['Drama'],'https://example.org/v7e.jpg',true,'editorial_fr_history','https://example.org/fr-v7',now()),
+ (989106,'Épreuve 2018','2018-04-09',ARRAY['Drama'],'https://example.org/v7f.jpg',true,'editorial_fr_history','https://example.org/fr-v7',now())
 ON CONFLICT(id) DO NOTHING;
 
 SET ROLE authenticated;
