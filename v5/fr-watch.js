@@ -55,7 +55,8 @@ export function renderFranceAvailability(record=null,show={}){
   (entry===ROOT?'Rechercher sur JustWatch France ↗':'Ouvrir la fiche JustWatch France ↗')+'</a>';
  const country='<div class="sc53-broadcast"><strong>🇫🇷 Diffusion en France</strong>'+
   (origin.length?'<p>Chaîne ou service français d’origine : '+origin.map(esc).join(', ')+'.</p>':
-  '<p>Aucune chaîne de diffusion française renseignée dans TVmaze. Les diffuseurs étrangers sont volontairement masqués.</p>')+'</div>';
+  data?.offers?.length?'<p>Les plateformes françaises sont recensées ci-dessus. TVmaze indique surtout la chaîne d’origine et ne répertorie pas toutes les diffusions françaises ultérieures.</p>':
+  '<p>TVmaze ne renseigne pas les diffusions françaises ultérieures. Les chaînes d’origine étrangères ne sont pas présentées comme françaises.</p>')+'</div>';
  if(!data||!data.offers.length){
   return '<section class="sc53-fr-watch" aria-label="Streaming et diffusion France"><div class="sc53-watch-title"><b>Où regarder en France ?</b><small>🇫🇷 Offres françaises uniquement</small></div>'+
    '<p class="sc53-watch-note">Aucune disponibilité française vérifiée n’est encore enregistrée pour cette série. Cela ne signifie pas qu’elle est indisponible.</p>'+
