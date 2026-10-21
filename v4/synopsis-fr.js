@@ -19,7 +19,7 @@ const original=new Map([
  ['dark|2017',"La disparition de deux enfants révèle les secrets d'une petite ville allemande. Les habitants découvrent peu à peu que leurs histoires familiales sont liées à un mystère qui traverse les époques."],
  ['peaky blinders|2013',"Dans l'Angleterre de l'après-guerre, Tommy Shelby dirige un gang familial ambitieux. Entre criminalité, politique et rivalités, il cherche à étendre son influence à tout prix."],
  ['the office|2005',"Dans les bureaux d'une entreprise de papier américaine, une équipe d'employés affronte les absurdités du quotidien sous le regard d'une caméra documentaire et d'un patron imprévisible."],
- ['the bear|2022',"De retour à Chicago, un jeune chef reprend la petite sandwicherie de son frère. Entre pression en cuisine, deuil et ambitions, il tente de reconstru un lieu et une équipe."],
+ ['the bear|2022',"De retour à Chicago, un jeune chef reprend la petite sandwicherie de son frère. Entre pression en cuisine, deuil et ambitions, il tente de reconstruire un lieu et une équipe."],
  ['better call saul|2015',"Avant de devenir l'avocat Saul Goodman, Jimmy McGill essaie de se faire une place dans le monde du droit. Ses choix l'entraînent progressivement vers des affaires de plus en plus douteuses."]
 ]);
 const STORAGE_KEY='serieclub-synopsis-fr-v1';
