@@ -187,7 +187,7 @@ export function showDetailHTML(source={},base={},french={source:'loading'}){
   '<div class="sc5-show-intro"><span class="caps">SÉRIECLUB · LA SÉRIE</span><h2>'+escapeHTML(name)+'</h2>'+
   '<div class="sc5-tagline">'+[year,status,seasons!=null?seasons+' saison'+(seasons>1?'s':''):null].filter(Boolean).map(v=>'<span>'+escapeHTML(v)+'</span>').join('')+'</div>'+
   '<div class="detail-tags">'+genrePills(show.genres||base.genres)+(officialRarity?'<strong class="sc53-official-rank">✦ '+escapeHTML(officialRarity)+' · rareté officielle</strong>':'<span class="sc53-rank-unknown">Rareté en attente de classement</span>')+'</div>'+
-  frenchProof+'<h3>En quelques mots</h3><div class="sc5-synopsis" data-synopsis>'+frenchSynopsisHTML(french,summary)+'</div>'+
+  '<div data-fr-proof>'+frenchProof+'</div><h3>En quelques mots</h3><div class="sc5-synopsis" data-synopsis>'+frenchSynopsisHTML(french,summary)+'</div>'+
   '</div></div>'+
   (more.length?'<details class="sc5-meta-more"><summary>Informations complémentaires</summary><div class="sc5-facts">'+more.map(([label,val])=>'<div><small>'+escapeHTML(label)+'</small><strong>'+escapeHTML(val)+'</strong></div>').join('')+'</div></details>':'')+
   '<section class="sc5-cast-section"><div class="sc5-section-head"><div><span class="caps">DISTRIBUTION</span><h3>Acteurs et personnages</h3></div><span class="sc5-muted">Clique sur un nom pour ses autres séries</span></div>'+
