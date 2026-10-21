@@ -3,6 +3,7 @@ import {actorCatalogueView} from '../v4/series.js?v=6.1.0';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 import {fusionPlan,fusionRanks,nextFusionRank} from '../v6/fusion.js?v=6.0.1';
 import {quizHTML} from '../v6/games.js?v=6.0.1';
+import {gameCards,rewardQuizHTML} from '../v7/arena.js?v=7.0.0';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
  ['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits'],['market','◇','Le Comptoir'],
@@ -154,22 +155,31 @@ export function profile(s){
  return '<div class="page-content">'+heading('Mon profil','Ton identité et ta progression au sein du club.')+'<div class="metric-row"><div class="metric"><strong>'+money(s.cards.length)+'</strong><span>Cartes</span></div><div class="metric"><strong>'+money(s.wallet?.boosters_opened)+'</strong><span>Paquets ouverts</span></div><div class="metric"><strong>'+money(s.wallet?.credits)+'</strong><span>Crédits</span></div><div class="metric"><strong>'+money(s.wallet?.experience)+'</strong><span>XP</span></div></div><div class="panel"><h2>'+esc(s.username||'Bienvenue dans le club')+'</h2><p>'+(s.user?esc(s.user.email):'Connecte-toi pour jouer et sauvegarder ta progression.')+'</p>'+(s.user?'<div class="row"><input class="input" id="usernameInput" maxlength="24" value="'+esc(s.username||'')+'" placeholder="Pseudonyme"></div><div class="row" style="margin:12px 0"><input class="input" id="bioInput" maxlength="160" style="width:100%" value="'+esc(s.bio||'')+'" placeholder="Une phrase sur tes séries favorites (160 caractères)"></div><div class="row"><label for="favoriteGenre">Genre favori</label><select id="favoriteGenre"><option value="">À découvrir</option>'+['Drama','Comedy','Action','Horror','Thriller','Mystery','Science-Fiction','Fantasy','Animation','Crime','Romance','Family'].map(g=>'<option value="'+esc(g)+'" '+(s.favoriteGenre===g?'selected':'')+'>'+esc(genreFR(g))+'</option>').join('')+'</select><button class="btn primary" id="usernameSave">Enregistrer mon profil</button><button class="btn subtle" id="signout">Déconnexion</button></div>':'<button class="btn primary" data-auth>Connexion / inscription</button>')+'</div></div>';
 }
 export function games(s){
- const cards=[
- ['poster','⌕','OBSERVATION','Affiche mystère','Une image floutée, quatre propositions. Retrouve la série !'],
- ['timeline','◷','CHRONOLOGIE','Avant ou après ?','Compare deux séries et retrouve la première diffusée.'],
- ['year','✦','CULTURE SÉRIES','La bonne année','Retrouve la série ayant débuté une année précise.']
- ];
- const menu='<div class="sc60-games-grid">'+cards.map(([key,ico,label,title,desc])=>
- '<article class="sc60-game-tile"><div class="sc60-game-icon">'+ico+'</div><span class="caps">'+label+'</span><h2>'+title+'</h2><p>'+desc+'</p>'+
- '<div class="sc60-game-meta">5 manches · score sur 5'+((s.quizRecords||{})[key]?' · record : '+(s.quizRecords||{})[key]+'/5':'')+'</div><button class="btn primary" data-challenge="'+key+'">Jouer →</button></article>').join('')+'</div>'+
- '<div class="sc60-games-note"><strong>Des parties vraiment gratuites</strong><p>Les jeux testent tes connaissances sur les séries certifiées pour la France. Le score reste dans la partie : aucun crédit, XP ou carte n’est attribué par ces mini-jeux.</p></div>';
- return '<div class="page-content sc60-games">'+heading('Jeux & défis','Trois jeux de culture séries, cinq manches et des défis toujours renouvelés.')+
- '<div class="sc60-games-hero"><div><span class="caps">SÉRIECLUB · L’ARÈNE</span><h2>À toi de jouer.</h2><p>Reconnais les affiches, maîtrise les dates et défie ta mémoire.</p></div><div class="sc60-games-hero-stat"><strong>'+money(s.wallet?.experience||0)+'</strong><span>XP de collection</span></div></div>'+
- (s.quiz?quizHTML(s.quiz):menu)+(s.quiz?.finished?'<p class="sc60-record-note">Meilleur score sur cet appareil : '+Number((s.quizRecords||{})[s.quiz.type]||0)+'/5</p>':'')+(s.quizError?'<div class="sc60-quiz-empty" role="alert">'+esc(s.quizError)+'</div>':'')+(s.quizLoading?'<div class="sc60-loading" role="status">Préparation des questions françaises…</div>':'')+
+ const online=s.rewardStatus?.enabled===true;
+ const remaining=Number(s.rewardStatus?.remaining_today??3);
+ const menu=gameCards(s.rewardStatus||{},s.quizRecords||{});
+ const intro=online?
+   '<div class="sc7-rewards-bar"><strong>✦ +10 crédits par bonne réponse</strong><strong>+30 pour un sans-faute</strong><span>'+
+    remaining+' partie'+(remaining===1?'':'s')+' récompensée'+(remaining===1?'':'s')+' restante'+(remaining===1?'':'s')+' aujourd’hui</span></div>':
+   '<div class="sc7-rewards-bar"><strong>Défis libres</strong><span>Les récompenses en crédits seront disponibles prochainement.</span></div>';
+ const playing=s.rewardQuiz
+  ?rewardQuizHTML(s.rewardQuiz,s.rewardFeedback,s.rewardBusy)
+  :s.quiz?quizHTML(s.quiz):menu;
+ return '<div class="page-content sc7-games">'+
+  heading('Jeux & défis','Une autre façon de vivre tes séries.')+
+  '<div class="sc7-hero"><div><span class="sc7-hero-kicker">SÉRIECLUB · L’ARÈNE</span>'+
+   '<h2>Joue. Gagne.<br>Collectionne.</h2>'+
+   '<p>Affiches cultes, mémoire et chronologie : quatre défis, cinq questions et des surprises à chaque partie.</p></div>'+
+   '<div class="sc7-hero-stat"><strong>'+money(s.wallet?.credits||0)+'</strong><small>Crédits disponibles</small></div></div>'+
+  (!s.quiz&&!s.rewardQuiz?intro:'')+
+  playing+
+  (s.rewardError?'<div class="sc60-quiz-empty" role="status">'+esc(s.rewardError)+'</div>':'')+
+  (s.quizError?'<div class="sc60-quiz-empty" role="status">'+esc(s.quizError)+'</div>':'')+
+  (s.quizLoading||s.rewardBusy&&!s.rewardQuiz?'<div class="sc60-loading" role="status">Préparation du défi…</div>':'')+
  '</div>';
 }
 export function rules(){
- const data=[['01','PAQUETS','5 cartes par ouverture. Dix paquets maximum en réserve, recharge de 10 minutes.'],['02','RARETÉS','Chaque série a un seul rang officiel, identique pour tous les exemplaires. Sept niveaux, de Commune à Unique.'],['03','FUSIONS','Dix cartes de même rareté sont consommées pour obtenir une carte officielle du rang supérieur. La sélection intelligente protège par défaut les derniers exemplaires et une confirmation précède toute fusion.'],['04','HALLOWEEN','Paquet saisonnier du 1er au 31 octobre, au moins une série d’horreur ou thriller.'],['05','RÉCOMPENSES','25 crédits et 50 XP par ouverture. 100 crédits une fois par jour.'],['06','COMPTE','Cartes sauvegardées sur Supabase, protégées par contrôle de propriétaire.'],['07','LE STUDIO','Retrouve tes séries, doublons, cartes protégées et souhaits pour organiser ta collection.'],['08','JEUX & DÉFIS','Trois défis de culture séries avec cinq manches par partie. Les scores ne produisent ni crédits, ni XP, ni cartes.']];
+ const data=[['01','PAQUETS','5 cartes par ouverture. Dix paquets maximum en réserve, recharge de 10 minutes.'],['02','RARETÉS','Chaque série a un seul rang officiel, identique pour tous les exemplaires. Sept niveaux, de Commune à Unique.'],['03','FUSIONS','Dix cartes de même rareté sont consommées pour obtenir une carte officielle du rang supérieur. La sélection intelligente protège par défaut les derniers exemplaires et une confirmation précède toute fusion.'],['04','HALLOWEEN','Paquet saisonnier du 1er au 31 octobre, au moins une série d’horreur ou thriller.'],['05','RÉCOMPENSES','25 crédits et 50 XP par ouverture. 100 crédits une fois par jour.'],['06','COMPTE','Cartes sauvegardées sur Supabase, protégées par contrôle de propriétaire.'],['07','LE STUDIO','Retrouve tes séries, doublons, cartes protégées et souhaits pour organiser ta collection.'],['08','JEUX & DÉFIS','Quatre défis de culture séries : récompenses en crédits après activation de l’arène sécurisée, limitées à trois parties par jour.']];
  return '<div class="page-content">'+heading('Règles du jeu','Comment commencer ta collection.')+'<div class="guide-grid">'+data.map(([n,t,d])=>'<div class="guide-item"><div class="big">'+n+'</div><h2>'+t+'</h2><p>'+d+'</p></div>').join('')+'</div></div>';
 }
 export function settings(s){
