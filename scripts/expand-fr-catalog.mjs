@@ -127,7 +127,11 @@ export async function run(){
  const token=process.env.TMDB_READ_ACCESS_TOKEN;
  const key=process.env.SUPABASE_SERVICE_ROLE_KEY;
  const base=(process.env.SUPABASE_URL||'https://anjfidksqbqlaggttdop.supabase.co').replace(/\/$/,'');
- if(!token||!key)throw Error('Secrets TMDB_READ_ACCESS_TOKEN et SUPABASE_SERVICE_ROLE_KEY indispensables');
+ if(!token){
+  console.warn('Enrichissement TMDB inactif : renseigner TMDB_READ_ACCESS_TOKEN dans les secrets GitHub.');
+  return; // L'import TVmaze indépendant reste actif ; aucune fausse preuve ajoutée.
+ }
+ if(!key)throw Error('Secret SUPABASE_SERVICE_ROLE_KEY manquant');
  if(!/^https:\/\/[a-z0-9.-]+$/i.test(base))throw Error('URL Supabase invalide');
  const pageCount=limit(process.env.FR_DISCOVERY_PAGES,20,60);
  const budget=limit(process.env.FR_DISCOVERY_BUDGET,400,1000);
