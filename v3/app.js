@@ -1,8 +1,8 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=5.5.0';
-import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=5.5.0';
+import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=5.6.0';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
-import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.5.0';
+import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.6.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.5.0';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.5.0';
