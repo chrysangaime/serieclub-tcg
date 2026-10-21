@@ -1,9 +1,9 @@
 import {platformStrip,seasonShelf} from './discovery.js?v=6.1.0';
 import {actorCatalogueView} from '../v4/series.js?v=6.1.0';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
-import {fusionPlan,fusionRanks,nextFusionRank} from '../v6/fusion.js?v=6.0.1';
-import {quizHTML} from '../v6/games.js?v=6.0.1';
-import {gameCards,rewardQuizHTML} from '../v7/arena.js?v=7.0.0';
+import {fusionPlan,fusionRanks,nextFusionRank} from '../v6/fusion.js?v=8.0.0';
+import {quizHTML} from '../v6/games.js?v=8.0.0';
+import {gameCards,rewardQuizHTML} from '../v7/arena.js?v=8.0.0';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
  ['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits'],['market','◇','Le Comptoir'],
