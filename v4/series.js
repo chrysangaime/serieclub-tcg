@@ -5,7 +5,8 @@
  * Aucun secret / aucune clé dans le navigateur. Les fiches d'acteurs,
  * résumés et crédits sont chargés uniquement à la demande.
  */
-import {whereToWatchLink,amazonSearchLink,amazonIsAffiliate} from '../v3/discovery.js?v=3.1.0';
+import {whereToWatchLink,amazonSearchLink,amazonIsAffiliate} from '../v3/discovery.js?v=5.3.0';
+import {renderFranceAvailability,getFrenchOriginChannel} from '../v5/fr-watch.js?v=5.3.0';
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -119,12 +120,12 @@ export async function getPersonFilmography(id) {
 }
 function externalLinks(title){
   return '<div class="sc5-external">'+
-    '<a class="btn primary" target="_blank" rel="noopener noreferrer" href="'+whereToWatchLink(title)+'">Où regarder ? ↗</a>'+
+    '<a class="btn subtle" target="_blank" rel="noopener noreferrer" href="'+whereToWatchLink(title)+'">JustWatch France ↗</a>'+
     '<a class="btn subtle" target="_blank" rel="noopener noreferrer" href="'+amazonSearchLink(title)+'">Rechercher un coffret ↗</a>'+
     '</div><p class="ad-label">'+(amazonIsAffiliate()
       ? 'Lien marchand pouvant générer une commission pour SérieClub.'
       : 'Liens de recherche non affiliés pour le moment.')+
-    ' Les disponibilités de streaming ne sont pas vérifiées. SérieClub est indépendant des diffuseurs.</p>';
+    ' Les offres françaises sont affichées uniquement lorsqu’elles proviennent d’une source vérifiée. SérieClub est indépendant des diffuseurs.</p>';
 }
 
 export function frenchSynopsisHTML(result={source:'loading',text:''},english=''){
@@ -155,28 +156,30 @@ export function showDetailHTML(source={},base={},french={source:'loading'}){
  const cast=Array.isArray(show._embedded?.cast)?show._embedded.cast:[];
  const seasons=Array.isArray(show._embedded?.seasons)?show._embedded.seasons.length:null;
  const year=formatYear(show.premiered),status=show.status==='Ended'?'Terminée':show.status==='Running'?'En cours':show.status||'';
- const officialRarity=base.rarity&&base.rarity_source!=='pending'?base.rarity:null;
+ const officialRarity=base.rarity_source==='pending'?null:(base.rarity||show.rarity||null);
+ const tier=officialRarity?officialRarity.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'-'):'unclassified';
  const poster=show.image?.medium||show.image?.original||show.image_url||base.image_url;
  const castRows=cast.filter(x=>x.person?.id&&x.person?.name).slice(0,24).map(x=>
   '<button class="sc5-cast-row" data-person="'+x.person.id+'" aria-label="Voir les séries de '+escapeHTML(x.person.name)+'">'+photo(x.person.image?.medium||x.person.image?.original,x.person.name,'sc5-cast-thumb')+'<b>'+escapeHTML(x.person.name)+'</b>'+
   (x.character?.name?'<small>'+escapeHTML(x.character.name)+'</small>':'')+'<span class="sc5-row-arrow" aria-hidden="true">↗</span></button>').join('');
  const more=[
-  ['Diffusion',show.webChannel?.name||show.network?.name],['Langue',show.language],
+  ['Première diffusion',year?year+' (monde)':''],
   ['Épisode',show.averageRuntime||show.runtime?(show.averageRuntime||show.runtime)+' min':''],
   ['Note TVmaze',Number(show.rating?.average)>0?show.rating.average+'/10':'']
  ].filter(([,v])=>Boolean(v));
  const imdb=show.externals?.imdb&&/^[a-z0-9]+$/i.test(show.externals.imdb)?'https://www.imdb.com/title/'+show.externals.imdb+'/':null;
- return '<div class="dialog sc5-dialog sc5-compact-dialog" role="dialog" aria-modal="true" aria-label="Fiche de '+escapeHTML(name)+'">'+
+ return '<div class="dialog sc5-dialog sc5-compact-dialog sc53-detail sc53-tier-'+tier+'" role="dialog" aria-modal="true" aria-label="Fiche de '+escapeHTML(name)+'">'+
   '<button class="close" data-close aria-label="Fermer">×</button>'+
   '<div class="sc5-show-head">'+photo(poster,'Affiche de '+name,'sc5-poster')+
   '<div class="sc5-show-intro"><span class="caps">SÉRIECLUB · LA SÉRIE</span><h2>'+escapeHTML(name)+'</h2>'+
   '<div class="sc5-tagline">'+[year,status,seasons!=null?seasons+' saison'+(seasons>1?'s':''):null].filter(Boolean).map(v=>'<span>'+escapeHTML(v)+'</span>').join('')+'</div>'+
-  '<div class="detail-tags">'+genrePills(show.genres||base.genres)+(officialRarity?'<span class="sc5-official-rarity">✦ '+escapeHTML(officialRarity)+' · officielle</span>':'')+'</div>'+
+  '<div class="detail-tags">'+genrePills(show.genres||base.genres)+(officialRarity?'<strong class="sc53-official-rank">✦ '+escapeHTML(officialRarity)+' · rareté officielle</strong>':'<span class="sc53-rank-unknown">Rareté en attente de classement</span>')+'</div>'+
   '<h3>En quelques mots</h3><div class="sc5-synopsis" data-synopsis>'+frenchSynopsisHTML(french,summary)+'</div>'+
   '</div></div>'+
   (more.length?'<details class="sc5-meta-more"><summary>Informations complémentaires</summary><div class="sc5-facts">'+more.map(([label,val])=>'<div><small>'+escapeHTML(label)+'</small><strong>'+escapeHTML(val)+'</strong></div>').join('')+'</div></details>':'')+
   '<section class="sc5-cast-section"><div class="sc5-section-head"><div><span class="caps">DISTRIBUTION</span><h3>Acteurs et personnages</h3></div><span class="sc5-muted">Clique sur un nom pour ses autres séries</span></div>'+
   (castRows?'<div class="sc5-cast-list">'+castRows+'</div>':'<p class="sc5-muted">Distribution non renseignée.</p>')+'</section>'+
+  '<div data-fr-watch>'+renderFranceAvailability(null,show)+'</div>'+
   '<div class="sc5-compact-footer">'+externalLinks(name)+
   '<div class="sc5-bottom"><a href="'+tvmazeLink(show.url)+'" target="_blank" rel="noopener noreferrer">Source TVmaze ↗</a>'+
   (imdb?'<a href="'+imdb+'" target="_blank" rel="noopener noreferrer">IMDb ↗</a>':'')+'</div></div></div>';
