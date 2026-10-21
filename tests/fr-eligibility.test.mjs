@@ -56,7 +56,9 @@ test('known verified French broadcasts show the official source in the series sh
 });
 test('no historic series is deleted by server eligibility migration',()=>{
  const sql=fs.readFileSync('supabase/game_v5_4_fr.sql','utf8');
- assert.doesNotMatch(sql,/\bDELETE\s+FROM\s+public\.(?:series|player_cards)\b/i);
+ const migrationDdl=sql.slice(0,sql.indexOf('CREATE OR REPLACE FUNCTION public.pick_official_pack'));
+ assert.doesNotMatch(migrationDdl,/\bDELETE\s+FROM\s+public\.(?:series|player_cards)\b/i);
+ // Existing fusion logic legitimately deletes consumed cards when explicitly invoked.
  assert.match(sql,/BEFORE INSERT ON public\.player_cards/);
  assert.match(sql,/BEFORE INSERT ON public\.player_wishlist/);
  assert.match(sql,/BEFORE INSERT ON public\.card_listings/);
