@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {catalogue} from '../v3/views.js';
+import {catalogue,packs} from '../v3/views.js';
 
 const state={catalogMode:'series',catalog:[],cards:[],wishes:[],catalogQuery:'',
  catalogLoading:false,catalogError:'',catalogMore:false,catalogTotal:2033,
@@ -52,4 +52,20 @@ test('navigation mobile, sécurité clavier, tri serveur et reprise partielle : 
  assert.match(importer,/state\.last_run=\{/);
  assert.match(css,/@media\(max-width:860px\)/);
  assert.match(css,/safe-area-inset-bottom/);
+});
+
+test('un visiteur anonyme peut accéder à la création de compte depuis la page paquets',()=>{
+ const html=packs({pack:'classic',stock:null,user:null,cards:[],wallet:null,seasonShows:[]});
+ const button=html.match(/<button id="openPack"[^>]*>/)?.[0]||'';
+ assert.match(button,/id="openPack"/);
+ assert.doesNotMatch(button,/disabled/);
+ assert.match(html,/Commencer à jouer/);
+ assert.match(html,/Créer un compte gratuit/);
+ const connected=packs({pack:'classic',stock:{stock:0,maximum:10},user:{id:'test'},cards:[],wallet:null,seasonShows:[]});
+ assert.match(connected,/<button id="openPack"[^>]*disabled/);
+});
+test('la recherche globale est disponible depuis la barre supérieure sur toutes les pages',()=>{
+ const app=fs.readFileSync('v3/app.js','utf8');
+ assert.match(app,/id="topSearch"/);
+ assert.match(app,/change\('catalog'\);\$\('catalogQuery'\)/);
 });
