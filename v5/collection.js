@@ -27,7 +27,9 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
   return {
    id,name:first.series?.name||'Série inconnue',
    image:first.series?.image_url||'',premiered:first.series?.premiered||'',
-   rarity:rank,genre:first.series?.genres||[],eligible:Boolean(first.series?.image_url)&&first.series?.rarity_source!=='pending',
+   rarity:rank,genre:first.series?.genres||[],
+   frVerified:first.series?.fr_verified===true,
+   eligible:Boolean(first.series?.image_url)&&first.series?.rarity_source!=='pending'&&first.series?.fr_verified===true,
    cards:items,count:items.length,duplicates:Math.max(0,items.length-1),
    protectedCount,blockedCount,
    sellableCopy:items.length>1&&free.length>0&&(protectedCount>0||free.length>=2)?free[free.length-1]:null,
@@ -124,6 +126,7 @@ function groupCard(g){
   (photo(g.image)?'<img src="'+photo(g.image)+'" loading="lazy" alt="Affiche de '+esc(g.name)+'">':'<span class="sc52-poster-absent">✧</span>')+
   '<span class="sc52-copy-count">× '+g.count+'</span></button>'+
   '<div class="sc52-group-body"><h3>'+esc(g.name)+'</h3>'+pill(g.rarity)+
+  (g.frVerified?'':'<small class="sc54-collection-pending">🇫🇷 Diffusion à vérifier · ancienne carte</small>')+
   '<p>'+g.count+' exemplaire'+(g.count>1?'s':'')+
   (g.duplicates?' · '+g.duplicates+' doublon'+(g.duplicates>1?'s':''):'')+'</p>'+
   '<div class="sc52-group-flags">'+
@@ -139,7 +142,8 @@ function missingCard(item){
  const show=item.series;
  return '<article class="sc52-wish-row">'+
   (photo(show.image_url)?'<img src="'+photo(show.image_url)+'" alt="" loading="lazy">':'<span class="sc52-wish-empty">✧</span>')+
-  '<div><b>'+esc(show.name||'Série')+'</b><small>'+esc(show.rarity||'Rareté à définir')+'</small></div>'+
+  '<div><b>'+esc(show.name||'Série')+'</b><small>'+esc(show.rarity||'Rareté à définir')+'</small>'+
+  (show.fr_verified===false?'<small>🇫🇷 Diffusion à vérifier</small>':'')+'</div>'+
   '<button class="btn subtle small" data-series="'+esc(item.id)+'">Découvrir</button>'+
   '<button class="btn subtle small" data-wish="'+esc(item.id)+'" aria-label="Retirer des souhaits">✕</button>'+
   '</article>';
@@ -154,7 +158,7 @@ function statsPanel(view,data){
   '<div><strong>'+money(data.duplicates)+'</strong><span>Exemplaires en doublon</span></div>'+
   '<div><strong>'+money(data.tradableDuplicates)+'</strong><span>Séries avec doublon vendable</span></div>'+
   '</div>'+
-  (total>0?'<div class="sc52-completion"><div><b>Exploration du catalogue</b><span>'+money(eligibleOwned)+' / '+money(total)+' séries classées possédées · '+percentage+' %</span></div><div class="sc52-progress"><span style="width:'+percentage+'%"></span></div><small>Indicateur de découverte, calculé sur les séries classées et illustrées. Les doublons ne comptent qu’une fois.</small></div>':
+  (total>0?'<div class="sc52-completion"><div><b>Exploration du catalogue</b><span>'+money(eligibleOwned)+' / '+money(total)+' séries classées possédées · '+percentage+' %</span></div><div class="sc52-progress"><span style="width:'+percentage+'%"></span></div><small>Indicateur de découverte, calculé sur les séries classées et illustrées. Les doublons et les anciennes séries sans preuve française ne comptent qu’une fois ou sont exclus du total.</small></div>':
   '<p class="sc52-stats-note">Découvre des séries en ouvrant des paquets. Le pourcentage global sera affiché lorsque le catalogue sera disponible.</p>');
 }
 export function collectionStudio(state){
