@@ -4,7 +4,7 @@
  * Les doublons sont des exemplaires au-delà de la première copie d'une même
  * série. Une copie engagée ne peut pas être conseillée pour la vente.
  */
-import {card,esc,money,ranks,photo} from '../v3/views.js?v=5.2.1';
+import {card,esc,money,ranks,photo,officialRarity,raritySlug} from '../v3/views.js?v=5.3.0';
 
 export const COLLECTION_PAGE_SIZE=48;
 const rankOrder=new Map(ranks.map((name,i)=>[name,i]));
@@ -19,7 +19,7 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
   copies.get(k).push(c);
  }
  const groups=[...copies].map(([id,items])=>{
-  const first=items[0],rank=first.series?.rarity||first.rarity||'Non classée';
+  const first=items[0],rank=officialRarity(first);
   const protectedCount=items.filter(c=>c.locked).length;
   const blockedCount=items.filter(c=>c.reserved_trade_id||selling.has(c.id)).length;
   const free=items.filter(c=>!c.locked&&!c.reserved_trade_id&&!selling.has(c.id));
@@ -43,6 +43,7 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
   groups,rankStats,missing,
   totalCards:(cards||[]).length,unique:groups.length,
   duplicates:duplicateGroups.reduce((n,g)=>n+g.duplicates,0),
+  rarityConflicts:(cards||[]).filter(c=>c.series?.rarity&&c.series?.rarity_source!=='pending'&&c.rarity!==c.series.rarity).length,
   duplicateGroups:duplicateGroups.length,
   protectedCards:(cards||[]).filter(c=>c.locked).length,
   reservedCards:(cards||[]).filter(c=>c.reserved_trade_id||selling.has(c.id)).length,
@@ -117,7 +118,7 @@ export function selectCollection(view){
 function pill(value){return '<span class="sc52-rarity">'+esc(value)+'</span>'}
 function groupCard(g){
  const selling=g.sellableCopy;
- return '<article class="sc52-group-card">'+
+ return '<article class="sc52-group-card sc53-rarity-'+raritySlug(g.rarity)+'">'+
   '<button class="sc52-group-poster" data-series="'+esc(g.id)+'" aria-label="Découvrir '+esc(g.name)+'">'+
   (photo(g.image)?'<img src="'+photo(g.image)+'" loading="lazy" alt="Affiche de '+esc(g.name)+'">':'<span class="sc52-poster-absent">✧</span>')+
   '<span class="sc52-copy-count">× '+g.count+'</span></button>'+
@@ -191,7 +192,7 @@ export function collectionStudio(state){
   '<button class="btn subtle small" data-collection-page="'+(v.page+1)+'" '+(v.page===v.pages-1?'disabled':'')+'>Suivant →</button></nav>':'';
  return '<div class="page-content sc52-collection"><header class="sc52-heading"><div><span class="caps">SÉRIECLUB · LE STUDIO</span><h1>MA COLLECTION</h1><p>Retrouve tes séries, organise tes exemplaires et repère les doublons que tu peux échanger.</p></div>'+
   '<div class="sc52-heading-actions"><button class="btn subtle" data-route="catalog">Explorer le catalogue ↗</button><button class="btn subtle" data-export-collection '+(!state.user||!d.totalCards?'disabled':'')+'>Exporter CSV ↓</button></div></header>'+
-  statsPanel(state,d)+rankBars+
+  statsPanel(state,d)+(d.rarityConflicts?'<div class="notice sc53-rarity-warning">'+money(d.rarityConflicts)+' anciennes cartes ont encore une rareté historique différente en base. L’affichage respecte la rareté officielle de leur série ; une synchronisation serveur est prévue.</div>':'')+rankBars+
   '<div class="sc52-tabs" role="group" aria-label="Mode de consultation">'+
   modes.map(([mode,label,n])=>'<button data-collection-mode="'+mode+'" class="'+(v.mode===mode?'active':'')+'" aria-pressed="'+(v.mode===mode)+'">'+esc(label)+' <span>'+money(n)+'</span></button>').join('')+'</div>'+
   (state.genre?'<div class="notice">Genre sélectionné : '+esc(state.genre)+' <button class="btn small subtle" data-clear-genre>Afficher tous les genres</button></div>':'')+
