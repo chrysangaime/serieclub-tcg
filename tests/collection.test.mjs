@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {deriveCollection,selectCollection,collectionStudio,COLLECTION_PAGE_SIZE} from '../v5/collection.js';
+import {deriveCollection,selectCollection,collectionStudio,collectionCSV,COLLECTION_PAGE_SIZE} from '../v5/collection.js';
 
 const make=(id,show,name,rarity='Rare',extras={})=>({
  id,owner_id:'u1',series_id:show,rarity,locked:false,reserved_trade_id:null,
@@ -87,4 +87,17 @@ test('all displayed series names and wishlist content are safely escaped',()=>{
  const html=collectionStudio({...state,cards:[nasty],wishes:[],marketActivity:[],collectionMode:'unique'});
  assert.ok(!html.includes('<img src=x onerror=alert(1)>'));
  assert.match(html,/&lt;img src=x onerror=alert\(1\)&gt;/);
+});
+
+test('CSV export is one row per unique show, Excel-friendly and injection-resistant',()=>{
+ const csv=collectionCSV(cards,wishes,activity);
+ const lines=csv.split('\r\n');
+ assert.equal(lines.length,5,'one header and four different TVmaze series');
+ assert.match(lines[0],/"Série";"ID TVmaze";"Première diffusion";"Rareté officielle"/);
+ assert.match(csv,/"Lost";"1";"2004-01-01";"Légendaire";"3";"2";"1";"1"/);
+ const dangerous=collectionCSV([make('e1',56,'=HYPERLINK("https://bad.example")','Rare')],[],[]);
+ assert.match(dangerous,/"'=HYPERLINK\(""https:\/\/bad\.example""\)"/);
+ assert.doesNotMatch(dangerous,/\r\n"=HYPERLINK/);
+ const semicolon=collectionCSV([make('e2',57,'A; "B"','Rare')],[],[]);
+ assert.match(semicolon,/"A; ""B"""/);
 });
