@@ -114,7 +114,7 @@ jobs:
           assert.match(d.seasonShelf([{id:12,name:'Horreur test',image_url:'https://example.com/poster.jpg',genres:['Horror']}]),/Horreur test/);
           assert.equal(d.amazonIsAffiliate(),false);
           assert.ok(!d.amazonSearchLink('Test').includes('&tag='));
-          assert.match(d.seriesDetail({id:12,name:'Horreur test',image_url:'https://example.com/poster.jpg',genres:['Horror']}),/non affilié/);
+          assert.match(d.seriesDetail({id:12,name:'Horreur test',image_url:'https://example.com/poster.jpg',genres:['Horror']}),/Consulter JustWatch France/);
           assert.match(fs.readFileSync('v3/season.css','utf8'),/#111722/);
           assert.match(fs.readFileSync('v3/nightfall.svg','utf8'),/<svg/);
           assert.match(fs.readFileSync('v4/synopsis-fr.js','utf8'),/dear white people/);
