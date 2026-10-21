@@ -123,10 +123,12 @@ export function renderFranceAvailability(record=null,show={}){
  const direct=data?.url&&editorial?'Ouvrir la fiche JustWatch France ↗':
   data?.url?'Vérifier sur TMDB France ↗':'Chercher sur JustWatch France ↗';
  const note=origin.length?'<span class="sc56-origin">Diffusion en France : '+origin.map(esc).join(', ')+'</span>':'';
- const evidence=!data?.offers.length&&proof&&
-  safeWatchLink(show.fr_evidence_url)
-   ?'<a href="'+esc(safeWatchLink(show.fr_evidence_url))+
-    '" target="_blank" rel="noopener noreferrer">Source française ↗</a>':'';
+ const evidenceUrl=safeWatchLink(show.fr_evidence_url)||
+  safeProviderLink(show.fr_evidence_url,'Disney+')||
+  safeProviderLink(show.fr_evidence_url,'Netflix');
+ const evidence=!data?.offers.length&&proof&&evidenceUrl
+  ?'<a href="'+esc(evidenceUrl)+
+    '" target="_blank" rel="noopener noreferrer">Source de diffusion française ↗</a>':'';
  return '<section class="sc56-where" aria-label="Disponibilité en streaming en France">'+
   '<div class="sc56-main"><strong class="sc56-label">'+intro+'</strong>'+content+'</div>'+
   secondary+
