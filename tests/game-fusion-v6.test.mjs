@@ -9,13 +9,14 @@ const series=(id,year=1990)=>({id,name:'Série '+id,image_url:'https://example.o
  premiered:year+'-01-01',fr_verified:true});
 const pool=Array.from({length:110},(_,i)=>series(i+10,1950+i));
 
-test('quiz : 3 modes, cinq manches, bonnes réponses et aucune distribution fictive de crédits',()=>{
- for(const type of ['poster','timeline','year']){
+test('quiz : quatre modes, cinq manches, bonnes réponses et aucune distribution fictive de crédits',()=>{
+ for(const type of ['poster','pixel','timeline','year']){
   const game=newQuiz(type,pool,()=>0.2);
   assert.ok(game,type);assert.equal(game.total,5);
   const html=quizHTML(game);
   assert.match(html,/data-quiz-answer/);
-  if(type==='poster')assert.match(html,/sc60-blurred/);
+  if(type==='poster')assert.match(html,/sc8-training-poster/);
+  if(type==='pixel')assert.match(html,/sc7-training-pixel sc8-pixel/);
   let active=game;
   for(let i=1;i<=5;i++){
    active=answerQuiz(active,active.question.answer);
@@ -106,5 +107,5 @@ test('jeux : nouvelle arène et grille accessible en France',()=>{
  const html=games({wallet:{experience:120},quiz:null});
  for(const type of ['poster','timeline','year'])assert.match(html,new RegExp('data-challenge="'+type+'"'));
  assert.match(html,/5 questions/);
- assert.match(html,/Les récompenses en crédits seront disponibles prochainement/);
+ assert.match(html,/Une tentative par jeu toutes les 24 h/);
 });
