@@ -574,17 +574,47 @@ async function openPack(){
  }catch(e){toast('Ouverture impossible : '+e.message,true);render()}
  finally{state.busy=false}
 }
+function activeFusionPlan(){
+ return fusionPlan(state.cards,state.fusionRank,state.fusionSelected,state.marketActivity,
+  state.fusionProtectLast);
+}
+function previewFusion(){
+ if(!state.user){openAuth();return}
+ const plan=activeFusionPlan();
+ const summary=fusionConfirmation(plan);
+ if(!summary){toast('Sélectionne exactement dix cartes admissibles.',true);return}
+ const lines=plan.selectedCards.map(c=>'<li>'+esc(c.series?.name||'Série')+
+  (c.isLast?' <strong>· dernier exemplaire</strong>':' · doublon')+'</li>').join('');
+ const root=$('overlay');root.classList.remove('hidden');
+ root.innerHTML='<div class="dialog sc60-confirm" role="dialog" aria-modal="true" aria-labelledby="sc60-confirm-title">'+
+  '<button class="close" data-close aria-label="Fermer">×</button><span class="caps">VÉRIFICATION AVANT FUSION</span>'+
+  '<h2 id="sc60-confirm-title">'+esc(summary.source)+' → '+esc(summary.target)+'</h2>'+
+  '<p>Les dix cartes suivantes seront <strong>définitivement supprimées</strong>. Tu recevras une carte aléatoire du rang supérieur parmi les séries certifiées France.</p>'+
+  '<ol>'+lines+'</ol>'+
+  (summary.lastCount?'<p class="sc60-danger">Attention : '+summary.lastCount+' dernier(s) exemplaire(s) de série seront perdus.</p>':'<p class="sc60-safe">✓ Tes derniers exemplaires sont préservés.</p>')+
+  '<div class="row"><button class="btn subtle" data-close>Annuler</button>'+
+  '<button class="btn primary" id="fusionConfirm">Confirmer la fusion définitive</button></div></div>';
+ root.querySelector('#fusionConfirm')?.focus();
+}
 async function doFusion(){
- if(state.fusionSelected.length!==10||state.busy)return;
- if(!confirm('Confirmer ? Ces dix cartes seront définitivement consommées.'))return;
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ const plan=activeFusionPlan();
+ if(!plan.ready){closeModal();toast('La sélection a changé : fusion annulée.',true);return}
+ const ids=[...plan.selected];
  state.busy=true;
+ const btn=$('fusionConfirm');if(btn){btn.disabled=true;btn.textContent='Fusion en cours…'}
  try{
-  const {data,error}=await supa.rpc('fuse_cards',{p_card_ids:state.fusionSelected});
+  const {data,error}=await supa.rpc('fuse_cards',{p_card_ids:ids});
   if(error)throw error;
-  state.fusionSelected=[];toast('Fusion réussie : '+(data?.[0]?.name||'nouvelle carte')+' ('+(data?.[0]?.rarity||'rareté supérieure')+')');
+  closeModal();
+  state.fusionSelected=[];
+  state.fusionPage=0;
   await loadSession();
- }catch(e){toast('Fusion impossible : '+e.message,true)}
- finally{state.busy=false}
+  toast('Fusion réussie : '+(data?.[0]?.name||'nouvelle carte')+' · '+(data?.[0]?.rarity||plan.target)+' · +100 XP');
+ }catch(e){
+  closeModal();toast('Fusion impossible : '+e.message,true);
+ }finally{state.busy=false;if(state.route==='fusion')render()}
 }
 function openAuth(){
  const root=$('overlay');root.classList.remove('hidden');
@@ -753,8 +783,33 @@ function globalClick(e){
   loadCatalog(true);return;
  }
  if(e.target.closest('#catalogMore')){loadCatalog(false);return}
- if(e.target.closest('#fusionAuto')){state.fusionSelected=state.cards.filter(c=>c.rarity===state.fusionRank&&(!c.series?.rarity||c.rarity===c.series.rarity)&&c.series?.fr_verified===true&&!c.locked&&!c.reserved_trade_id&&!(state.marketActivity||[]).some(l=>l.card_id===c.id&&l.status==='active')).slice(0,10).map(c=>c.id);render();return}
- if(e.target.closest('#fusionSubmit')){doFusion();return}
+ const fusionRank=e.target.closest('[data-fusion-rank]');
+ if(fusionRank){state.fusionRank=fusionRank.dataset.fusionRank;state.fusionSelected=[];state.fusionPage=0;render();return}
+ const pickFusion=e.target.closest('[data-fusion-pick]');
+ if(pickFusion){
+  const id=String(pickFusion.dataset.fusionPick),plan=activeFusionPlan();
+  if(!plan.allowed.some(c=>String(c.id)===id))return;
+  if(state.fusionSelected.includes(id))state.fusionSelected=state.fusionSelected.filter(x=>x!==id);
+  else if(plan.selected.length<10)state.fusionSelected=[...plan.selected,id];
+  else toast('La sélection est limitée à dix cartes.',true);
+  render();return;
+ }
+ const turnFusion=e.target.closest('[data-fusion-page]');
+ if(turnFusion){state.fusionPage=Math.max(0,state.fusionPage+Number(turnFusion.dataset.fusionPage));render();return}
+ if(e.target.closest('#fusionClear')){state.fusionSelected=[];render();return}
+ if(e.target.closest('#fusionAuto')){
+  state.fusionSelected=autoFusion(activeFusionPlan());render();
+  if(state.fusionSelected.length<10)toast('Il manque '+(10-state.fusionSelected.length)+' cartes disponibles à ce rang.');
+  return;
+ }
+ if(e.target.closest('#fusionSubmit')){previewFusion();return}
+ if(e.target.closest('#fusionConfirm')){doFusion();return}
+ const answerBtn=e.target.closest('[data-quiz-answer]');
+ if(answerBtn){selectQuizAnswer(answerBtn.dataset.quizAnswer);return}
+ if(e.target.closest('[data-quiz-next]')){advanceQuiz();return}
+ const restartQuiz=e.target.closest('[data-quiz-restart]');
+ if(restartQuiz){chooseChallenge(restartQuiz.dataset.quizRestart);return}
+ if(e.target.closest('[data-quiz-home]')){state.quiz=null;state.quizError='';render();return}
  if(e.target.closest('#usernameSave')){saveUsername();return}
  if(e.target.closest('#signout')){supa.auth.signOut().then(()=>loadSession());return}
  if(e.target.closest('#exportData')){exportData();return}
@@ -778,7 +833,12 @@ function globalChange(e){
  if(e.target.id==='marketRarity'){state.marketRarity=e.target.value;render();return}
  if(e.target.id==='rarityFilter'){state.rank=e.target.value;state.collectionPage=0;render();return}
  if(e.target.id==='collectionSort'){state.collectionSort=e.target.value;state.collectionPage=0;render();return}
- if(e.target.id==='fusionRank'){state.fusionRank=e.target.value;state.fusionSelected=[];render();return}
+ if(e.target.id==='fusionRank'){state.fusionRank=e.target.value;state.fusionSelected=[];state.fusionPage=0;render();return}
+ if(e.target.id==='fusionProtectLast'){
+  state.fusionProtectLast=e.target.checked;
+  state.fusionSelected=activeFusionPlan().selected;
+  state.fusionPage=0;render();return;
+ }
  if(e.target.matches('[data-fuse]')){const id=e.target.dataset.fuse;if(e.target.checked){if(state.fusionSelected.length===10){e.target.checked=false;return}state.fusionSelected.push(id)}else state.fusionSelected=state.fusionSelected.filter(x=>x!==id);render();return}
  if(e.target.id==='reduceMotion'){state.reduceMotion=e.target.checked;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render()}
 }
