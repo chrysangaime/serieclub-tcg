@@ -74,6 +74,14 @@ jobs:
           assert.match(alb.personalAlbumsPage({...state,personalAlbums:[],publicAlbums:[]}),/Mes saisons personnalisées/);
           assert.match(alb.albumDialog({...state,personalAlbums:[],publicAlbums:[]},{album_id:'demo',title:'Saisons cultes'},[]),/Saisons cultes/);
           assert.ok(fs.readFileSync('v3/app.js','utf8').includes('v4/albums.js'));
+          const oneStep=fs.readFileSync('supabase/install_v4_v5.sql','utf8');
+          assert.match(oneStep,/create table if not exists public.card_trade_offers/i,'La migration V4 doit créer les échanges');
+          assert.match(oneStep,/create or replace function public.enforce_card_series_rarity/i,'La migration V5 doit figer le rang');
+          assert.ok(oneStep.indexOf('create table if not exists public.card_trade_offers') <
+            oneStep.indexOf('CREATE OR REPLACE FUNCTION public.enforce_card_series_rarity'),
+            'La V4 doit être exécutée avant la V5');
+          assert.equal((oneStep.match(/^BEGIN;/gm)||[]).length,1,'Installateur : transaction unique');
+          assert.equal((oneStep.match(/^COMMIT;/gm)||[]).length,1,'Installateur : commit unique');
           const raritySql=fs.readFileSync('supabase/game_v5.sql','utf8');
           for(const name of ['assign_series_official_rarity','enforce_card_series_rarity',
                              'pick_official_pack','open_starter_booster','open_halloween_booster',
