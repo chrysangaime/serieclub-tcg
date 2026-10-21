@@ -1,0 +1,26 @@
+name: Auditer le catalogue de séries France
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/audit-fr-catalog.mjs"
+      - ".github/workflows/audit-fr-catalog.yml"
+  schedule:
+    - cron: "45 6 * * *"
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Vérifier les séries réellement confirmées France
+        env:
+          SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/audit-fr-catalog.mjs
