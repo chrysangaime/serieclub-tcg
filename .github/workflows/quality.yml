@@ -26,9 +26,10 @@ jobs:
           node --check v4/synopsis-fr.js
           node --check v5/collection.js
           node --check v5/fr-watch.js
+          node --check v5/fr-collection.js
           node --check v5/fr-text.js
           node --check scripts/sync-fr-providers.mjs
-          node --test tests/series.test.mjs tests/synopsis-fr.test.mjs tests/collection.test.mjs tests/france-rarity.test.mjs tests/fr-eligibility.test.mjs
+          node --test tests/series.test.mjs tests/synopsis-fr.test.mjs tests/collection.test.mjs tests/france-rarity.test.mjs tests/fr-eligibility.test.mjs tests/fr-archive-watch.test.mjs
           node --check scripts/import-tvmaze.mjs
       - name: Tester les pages du TCG
         run: |
@@ -37,7 +38,7 @@ jobs:
           import assert from 'node:assert/strict';
           import * as v from './v3/views.js';
           const html=fs.readFileSync('index.html','utf8');
-          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./v4/club.css','./v4/club.js','./v4/series.css','./v4/series.js','./v4/synopsis-fr.js','./v5/collection.css','./v5/collection.js','./v5/fr-rarity.css','./v5/fr-watch.js','./v5/fr-text.js','./manifest.webmanifest']){
+          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./v4/club.css','./v4/club.js','./v4/series.css','./v4/series.js','./v4/synopsis-fr.js','./v5/collection.css','./v5/collection.js','./v5/fr-rarity.css','./v5/fr-watch.js','./v5/fr-collection.js','./v5/fr-text.js','./manifest.webmanifest']){
             assert.ok(html.includes(file), 'Lien manquant : '+file);
             assert.ok(fs.existsSync(file.slice(2)), 'Fichier manquant : '+file);
           }
@@ -84,6 +85,17 @@ jobs:
           assert.equal(frText.genreFR('Mystery'),'Mystère');
           assert.deepEqual(watchModule.getFrenchOriginChannel({network:{name:'CBS',country:{code:'US'}}}),[]);
           assert.ok(fs.existsSync('data/watch-fr.json'));
+          const frOffers=JSON.parse(fs.readFileSync('data/watch-fr.json','utf8'));
+          assert.equal(frOffers.titles['430'].country,'FR');
+          assert.equal(frOffers.titles['430'].url,'https://www.justwatch.com/fr/serie/the-x-files');
+          assert.ok(frOffers.titles['430'].offers.some(o=>o.name==='Disney+'));
+          assert.ok(frOffers.titles['430'].offers.some(o=>o.name==='Amazon Prime Video'));
+          const franchise=await import('./v5/fr-collection.js');
+          assert.equal(franchise.partitionFrenchInventory([
+            {series:{fr_verified:true,rarity_source:'editorial'}},
+            {series:{fr_verified:false,rarity_source:'popularity'}}
+          ],[]).excludedCardsCount,1);
+
 
           const d=await import('./v3/discovery.js');
           assert.match(d.seasonShelf([{id:12,name:'Horreur test',image_url:'https://example.com/poster.jpg',genres:['Horror']}]),/Horreur test/);
@@ -142,6 +154,16 @@ jobs:
           assert.match(frSql,/the x-files/);
           assert.match(frSql,/stranger things/);
           assert.match(frSql,/how i met your mother/);
+          const combined=fs.readFileSync('supabase/install_v5_4_v5_5.sql','utf8');
+          assert.equal((combined.match(/^BEGIN;/gm)||[]).length,1,'Installation France : BEGIN unique');
+          assert.equal((combined.match(/^COMMIT;/gm)||[]).length,1,'Installation France : COMMIT unique');
+          assert.equal((combined.match(/\$\$/g)||[]).length%2,0,'Délimiteurs SQL France incomplets');
+          const correction=fs.readFileSync('supabase/game_v5_5_fr_fix.sql','utf8');
+          for(const word of ['the-x-files','get_leaderboard','player_directory',
+                             'marketplace_feed','enforce_fr_card_transfer']){
+            assert.ok(correction.includes(word),'Correctif France V5.5 incomplet : '+word);
+          }
+
 
           const marketSql=fs.readFileSync('supabase/game_v4.sql','utf8');
           for(const rpc of ['create_card_listing','buy_card_listing','propose_card_trade','respond_card_trade','toggle_player_follow','claim_quest_reward','create_personal_album','album_card_data']){
@@ -197,3 +219,7 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v5_4_fr.sql
       - name: Tester les séries vérifiées FR, l’intégrité des cartes et les nouveaux boosters
         run: psql -v ON_ERROR_STOP=1 -f tests/v5_4_fr.sql
+      - name: Réparer X-Files France et exclure les anciennes cartes des statistiques
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v5_5_fr_fix.sql
+      - name: Vérifier le classement France, les transferts et les liens attestés
+        run: psql -v ON_ERROR_STOP=1 -f tests/v5_5_fr.sql
