@@ -4,11 +4,12 @@ import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDeta
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=4.2.1';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=4.2.0';
+import{collectionStudio}from'../v5/collection.js?v=5.2.0';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions'};
-const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let toastTimer,clockTimer,searchTimer,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
@@ -16,6 +17,7 @@ function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\
 function loadRouteData(route){
  if((route==='catalog'&&state.catalogMode==='series'||route==='games')&&!state.catalog.length)loadCatalog(true);
  if(route==='rankings')loadRankings();
+ if(route==='collection'){loadCollectionGoal();if(state.user)loadMySales()}
  if(route==='market'&&state.user)loadMarket();
  if(route==='community'&&state.user)loadPeople();
  if(route==='quests'&&state.user)loadDaily();
@@ -48,7 +50,7 @@ function render(){
  document.body.classList.toggle('reduce-motion',state.reduceMotion);
  document.body.classList.toggle('season-halloween',monthHalloween());
  renderChrome();
- const view={packs,collection,catalog:catalogue,wishlist,albums:personalAlbumsPage,rankings,fusion:fusions,profile,games,rules,settings,market:marketPage,community:communityPage,quests:questsPage}[state.route];
+ const view={packs,collection:collectionStudio,catalog:catalogue,wishlist,albums:personalAlbumsPage,rankings,fusion:fusions,profile,games,rules,settings,market:marketPage,community:communityPage,quests:questsPage}[state.route];
  $('page').innerHTML=(view?view(state):placeholder(state.route))+'<footer class="app-footer">SÉRIECLUB TCG · Données de séries : TVmaze · Visuels : ayants droit respectifs · Projet indépendant</footer>';
  document.title=navName(state.route)+' — SérieClub TCG';
 }
@@ -72,7 +74,7 @@ async function loadSession(){
   const {data:{user},error}=await supa.auth.getUser();
   if(error&&!/session missing/i.test(error.message))console.warn('Auth:',error.message);
   state.user=user||null;
-  if(!user){state.username='';state.bio='';state.favoriteGenre='';state.cards=[];state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.daily=null;render();return}
+  if(!user){state.username='';state.bio='';state.favoriteGenre='';state.cards=[];state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;render();return}
   await ensureProfile(user);
   const status=await supa.rpc('get_booster_status');
   if(status.error)console.warn('Réserve:',status.error.message);
@@ -99,6 +101,7 @@ async function loadSession(){
   render();
   loadDaily();
   if(state.route==='market')loadMarket();
+  if(state.route==='collection'){loadCollectionGoal();loadMySales()}
   if(state.route==='community')loadPeople();
   if(state.route==='albums')loadAlbums();
  }catch(e){console.error('Session:',e);toast('Connexion au serveur momentanément indisponible.',true)}
@@ -154,6 +157,27 @@ async function addAlbumCard(id){
 async function removeAlbumCard(id,cardId){
  await albumMutation('remove_card_from_album',{p_album_id:id,p_card_id:cardId},'Carte retirée de l’album.',id);
 }
+async function loadCollectionGoal(){
+ if(state.collectionEligibleTotal!==null)return;
+ if(loadCollectionGoal.pending)return;
+ loadCollectionGoal.pending=true;
+ try{
+  const {count,error}=await supa.from('series').select('id',{count:'exact',head:true})
+   .neq('rarity_source','pending').not('image_url','is',null);
+  state.collectionEligibleTotal=!error&&Number.isFinite(count)?count:0;
+ }catch{state.collectionEligibleTotal=0}
+ finally{
+  loadCollectionGoal.pending=false;
+  if(state.route==='collection')render();
+ }
+}
+async function loadMySales(){
+ if(!state.user)return;
+ try{
+  const {data,error}=await supa.rpc('my_marketplace_activity');
+  if(!error){state.marketActivity=data||[];if(state.route==='collection')render()}
+ }catch{/* Le Comptoir indiquera l'erreur sur sa page dédiée. */}
+}
 async function loadMarket(){
  if(!state.user){state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];if(state.route==='market')render();return}
  const [feed,activity,offers]=await Promise.all([
@@ -206,6 +230,7 @@ async function createListing(){
  if(!state.user){openAuth();return}
  const id=$('listingCard')?.value,price=Number($('listingPrice')?.value);
  if(!id||!Number.isInteger(price)||price<10||price>50000)return toast('Choisis une carte et un prix entre 10 et 50 000 crédits.',true);
+ state.saleSelectionCard=null;
  await executeMarket('create_card_listing',{p_card_id:id,p_price:price},'Ta carte est désormais en vente.');
 }
 async function purchaseListing(id){
@@ -595,6 +620,21 @@ function globalClick(e){
  if(e.target.closest('#openPack')){openPack();return}
  if(e.target.closest('[data-daily]')){claimDaily();return}
  if(e.target.closest('#openingDone')){closeModal();change('collection');return}
+ const switchMode=e.target.closest('[data-collection-mode]');
+ if(switchMode){state.collectionMode=switchMode.dataset.collectionMode;state.collectionPage=0;render();return}
+ const rankChip=e.target.closest('[data-collection-rank]');
+ if(rankChip){state.rank=state.rank===rankChip.dataset.collectionRank?'':rankChip.dataset.collectionRank;state.collectionPage=0;render();return}
+ const pager=e.target.closest('[data-collection-page]');
+ if(pager){state.collectionPage=Number(pager.dataset.collectionPage)||0;render();$('page')?.scrollIntoView({behavior:'smooth',block:'start'});return}
+ const sellCopy=e.target.closest('[data-sell-copy]');
+ if(sellCopy){
+  if(!state.user){openAuth();return}
+  const copy=state.cards.find(c=>c.id===sellCopy.dataset.sellCopy);
+  if(!copy||copy.locked||copy.reserved_trade_id){toast('Exemplaire indisponible pour la vente.',true);return}
+  state.saleSelectionCard=copy.id;
+  change('market');
+  return;
+ }
  const lock=e.target.closest('[data-lock]');if(lock){toggleLock(lock.dataset.lock,lock.dataset.next==='true');return}
  const series=e.target.closest('[data-series]');if(series){openSeriesDetail(series.dataset.series);return}
  const wish=e.target.closest('[data-wish]');if(wish){toggleWishlist(Number(wish.dataset.wish));return}
@@ -606,8 +646,8 @@ function globalClick(e){
  if(e.target.closest('#signout')){supa.auth.signOut().then(()=>loadSession());return}
  if(e.target.closest('#exportData')){exportData();return}
  const ch=e.target.closest('[data-challenge]');if(ch){chooseChallenge(ch.dataset.challenge);return}
- if(e.target.closest('[data-clear-genre]')){state.genre='';render();return}
- const album=e.target.closest('[data-album]');if(album){state.filter='';state.rank='';state.genre=album.dataset.album;change('collection');return}
+ if(e.target.closest('[data-clear-genre]')){state.genre='';state.collectionPage=0;render();return}
+ const album=e.target.closest('[data-album]');if(album){state.filter='';state.rank='';state.collectionMode='unique';state.collectionPage=0;state.genre=album.dataset.album;change('collection');return}
 }
 async function saveUsername(){
  const name=$('usernameInput')?.value.trim();if(!state.user||!name||name.length<3||name.length>24){toast('Pseudonyme entre 3 et 24 caractères.',true);return}
@@ -621,7 +661,8 @@ async function saveUsername(){
 function globalChange(e){
  if(e.target.id==='actorOnlyClub'){state.actorOnlyClub=e.target.checked;render();return}
  if(e.target.id==='marketRarity'){state.marketRarity=e.target.value;render();return}
- if(e.target.id==='rarityFilter'){state.rank=e.target.value;render();return}
+ if(e.target.id==='rarityFilter'){state.rank=e.target.value;state.collectionPage=0;render();return}
+ if(e.target.id==='collectionSort'){state.collectionSort=e.target.value;state.collectionPage=0;render();return}
  if(e.target.id==='fusionRank'){state.fusionRank=e.target.value;state.fusionSelected=[];render();return}
  if(e.target.matches('[data-fuse]')){const id=e.target.dataset.fuse;if(e.target.checked){if(state.fusionSelected.length===10){e.target.checked=false;return}state.fusionSelected.push(id)}else state.fusionSelected=state.fusionSelected.filter(x=>x!==id);render();return}
  if(e.target.id==='reduceMotion'){state.reduceMotion=e.target.checked;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render()}
@@ -629,7 +670,7 @@ function globalChange(e){
 document.addEventListener('click',globalClick);
 document.addEventListener('change',globalChange);
 document.addEventListener('input',e=>{
- if(e.target.id==='collectionSearch'){state.filter=e.target.value;const active=document.activeElement,position=active.selectionStart;render();const input=$('collectionSearch');input.focus();input.setSelectionRange(position,position)}
+ if(e.target.id==='collectionSearch'){state.filter=e.target.value;state.collectionPage=0;const position=e.target.selectionStart;render();const input=$('collectionSearch');input?.focus();input?.setSelectionRange(position,position)}
  if(e.target.id==='catalogQuery')state.catalogQuery=e.target.value;
  if(e.target.id==='actorSearchQuery')state.actorQuery=e.target.value;
  if(e.target.id==='marketSearch'||e.target.id==='peopleSearch'){
