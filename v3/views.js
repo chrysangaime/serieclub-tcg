@@ -68,7 +68,7 @@ export function catalogue(s){
  const chosen={rarity:s.catalogRarity||'',genre:s.catalogGenre||'',decade:s.catalogDecade||'',sort:s.catalogSort||'name'};
  const active=Boolean((s.catalogQuery||'').trim()||chosen.rarity||chosen.genre||chosen.decade||chosen.sort!=='name');
  const countText=Number.isSafeInteger(s.catalogTotal)
-  ?money(s.catalogTotal)+' série'+(s.catalogTotal>1?'s':'')+' éligible'+(s.catalogTotal>1?'s':'')+' en France · '+money((s.catalog||[]).length)+' affichée'+((s.catalog||[]).length>1?'s':'')
+  ?money(s.catalogTotal)+' série'+(s.catalogTotal>1?'s':'')+' éligible'+(s.catalogTotal>1?'s':'')+' en France · '+money((s.catalog||[]).length)+' affichée'+((s.catalog||[]).length===1?'':'s')
   :money((s.catalog||[]).length)+' séries affichées';
  const filters='<div class="sc59-search-row"><label class="sr" for="catalogQuery">Rechercher une série</label>'+
    '<div class="sc59-search-input"><span aria-hidden="true">⌕</span><input class="input" type="search" id="catalogQuery" placeholder="Rechercher une série…" autocomplete="off" value="'+esc(s.catalogQuery||'')+'" aria-describedby="catalogFeedback"></div>'+
@@ -91,7 +91,7 @@ export function catalogue(s){
       (active?'<button class="btn primary" id="catalogReset">Effacer les filtres</button>':'')+'</div>';
  return '<div class="page-content sc59-catalog">'+
   heading('Catalogue France','Explore les séries diffusées en France, aujourd’hui ou autrefois, et prépare ta collection.')+
-  '<div class="sc54-fr-intro">🇫🇷 <b>Catalogue vérifié pour la France.</b> Une série absente peut encore être en cours de vérification.</div>'+
+  '<div class="sc54-fr-intro">🇫🇷 <b>Diffusion en France vérifiée.</b> Chaque série est appuyée sur une preuve française ; une série absente peut encore être en cours de vérification.</div>'+
   '<div class="sc5-mode"><button class="btn primary" data-catalog-mode="series" aria-pressed="true">▦ Par série</button>'+
   '<button class="btn subtle" data-catalog-mode="actors" aria-pressed="false">♙ Par acteur</button></div>'+
   '<section class="sc59-explorer" aria-label="Rechercher et filtrer les séries">'+filters+
