@@ -204,6 +204,41 @@ CREATE TRIGGER sc_enforce_new_wishlist_fr
  BEFORE INSERT ON public.player_wishlist FOR EACH ROW
  EXECUTE FUNCTION public.enforce_new_wishlist_fr();
 
+-- Les anciennes cartes restent consultables, mais aucune nouvelle annonce
+-- ni proposition d'échange ne peut porter sur une série non vérifiée.
+-- Les transactions existantes ne sont pas modifiées rétroactivement.
+CREATE OR REPLACE FUNCTION public.enforce_new_trade_fr()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
+SET search_path=public,pg_temp AS $
+DECLARE target_id uuid;
+BEGIN
+ target_id:=CASE WHEN TG_TABLE_NAME='card_listings' THEN NEW.card_id
+                 ELSE NEW.offered_card_id END;
+ IF NOT EXISTS (
+   SELECT 1 FROM public.player_cards c JOIN public.series s ON s.id=c.series_id
+   WHERE c.id=target_id AND s.fr_verified IS TRUE
+ ) THEN
+  RAISE EXCEPTION 'Carte non éligible aux nouveaux échanges : diffusion France à vérifier';
+ END IF;
+ IF TG_TABLE_NAME='card_trade_offers' AND NOT EXISTS (
+   SELECT 1 FROM public.card_listings l
+   JOIN public.player_cards c ON c.id=l.card_id
+   JOIN public.series s ON s.id=c.series_id
+   WHERE l.id=NEW.listing_id AND s.fr_verified IS TRUE
+ ) THEN
+  RAISE EXCEPTION 'Annonce non éligible : diffusion France à vérifier';
+ END IF;
+ RETURN NEW;
+END $;
+DROP TRIGGER IF EXISTS sc_fr_new_listings ON public.card_listings;
+CREATE TRIGGER sc_fr_new_listings
+ BEFORE INSERT ON public.card_listings FOR EACH ROW
+ EXECUTE FUNCTION public.enforce_new_trade_fr();
+DROP TRIGGER IF EXISTS sc_fr_new_offers ON public.card_trade_offers;
+CREATE TRIGGER sc_fr_new_offers
+ BEFORE INSERT ON public.card_trade_offers FOR EACH ROW
+ EXECUTE FUNCTION public.enforce_new_trade_fr();
+
 -- Vue non destructive du catalogue jouable.
 CREATE OR REPLACE VIEW public.playable_fr_series
 WITH (security_invoker=true) AS
