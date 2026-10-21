@@ -138,7 +138,7 @@ export function frenchSynopsisHTML(result={source:'loading',text:''},english='')
        (/^https:\/\/fr\.wikipedia\.org\/\?curid=\d+$/.test(result.sourceUrl||'')?escFR(result.sourceUrl):'https://fr.wikipedia.org/')+
        '" target="_blank" rel="noopener noreferrer">Wikipédia en français ↗</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a> (texte abrégé).</p>'
    :result.source==='translated'
-    ?'<p class="sc5-synopsis-source">Traduction automatique du résumé TVmaze. Des imprécisions sont possibles.</p>'
+    ?'<p class="sc5-synopsis-source">Traduction automatique de données <a href="https://www.tvmaze.com/api#licensing" target="_blank" rel="noopener noreferrer">TVmaze (CC BY-SA) ↗</a>. Des imprécisions sont possibles.</p>'
     :'<p class="sc5-synopsis-source">Résumé original SérieClub.</p>';
   return '<p class="sc5-summary-short">'+escFR(short)+'</p>'+
    (short.length<full.length?'<p class="sc5-summary-long hidden">'+escFR(full)+'</p>'+
