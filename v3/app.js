@@ -11,9 +11,9 @@ const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishab
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions'};
-const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
-let toastTimer,clockTimer,searchTimer,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
+let toastTimer,clockTimer,searchTimer,catalogRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
 function loadRouteData(route){
@@ -26,6 +26,7 @@ function loadRouteData(route){
  if(route==='albums'&&state.user)loadAlbums();
 }
 function change(route){
+ clearTimeout(searchTimer);
  const nextRoute=routes[route]||route;if(!nextRoute)return;
  state.route=nextRoute;
  const next='#/'+(slug[nextRoute]||nextRoute);
@@ -33,6 +34,7 @@ function change(route){
  render();loadRouteData(nextRoute);
  window.scrollTo({top:0,behavior:'instant'});
  document.body.classList.remove('drawer-open');
+ const button=$('menuToggle');if(button)button.setAttribute('aria-expanded','false');
 }
 function syncBrowserRoute(){
  state.route=safeRoute();render();loadRouteData(state.route);
@@ -42,19 +44,27 @@ window.addEventListener('hashchange',()=>{if(safeRoute()!==state.route)syncBrows
 function renderChrome(){
  const pending=state.tradeOffers.filter(o=>o.status==='pending'&&o.seller_id===state.user?.id).length;
  const nav=navItems.map(([key,icon,title])=>'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico">'+esc(icon)+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':key==='market'&&pending?'<span class="count">'+pending+'</span>':'')+'</button>').join('');
- $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark">S</span><span>SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav><div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div><div class="side-account" data-route="profile"><div class="avatar">'+esc((state.username||'S').slice(0,1).toUpperCase())+'</div><div><b>'+esc(state.username||'Mon compte')+'</b><small>'+money(state.cards.length)+' cartes dans ma collection</small></div></div>';
+ $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark">S</span><span>SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav>'+(monthHalloween()?'<div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div>':'')+'<div class="side-account" data-route="profile"><div class="avatar">'+esc((state.username||'S').slice(0,1).toUpperCase())+'</div><div><b>'+esc(state.username||'Mon compte')+'</b><small>'+money(state.cards.length)+' cartes dans ma collection</small></div></div>';
  $('topbar').innerHTML='<div class="row"><button class="top-btn mobile-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><span class="crumb">'+esc(navName(state.route)).toUpperCase()+'</span></div><div class="top-actions"><button class="top-btn sc4-bell" data-route="market" aria-label="Offres d’échange reçues">✧'+(pending?'<span class="sc4-bell-number">'+pending+'</span>':'')+'</button><button class="top-btn hide-mobile" data-route="rules">Règles du jeu</button><span class="credit-pill">Ⓒ &nbsp;'+money(state.wallet?.credits)+'<span>crédits</span></span><button class="top-btn" data-auth>'+(state.user?'Mon compte':'Connexion')+'</button><button class="top-btn hide-mobile" id="motionToggle" title="Animations">◐</button><span class="top-btn" aria-label="Langue : français">🇫🇷 FR</span></div>';
  if(monthHalloween()){
   $('topbar').querySelector('.crumb')?.insertAdjacentHTML('afterend','<span class="top-season-tag hide-mobile">☾ LES NUITS D’OCTOBRE</span>');
  }
+ const mobile=[['packs','▤','Paquets'],['collection','▣','Collection'],['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits']];
+ const bottom=$('mobileNav');
+ if(bottom)bottom.innerHTML=mobile.map(([route,icon,label])=>
+   '<button type="button" data-route="'+route+'" class="sc59-mobile-link'+(state.route===route?' active':'')+'" aria-current="'+(state.route===route?'page':'false')+'" aria-label="'+label+'"><span aria-hidden="true">'+icon+'</span><small>'+label+'</small></button>').join('');
 }
 function render(){
+ const focused=document.activeElement;
+ const restoreCatalog=state.route==='catalog'&&focused?.id==='catalogQuery';
+ const cursor=restoreCatalog?focused.selectionStart:null;
  document.body.classList.toggle('reduce-motion',state.reduceMotion);
  document.body.classList.toggle('season-halloween',monthHalloween());
  renderChrome();
  const view={packs,collection:collectionStudio,catalog:catalogue,wishlist,albums:personalAlbumsPage,rankings,fusion:fusions,profile,games,rules,settings,market:marketPage,community:communityPage,quests:questsPage}[state.route];
  $('page').innerHTML=(view?view(state):placeholder(state.route))+'<footer class="app-footer">SÉRIECLUB TCG · Données de séries : TVmaze · Visuels : ayants droit respectifs · Projet indépendant</footer>';
  document.title=navName(state.route)+' — SérieClub TCG';
+ if(restoreCatalog){const input=$('catalogQuery');if(input){input.focus({preventScroll:true});if(cursor!==null)input.setSelectionRange(cursor,cursor)}}
 }
 async function ensureProfile(user){
  let {data,error}=await supa.from('profiles').select('username,bio,favorite_genre').eq('id',user.id).maybeSingle();
