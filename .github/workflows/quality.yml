@@ -60,8 +60,8 @@ jobs:
           assert.match(v.collection(state),/Ma collection/);
           const studio=await import('./v5/collection.js');
           const sample=[
-            {id:'a1',series_id:17,rarity:'Rare',series:{name:'From',rarity:'Rare',image_url:'https://example.com/p.jpg'}},
-            {id:'a2',series_id:17,rarity:'Rare',series:{name:'From',rarity:'Rare',image_url:'https://example.com/p.jpg'}},
+            {id:'a1',series_id:17,rarity:'Rare',series:{name:'From',rarity:'Rare',fr_verified:true,image_url:'https://example.com/p.jpg'}},
+            {id:'a2',series_id:17,rarity:'Rare',series:{name:'From',rarity:'Rare',fr_verified:true,image_url:'https://example.com/p.jpg'}},
           ];
           const summary=studio.deriveCollection(sample,[{series_id:18,series:{name:'Lost'}}],[]);
           assert.equal(summary.unique,1);
