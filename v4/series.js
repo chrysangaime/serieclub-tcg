@@ -160,6 +160,18 @@ export function showDetailHTML(source={},base={},french={source:'loading'}){
  const officialRarity=base.rarity_source==='pending'?null:(base.rarity||show.rarity||null);
  const tier=officialRarity?officialRarity.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'-'):'unclassified';
  const poster=show.image?.medium||show.image?.original||show.image_url||base.image_url;
+ const verifiedInFrance=base.fr_verified===true;
+ const evidence=String(base.fr_evidence_url||'');
+ const safeEvidence=/^https:\/\/[^\s<>"']{5,512}$/i.test(evidence)
+  ?escapeHTML(evidence):null;
+ const frenchProof=verifiedInFrance
+  ?'<div class="sc54-fr-cert"><b>🇫🇷 Série diffusée en France</b>'+
+    '<small>Diffusion ou mise à disposition confirmée, actuelle ou passée.</small>'+
+    (safeEvidence?'<a href="'+safeEvidence+'" target="_blank" rel="noopener noreferrer">Voir la source ↗</a>':'')+
+    '</div>'
+  :'<div class="sc54-fr-unverified"><b>🇫🇷 Diffusion française à vérifier</b>'+
+    '<small>Cette série n’est pas encore éligible aux nouveaux boosters. Cela ne signifie pas qu’elle n’a jamais été diffusée en France.</small></div>';
+
  const castRows=cast.filter(x=>x.person?.id&&x.person?.name).slice(0,24).map(x=>
   '<button class="sc5-cast-row" data-person="'+x.person.id+'" aria-label="Voir les séries de '+escapeHTML(x.person.name)+'">'+photo(x.person.image?.medium||x.person.image?.original,x.person.name,'sc5-cast-thumb')+'<b>'+escapeHTML(x.person.name)+'</b>'+
   (x.character?.name?'<small>'+escapeHTML(x.character.name)+'</small>':'')+'<span class="sc5-row-arrow" aria-hidden="true">↗</span></button>').join('');
@@ -175,7 +187,7 @@ export function showDetailHTML(source={},base={},french={source:'loading'}){
   '<div class="sc5-show-intro"><span class="caps">SÉRIECLUB · LA SÉRIE</span><h2>'+escapeHTML(name)+'</h2>'+
   '<div class="sc5-tagline">'+[year,status,seasons!=null?seasons+' saison'+(seasons>1?'s':''):null].filter(Boolean).map(v=>'<span>'+escapeHTML(v)+'</span>').join('')+'</div>'+
   '<div class="detail-tags">'+genrePills(show.genres||base.genres)+(officialRarity?'<strong class="sc53-official-rank">✦ '+escapeHTML(officialRarity)+' · rareté officielle</strong>':'<span class="sc53-rank-unknown">Rareté en attente de classement</span>')+'</div>'+
-  '<h3>En quelques mots</h3><div class="sc5-synopsis" data-synopsis>'+frenchSynopsisHTML(french,summary)+'</div>'+
+  frenchProof+'<h3>En quelques mots</h3><div class="sc5-synopsis" data-synopsis>'+frenchSynopsisHTML(french,summary)+'</div>'+
   '</div></div>'+
   (more.length?'<details class="sc5-meta-more"><summary>Informations complémentaires</summary><div class="sc5-facts">'+more.map(([label,val])=>'<div><small>'+escapeHTML(label)+'</small><strong>'+escapeHTML(val)+'</strong></div>').join('')+'</div></details>':'')+
   '<section class="sc5-cast-section"><div class="sc5-section-head"><div><span class="caps">DISTRIBUTION</span><h3>Acteurs et personnages</h3></div><span class="sc5-muted">Clique sur un nom pour ses autres séries</span></div>'+
