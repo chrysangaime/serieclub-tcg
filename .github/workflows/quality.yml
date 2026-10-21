@@ -29,7 +29,7 @@ jobs:
           node --check v5/fr-collection.js
           node --check v5/fr-text.js
           node --check scripts/sync-fr-providers.mjs
-          node --test tests/series.test.mjs tests/synopsis-fr.test.mjs tests/collection.test.mjs tests/france-rarity.test.mjs tests/fr-eligibility.test.mjs tests/fr-archive-watch.test.mjs
+          node --test tests/series.test.mjs tests/synopsis-fr.test.mjs tests/collection.test.mjs tests/france-rarity.test.mjs tests/fr-eligibility.test.mjs tests/fr-archive-watch.test.mjs tests/watch-platforms.test.mjs
           node --check scripts/import-tvmaze.mjs
       - name: Tester les pages du TCG
         run: |
@@ -88,6 +88,17 @@ jobs:
           const frOffers=JSON.parse(fs.readFileSync('data/watch-fr.json','utf8'));
           assert.equal(frOffers.titles['430'].country,'FR');
           assert.equal(frOffers.titles['430'].url,'https://www.justwatch.com/fr/serie/the-x-files');
+          const himym=frOffers.titles['171'];
+          assert.equal(himym.url,'https://www.justwatch.com/fr/serie/how-i-met-your-mother');
+          assert.equal(himym.offers.find(o=>o.type==='flatrate')?.name,'Disney+');
+          assert.deepEqual(himym.offers.filter(o=>o.type==='buy').map(o=>o.name),
+            ['Apple TV Store','Amazon Video']);
+          const compactView=await import('./v5/fr-watch.js');
+          const panel=compactView.renderFranceAvailability(himym);
+          assert.match(panel,/Disponible sur/);
+          assert.match(panel,/sc56-brand-disney/);
+          assert.match(panel,/sc56-secondary/);
+
           assert.ok(frOffers.titles['430'].offers.some(o=>o.name==='Disney+'));
           assert.ok(frOffers.titles['430'].offers.some(o=>o.name==='Amazon Prime Video'));
           const franchise=await import('./v5/fr-collection.js');
