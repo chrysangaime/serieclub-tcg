@@ -55,10 +55,53 @@ export function collection(s){
  const q=(s.filter||'').toLowerCase(),list=s.cards.filter(c=>(!s.rank||c.rarity===s.rank)&&(!s.genre||(c.series?.genres||[]).includes(s.genre))&&(!q||c.series?.name?.toLowerCase().includes(q)));
  return '<div class="page-content">'+heading('Ma collection','Une collection synchronisée, carte par carte.')+'<div class="metric-row"><div class="metric"><strong>'+money(s.cards.length)+'</strong><span>Cartes</span></div><div class="metric"><strong>'+money(new Set(s.cards.map(c=>c.series_id)).size)+'</strong><span>Séries uniques</span></div><div class="metric"><strong>'+money(s.cards.filter(c=>c.locked).length)+'</strong><span>Cartes protégées</span></div><div class="metric"><strong>'+money(s.wallet?.experience)+'</strong><span>Expérience</span></div></div>'+(s.genre?'<div class="notice">Album : '+esc(s.genre)+' <button class="btn small" data-clear-genre>Tout afficher</button></div>':'')+'<div class="row" style="margin-bottom:20px"><input class="input" id="collectionSearch" placeholder="Rechercher mes cartes..." value="'+esc(s.filter||'')+'"><select id="rarityFilter"><option value="">Toutes les raretés</option>'+ranks.map(r=>'<option '+(s.rank===r?'selected':'')+'>'+esc(r)+'</option>').join('')+'</select><span class="note">'+list.length+' résultats</span></div>'+(list.length?'<div class="grid">'+list.map(c=>card(c,'<button class="card-action" data-series="'+esc(c.series_id)+'">✧ Voir la série</button><button class="card-action" data-lock="'+esc(c.id)+'" data-next="'+(!c.locked)+'">'+(c.locked?'Déprotéger':'🔒 Protéger')+'</button>')).join('')+'</div>':'<div class="empty">Aucune carte. Ouvre un paquet pour commencer.</div>')+'</div>';
 }
+/** Catalogue France : filtres réellement exécutés par Supabase, pas sur la seule page courante. */
 export function catalogue(s){
  if(s.catalogMode==='actors')return actorCatalogueView(s);
- const owned=new Map();for(const c of s.cards||[])owned.set(c.series_id,(owned.get(c.series_id)||0)+1);
- return '<div class="page-content">'+heading('Catalogue France','Séries diffusées en France par le passé, actuellement ou dont une diffusion française est annoncée et sourcée.')+'<div class="sc54-fr-intro">🇫🇷 <b>Séries éligibles en France uniquement.</b> Une série absente n’est pas forcément inédite en France : sa diffusion peut encore être à vérifier. Les anciennes cartes restent dans les collections.</div><div class="sc5-mode"><button class="btn primary" data-catalog-mode="series">▦ Par série</button><button class="btn subtle" data-catalog-mode="actors">♙ Par acteur</button></div>'+'<div class="row" style="margin:20px 0"><input class="input" id="catalogQuery" placeholder="Titre d’une série..." value="'+esc(s.catalogQuery||'')+'"><button class="btn primary" id="catalogSearch">Rechercher</button></div><p class="note">'+(s.catalogLoading?'Recherche en cours…':esc(s.catalogError||(Number.isSafeInteger(s.catalogTotal)?money(s.catalogTotal)+' séries éligibles en France · '+money(s.catalog.length)+' affichées':money(s.catalog.length)+' séries affichées')))+'</p>'+(s.catalog.length?'<div class="grid">'+s.catalog.map(c=>card(c,(owned.get(c.id)?'<div class="sc52-owned-tag">✓ Dans ta collection · '+money(owned.get(c.id))+' exemplaire'+(owned.get(c.id)>1?'s':'')+'</div>':'')+'<button class="card-action" data-series="'+esc(c.id)+'">✧ Découvrir · où regarder</button><button class="card-action" data-wish="'+esc(c.id)+'">'+(s.wishes.some(w=>w.series_id===c.id)?'★ Retirer des souhaits':'☆ Ajouter aux souhaits')+'</button>')).join('')+'</div>':'<div class="empty">Aucune série française vérifiée ne correspond à cette recherche. Essaie un autre titre ou attends la vérification de nouvelles séries.</div>')+'<div class="row" style="justify-content:center;margin:25px"><button class="btn subtle" id="catalogMore" '+(!s.catalogMore?'disabled':'')+'>Charger davantage</button></div></div>';
+ const owned=new Map();
+ for(const c of s.cards||[])owned.set(c.series_id,(owned.get(c.series_id)||0)+1);
+ const wishes=new Set((s.wishes||[]).map(w=>w.series_id));
+ const opt=(value,label,current)=>'<option value="'+esc(value)+'"'+(current===value?' selected':'')+'>'+esc(label)+'</option>';
+ const genres=[['','Tous les genres'],['Drama','Drame'],['Comedy','Comédie'],['Crime','Policier'],['Thriller','Thriller'],['Mystery','Mystère'],['Science-Fiction','Science-fiction'],['Fantasy','Fantastique'],['Horror','Horreur'],['Action','Action'],['Adventure','Aventure'],['Romance','Romance'],['Animation','Animation'],['Documentary','Documentaire'],['Family','Famille']];
+ const decades=[['','Toutes les époques'],['2020','Années 2020'],['2010','Années 2010'],['2000','Années 2000'],['1990','Années 1990'],['1980','Années 1980'],['1970','Années 1970'],['1960','Années 1960'],['1950','Années 1950'],['before1950','Avant 1950']];
+ const sorting=[['name','Titre A → Z'],['recent','Plus récentes'],['oldest','Plus anciennes'],['popular','Popularité TVmaze']];
+ const chosen={rarity:s.catalogRarity||'',genre:s.catalogGenre||'',decade:s.catalogDecade||'',sort:s.catalogSort||'name'};
+ const active=Boolean((s.catalogQuery||'').trim()||chosen.rarity||chosen.genre||chosen.decade||chosen.sort!=='name');
+ const countText=Number.isSafeInteger(s.catalogTotal)
+  ?money(s.catalogTotal)+' série'+(s.catalogTotal>1?'s':'')+' éligible'+(s.catalogTotal>1?'s':'')+' en France · '+money((s.catalog||[]).length)+' affichée'+((s.catalog||[]).length>1?'s':'')
+  :money((s.catalog||[]).length)+' séries affichées';
+ const filters='<div class="sc59-search-row"><label class="sr" for="catalogQuery">Rechercher une série</label>'+
+   '<div class="sc59-search-input"><span aria-hidden="true">⌕</span><input class="input" type="search" id="catalogQuery" placeholder="Rechercher une série…" autocomplete="off" value="'+esc(s.catalogQuery||'')+'" aria-describedby="catalogFeedback"></div>'+
+   '<button class="btn primary" id="catalogSearch">Rechercher</button></div>'+
+   '<div class="sc59-filter-grid" aria-label="Filtrer le catalogue">'+
+    '<label>Rareté<select id="catalogRarity">'+opt('', 'Toutes les raretés',chosen.rarity)+ranks.map(v=>opt(v,v,chosen.rarity)).join('')+'</select></label>'+
+    '<label>Genre<select id="catalogGenre">'+genres.map(([v,l])=>opt(v,l,chosen.genre)).join('')+'</select></label>'+
+    '<label>Époque<select id="catalogDecade">'+decades.map(([v,l])=>opt(v,l,chosen.decade)).join('')+'</select></label>'+
+    '<label>Trier par<select id="catalogSort">'+sorting.map(([v,l])=>opt(v,l,chosen.sort)).join('')+'</select></label>'+
+   '</div>';
+ const results=(s.catalog||[]).length
+  ?'<div class="grid sc59-catalog-grid">'+s.catalog.map(c=>card(c,
+    (owned.get(c.id)?'<div class="sc52-owned-tag">✓ Dans ta collection · '+money(owned.get(c.id))+' exemplaire'+(owned.get(c.id)>1?'s':'')+'</div>':'')+
+    '<button class="card-action" data-series="'+esc(c.id)+'">✧ Découvrir · où regarder</button>'+
+    '<button class="card-action" data-wish="'+esc(c.id)+'" aria-pressed="'+wishes.has(c.id)+'">'+
+     (wishes.has(c.id)?'★ Retirer des souhaits':'☆ Ajouter aux souhaits')+'</button>')).join('')+'</div>'
+  :s.catalogLoading
+   ?'<div class="sc59-skeleton-grid" role="status" aria-label="Chargement des séries">'+Array.from({length:6},()=>'<div class="sc59-skeleton"><div></div><span></span><span></span></div>').join('')+'</div>'
+   :'<div class="sc59-empty"><span aria-hidden="true">⌕</span><h2>Aucune série trouvée</h2><p>'+(active?'Essaie un autre titre ou élargis les filtres.':'De nouvelles séries sont ajoutées après vérification de leur diffusion en France.')+'</p>'+
+      (active?'<button class="btn primary" id="catalogReset">Effacer les filtres</button>':'')+'</div>';
+ return '<div class="page-content sc59-catalog">'+
+  heading('Catalogue France','Explore les séries diffusées en France, aujourd’hui ou autrefois, et prépare ta collection.')+
+  '<div class="sc54-fr-intro">🇫🇷 <b>Catalogue vérifié pour la France.</b> Une série absente peut encore être en cours de vérification.</div>'+
+  '<div class="sc5-mode"><button class="btn primary" data-catalog-mode="series" aria-pressed="true">▦ Par série</button>'+
+  '<button class="btn subtle" data-catalog-mode="actors" aria-pressed="false">♙ Par acteur</button></div>'+
+  '<section class="sc59-explorer" aria-label="Rechercher et filtrer les séries">'+filters+
+  '<div class="sc59-results" id="catalogFeedback" role="status" aria-live="polite">'+
+   '<span>'+(s.catalogLoading?'Recherche en cours…':esc(s.catalogError||countText))+'</span>'+
+   (active?'<button class="sc59-clear" id="catalogReset">Effacer les filtres ×</button>':'')+
+  '</div></section>'+
+  results+
+  (s.catalogMore?'<div class="sc59-more"><button class="btn primary" id="catalogMore"'+(s.catalogLoading?' disabled':'')+'>Charger davantage de séries ↓</button></div>':'')+
+ '</div>';
 }
 export function wishlist(s){
  return '<div class="page-content">'+heading('Liste de souhaits','Les séries que tu aimerais obtenir.')+'<div class="panel"><p>'+ (s.user?'Synchronisée avec ton compte.':'Connecte-toi pour enregistrer une liste de souhaits.')+'</p>'+(s.wishes.length?'<div class="grid">'+s.wishes.map(w=>card(w.series||{name:'Série'},'<button class="card-action" data-series="'+esc(w.series_id)+'">✧ Découvrir</button><button class="card-action" data-wish="'+esc(w.series_id)+'">★ Retirer</button>')).join('')+'</div>':'<div class="empty">La liste est vide. Ajoute des séries depuis le catalogue.</div>')+'</div></div>';
