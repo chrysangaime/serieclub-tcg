@@ -5,22 +5,27 @@
  */
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeImg=x=>/^https:\/\/(?:static\.tvmaze\.com|image\.tmdb\.org|[^/]+\.tvmaze\.com)\//i.test(x||'')?esc(x):'';
-const levels={poster:['◈','Affiche mystère','Reconnais une affiche emblématique.'],
- pixel:['▦','Pixel secret','Retrouve une série à partir d’une affiche pixellisée.'],
+const levels={poster:['◈','Détail mystère','Retrouve la série à partir d’un fragment de son affiche.'],
+ pixel:['▦','Mosaïque pixel','Reconnais l’affiche entière en gros pixels.'],
  timeline:['◷','Chrono séries','Qui est apparu sur nos écrans en premier ?'],
  year:['✧','L’année culte','Retrouve les séries qui ont marqué leur époque.']};
 export const gameModes=Object.freeze(Object.keys(levels));
 export function gameCards(status={},records={}){
- const active=status?.enabled===true;
+ const active=status?.enabled===true&&status?.limit_per_mode_hours===24;
  return '<div class="sc7-mode-grid">'+gameModes.map(type=>{
   const [symbol,title,description]=levels[type];
+  const info=status?.modes?.[type];
+  const retry=Date.parse(info?.next_available_at||'');
+  const locked=active&&info?.available===false&&Number.isFinite(retry)&&retry>Date.now();
+  const next=locked?new Date(retry).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
   return '<article class="sc7-mode sc7-mode-'+type+'">'+
    '<div class="sc7-mode-art"><span aria-hidden="true">'+symbol+'</span>'+
    '<div class="sc7-mode-ornament" aria-hidden="true"></div></div>'+
    '<div class="sc7-mode-content"><span class="sc7-mode-eyebrow">'+
-    (active?'DÉFI RÉCOMPENSÉ':'DÉFI LIBRE')+'</span><h2>'+esc(title)+'</h2><p>'+esc(description)+'</p>'+
-   '<div class="sc7-mode-meta"><span>5 questions</span><span>'+(active?'Jusqu’à 80 crédits':'Sans limite')+'</span></div>'+
-   '<button class="btn primary" data-challenge="'+type+'">Jouer <span aria-hidden="true">↗</span></button></div></article>'
+    (active?'DÉFI RÉCOMPENSÉ':'ENTRAÎNEMENT')+'</span><h2>'+esc(title)+'</h2><p>'+esc(description)+'</p>'+
+   '<div class="sc7-mode-meta"><span>5 questions</span><span>'+(active?'80 crédits max':'Sans crédits')+'</span></div>'+ 
+   (locked?'<p class="sc8-retry">Disponible le '+esc(next)+'</p>':'')+
+   '<button class="btn primary" data-challenge="'+type+'"'+(locked?' disabled':'')+'>'+(locked?'À demain':'Jouer')+' <span aria-hidden="true">↗</span></button></div></article>'
  }).join('')+'</div>';
 }
 export function rewardQuizHTML(session,feedback=null,busy=false){
@@ -41,8 +46,8 @@ export function rewardQuizHTML(session,feedback=null,busy=false){
  const isTimeline=display.mode==='timeline';
  const isPixel=display.mode==='pixel';
  const img=safeImg(q.poster);
- const poster=img?'<div class="sc7-clue '+(isPixel?'sc7-pixel':'sc7-poster')+
-   (feedback?' is-revealed':'')+'"><img src="'+img+'" alt="'+(feedback?'Affiche dévoilée':'Affiche à reconnaître')+
+ const poster=img?'<div class="sc7-clue '+(isPixel?'sc7-pixel sc8-pixel':'sc7-poster sc8-poster')+
+   (feedback?' is-revealed':'')+'"><img src="'+img+'" alt="'+(feedback?'Affiche dévoilée':'Indice visuel de série à reconnaître')+
    '" loading="eager"></div>':'';
  const buttons=choices.map(c=>{
   const selected=feedback&&Number(c.id)===Number(feedback.answer);
