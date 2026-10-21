@@ -10,7 +10,7 @@ const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishab
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions'};
-const state={route:'packs',user:null,username:'',cards:[],wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let toastTimer,clockTimer,searchTimer,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
@@ -75,7 +75,7 @@ async function loadSession(){
   const {data:{user},error}=await supa.auth.getUser();
   if(error&&!/session missing/i.test(error.message))console.warn('Auth:',error.message);
   state.user=user||null;
-  if(!user){state.username='';state.bio='';state.favoriteGenre='';state.cards=[];state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;render();return}
+  if(!user){state.username='';state.bio='';state.favoriteGenre='';state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;render();return}
   await ensureProfile(user);
   const status=await supa.rpc('get_booster_status');
   if(status.error)console.warn('Réserve:',status.error.message);
@@ -86,17 +86,22 @@ async function loadSession(){
    supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500),
    supa.rpc('my_trade_offers')
   ]);
-  if(wi.error&&/rarity|column|schema cache/i.test(wi.error.message)){
-   const legacy=await supa.from('player_wishlist')
-    .select('series_id,series:series_id(id,name,image_url,premiered)')
-    .eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500);
-   if(!legacy.error)wi=legacy;
-  }
-  if(c.error){const old=await supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,obtained_at,series:series_id(id,name,image_url,genres,premiered)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000);if(!old.error)c={data:(old.data||[]).map(x=>({...x,reserved_trade_id:null})),error:null}}
+  // A missing France column is an actionable migration error, not a reason
+  // to display worldwide historical wishlists.
+  // Do not silently fall back to a worldwide inventory if the FR schema is absent.
+  state.frMigrationError=c.error&&/fr_verified|schema cache|column/i.test(c.error.message)?
+   'Active la migration France V5.4 + V5.5 pour afficher les cartes éligibles.':'';
   if(w.error)toast('Portefeuille : '+w.error.message,true);
   if(c.error)toast('Collection : '+c.error.message,true);
-  state.wallet=w.data||null;state.cards=c.data||[];
-  state.wishes=wi.error?[]:wi.data||[];
+  state.wallet=w.data||null;
+  const allCards=c.error?[]:c.data||[];
+  const allWishes=wi.error?[]:wi.data||[];
+  const isPlayable=x=>x?.series?.fr_verified===true&&x?.series?.rarity_source!=='pending';
+  state.cards=allCards.filter(isPlayable);
+  state.excludedCardsCount=allCards.length-state.cards.length;
+  state.wishes=allWishes.filter(isPlayable);
+  state.excludedWishesCount=allWishes.length-state.wishes.length;
+  state.fusionSelected=state.fusionSelected.filter(id=>state.cards.some(c=>c.id===id));
   state.tradeOffers=tr.error?[]:tr.data||[];
   if(wi.error&&wi.error.code!=='42P01')console.warn('Wishlist:',wi.error.message);
   render();
@@ -363,7 +368,7 @@ async function openSeriesDetail(id){
   // card's historic rarity, a TVmaze popularity weight or a selected filter.
   if(!base.rarity||base.fr_verified===undefined){
     const {data:canonical,error:catalogError}=await supa.from('series')
-      .select('id,name,image_url,premiered,genres,rarity,rarity_source')
+      .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url')
       .eq('id',numeric).maybeSingle();
     if(!catalogError&&canonical)base={...base,...canonical};
     if(!detailReady(token))return;
@@ -492,8 +497,8 @@ async function toggleWishlist(id){
  }
  const reply=exists?await supa.from('player_wishlist').delete().eq('owner_id',state.user.id).eq('series_id',id):await supa.from('player_wishlist').insert({owner_id:state.user.id,series_id:id});
  if(reply.error){toast('Liste de souhaits : '+reply.error.message,true);return}
- const {data}=await supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered)').eq('owner_id',state.user.id).order('created_at',{ascending:false});
- state.wishes=data||[];toast(exists?'Série retirée des souhaits.':'Série ajoutée à tes souhaits.');render();
+ const {data}=await supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source,fr_verified)').eq('owner_id',state.user.id).order('created_at',{ascending:false});
+ state.wishes=(data||[]).filter(w=>w.series?.fr_verified===true&&w.series?.rarity_source!=='pending');toast(exists?'Série retirée des souhaits.':'Série ajoutée à tes souhaits.');render();
 }
 async function toggleLock(id,next){
  const {error}=await supa.rpc('set_card_locked',{p_card_id:id,p_locked:next});
