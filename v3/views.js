@@ -1,5 +1,5 @@
 import {platformStrip,seasonShelf} from './discovery.js?v=5.3.1';
-import {actorCatalogueView} from '../v4/series.js?v=5.3.1';
+import {actorCatalogueView} from '../v4/series.js?v=5.4.0';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
