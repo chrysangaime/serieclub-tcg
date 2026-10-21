@@ -603,6 +603,20 @@ function previewFusion(){
   '<button class="btn primary" id="fusionConfirm">Confirmer la fusion définitive</button></div></div>';
  root.querySelector('#fusionConfirm')?.focus();
 }
+function showFusionSuccess(result,rank){
+ const root=$('overlay');
+ root.classList.remove('hidden');
+ const name=String(result?.name||'Nouvelle carte');
+ const img=photo(result?.image_url);
+ root.innerHTML='<div class="dialog sc60-fusion-win" role="dialog" aria-modal="true" aria-label="Fusion réussie">'+
+  '<div class="sc60-medal">✦</div><span class="caps">FUSION RÉUSSIE · +100 XP</span>'+
+  '<h2>Une nouvelle carte !</h2>'+
+  (img?'<img src="'+img+'" alt="Affiche de '+esc(name)+'" loading="lazy">':'')+
+  '<h3>'+esc(name)+'</h3><span class="sc60-win-rank">'+esc(String(result?.rarity||rank))+'</span>'+
+  '<p>Ta nouvelle carte est enregistrée dans ta collection.</p>'+
+  '<button class="btn primary" id="fusionResultDone">Voir ma collection →</button></div>';
+ root.querySelector('#fusionResultDone')?.focus();
+}
 async function doFusion(){
  if(!state.user){openAuth();return}
  if(state.busy)return;
@@ -618,7 +632,7 @@ async function doFusion(){
   state.fusionSelected=[];
   state.fusionPage=0;
   await loadSession();
-  toast('Fusion réussie : '+(data?.[0]?.name||'nouvelle carte')+' · '+(data?.[0]?.rarity||plan.target)+' · +100 XP');
+  showFusionSuccess(data?.[0],plan.target);
  }catch(e){
   closeModal();toast('Fusion impossible : '+e.message,true);
  }finally{state.busy=false;if(state.route==='fusion')render()}
@@ -816,6 +830,7 @@ function globalClick(e){
  }
  if(e.target.closest('#fusionSubmit')){previewFusion();return}
  if(e.target.closest('#fusionConfirm')){doFusion();return}
+ if(e.target.closest('#fusionResultDone')){closeModal();change('collection');return}
  const answerBtn=e.target.closest('[data-quiz-answer]');
  if(answerBtn){selectQuizAnswer(answerBtn.dataset.quizAnswer);return}
  if(e.target.closest('[data-quiz-next]')){advanceQuiz();return}
