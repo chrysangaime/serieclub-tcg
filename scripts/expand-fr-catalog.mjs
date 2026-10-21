@@ -59,7 +59,8 @@ export function collectFrenchOffers(region){
 async function requestJSON(url,headers={},allow404=false){
  let last='Erreur réseau temporaire';
  const safePath=new URL(url).hostname+new URL(url).pathname;
- for(let attempt=0;attempt<6;attempt++){
+ const maxAttempts=safePath.startsWith('api.tvmaze.com/')?2:5;
+ for(let attempt=0;attempt<maxAttempts;attempt++){
   const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
   let retryAfter=0;
   try{
@@ -77,7 +78,7 @@ async function requestJSON(url,headers={},allow404=false){
    last=err?.name==='AbortError'?'Délai dépassé '+safePath:
     String(err?.message||'Erreur réseau').slice(0,140);
   }finally{clearTimeout(timer)}
-  if(attempt<5)await pause(Math.max(retryAfter,(attempt+1)*2500));
+  if(attempt<maxAttempts-1)await pause(Math.max(retryAfter,(attempt+1)*1600));
  }
  throw Error('Échec API après reprises : '+last);
 }
@@ -193,6 +194,7 @@ export async function run(){
  const checked_at=new Date().toISOString();
  console.log('Découverte TMDB : '+discoveryLabel(cursor)+' | '+pageCount+' pages max, '+budget+' titres max.');
  let discovered=0,approved=0,noMatch=0,withoutOffers=0,errors=0,processedPages=0;
+ let outageErrors=0,partial=false;
  for(let j=0;j<pageCount&&discovered<budget;j++){
   const periodLabel=discoveryLabel(cursor);
   const activePage=cursor.mode==='popular'?cursor.popular.page:cursor.archive.page;
@@ -222,24 +224,34 @@ export async function run(){
        cached.offers.length){
       // Ne jamais effacer les relevés éditoriaux attribués avec leurs liens directs.
     }else watch.titles[String(show.id)]=record;
-    approved++;
+    approved++;outageErrors=0;
    }catch(e){
     errors++; console.warn('Série TMDB',candidate.id,':',e.message);
-    if(errors>=25)throw Error('Arrêt prudent : trop d’erreurs API. Progression non publiée.');
+    if(/HTTP 50[234] api\.tvmaze\.com/.test(e.message))outageErrors++;
+    else outageErrors=0;
+    if(outageErrors>=3||errors>=30){
+     // Reporter la page incomplète au prochain passage, sans jeter le
+     // cache enrichi durant les pages déjà terminées.
+     partial=true;
+     console.warn('Import partiel : fournisseur TVmaze temporairement indisponible. '+
+      'La page courante sera réexaminée lors du prochain lancement.');
+     break;
+    }
    }
    await pause(550); // rester courtois envers TVmaze et TMDB
   }
+  if(partial)break;
   processedPages++;
   advanceDiscovery(cursor,totalPages);
   console.log('Découverte FR : page',processedPages+'/'+pageCount,
    '| '+periodLabel,'| vérifiées',approved,'| sans correspondance',noMatch);
  }
- if(processedPages===0)throw Error('Aucune page de découverte traitée');
+ if(processedPages===0&&!partial)throw Error('Aucune page de découverte traitée');
  watch.updated_at=checked_at;
- saveDiscoveryCursor(state,cursor);
+ if(processedPages>0)saveDiscoveryCursor(state,cursor);
  state.updated_at=checked_at;
  state.last_run={mode:cursor.mode,pages:processedPages,examined:discovered,confirmed:approved,
-  no_match:noMatch,no_fr_offer:withoutOffers,errors};
+  no_match:noMatch,no_fr_offer:withoutOffers,errors,partial};
  await Promise.all([
   fs.writeFile(WATCH,JSON.stringify(watch)+'\n'),
   fs.writeFile(STATE,JSON.stringify(state,null,2)+'\n')
