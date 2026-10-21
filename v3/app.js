@@ -1,8 +1,8 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
-import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=5.6.1';
+import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=5.8.0';
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=5.6.1';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
-import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.6.1';
+import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.8.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.6.1';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.6.1';
@@ -11,7 +11,7 @@ const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishab
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions'};
-const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let toastTimer,clockTimer,searchTimer,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
@@ -289,7 +289,7 @@ async function loadCatalog(reset=false){
  if(state.route==='catalog')render();
  const queryPage=withRarity=>{
   let query=supa.from('series')
-    .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url')
+    .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url',{count:'exact'})
     .eq('fr_verified',true).neq('rarity_source','pending')
     .not('image_url','is',null).order('name')
     .range(page*36,page*36+35);
@@ -300,10 +300,12 @@ async function loadCatalog(reset=false){
  };
  try{
   // Fail closed: never return unverified series if the migration is missing.
-  const {data,error}=await queryPage(true);
+  const {data,error,count}=await queryPage(true);
   if(error)throw error;
   state.catalog=reset?[...(data||[])]:state.catalog.concat(data||[]);
-  state.catalogMore=(data||[]).length===36;state.catalogPage=page+1;
+  state.catalogTotal=Number.isSafeInteger(count)?count:null;
+  state.catalogMore=(data||[]).length===36 && (state.catalogTotal===null||state.catalog.length<state.catalogTotal);
+  state.catalogPage=page+1;
  }catch(e){state.catalogError=/fr_verified|schema cache|column/i.test(e.message)
   ?'Active la migration France V5.4 pour afficher uniquement les séries diffusées en France.'
   :'Catalogue indisponible : '+e.message}
