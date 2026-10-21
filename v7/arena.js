@@ -11,7 +11,7 @@ const levels={poster:['◈','Détail mystère','Retrouve la série à partir d�
  year:['✧','L’année culte','Retrouve les séries qui ont marqué leur époque.']};
 export const gameModes=Object.freeze(Object.keys(levels));
 export function gameCards(status={},records={}){
- const active=status?.enabled===true&&status?.limit_per_mode_hours===24;
+ const active=status?.enabled===true;
  return '<div class="sc7-mode-grid">'+gameModes.map(type=>{
   const [symbol,title,description]=levels[type];
   const info=status?.modes?.[type];
