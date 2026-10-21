@@ -26,7 +26,7 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
   return {
    id,name:first.series?.name||'Série inconnue',
    image:first.series?.image_url||'',premiered:first.series?.premiered||'',
-   rarity:rank,genre:first.series?.genres||[],
+   rarity:rank,genre:first.series?.genres||[],eligible:Boolean(first.series?.image_url)&&first.series?.rarity_source!=='pending',
    cards:items,count:items.length,duplicates:Math.max(0,items.length-1),
    protectedCount,blockedCount,
    sellableCopy:items.length>1&&free.length>0?free[free.length-1]:null,
@@ -67,6 +67,7 @@ export function selectCollection(view){
  const acceptName=name=>!text||String(name||'').toLocaleLowerCase('fr').includes(text);
  const validGroup=g=>(!rank||g.rarity===rank)&&(!genre||g.genre.includes(genre))&&acceptName(g.name);
  const groups=sortGroups(data.groups.filter(g=>validGroup(g)),view.collectionSort||'rarity');
+ const groupIndex=new Map(data.groups.map(g=>[g.id,g]));
  let entries;
  if(mode==='missing'){
   entries=data.missing.filter(w=>{
@@ -76,7 +77,7 @@ export function selectCollection(view){
  }else if(mode==='all'){
   const orderByRank=(a,b)=>(rankOrder.get(b.series?.rarity||b.rarity)??-1)-
    (rankOrder.get(a.series?.rarity||a.rarity)??-1);
-  const filtered=(view.cards||[]).filter(c=>validGroup(data.groups.find(g=>g.id===String(c.series_id))||{
+  const filtered=(view.cards||[]).filter(c=>validGroup(groupIndex.get(String(c.series_id))||{
    name:c.series?.name||'',rarity:c.series?.rarity||c.rarity,genre:c.series?.genres||[]
   }));
   entries=[...filtered];
@@ -125,14 +126,15 @@ function missingCard(item){
 }
 function statsPanel(view,data){
  const total=Number(view.collectionEligibleTotal)||0;
- const percentage=total>0?Math.min(100,Math.round(100*data.unique/total)):null;
+ const eligibleOwned=data.groups.filter(g=>g.eligible).length;
+ const percentage=total>0?Math.min(100,Math.round(100*eligibleOwned/total)):null;
  return '<div class="sc52-stats">'+
   '<div><strong>'+money(data.totalCards)+'</strong><span>Cartes possédées</span></div>'+
   '<div><strong>'+money(data.unique)+'</strong><span>Séries différentes</span></div>'+
   '<div><strong>'+money(data.duplicates)+'</strong><span>Exemplaires en doublon</span></div>'+
   '<div><strong>'+money(data.tradableDuplicates)+'</strong><span>Séries avec doublon vendable</span></div>'+
   '</div>'+
-  (total>0?'<div class="sc52-completion"><div><b>Exploration du catalogue</b><span>'+money(data.unique)+' / '+money(total)+' séries possédées · '+percentage+' %</span></div><div class="sc52-progress"><span style="width:'+percentage+'%"></span></div><small>Indicateur de découverte, calculé sur les séries classées et illustrées. Les doublons ne comptent qu’une fois.</small></div>':
+  (total>0?'<div class="sc52-completion"><div><b>Exploration du catalogue</b><span>'+money(eligibleOwned)+' / '+money(total)+' séries classées possédées · '+percentage+' %</span></div><div class="sc52-progress"><span style="width:'+percentage+'%"></span></div><small>Indicateur de découverte, calculé sur les séries classées et illustrées. Les doublons ne comptent qu’une fois.</small></div>':
   '<p class="sc52-stats-note">Découvre des séries en ouvrant des paquets. Le pourcentage global sera affiché lorsque le catalogue sera disponible.</p>');
 }
 export function collectionStudio(state){
