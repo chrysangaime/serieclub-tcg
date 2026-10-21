@@ -50,5 +50,5 @@ test('une diffusion française à venir est présentée comme annoncée, pas dé
  assert.match(future,/France 2/);
  assert.doesNotMatch(future,/France · diffusion attestée/);
  const past=renderFranceAvailability(null,{...details,premiered:'2020-01-01'});
- assert.match(past,/France · diffusion attestée/);
+ assert.match(past,/Diffusion en France confirmée/);
 });
