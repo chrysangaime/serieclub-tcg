@@ -1,9 +1,7 @@
 {
-  "next_page": 0,
-  "updated_at": "2026-10-21T08:51:27.076Z",
-  "previous_start": 100,
-  "imported": 59509,
-  "france_verified_updates": 1434,
-  "completed_full_scan": true,
-  "france_verified_total": 1656
+  "next_page": 300,
+  "updated_at": "2026-10-21T09:06:35.258Z",
+  "previous_start": 0,
+  "imported": 64801,
+  "france_verified_updates": 1323
 }
