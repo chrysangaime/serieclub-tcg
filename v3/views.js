@@ -18,10 +18,27 @@ export function foil(type='classic'){
  const art=horror?'<svg viewBox="0 0 130 120" aria-hidden="true"><defs><radialGradient id="moonT"><stop stop-color="#ffe9aa"/><stop offset="1" stop-color="#f39678"/></radialGradient></defs><circle cx="65" cy="53" r="42" fill="url(#moonT)"/><path d="M65 51 56 33 52 45 C40 43 32 27 13 36 L23 53 Q11 57 7 77 Q25 66 36 81 Q42 66 54 74 L65 91 L76 74 Q88 66 94 81 Q105 66 123 77 Q119 57 107 53 L117 36 C98 27 90 43 78 45 L74 33Z" fill="#21172d" stroke="#663554" stroke-width="1.6"/><circle cx="60" cy="55" r="1.7" fill="#f7c599"/><circle cx="70" cy="55" r="1.7" fill="#f7c599"/></svg>':'<svg viewBox="0 0 120 120" aria-hidden="true"><rect x="23" y="33" width="74" height="56" rx="12" fill="none" stroke="currentColor" stroke-width="2"/><path d="M36 70 48 56 60 67 74 48 84 60" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="34" r="5" fill="currentColor"/><path d="M48 25 Q60 12 73 25 M42 20 Q60 2 80 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
  return '<div class="foil '+(horror?'halloween':'')+'" aria-label="Pochette '+(horror?'Halloween':'Classique')+'"><div class="foil-face"><div class="foil-shimmer"></div><div class="foil-name">SÉRIECLUB<small>TRADING CARD GAME</small></div><div class="foil-emblem">'+art+'</div><div class="foil-foot">'+(horror?'HALLOWEEN':'ORIGINAL')+'</div><span class="foil-mini">5 CARTES • 7 RARETÉS</span></div></div>';
 }
+/** Official rank belongs to a TV show; a card cannot have its own rank. */
+export function officialRarity(cardOrShow){
+ const item=cardOrShow||{},show=item.series||item;
+ if(show.rarity_source==='pending')return 'À classer';
+ return show.rarity||item.rarity||'Non classée';
+}
+export function raritySlug(rank){
+ const known=ranks.find(r=>r===rank);
+ if(!known)return 'unclassified';
+ return known.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'-');
+}
 export function card(c,action=''){
- const s=c.series||c;const title=s.name||'Série inconnue';const rank=(s.rarity_source==='pending'?'À classer':(c.rarity||s.rarity||'Non classée'));
- const rankClass=rank.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\W/g,'');
- return '<article class="collect-card"><img loading="lazy" src="'+photo(s.image_url||s.image?.medium)+'" alt="Affiche de '+esc(title)+'"><div class="card-title">'+esc(title)+'</div><div class="card-meta"><span class="rarity rarity--'+rankClass+'">'+(c.locked?'🔒 ':'')+esc(rank)+'</span><small>'+esc(String(s.premiered||'').slice(0,4))+'</small></div>'+action+'</article>';
+ const s=c.series||c,title=s.name||'Série inconnue';
+ const rank=officialRarity(c),slug=raritySlug(rank);
+ const locked=Boolean(c.locked),year=String(s.premiered||'').slice(0,4);
+ return '<article class="collect-card sc53-card sc53-rarity-'+slug+'">'+
+  '<div class="sc53-poster-wrap"><img loading="lazy" src="'+photo(s.image_url||s.image?.medium)+'" alt="Affiche de '+esc(title)+'">'+
+  '<span class="sc53-rank-label">'+(locked?'🔒 ':'')+esc(rank)+'</span></div>'+
+  '<div class="card-title">'+esc(title)+'</div>'+
+  '<div class="card-meta"><span class="rarity rarity--'+rank.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\W/g,'')+'">'+esc(rank)+'</span>'+
+  '<small>'+esc(year)+'</small></div>'+action+'</article>';
 }
 export function heading(t,sub=''){return '<div class="page-title"><h1>'+esc(t)+'</h1>'+(sub?'<p>'+esc(sub)+'</p>':'')+'</div>'}
 export function packs(s){
