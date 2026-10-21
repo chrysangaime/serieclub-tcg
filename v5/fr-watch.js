@@ -96,6 +96,7 @@ export function renderFranceAvailability(record=null,show={}){
  const renting=data?.offers.filter(o=>o.type==='rent')||[];
  const date=data?new Date(data.checked_at).toLocaleDateString('fr-FR'):'';
  const proof=show?.fr_verified===true;
+ const announced=proof&&origin.length>0&&/^\d{4}-\d{2}-\d{2}$/.test(show?.premiered||'')&&Date.parse(show.premiered+'T00:00:00Z')>Date.now();
  let intro,content;
  if(subscription.length){
   intro='Disponible sur';
@@ -104,9 +105,9 @@ export function renderFranceAvailability(record=null,show={}){
   intro='Disponible à l’achat ou à la location sur';
   content=offersList([...buying,...renting],link);
  }else{
-  intro='Où regarder en France ?';
+  intro=announced?'Diffusion annoncée en France':'Où regarder en France ?';
   content='<span class="sc56-no-offers">Plateformes françaises non encore renseignées'+
-    (proof?' · diffusion française attestée':'')+'</span>';
+    (proof?(announced?' · diffusion française annoncée':' · diffusion française attestée'):'')+'</span>';
  }
  const secondary=subscription.length&&(
    buying.length||renting.length)
@@ -119,10 +120,10 @@ export function renderFranceAvailability(record=null,show={}){
   data?.stale?' · offres à revérifier':'';
  const source=data?'France · '+(editorial?'JustWatch':'TMDB / JustWatch')+
   ' · relevé du '+date+warning:
-  (proof?'France · diffusion attestée, plateformes à vérifier':'France · diffusion à vérifier');
+  (proof?(announced?'France · diffusion annoncée, plateformes à venir':'France · diffusion attestée, plateformes à vérifier'):'France · diffusion à vérifier');
  const direct=data?.url&&editorial?'Ouvrir la fiche JustWatch France ↗':
   data?.url?'Vérifier sur TMDB France ↗':'Chercher sur JustWatch France ↗';
- const note=origin.length?'<span class="sc56-origin">Diffusion en France : '+origin.map(esc).join(', ')+'</span>':'';
+ const note=origin.length?'<span class="sc56-origin">'+(announced?'Chaîne prévue en France : ':'Diffusion en France : ')+origin.map(esc).join(', ')+'</span>':'';
  const evidenceUrl=safeWatchLink(show.fr_evidence_url)||
   safeProviderLink(show.fr_evidence_url,'Disney+')||
   safeProviderLink(show.fr_evidence_url,'Netflix');
