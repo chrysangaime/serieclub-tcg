@@ -35,7 +35,7 @@ function safeProviderLink(raw,name){
   const u=new URL(String(raw||''));
   if(u.protocol!=='https:')return null;
   if(name==='Disney+'&&u.hostname==='www.disneyplus.com'
-      &&/^\/fr-fr\/browse\/entity\/[a-f0-9-]{30,50}\/?$/.test(u.pathname))return u.href;
+      &&/^\/fr-fr\/browse\/entity-[a-f0-9-]{30,50}\/?$/.test(u.pathname))return u.href;
   if(name==='Netflix'&&['www.netflix.com','netflix.com'].includes(u.hostname)
       &&/^\/fr\/title\/\d+\/?$/.test(u.pathname))return u.href;
   if(name==='Amazon Prime Video'&&u.hostname==='www.primevideo.com'
