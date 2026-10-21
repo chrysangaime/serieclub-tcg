@@ -7,10 +7,16 @@ on:
       - ".github/workflows/audit-fr-catalog.yml"
   schedule:
     - cron: "45 6 * * *"
+  workflow_run:
+    workflows:
+      - "Enrichir le catalogue de séries diffusées en France"
+      - "Synchroniser le catalogue TVmaze"
+    types: [completed]
 permissions:
   contents: read
 jobs:
   audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
