@@ -5,6 +5,7 @@ import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,co
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=5.6.1';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.8.0';
+import{getFrenchCastByShow}from'../v5/cast-fr.js?v=5.10.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.6.1';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.6.1';
@@ -394,71 +395,69 @@ async function openSeriesDetail(id){
  if(!Number.isSafeInteger(numeric)||numeric<=0)return;
  const token=++detailRequestId;
  lastShowForBack=numeric;
- showDetailLoading('Une histoire à découvrir…');
- let base=findLocalShow(numeric)||{};
+ const initial=findLocalShow(numeric)||{};
+ showDetailLoading('Chargement de la série…');
+ const remote=getShowDetails(numeric).catch(()=>null);
+ const canonical=supa.from('series')
+  .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url')
+  .eq('id',numeric).maybeSingle();
+ const france=getFrenchOffersByShow(numeric).catch(()=>null);
+ const casting=getFrenchCastByShow(numeric).catch(()=>null);
+ // Un échec du service distant ne doit jamais bloquer l'affichage local.
+ let base=initial,providers=null,backup=null;
  try{
-  const loaded=await getShowDetails(numeric);
+  const [proof,watch,actors]=await Promise.all([canonical,france,casting]);
   if(!detailReady(token))return;
-  if(!loaded&&!base?.name){
-   const {data,error}=await supa.from('series').select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url').eq('id',numeric).maybeSingle();
-   if(!error&&data)base=data;
-  }
-  if(!loaded&&!base?.name){
-   $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close>×</button><h2>Série introuvable</h2><p>Aucune fiche disponible pour cet identifiant.</p></div>';
-   return;
-  }
-  // The canonical series rank is stored in Supabase, never derived from a
-  // card's historic rarity, a TVmaze popularity weight or a selected filter.
-  {
-    // Read the authoritative French proof on EVERY modal open. Previously
-    // a cached series could permanently show "France à vérifier" even after
-    // the server had already validated the show.
-    const {data:canonical,error:catalogError}=await supa.from('series')
-      .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url')
-      .eq('id',numeric).maybeSingle();
-    if(!catalogError&&canonical)base={...base,...canonical};
-    if(!detailReady(token))return;
-  }
-  const show=loaded||base;
-  $('overlay').innerHTML=showDetailHTML(loaded||{},base);
-  $('overlay').querySelector('[data-close]')?.focus();
-  getFrenchOffersByShow(numeric).then(record=>{
-    if(!detailReady(token))return;
-    const target=$('overlay').querySelector('[data-fr-watch]');
-    if(target)target.innerHTML=renderFranceAvailability(record,{...show,...base});
-  }).catch(()=>{/* Provider data remains explicitly unverified. */});
-  // Localized synopsis is loaded independently: never blocks cast or navigation.
-  getFrenchSynopsis(show,stripSummary(show.summary||base.summary))
-    .then(result=>{
-      if(!detailReady(token))return;
-      const target=$('overlay').querySelector('[data-synopsis]');
-      if(target)target.innerHTML=frenchSynopsisHTML(result,show.summary||base.summary);
-    })
-    .catch(()=>{
-      if(!detailReady(token))return;
-      const target=$('overlay').querySelector('[data-synopsis]');
-      if(target)target.innerHTML=frenchSynopsisHTML({source:'unavailable',text:''},show.summary||base.summary);
-    });
+  if(!proof.error&&proof.data)base={...base,...proof.data};
+  providers=watch;backup=actors;
  }catch(error){
+  // Une fiche déjà connue peut être affichée même si un fournisseur ne répond pas.
+ }
+ let loaded=null;
+ try{
+  loaded=await Promise.race([remote,new Promise(resolve=>setTimeout(()=>resolve(null),450))]);
+ }catch{/* La fiche de base reste accessible. */}
+ if(!detailReady(token))return;
+ if(!loaded&&!base.name)loaded=await remote;
+ if(!detailReady(token))return;
+ if(!loaded&&!base.name){
+  $('overlay').innerHTML='<div class="dialog sc5-loading" role="dialog" aria-modal="true"><button class="close" data-close aria-label="Fermer">×</button><h2>Série indisponible</h2><p>Réessaie dans quelques instants.</p></div>';
+  return;
+ }
+ const show=loaded||base;
+ $('overlay').innerHTML=showDetailHTML(loaded||{},base,{source:'loading'},backup);
+ $('overlay').querySelector('[data-close]')?.focus();
+ const currentWatch=$('overlay').querySelector('[data-fr-watch]');
+ if(currentWatch)currentWatch.innerHTML=renderFranceAvailability(providers,{...show,...base});
+ const synopsisInput=stripSummary(show.summary||base.summary);
+ getFrenchSynopsis(show,synopsisInput).then(result=>{
   if(!detailReady(token))return;
-  if(base?.name){
-    $('overlay').innerHTML=showDetailHTML({},base);
-    getFrenchOffersByShow(numeric).then(record=>{
-      if(!detailReady(token))return;
-      const target=$('overlay').querySelector('[data-fr-watch]');
-      if(target)target.innerHTML=renderFranceAvailability(record,base);
-    }).catch(()=>{});
-    getFrenchSynopsis(base,stripSummary(base.summary)).then(result=>{
-      if(!detailReady(token))return;
-      const target=$('overlay').querySelector('[data-synopsis]');
-      if(target)target.innerHTML=frenchSynopsisHTML(result,base.summary);
-    }).catch(()=>{if(detailReady(token)){const target=$('overlay').querySelector('[data-synopsis]');if(target)target.innerHTML=frenchSynopsisHTML({source:'unavailable',text:''},base.summary)}});
-    const dialog=$('overlay').querySelector('.sc5-dialog');
-    dialog?.insertAdjacentHTML('afterbegin','<div class="notice sc5-fetch-warning">La distribution et le résumé détaillé ne sont pas accessibles momentanément sur TVmaze.</div>');
-    $('overlay').querySelector('[data-close]')?.focus();
-  }else{
-    $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close>×</button><h2>Fiche indisponible</h2><p>Le service TVmaze ne répond pas pour le moment. Réessaie.</p></div>';
-  }
+  const target=$('overlay').querySelector('[data-synopsis]');
+  if(target)target.innerHTML=frenchSynopsisHTML(result,show.summary||base.summary);
+ }).catch(()=>{
+  if(!detailReady(token))return;
+  const target=$('overlay').querySelector('[data-synopsis]');
+  if(target)target.innerHTML=frenchSynopsisHTML({source:'unavailable',text:''},show.summary||base.summary);
+ });
+ // TVmaze est facultatif : améliorer le casting seulement si ses crédits arrivent.
+ if(!loaded){
+  remote.then(details=>{
+   if(!detailReady(token)||!details)return;
+   const existing=$('overlay').querySelector('[data-cast-section]');
+   const template=document.createElement('div');
+   template.innerHTML=showDetailHTML(details,base,{source:'loading'},backup);
+   const improved=template.querySelector('[data-cast-section]');
+   if(existing&&improved&&!improved.hidden&&details._embedded?.cast?.length)
+    existing.replaceWith(improved);
+   const detailHead=$('overlay').querySelector('.sc5-show-head');
+   const improvedHead=template.querySelector('.sc5-show-head');
+   if(detailHead&&improvedHead){
+    // Les informations diffusées en France restent intactes.
+    const oldTag=detailHead.querySelector('.sc5-tagline');
+    const newTag=improvedHead.querySelector('.sc5-tagline');
+    if(oldTag&&newTag)oldTag.replaceWith(newTag);
+   }
+  }).catch(()=>{});
  }
 }
 async function openPersonDetail(id,fromShow=false){
