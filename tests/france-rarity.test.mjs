@@ -76,7 +76,7 @@ test('unverified, foreign and expired offers cannot be presented as France avail
  assert.equal(normalizeFranceOffers({country:'US',checked_at:current,offers:[]}),null);
  assert.equal(normalizeFranceOffers({country:'FR',checked_at:expired,offers:[]}),null);
  const html=renderFranceAvailability(null,{network:{name:'NBC',country:{code:'US'}}});
- assert.match(html,/Aucune disponibilité française vérifiée/);
+ assert.match(html,/Plateformes françaises non encore renseignées/);
  assert.doesNotMatch(html,/Netflix/);
  assert.doesNotMatch(html,/NBC/);
  assert.match(html,/JustWatch France/);
