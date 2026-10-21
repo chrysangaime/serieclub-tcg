@@ -68,3 +68,17 @@
  .sc53-detail .sc53-official-rank{font-size:10px}
  .sc53-fr-watch{padding:11px}
 }
+
+/* Les groupes de doublons reprennent le code couleur du rang officiel. */
+.sc52-group-card[class*="sc53-rarity-"]{
+ border:2px solid var(--sc53-color);
+ box-shadow:0 0 11px var(--sc53-glow);
+}
+.sc52-group-card[class*="sc53-rarity-"] .sc52-rarity{
+ color:var(--sc53-color);border-color:var(--sc53-color);
+ background:var(--sc53-fill);font-weight:900
+}
+.sc53-rarity-warning{
+ border-color:#aa8750;color:#f2d7a1;background:#423c31;
+ font-size:11px;line-height:1.55;margin:12px 0
+}
