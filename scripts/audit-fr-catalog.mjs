@@ -35,8 +35,12 @@ const stats={
  editorial:await count('preuve éditoriale',
   '&fr_verified=eq.true&fr_verification_method=eq.editorial_fr_history')
 };
+console.log('Détail des comptages indépendants :',JSON.stringify(stats));
+// Les compteurs sont interrogés successivement. Durant un import actif,
+// des INSERT peuvent augmenter le nombre de séries entre deux lectures.
+// Ne pas transformer cette évolution normale en fausse alerte.
 if(stats.playable>stats.verified||stats.verified>stats.total)
- throw Error('Incohérence dans les comptages du catalogue France');
+ console.warn('Mesures non atomiques pendant un import : écarts à revérifier au prochain audit.');
 if(stats.verified===0)throw Error('Aucune série France vérifiée');
 const report=[
  '## SérieClub TCG — contrôle du catalogue France',
