@@ -1,5 +1,6 @@
 import {platformStrip,seasonShelf} from './discovery.js?v=5.3.0';
 import {actorCatalogueView} from '../v4/series.js?v=5.3.0';
+import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
  ['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits'],['market','◇','Le Comptoir'],
@@ -62,7 +63,7 @@ export function wishlist(s){
 }
 export function albums(s){
  const genres=new Map();for(const c of s.cards)for(const g of c.series?.genres||[])genres.set(g,(genres.get(g)||0)+1);
- return '<div class="page-content">'+heading('Mes albums','Tes cartes organisées par univers.')+(genres.size?'<div class="album-grid">'+[...genres].sort((a,b)=>b[1]-a[1]).map(([g,n])=>'<button class="album" data-album="'+esc(g)+'"><div class="caps">ALBUM THÉMATIQUE</div><b>'+esc(g)+'</b><small>'+n+' cartes</small></button>').join('')+'</div>':'<div class="empty">Ouvre des paquets pour remplir tes premiers albums.</div>')+'</div>';
+ return '<div class="page-content">'+heading('Mes albums','Tes cartes organisées par univers.')+(genres.size?'<div class="album-grid">'+[...genres].sort((a,b)=>b[1]-a[1]).map(([g,n])=>'<button class="album" data-album="'+esc(g)+'"><div class="caps">ALBUM THÉMATIQUE</div><b>'+esc(genreFR(g))+'</b><small>'+n+' cartes</small></button>').join('')+'</div>':'<div class="empty">Ouvre des paquets pour remplir tes premiers albums.</div>')+'</div>';
 }
 export function rankings(s){
  return '<div class="page-content">'+heading('Classement','Les collectionneurs les plus actifs.')+'<div class="panel"><table class="ranking-table"><thead><tr><th>#</th><th>Joueur</th><th>Cartes</th><th>Séries</th></tr></thead><tbody>'+(s.rankings.length?s.rankings.map((x,i)=>'<tr><td>'+(i+1)+'</td><td><b>'+esc(x.username)+'</b></td><td>'+money(x.card_count)+'</td><td>'+money(x.unique_series)+'</td></tr>').join(''):'<tr><td colspan="4">Aucun résultat pour le moment.</td></tr>')+'</tbody></table></div></div>';
