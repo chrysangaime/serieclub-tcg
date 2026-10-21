@@ -682,8 +682,77 @@ async function exportData(){
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='serieclub-mes-donnees.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
+async function loadRewardStatus(){
+ if(!state.user){state.rewardStatus={enabled:false};if(state.route==='games')render();return}
+ try{
+  const {data,error}=await supa.rpc('rewarded_quiz_status');
+  state.rewardStatus=error?{enabled:false}:data;
+ }catch{state.rewardStatus={enabled:false}}
+ if(state.route==='games')render();
+}
+async function startRewardedChallenge(type){
+ if(!state.user){openAuth();return}
+ if(state.rewardBusy)return;
+ state.rewardBusy=true;state.rewardError='';state.rewardQuiz=null;
+ state.rewardFeedback=null;state.quiz=null;render();
+ try{
+  const {data,error}=await supa.rpc('start_rewarded_quiz',{p_mode:type});
+  if(error)throw error;
+  if(data?.status==='limit'||data?.status==='signin'){
+   state.rewardError=data.message||'Plus de parties récompensées aujourd’hui.';
+  }else if(data?.status==='active'){
+   state.rewardQuiz=data;
+  }else{
+   state.rewardError='Impossible de commencer ce défi. Réessaie.';
+  }
+ }catch(error){
+  state.rewardError=/PGRST202|function.*not found/i.test(error.message)
+   ?'Les récompenses arrivent bientôt. Essaie les défis libres.':
+    'Impossible de commencer : '+error.message;
+ }finally{
+  state.rewardBusy=false;
+  if(state.route==='games')render();
+ }
+}
+async function answerRewardedChallenge(id){
+ if(!state.rewardQuiz||state.rewardBusy||state.rewardFeedback)return;
+ if(!state.rewardQuiz.question?.options?.some(x=>Number(x.id)===Number(id)))return;
+ const previous=state.rewardQuiz;
+ state.rewardBusy=true;render();
+ try{
+  const {data,error}=await supa.rpc('submit_rewarded_quiz_answer',{
+   p_session:previous.session_id,p_choice:Number(id)
+  });
+  if(error)throw error;
+  if(data?.status==='expired'){
+   state.rewardQuiz=null;state.rewardError='Partie expirée. Essaie un nouveau défi.';
+   loadRewardStatus();
+  }else if(data?.status==='active'||data?.status==='completed'){
+   state.rewardQuiz=data.status==='completed'
+     ?{...previous,finished:true,score:data.score,credits_earned:data.credits_earned}
+     :data;
+   state.rewardFeedback={
+    previous,answer:Number(id),correct_answer:data.correct_answer,
+    correct:data.correct,earned:data.earned,completed:data.status==='completed'
+   };
+   if(data.status==='completed')loadRewardStatus();
+  }else{state.rewardError='Partie indisponible. Réessaie.'}
+ }catch(error){
+  state.rewardError='Réponse non enregistrée. Réessaie.';
+ }finally{state.rewardBusy=false;if(state.route==='games')render()}
+}
+function nextRewardedQuestion(){
+ if(!state.rewardFeedback)return;
+ const completed=state.rewardFeedback.completed;
+ state.rewardFeedback=null;
+ if(completed){
+  if(state.user)loadSession();
+ }
+ if(state.route==='games')render();
+}
 async function chooseChallenge(type){
- if(!['poster','timeline','year'].includes(type)||state.quizLoading)return;
+ if(!gameModes.includes(type)||state.quizLoading||state.rewardBusy)return;
+ if(state.rewardStatus?.enabled===true){await startRewardedChallenge(type);return}
  const request=++quizRequestId;
  state.quizLoading=true;state.quizError='';state.quiz=null;render();
  try{
@@ -853,7 +922,10 @@ function globalClick(e){
  if(e.target.closest('[data-quiz-next]')){advanceQuiz();return}
  const restartQuiz=e.target.closest('[data-quiz-restart]');
  if(restartQuiz){chooseChallenge(restartQuiz.dataset.quizRestart);return}
- if(e.target.closest('[data-quiz-home]')){state.quiz=null;state.quizError='';render();return}
+ if(e.target.closest('[data-quiz-home]')){state.quiz=null;state.quizError='';state.rewardQuiz=null;state.rewardFeedback=null;state.rewardError='';render();return}
+ const selectedReward=e.target.closest('[data-reward-answer]');
+ if(selectedReward){answerRewardedChallenge(selectedReward.dataset.rewardAnswer);return}
+ if(e.target.closest('[data-reward-next]')){nextRewardedQuestion();return}
  if(e.target.closest('#usernameSave')){saveUsername();return}
  if(e.target.closest('#signout')){supa.auth.signOut().then(()=>loadSession());return}
  if(e.target.closest('#exportData')){exportData();return}
