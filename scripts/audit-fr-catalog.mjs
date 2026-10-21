@@ -23,6 +23,20 @@ async function count(label,filters=''){
   return Number(value);
  }finally{clearTimeout(timeout)}
 }
+// Contrôle ciblé d’une série connue, sans données joueur ni secret.
+async function inspectSeries(id){
+ const c=new AbortController(),timer=setTimeout(()=>c.abort(),12000);
+ try{
+  const response=await fetch(base+'/rest/v1/series?select=id,name,rarity,rarity_source,fr_verified,fr_verification_method&id=eq.'+id,
+    {headers,signal:c.signal});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  const rows=await response.json();
+  console.log('Contrôle fiche '+id+':',JSON.stringify(rows?.[0]||null));
+ }catch(error){console.warn('Fiche ciblée inaccessible :',error.message)}
+ finally{clearTimeout(timer)}
+}
+await inspectSeries(2993);
+
 const stats={
  total:await count('toutes les séries'),
  verified:await count('diffusion France','&fr_verified=eq.true'),
