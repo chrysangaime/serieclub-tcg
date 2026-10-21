@@ -5,6 +5,7 @@
  * série. Une copie engagée ne peut pas être conseillée pour la vente.
  */
 import {card,esc,money,ranks,photo,officialRarity,raritySlug} from '../v3/views.js?v=5.3.0';
+import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 
 export const COLLECTION_PAGE_SIZE=48;
 const rankOrder=new Map(ranks.map((name,i)=>[name,i]));
@@ -66,7 +67,7 @@ export function collectionCSV(cards=[],wishes=[],activity=[]){
   return '"'+val.replace(/"/g,'""').replace(/\r|\n/g,' ')+'"';
  };
  const rows=[head,...groups.map(g=>[g.name,g.id,String(g.premiered).slice(0,10),g.rarity,
-  g.count,g.duplicates,g.protectedCount,g.blockedCount,g.genre.join(', ')])];
+  g.count,g.duplicates,g.protectedCount,g.blockedCount,g.genre.map(genreFR).join(', ')])];
  return rows.map(row=>row.map(safe).join(';')).join('\r\n');
 }
 function sortGroups(groups,mode){
