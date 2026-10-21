@@ -26,6 +26,7 @@ jobs:
           node --check v4/synopsis-fr.js
           node --check v5/collection.js
           node --check v5/fr-watch.js
+          node --check v5/fr-text.js
           node --check scripts/sync-fr-providers.mjs
           node --test tests/series.test.mjs tests/synopsis-fr.test.mjs tests/collection.test.mjs tests/france-rarity.test.mjs
           node --check scripts/import-tvmaze.mjs
@@ -36,7 +37,7 @@ jobs:
           import assert from 'node:assert/strict';
           import * as v from './v3/views.js';
           const html=fs.readFileSync('index.html','utf8');
-          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./v4/club.css','./v4/club.js','./v4/series.css','./v4/series.js','./v4/synopsis-fr.js','./v5/collection.css','./v5/collection.js','./v5/fr-rarity.css','./v5/fr-watch.js','./manifest.webmanifest']){
+          for(const file of ['./v3/styles.css','./v3/season.css','./v3/app.js','./v3/discovery.js','./v3/views.js','./v3/icon.svg','./v4/club.css','./v4/club.js','./v4/series.css','./v4/series.js','./v4/synopsis-fr.js','./v5/collection.css','./v5/collection.js','./v5/fr-rarity.css','./v5/fr-watch.js','./v5/fr-text.js','./manifest.webmanifest']){
             assert.ok(html.includes(file), 'Lien manquant : '+file);
             assert.ok(fs.existsSync(file.slice(2)), 'Fichier manquant : '+file);
           }
@@ -78,6 +79,9 @@ jobs:
           assert.doesNotMatch(v.card(oldCard),/rarity--Commune/);
           const watchModule=await import('./v5/fr-watch.js');
           assert.equal(watchModule.justwatchFranceUrl(),'https://www.justwatch.com/fr');
+          const frText=await import('./v5/fr-text.js');
+          assert.equal(frText.genreFR('Comedy'),'Comédie');
+          assert.equal(frText.genreFR('Mystery'),'Mystère');
           assert.deepEqual(watchModule.getFrenchOriginChannel({network:{name:'CBS',country:{code:'US'}}}),[]);
           assert.ok(fs.existsSync('data/watch-fr.json'));
 
