@@ -671,7 +671,7 @@ function globalClick(e){
  const wish=e.target.closest('[data-wish]');if(wish){toggleWishlist(Number(wish.dataset.wish));return}
  if(e.target.closest('#catalogSearch')){state.catalogQuery=$('catalogQuery').value;loadCatalog(true);return}
  if(e.target.closest('#catalogMore')){loadCatalog(false);return}
- if(e.target.closest('#fusionAuto')){state.fusionSelected=state.cards.filter(c=>c.rarity===state.fusionRank&&!c.locked&&!c.reserved_trade_id&&!(state.marketActivity||[]).some(l=>l.card_id===c.id&&l.status==='active')).slice(0,10).map(c=>c.id);render();return}
+ if(e.target.closest('#fusionAuto')){state.fusionSelected=state.cards.filter(c=>c.rarity===state.fusionRank&&(!c.series?.rarity||c.rarity===c.series.rarity)&&!c.locked&&!c.reserved_trade_id&&!(state.marketActivity||[]).some(l=>l.card_id===c.id&&l.status==='active')).slice(0,10).map(c=>c.id);render();return}
  if(e.target.closest('#fusionSubmit')){doFusion();return}
  if(e.target.closest('#usernameSave')){saveUsername();return}
  if(e.target.closest('#signout')){supa.auth.signOut().then(()=>loadSession());return}
