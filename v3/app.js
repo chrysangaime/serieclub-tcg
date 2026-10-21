@@ -1,5 +1,7 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
-import{newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=6.0.1';
+import{newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=7.0.0';
+import{openingFrame}from'../v7/booster.js?v=7.0.0';
+import{gameModes}from'../v7/arena.js?v=7.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=6.0.1';
 import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=6.1.0';
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0';
@@ -21,8 +23,9 @@ function readQuizRecords(){
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions'};
-const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,quizLoading:false,quizError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',bio:'',favoriteGenre:'',daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
+let openingCards=null,openingStep=0;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
@@ -34,6 +37,7 @@ function loadRouteData(route){
  if(route==='community'&&state.user)loadPeople();
  if(route==='quests'&&state.user)loadDaily();
  if(route==='albums'&&state.user)loadAlbums();
+ if(route==='games')loadRewardStatus();
 }
 function change(route){
  clearTimeout(searchTimer);
@@ -560,12 +564,23 @@ async function claimDaily(){
  catch(e){toast('Récompense : '+e.message,true)}finally{state.busy=false}
 }
 function showOpening(data){
+ openingCards=data;openingStep=0;
  const overlay=$('overlay');overlay.classList.remove('hidden');
- overlay.innerHTML='<div class="dialog opening-dialog" role="dialog" aria-modal="true" aria-label="Paquet ouvert"><button class="close" data-close aria-label="Fermer">×</button><div class="caps">SÉRIECLUB · OUVERTURE DE PAQUET</div><div id="openingPack">'+foil(state.pack)+'</div><div class="opening-status" id="openingText">Les cartes se dévoilent…</div><div class="opening-result hidden" id="openingCards"></div><button class="btn primary hidden" id="openingDone">Voir mes nouvelles cartes ✓</button></div>';
- $('openingPack').querySelector('.foil').classList.add('shaking');
- const show=()=>{const f=$('openingPack')?.querySelector('.foil');if(f)f.classList.add('opened')};
- const reveal=()=>{if(!$('openingCards'))return;$('openingPack').classList.add('hidden');$('openingCards').classList.remove('hidden');$('openingCards').innerHTML=data.map(c=>card({rarity:c.rarity,series:{id:c.series_id,name:c.name,image_url:c.image_url}})).join('');$('openingText').textContent='Cinq nouvelles cartes ! +25 crédits · +50 XP';$('openingDone').classList.remove('hidden')};
- if(state.reduceMotion||matchMedia('(prefers-reduced-motion: reduce)').matches)reveal();else{setTimeout(show,650);setTimeout(reveal,1250)}
+ updateOpening();
+}
+function updateOpening(){
+ if(!openingCards)return;
+ const reduced=state.reduceMotion||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const overlay=$('overlay');
+ overlay.innerHTML='<div class="dialog opening-dialog" role="dialog" aria-modal="true" aria-label="Cartes du paquet">'+
+  '<button class="close" data-close aria-label="Fermer">×</button>'+
+  openingFrame(openingCards,openingStep,reduced)+'</div>';
+ overlay.querySelector('#openingNext,#openingDone')?.focus({preventScroll:true});
+}
+function advanceOpening(skip=false){
+ if(!openingCards)return;
+ openingStep=skip?openingCards.length+1:Math.min(openingCards.length+1,openingStep+1);
+ updateOpening();
 }
 async function openPack(){
  if(!state.user){openAuth();return}
@@ -651,7 +666,7 @@ async function authenticate(register){
  if(register&&!result.data.session){$('authFeedback').textContent='Inscription enregistrée. Vérifie ton e-mail pour confirmer le compte.';return}
  $('overlay').classList.add('hidden');await loadSession();toast('Bienvenue dans le club !')
 }
-function closeModal(){detailRequestId++;const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
+function closeModal(){detailRequestId++;openingCards=null;openingStep=0;const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
 function exportCollection(){
  if(!state.user||!state.cards.length){toast('Aucune carte à exporter.',true);return}
  const csv=collectionCSV(state.cards,state.wishes,state.marketActivity);
@@ -783,6 +798,8 @@ function globalClick(e){
  const pack=e.target.closest('[data-pack]');if(pack){state.pack=pack.dataset.pack;render();return}
  if(e.target.closest('#openPack')){openPack();return}
  if(e.target.closest('[data-daily]')){claimDaily();return}
+ if(e.target.closest('#openingNext')){advanceOpening();return}
+ if(e.target.closest('#openingSkip')){advanceOpening(true);return}
  if(e.target.closest('#openingDone')){closeModal();change('collection');return}
  if(e.target.closest('[data-export-collection]')){exportCollection();return}
  const switchMode=e.target.closest('[data-collection-mode]');
