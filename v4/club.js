@@ -1,4 +1,4 @@
-import{esc,photo,money,heading,card}from'../v3/views.js?v=5.2.1';
+import{esc,photo,money,heading,card}from'../v3/views.js?v=5.3.0';
 
 const rare=['Commune','Peu commune','Rare','Épique','Légendaire','Mythique','Unique'];
 const statusLabel={active:'En vente',sold:'Vendue',traded:'Échangée',cancelled:'Annulée',pending:'En attente',accepted:'Acceptée',declined:'Refusée'};
