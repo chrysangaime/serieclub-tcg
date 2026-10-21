@@ -111,7 +111,7 @@ async function loadSession(){
   // to display worldwide historical wishlists.
   // Do not silently fall back to a worldwide inventory if the FR schema is absent.
   state.frMigrationError=c.error&&/fr_verified|schema cache|column/i.test(c.error.message)?
-   'Active la migration France V5.4 + V5.5 pour afficher les cartes éligibles.':'';
+   'Collection momentanément indisponible.':'';
   if(w.error)toast('Portefeuille : '+w.error.message,true);
   if(c.error)toast('Collection : '+c.error.message,true);
   state.wallet=w.data||null;
@@ -343,7 +343,7 @@ async function loadCatalog(reset=false){
  }catch(e){
   if(request!==catalogRequestId)return;
   state.catalogError=/fr_verified|schema cache|column/i.test(e.message)
-   ?'La migration France doit être activée pour filtrer le catalogue.'
+   ?'Catalogue momentanément indisponible.'
    :'Catalogue indisponible : '+e.message;
  }finally{
   if(request===catalogRequestId){
@@ -475,7 +475,7 @@ async function openPersonDetail(id,fromShow=false){
   $('overlay').querySelector('[data-close]')?.focus();
  }catch(error){
   if(!detailReady(token))return;
-  $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close>×</button><h2>Filmographie indisponible</h2><p>'+esc(error.message)+'</p><button class="btn subtle" data-person-back>Retour</button></div>';
+  $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close aria-label="Fermer">×</button><h2>Filmographie indisponible</h2><p>Réessaie dans quelques instants.</p><button class="btn subtle" data-person-back>Retour</button></div>';
  }
 }
 async function searchCatalogueActors(){
@@ -849,7 +849,7 @@ async function saveUsername(){
  const bio=($('bioInput')?.value||'').trim(),favoriteGenre=$('favoriteGenre')?.value||'';
  if(bio.length>160||favoriteGenre.length>32){toast('Biographie trop longue.',true);return}
  let {error}=await supa.from('profiles').upsert({id:state.user.id,username:name,bio,favorite_genre:favoriteGenre},{onConflict:'id'});
- if(error&&(/bio|favorite_genre|schema cache|column/i.test(error.message))){const fallback=await supa.from('profiles').upsert({id:state.user.id,username:name},{onConflict:'id'});if(!fallback.error){toast('Pseudonyme sauvegardé. Active la migration V4 pour enregistrer la biographie.');state.username=name;render();return}error=fallback.error}
+ if(error&&(/bio|favorite_genre|schema cache|column/i.test(error.message))){const fallback=await supa.from('profiles').upsert({id:state.user.id,username:name},{onConflict:'id'});if(!fallback.error){toast('Pseudonyme enregistré. La biographie n’a pas pu être sauvegardée.');state.username=name;render();return}error=fallback.error}
  if(error){toast(error.code==='23505'?'Ce pseudonyme est déjà utilisé.':error.message,true);return}
  state.username=name;state.bio=bio;state.favoriteGenre=favoriteGenre;render();toast('Profil enregistré et visible dans Le Signal.')
 }
