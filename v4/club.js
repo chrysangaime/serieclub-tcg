@@ -10,7 +10,7 @@ export function marketPage(s){
  const own=(s.marketActivity||[]).filter(x=>x.seller_id===s.user?.id);
  const purchases=(s.marketActivity||[]).filter(x=>x.seller_id!==s.user?.id&&['sold','traded'].includes(x.status));
  const used=new Set(own.filter(x=>x.status==='active').map(x=>x.card_id));
- const available=s.cards.filter(c=>!c.locked&&!c.reserved_trade_id&&!used.has(c.id)&&(!c.series?.rarity||c.rarity===c.series.rarity));
+ const available=s.cards.filter(c=>!c.locked&&!c.reserved_trade_id&&!used.has(c.id)&&(!c.series?.rarity||c.rarity===c.series.rarity)&&c.series?.fr_verified===true);
  const mine=new Set(own.filter(x=>x.status==='active').map(x=>x.listing_id));
  const incoming=(s.tradeOffers||[]).filter(o=>o.seller_id===s.user?.id&&o.status==='pending');
  const outgoing=(s.tradeOffers||[]).filter(o=>o.proposer_id===s.user?.id&&o.status==='pending');
