@@ -100,6 +100,6 @@ await fs.mkdir('data',{recursive:true});
 await fs.writeFile(CURSOR_FILE,JSON.stringify({
  next_page:nextPage,updated_at:new Date().toISOString(),
  previous_start:startPage, imported,france_verified_updates:frVerified
-},null,2)+'\\n');
+},null,2)+'\n');
 console.log('Imported '+imported+' series. France-origin verified updates: '+
  frVerified+'. Next TVmaze page: '+nextPage);
