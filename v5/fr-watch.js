@@ -142,7 +142,9 @@ export async function getFrenchOffersByShow(id){
  const key=asId(id);
  if(!key)return null;
  if(!cache.promise){
-  const url=new URL('../data/watch-fr.json?v=5.6.1',import.meta.url);
+  const url=new URL('../data/watch-fr.json',import.meta.url);
+  // Réactualiser les offres après chaque heure sans requête vers TMDB côté client.
+  url.searchParams.set('hour',new Date().toISOString().slice(0,13));
   cache.promise=fetch(url,{headers:{Accept:'application/json'}})
    .then(async r=>{if(!r.ok)throw Error('Offres FR indisponibles');return r.json()})
    .catch(()=>({titles:{}}));
