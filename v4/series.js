@@ -127,9 +127,31 @@ function externalLinks(title){
     ' Les disponibilités de streaming ne sont pas vérifiées. SérieClub est indépendant des diffuseurs.</p>';
 }
 
-export function showDetailHTML(source={},base={}){
+export function frenchSynopsisHTML(result={source:'loading',text:''},english=''){
+ if(result.source==='loading'){
+  return '<p class="sc5-synopsis-wait" role="status">Recherche du résumé en français…</p>';
+ }
+ if(result.text){
+  const full=stripSummary(result.text),short=miniSummary(full,225);
+  const attribution=result.source==='wikipedia'
+   ? '<p class="sc5-synopsis-source">Extrait abrégé des contributeurs de <a href="'+
+       (/^https:\/\/fr\.wikipedia\.org\/\?curid=\d+$/.test(result.sourceUrl||'')?escFR(result.sourceUrl):'https://fr.wikipedia.org/')+
+       '" target="_blank" rel="noopener noreferrer">Wikipédia en français ↗</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a> (texte abrégé).</p>'
+   :result.source==='translated'
+    ?'<p class="sc5-synopsis-source">Traduction automatique du résumé TVmaze. Des imprécisions sont possibles.</p>'
+    :'<p class="sc5-synopsis-source">Résumé original SérieClub.</p>';
+  return '<p class="sc5-summary-short">'+escFR(short)+'</p>'+
+   (short.length<full.length?'<p class="sc5-summary-long hidden">'+escFR(full)+'</p>'+
+     '<button class="sc5-text-btn" data-summary-toggle aria-expanded="false">Lire la suite ↓</button>':'')+
+   attribution;
+ }
+ return '<p class="sc5-synopsis-unavailable">Aucun résumé français fiable n’est disponible actuellement pour cette série.</p>'+
+  (english?'<details class="sc5-english-original"><summary>Consulter le synopsis original en anglais</summary><p>'+escFR(stripSummary(english))+'</p></details>':'');
+}
+const escFR=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function showDetailHTML(source={},base={},french={source:'loading'}){
  const show={...base,...source},name=show.name||'Série';
- const summary=stripSummary(show.summary||base.summary),short=miniSummary(summary,225);
+ const summary=stripSummary(show.summary||base.summary);
  const cast=Array.isArray(show._embedded?.cast)?show._embedded.cast:[];
  const seasons=Array.isArray(show._embedded?.seasons)?show._embedded.seasons.length:null;
  const year=formatYear(show.premiered),status=show.status==='Ended'?'Terminée':show.status==='Running'?'En cours':show.status||'';
@@ -150,10 +172,7 @@ export function showDetailHTML(source={},base={}){
   '<div class="sc5-show-intro"><span class="caps">SÉRIECLUB · LA SÉRIE</span><h2>'+escapeHTML(name)+'</h2>'+
   '<div class="sc5-tagline">'+[year,status,seasons!=null?seasons+' saison'+(seasons>1?'s':''):null].filter(Boolean).map(v=>'<span>'+escapeHTML(v)+'</span>').join('')+'</div>'+
   '<div class="detail-tags">'+genrePills(show.genres||base.genres)+(officialRarity?'<span class="sc5-official-rarity">✦ '+escapeHTML(officialRarity)+' · officielle</span>':'')+'</div>'+
-  '<h3>En quelques mots</h3>'+
-  (summary?'<p class="sc5-summary-short">'+escapeHTML(short)+'</p>'+
-   (summary.length>short.length?'<p class="sc5-summary-long hidden">'+escapeHTML(summary)+'</p><button class="sc5-text-btn" data-summary-toggle aria-expanded="false">Lire la suite ↓</button>':''):
-   '<p class="sc5-muted">Résumé indisponible sur TVmaze.</p>')+
+  '<h3>En quelques mots</h3><div class="sc5-synopsis" data-synopsis>'+frenchSynopsisHTML(french,summary)+'</div>'+
   '</div></div>'+
   (more.length?'<details class="sc5-meta-more"><summary>Informations complémentaires</summary><div class="sc5-facts">'+more.map(([label,val])=>'<div><small>'+escapeHTML(label)+'</small><strong>'+escapeHTML(val)+'</strong></div>').join('')+'</div></details>':'')+
   '<section class="sc5-cast-section"><div class="sc5-section-head"><div><span class="caps">DISTRIBUTION</span><h3>Acteurs et personnages</h3></div><span class="sc5-muted">Clique sur un nom pour ses autres séries</span></div>'+
