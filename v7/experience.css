@@ -78,3 +78,9 @@
 @media(max-width:600px){.sc7-hero{padding:17px;flex-wrap:wrap}.sc7-hero-stat{min-width:110px;padding:10px}.sc7-mode-art{height:95px}.sc7-mode-art>span{font-size:65px}.sc7-mode-content{padding:11px}.sc7-mode h2{font-size:24px}.sc7-mode p{font-size:11px}.sc7-answers{gap:7px}.sc7-answer{min-height:58px;padding:9px;font-size:12px}.sc7-opening-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.sc7-opening{padding:6px}}
 @media(prefers-reduced-motion:reduce){.sc7-sealed-pack,.sc7-reveal-card,.sc7-reveal-shine,.sc7-spark{animation:none!important}.sc7-mode{transition:none}}
 body.reduce-motion .sc7-sealed-pack,body.reduce-motion .sc7-reveal-card,body.reduce-motion .sc7-reveal-shine,body.reduce-motion .sc7-spark{animation:none!important}
+
+/* Entraînement pixel et respect des mouvements. */
+.sc60-mystery .sc7-training-pixel{filter:blur(6px) contrast(180%) saturate(140%);image-rendering:pixelated;transform:scale(1.08)}
+body.reduce-motion .sc7-mode:hover{transform:none}
+.sc7-quiz-feedback[role="status"],.sc7-finish[role="status"]{scroll-margin-top:84px}
+@media(max-width:600px){.sc7-quiz-top{font-size:10px}.sc7-quiz-top strong{font-size:10px}}
