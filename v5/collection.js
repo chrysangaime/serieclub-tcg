@@ -62,14 +62,15 @@ export function collectionCSV(cards=[],wishes=[],activity=[]){
  const groups=deriveCollection(cards,wishes,activity).groups
   .sort((a,b)=>a.name.localeCompare(b.name,'fr'));
  const head=['Série','ID TVmaze','Première diffusion','Rareté officielle',
-  'Exemplaires','Doublons','Protégées','Engagées','Genres'];
+  'Exemplaires','Doublons','Protégées','Engagées','Genres','Diffusion France vérifiée'];
  const safe=value=>{
   let val=String(value??'');
   if(/^\s*[=+\-@]/.test(val))val="'"+val;
   return '"'+val.replace(/"/g,'""').replace(/\r|\n/g,' ')+'"';
  };
  const rows=[head,...groups.map(g=>[g.name,g.id,String(g.premiered).slice(0,10),g.rarity,
-  g.count,g.duplicates,g.protectedCount,g.blockedCount,g.genre.map(genreFR).join(', ')])];
+  g.count,g.duplicates,g.protectedCount,g.blockedCount,g.genre.map(genreFR).join(', '),
+  g.frVerified?'Oui':'À vérifier'])];
  return rows.map(row=>row.map(safe).join(';')).join('\r\n');
 }
 function sortGroups(groups,mode){
