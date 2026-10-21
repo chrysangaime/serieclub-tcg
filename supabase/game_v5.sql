@@ -148,23 +148,32 @@ CREATE TRIGGER sc_sync_series_rarity
  WHEN (OLD.rarity IS DISTINCT FROM NEW.rarity)
  EXECUTE FUNCTION public.reclassify_owned_cards();
 
--- Anciens exemplaires : un rang unique à partir de maintenant.
--- Annuler les transactions en cours pour ne pas changer leur valeur
--- alors que l'offre est déjà diffusée.
-DO $$
-BEGIN
- IF EXISTS(
-   SELECT 1 FROM public.player_cards c JOIN public.series s ON s.id=c.series_id
-   WHERE c.rarity IS DISTINCT FROM s.rarity
- ) THEN
-  UPDATE public.card_trade_offers SET status='declined',closed_at=now()
-   WHERE status='pending';
-  UPDATE public.card_listings SET status='cancelled',closed_at=now()
-   WHERE status='active';
-  UPDATE public.player_cards SET reserved_trade_id=NULL
-   WHERE reserved_trade_id IS NOT NULL;
- END IF;
-END $$;
+-- Anciennes cartes : ne clôturer QUE les transactions utilisant un
+-- exemplaire dont la rareté va changer. Préserver les annonces sans rapport.
+WITH changed_cards AS MATERIALIZED (
+ SELECT c.id FROM public.player_cards c
+ JOIN public.series s ON s.id=c.series_id
+ WHERE c.rarity IS DISTINCT FROM s.rarity
+), revoked AS (
+ UPDATE public.card_trade_offers o
+ SET status='declined',closed_at=now()
+ WHERE o.status='pending' AND (
+  o.offered_card_id IN (SELECT id FROM changed_cards)
+  OR EXISTS (
+   SELECT 1 FROM public.card_listings l
+   WHERE l.id=o.listing_id AND l.card_id IN (SELECT id FROM changed_cards)
+  )
+ )
+ RETURNING o.id
+)
+UPDATE public.player_cards c SET reserved_trade_id=NULL
+WHERE c.reserved_trade_id IN (SELECT id FROM revoked);
+UPDATE public.card_listings l SET status='cancelled',closed_at=now()
+WHERE l.status='active' AND EXISTS (
+ SELECT 1 FROM public.player_cards c
+ JOIN public.series s ON s.id=c.series_id
+ WHERE c.id=l.card_id AND c.rarity IS DISTINCT FROM s.rarity
+);
 UPDATE public.player_cards c SET rarity=s.rarity
 FROM public.series s WHERE c.series_id=s.id AND c.rarity IS DISTINCT FROM s.rarity;
 
