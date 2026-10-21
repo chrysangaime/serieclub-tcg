@@ -1,0 +1,80 @@
+/* SérieClub V7 — arène, récompenses, collection interactive */
+.sc7-hero{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:26px;margin:14px 0 22px;border-radius:18px;border:1px solid #937454;background:radial-gradient(circle at 95% 10%,#6d4e6a75,transparent 45%),linear-gradient(125deg,#373038,#24242a)}
+.sc7-hero h2{font:850 clamp(37px,6vw,66px)/1 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:8px 0;color:#ffe4bc}
+.sc7-hero p{margin:0;max-width:480px}.sc7-hero-kicker{font-size:11px;font-weight:850;color:#e8b879;letter-spacing:.18em}
+.sc7-hero-stat{min-width:145px;border:1px solid #a4825d;padding:14px 20px;border-radius:12px;text-align:center;background:#1b1d2499}
+.sc7-hero-stat strong{display:block;color:#ffe2a5;font-size:35px}.sc7-hero-stat small{color:#cfb9a3;font-size:11px}
+.sc7-rewards-bar{display:flex;align-items:center;flex-wrap:wrap;gap:13px;border:1px solid #665849;background:#2d2a2b;padding:13px 18px;border-radius:11px;margin-bottom:18px;font-size:12px}
+.sc7-rewards-bar strong{color:#ffdfa8}.sc7-rewards-bar>span{margin-left:auto;color:#bfb2ab}
+.sc7-mode-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.sc7-mode{min-width:0;border:1px solid #716174;border-radius:15px;background:#29272d;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,border-color .2s}
+.sc7-mode:hover{transform:translateY(-4px);border-color:#eac18e}
+.sc7-mode-art{height:132px;display:grid;place-items:center;background:radial-gradient(circle,#83627c,#282730 64%);position:relative;overflow:hidden}
+.sc7-mode-pixel .sc7-mode-art{background:radial-gradient(circle,#457887,#252a31 64%)}
+.sc7-mode-timeline .sc7-mode-art{background:radial-gradient(circle,#6262a0,#282730 64%)}
+.sc7-mode-year .sc7-mode-art{background:radial-gradient(circle,#a17946,#29262b 64%)}
+.sc7-mode-art>span{font:100px Georgia,serif;color:#f4ddb6;position:relative;z-index:1;text-shadow:0 14px 26px #0009}
+.sc7-mode-ornament{position:absolute;width:90px;height:90px;border-radius:50%;border:1px solid #ffffff44;box-shadow:0 0 0 20px #ffffff0c,0 0 0 41px #ffffff06}
+.sc7-mode-content{padding:16px;display:flex;flex-direction:column;flex:1}
+.sc7-mode-eyebrow{font-size:10px;font-weight:800;letter-spacing:.15em;color:#f4c68c}
+.sc7-mode h2{font:800 29px/1.1 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:8px 0}
+.sc7-mode p{font-size:12px;line-height:1.5;flex:1;margin:0 0 15px}
+.sc7-mode-meta{display:flex;gap:6px;flex-wrap:wrap;font-size:10px;color:#f3d5a6;margin-bottom:15px}
+.sc7-mode-meta span{padding:5px 8px;border:1px solid #816d51;border-radius:30px}
+.sc7-mode .btn{width:100%;min-height:45px}
+.sc7-quiz,.sc7-finish{max-width:820px;margin:18px auto;padding:clamp(17px,4vw,34px);border:1px solid #a7885f;border-radius:17px;background:radial-gradient(circle at 90% 0,#6b446850,transparent 44%),#2a282e}
+.sc7-quiz-top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#f0ce98;font-size:12px;font-weight:800}
+.sc7-quiz-top strong{border:1px solid #977351;background:#40352e;border-radius:22px;padding:7px 12px}
+.sc7-quiz-steps{display:flex;gap:7px;margin:17px 0 23px}.sc7-quiz-steps span{flex:1;height:6px;border-radius:6px;background:#58505c}
+.sc7-quiz-steps .complete{background:#9dccaa}.sc7-quiz-steps .current{background:#ffd090}
+.sc7-quiz h2{text-align:center;font-size:clamp(20px,3vw,30px);margin:0 0 20px}
+.sc7-clue{width:min(240px,60vw);aspect-ratio:2/3;margin:0 auto 21px;border:4px solid #ad8b60;border-radius:14px;overflow:hidden;box-shadow:0 0 28px #e7b76850,0 15px 24px #0008}
+.sc7-clue img{width:100%;height:100%;object-fit:cover}
+.sc7-poster:not(.is-revealed) img{filter:blur(12px) brightness(.8);transform:scale(1.15)}
+.sc7-pixel:not(.is-revealed) img{filter:blur(6px) contrast(185%) saturate(140%);transform:scale(1.12);image-rendering:pixelated}
+.sc7-answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.sc7-answer{display:flex;align-items:center;gap:11px;padding:12px;min-height:63px;text-align:left;color:#fff4e5;border:1px solid #706473;border-radius:10px;background:#38343d;font-weight:750;cursor:pointer}
+.sc7-answer img{width:45px;aspect-ratio:2/3;object-fit:cover;border-radius:5px;flex:none}.sc7-answer span{flex:1}
+.sc7-answer:not(:disabled):hover{border-color:#efc88e;background:#56473c}.sc7-answer:focus-visible{outline:3px solid #ffe4a4}
+.sc7-answer.is-correct{background:#294a3c;border-color:#8ddba9}.sc7-answer.is-wrong{background:#55343a;border-color:#dc9191}
+.sc7-answer:disabled{cursor:default}.sc7-quiz-feedback{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px;border:1px solid #93794f;background:#3b352e;border-radius:10px;margin-top:15px}
+.sc7-quiz-feedback.good{background:#30463a;border-color:#7abf91}.sc7-quiz-feedback.bad{background:#4d3737;border-color:#d18d82}
+.sc7-help{text-align:center;font-size:12px;margin:17px 0;color:#d8c5ac}
+.sc7-next{display:block;margin:16px auto;min-height:46px}.sc7-quit{display:block;margin:16px auto 0;border:0;background:transparent;text-decoration:underline;color:#efc893}
+.sc7-finish{text-align:center;padding:40px 20px}.sc7-finish-symbol{font-size:65px;color:#ffcf83}.sc7-finish h2{font:900 54px 'Barlow Condensed',sans-serif}
+.sc7-result-score{display:block;font-size:70px;color:#fbe4b4}.sc7-reward-total{font-size:23px;font-weight:900;color:#ffda93}
+.sc7-end-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:22px}
+.sc7-opening{text-align:center;position:relative;min-height:410px;padding:10px}
+.sc7-opening-kicker{font-size:11px;font-weight:900;color:#e9c18e;letter-spacing:.2em}
+.sc7-opening h2{font:800 clamp(31px,4vw,45px) 'Barlow Condensed',sans-serif;color:#ffe4c4;margin:12px 0}
+.sc7-sealed-pack{width:210px;height:275px;margin:12px auto 24px;display:flex;align-items:center;justify-content:center;flex-direction:column;
+ border:6px solid #b89b72;border-radius:15px;background:radial-gradient(circle at 35% 20%,#985b5f,#26232e 72%);box-shadow:0 19px 40px #0009,0 0 36px #e6b77955;
+ transform:rotate(-5deg);animation:sc7Float 3.3s ease-in-out infinite}
+.sc7-sealed-pack span{font:900 90px 'Barlow Condensed',sans-serif;color:#ffe6b2}.sc7-sealed-pack strong{font-size:20px;letter-spacing:.15em;color:#fff1d0}.sc7-sealed-pack small{font-size:10px;margin-top:9px;color:#d6c1b0}
+.sc7-pack-sub{font-size:12px;color:#d9c5ba;margin:13px 0}.sc7-pack-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:21px}
+.sc7-pack-actions .btn{min-height:48px}.sc7-pack-progress{display:flex;justify-content:center;gap:8px;margin:14px 0}
+.sc7-pack-progress span{width:32px;height:6px;background:#665c67;border-radius:8px}.sc7-pack-progress .done{background:#aad1ac}.sc7-pack-progress .next{background:#ffce82}
+.sc7-reveal-stage{position:relative;width:min(235px,57vw);margin:6px auto;perspective:900px}
+.sc7-reveal-card{position:relative;aspect-ratio:2/3;overflow:hidden;border:5px solid #b39a79;border-radius:15px;background:#302c33;box-shadow:0 20px 42px #000a;animation:sc7Reveal .7s cubic-bezier(.17,.8,.23,1) both}
+.sc7-reveal-card>img{width:100%;height:100%;object-fit:cover}
+.sc7-reveal-bottom{position:absolute;inset:auto 0 0;padding:35px 10px 12px;background:linear-gradient(transparent,#141015ef);display:flex;flex-direction:column;gap:4px}
+.sc7-reveal-bottom strong{font-size:16px;color:white}.sc7-reveal-bottom span{color:#ffe0ab;font-size:11px;text-transform:uppercase;font-weight:900;letter-spacing:.12em}
+.sc7-reveal-shine{position:absolute;inset:-40%;background:linear-gradient(110deg,transparent 40%,#ffffff55 50%,transparent 58%);pointer-events:none;animation:sc7Shine 1.5s .5s ease-out both}
+.sc7-reveal-rarity{font-size:13px;font-weight:900;color:#ffdca5;margin:18px}
+.sc7-tier-legendaire .sc7-reveal-card,.sc7-tier-epique .sc7-reveal-card{border-color:#ba9cef;box-shadow:0 0 50px #b19bf677,0 20px 42px #000a}
+.sc7-tier-mythique .sc7-reveal-card,.sc7-tier-unique .sc7-reveal-card{border-color:#ffdf95;box-shadow:0 0 58px #f2ce8588,0 20px 42px #000a}
+.sc7-spark{position:absolute;z-index:2;top:40%;left:50%;color:#ffdfa9;pointer-events:none;--angle:calc(var(--i)*22.5deg);animation:sc7Spark 1.15s .2s ease-out both}
+.sc7-opening-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:20px 0}
+.sc7-opening-mini{display:flex;flex-direction:column;min-width:0;border:2px solid #987f65;background:#292530;border-radius:10px;overflow:hidden}
+.sc7-opening-mini img{width:100%;aspect-ratio:2/3;object-fit:cover}.sc7-opening-mini b{padding:7px 4px 3px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sc7-opening-mini span{font-size:10px;color:#e6c792;padding-bottom:9px}
+.sc7-opening-mini.sc7-tier-legendaire,.sc7-opening-mini.sc7-tier-epique{border-color:#b79be0}.sc7-opening-mini.sc7-tier-mythique,.sc7-opening-mini.sc7-tier-unique{border-color:#ffe2a0}
+.sc7-pack-bonus{color:#ffdea2;font-size:21px;font-weight:900}.sc7-pack-bonus span{color:#9a9089}
+.opening-dialog:has(.sc7-opening){max-width:820px;background:radial-gradient(circle at 50% 0,#7854584d,transparent 55%),#22212b}
+@keyframes sc7Reveal{from{opacity:0;transform:rotateY(-90deg) scale(.75)}75%{opacity:1;transform:rotateY(10deg) scale(1.04)}to{opacity:1;transform:rotateY(0) scale(1)}}
+@keyframes sc7Float{50%{transform:translateY(-10px) rotate(-3deg)}}
+@keyframes sc7Shine{from{transform:translateX(-110%) rotate(-12deg)}to{transform:translateX(110%) rotate(-12deg)}}
+@keyframes sc7Spark{from{opacity:1;transform:rotate(var(--angle)) translateX(0)}to{opacity:0;transform:rotate(var(--angle)) translateX(165px)}}
+@media(max-width:1000px){.sc7-mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.sc7-hero{padding:17px;flex-wrap:wrap}.sc7-hero-stat{min-width:110px;padding:10px}.sc7-mode-art{height:95px}.sc7-mode-art>span{font-size:65px}.sc7-mode-content{padding:11px}.sc7-mode h2{font-size:24px}.sc7-mode p{font-size:11px}.sc7-answers{gap:7px}.sc7-answer{min-height:58px;padding:9px;font-size:12px}.sc7-opening-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.sc7-opening{padding:6px}}
+@media(prefers-reduced-motion:reduce){.sc7-sealed-pack,.sc7-reveal-card,.sc7-reveal-shine,.sc7-spark{animation:none!important}.sc7-mode{transition:none}}
+body.reduce-motion .sc7-sealed-pack,body.reduce-motion .sc7-reveal-card,body.reduce-motion .sc7-reveal-shine,body.reduce-motion .sc7-spark{animation:none!important}
