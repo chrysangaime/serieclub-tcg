@@ -23,7 +23,7 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
   const first=items[0],rank=officialRarity(first);
   const protectedCount=items.filter(c=>c.locked).length;
   const blockedCount=items.filter(c=>c.reserved_trade_id||selling.has(c.id)).length;
-  const free=items.filter(c=>!c.locked&&!c.reserved_trade_id&&!selling.has(c.id)&&(!c.series?.rarity||c.rarity===c.series.rarity));
+  const free=items.filter(c=>!c.locked&&!c.reserved_trade_id&&!selling.has(c.id)&&(!c.series?.rarity||c.rarity===c.series.rarity)&&c.series?.fr_verified===true);
   return {
    id,name:first.series?.name||'Série inconnue',
    image:first.series?.image_url||'',premiered:first.series?.premiered||'',
