@@ -161,11 +161,11 @@ export function games(s){
  ];
  const menu='<div class="sc60-games-grid">'+cards.map(([key,ico,label,title,desc])=>
  '<article class="sc60-game-tile"><div class="sc60-game-icon">'+ico+'</div><span class="caps">'+label+'</span><h2>'+title+'</h2><p>'+desc+'</p>'+
- '<div class="sc60-game-meta">5 manches · score sur 5</div><button class="btn primary" data-challenge="'+key+'">Jouer →</button></article>').join('')+'</div>'+
+ '<div class="sc60-game-meta">5 manches · score sur 5'+((s.quizRecords||{})[key]?' · record : '+(s.quizRecords||{})[key]+'/5':'')+'</div><button class="btn primary" data-challenge="'+key+'">Jouer →</button></article>').join('')+'</div>'+
  '<div class="sc60-games-note"><strong>Des parties vraiment gratuites</strong><p>Les jeux testent tes connaissances sur les séries certifiées pour la France. Le score reste dans la partie : aucun crédit, XP ou carte n’est attribué par ces mini-jeux.</p></div>';
  return '<div class="page-content sc60-games">'+heading('Jeux & défis','Trois jeux de culture séries, cinq manches et des défis toujours renouvelés.')+
  '<div class="sc60-games-hero"><div><span class="caps">SÉRIECLUB · L’ARÈNE</span><h2>À toi de jouer.</h2><p>Reconnais les affiches, maîtrise les dates et défie ta mémoire.</p></div><div class="sc60-games-hero-stat"><strong>'+money(s.wallet?.experience||0)+'</strong><span>XP de collection</span></div></div>'+
- (s.quiz?quizHTML(s.quiz):menu)+(s.quizError?'<div class="sc60-quiz-empty" role="alert">'+esc(s.quizError)+'</div>':'')+(s.quizLoading?'<div class="sc60-loading" role="status">Préparation des questions françaises…</div>':'')+
+ (s.quiz?quizHTML(s.quiz):menu)+(s.quiz?.finished?'<p class="sc60-record-note">Meilleur score sur cet appareil : '+Number((s.quizRecords||{})[s.quiz.type]||0)+'/5</p>':'')+(s.quizError?'<div class="sc60-quiz-empty" role="alert">'+esc(s.quizError)+'</div>':'')+(s.quizLoading?'<div class="sc60-loading" role="status">Préparation des questions françaises…</div>':'')+
  '</div>';
 }
 export function rules(){
