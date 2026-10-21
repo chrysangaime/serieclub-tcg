@@ -32,6 +32,8 @@ END $$;
 
 -- Un changement de propriétaire d'une carte non FR doit échouer même si
 -- une ancienne annonce demeurait encore ouverte dans un navigateur.
+INSERT INTO public.player_cards(owner_id,series_id,rarity)
+VALUES('00000000-0000-4000-8000-000000000001'::uuid,203,'Commune');
 UPDATE public.series SET fr_verified=false WHERE id=203;
 DO $$
 DECLARE blocked boolean:=false;
