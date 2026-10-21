@@ -35,7 +35,7 @@ test('How I Met Your Mother: Disney+ is subscription, Amazon Video/Apple purchas
  assert.doesNotMatch(html,/Amazon Prime Video/);
  assert.match(html,/17\/10\/2026/);
  assert.match(html,/justwatch\.com\/fr\/serie\/how-i-met-your-mother/);
- assert.match(html,/disneyplus\.com\/fr-fr\/browse\/entity\/bc68ac79/);
+ assert.match(html,/disneyplus\.com\/fr-fr\/browse\/entity-bc68ac79/);
 });
 
 test('Platforms are compact near title/rarity, not repeated in big footer banner',()=>{
