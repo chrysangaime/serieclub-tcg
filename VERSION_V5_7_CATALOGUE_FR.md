@@ -16,7 +16,7 @@ Une série produite hors de France peut être éligible : le **pays de productio
 
 `.github/workflows/sync-catalog.yml` examine jusqu'à **300 pages par lancement**, importe les métadonnées illustrées dans Supabase et marque les séries dont la chaîne originale est explicitement française. Les modifications SQL antérieures, les raretés fixées et les cartes obtenues ne sont pas effacées.
 
-Premier passage du **21 octobre 2026**, pages 0-99 : **22 353 séries TVmaze traitées** et **216 mises à jour de preuves d'origine française**. Deuxième passage pages 100-199 : **21 125 séries traitées** et **453 mises à jour de preuves d'origine française**. Ce sont des traitements réussis, pas 669 séries françaises nouvelles et uniques : le compteur exact de `fr_verified` dépend des preuves déjà présentes et est maintenant journalisé par le workflow.
+Premier passage du **21 octobre 2026**, pages 0-99 : **22 353 séries TVmaze traitées** et **216 mises à jour de preuves d'origine française**. Deuxième passage pages 100-199 : **21 125 séries traitées** et **453 mises à jour de preuves d'origine française**. Le balayage a ensuite atteint la fin de l’index TVmaze à la page 381. Le **21 octobre 2026 à 08:51 UTC**, le contrôle en base a confirmé **1 656 séries dont `fr_verified = true`**. Les 216, 453 et 1 434 tentatives de mise à jour d'origine française relevées au fil des passages ne doivent pas être additionnées comme des séries uniques : le nombre de séries certifiées est celui du contrôle SQL en base. Le point de reprise a été remis à la page 0 pour la prochaine rotation.
 
 ## Séries étrangères ayant eu une diffusion française
 
