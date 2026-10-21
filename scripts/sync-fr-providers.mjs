@@ -106,7 +106,7 @@ export async function recordFranceEligibility(show,record,supabase,key){
 async function getCatalog(supabase,key){
  let out=[],offset=0;
  do{
-  const query=new URLSearchParams({select:'id,name,premiered,popularity_weight',
+  const query=new URLSearchParams({select:'id,name,premiered,popularity_weight,fr_verified',
     order:'popularity_weight.desc.nullslast,id.asc',limit:'750',offset:String(offset)});
   const rows=await json(supabase+'/rest/v1/series?'+query,{
    apikey:key,Authorization:'Bearer '+key
@@ -128,11 +128,21 @@ export async function run(){
  const raw=JSON.parse(await fs.readFile(STORE,'utf8'));
  if(!raw.titles||typeof raw.titles!=='object')throw Error('Invalid France store');
  const shows=await getCatalog(supabase,service),now=Date.now(),checked_at=new Date().toISOString();
+ let verifiedFrance=0;
+ // Reuse prior authenticated observations: even if a provider was available
+ // several weeks ago, that is valid evidence of an actual French release.
+ for(const show of shows){
+  const record=raw.titles[String(show.id)];
+  if(!show.fr_verified&&hasVerifiedFranceOffer(record)){
+   if(await recordFranceEligibility(show,record,supabase,service))verifiedFrance++;
+  }
+ }
  const queued=shows.filter(s=>!raw.titles[String(s.id)]||
    now-Date.parse(raw.titles[String(s.id)].checked_at||0)>TTL)
   .slice(0,Math.max(1,Math.min(MAX,400)));
- console.log('Catalogue :',shows.length,'séries. A examiner :',queued.length);
- let inserted=0,notMatched=0,failed=0,verifiedFrance=0;
+ console.log('Catalogue :',shows.length,'séries. A examiner :',queued.length,
+  '. Historique FR déjà repris :',verifiedFrance);
+ let inserted=0,notMatched=0,failed=0;
  for(let i=0;i<queued.length;i++){
   const show=queued[i];
   try{
