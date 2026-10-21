@@ -6,6 +6,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {tmdbRequest,tmdbAuthError} from './tmdb-auth.mjs';
 
 const STORE='data/watch-fr.json';
 const BASE='https://api.themoviedb.org/3';
@@ -59,7 +60,14 @@ async function json(url,headers={}){
   return await r.json();
  }finally{clearTimeout(timer)}
 }
-async function tmdb(endpoint,token){return json(BASE+endpoint,{Authorization:'Bearer '+token})}
+async function tmdb(endpoint,token){
+ const auth=tmdbRequest(endpoint,token);
+ try{return await json(auth.url,auth.headers)}
+ catch(error){
+  if(/^HTTP 401\b/.test(error.message))throw Error(tmdbAuthError(auth.mode));
+  throw error;
+ }
+}
 export async function fetchFRShow(show,token,checked_at){
  const query=new URLSearchParams({query:show.name,language:'fr-FR',include_adult:'false'});
  const search=await tmdb('/search/tv?'+query,token);
@@ -125,6 +133,7 @@ export async function run(){
  const supabase=process.env.SUPABASE_URL||'https://anjfidksqbqlaggttdop.supabase.co';
  if(!token||!service)throw Error('Secrets manquants : ajouter TMDB_READ_ACCESS_TOKEN et SUPABASE_SERVICE_ROLE_KEY dans GitHub Actions.');
  if(!supabase.startsWith('https://'))throw Error('SUPABASE_URL doit être en HTTPS');
+ console.log('Méthode TMDB détectée : '+tmdbRequest('/search/tv?query=test',token).mode);
  const raw=JSON.parse(await fs.readFile(STORE,'utf8'));
  if(!raw.titles||typeof raw.titles!=='object')throw Error('Invalid France store');
  const shows=await getCatalog(supabase,service),now=Date.now(),checked_at=new Date().toISOString();
