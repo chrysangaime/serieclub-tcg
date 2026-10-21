@@ -76,6 +76,16 @@ async function tmdb(path,token){
 }
 async function tvmaze(path){return requestJSON(MAZE+path,{},true)}
 
+/** TVmaze renvoie plusieurs homonymes : ne garder qu'une correspondance unique. */
+export function pickExactTVmaze(candidate,search=[]){
+ const exact=new Map();
+ for(const item of Array.isArray(search)?search:[]){
+  const show=item?.show||item;
+  if(sameSeries(candidate,show,false))exact.set(show.id,show);
+ }
+ return exact.size===1?[...exact.values()][0]:null;
+}
+
 async function resolveTVmaze(candidate,token){
  const external=await tmdb('/tv/'+candidate.id+'/external_ids',token);
  for(const [parameter,id] of [['thetvdb',external?.tvdb_id],['imdb',external?.imdb_id]]){
@@ -86,8 +96,9 @@ async function resolveTVmaze(candidate,token){
  // Le titre localisé seul n'est PAS une identité suffisante.
  // Réexamen de l'original avec validation titre + année, sans devinette.
  for(const title of new Set([candidate.original_name,candidate.name].filter(Boolean))){
-  const found=await tvmaze('/singlesearch/shows?q='+encodeURIComponent(title));
-  if(sameSeries(candidate,found,false))return found;
+  const results=await tvmaze('/search/shows?q='+encodeURIComponent(title));
+  const match=pickExactTVmaze(candidate,results);
+  if(match)return match;
  }
  return null;
 }
