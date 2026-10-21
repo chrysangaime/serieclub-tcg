@@ -19,7 +19,7 @@ export function quizQuestion(type,pool,rng=Math.random){
  // chaque question ne doit admettre qu'une seule réponse correcte.
  const known=new Set();
  const list=pool.filter(valid).filter(item=>{
-  const key=String(item.name).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase();
+  const key=String(item.name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
   if(known.has(key))return false;
   known.add(key);return true;
  });
