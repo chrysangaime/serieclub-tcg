@@ -2,6 +2,7 @@ import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=5.2.1';
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=5.1.0';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
+import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.3.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.2.1';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.2.1';
 import{collectionStudio,collectionCSV}from'../v5/collection.js?v=5.2.1';
@@ -350,16 +351,30 @@ async function openSeriesDetail(id){
   const loaded=await getShowDetails(numeric);
   if(!detailReady(token))return;
   if(!loaded&&!base?.name){
-   const {data,error}=await supa.from('series').select('id,name,image_url,premiered,genres').eq('id',numeric).maybeSingle();
+   const {data,error}=await supa.from('series').select('id,name,image_url,premiered,genres,rarity,rarity_source').eq('id',numeric).maybeSingle();
    if(!error&&data)base=data;
   }
   if(!loaded&&!base?.name){
    $('overlay').innerHTML='<div class="dialog sc5-loading"><button class="close" data-close>×</button><h2>Série introuvable</h2><p>Aucune fiche disponible pour cet identifiant.</p></div>';
    return;
   }
+  // The canonical series rank is stored in Supabase, never derived from a
+  // card's historic rarity, a TVmaze popularity weight or a selected filter.
+  if(!base.rarity){
+    const {data:canonical,error:catalogError}=await supa.from('series')
+      .select('id,name,image_url,premiered,genres,rarity,rarity_source')
+      .eq('id',numeric).maybeSingle();
+    if(!catalogError&&canonical)base={...base,...canonical};
+    if(!detailReady(token))return;
+  }
   const show=loaded||base;
   $('overlay').innerHTML=showDetailHTML(loaded||{},base);
   $('overlay').querySelector('[data-close]')?.focus();
+  getFrenchOffersByShow(numeric).then(record=>{
+    if(!detailReady(token))return;
+    const target=$('overlay').querySelector('[data-fr-watch]');
+    if(target)target.innerHTML=renderFranceAvailability(record,show);
+  }).catch(()=>{/* Provider data remains explicitly unverified. */});
   // Localized synopsis is loaded independently: never blocks cast or navigation.
   getFrenchSynopsis(show,stripSummary(show.summary||base.summary))
     .then(result=>{
@@ -376,6 +391,11 @@ async function openSeriesDetail(id){
   if(!detailReady(token))return;
   if(base?.name){
     $('overlay').innerHTML=showDetailHTML({},base);
+    getFrenchOffersByShow(numeric).then(record=>{
+      if(!detailReady(token))return;
+      const target=$('overlay').querySelector('[data-fr-watch]');
+      if(target)target.innerHTML=renderFranceAvailability(record,base);
+    }).catch(()=>{});
     getFrenchSynopsis(base,stripSummary(base.summary)).then(result=>{
       if(!detailReady(token))return;
       const target=$('overlay').querySelector('[data-synopsis]');
