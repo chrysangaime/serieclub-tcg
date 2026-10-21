@@ -174,7 +174,7 @@ BEGIN
   result:=public.rewarded_quiz_snapshot(r);
  END IF;
  RETURN result||jsonb_build_object('correct',right_answer,'correct_answer',correct_id,
-  'earned',award,'answered_round',CASE WHEN r.status='completed' THEN 5 ELSE r.round-1 END);
+  'earned',award,'answered_round',CASE WHEN result->>'status'='completed' THEN 5 ELSE r.round-1 END);
 END $$;
 REVOKE ALL ON FUNCTION public.submit_rewarded_quiz_answer(uuid,bigint) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.submit_rewarded_quiz_answer(uuid,bigint) TO authenticated;
