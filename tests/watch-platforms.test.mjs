@@ -59,7 +59,7 @@ test('Streaming-only vs purchase-only offers are not mixed or falsely asserted',
  assert.match(html,/Disponible à l’achat ou à la location sur/);
  assert.doesNotMatch(html,/sc56-brand-disney/);
  const empty=renderFranceAvailability(null,show);
- assert.match(empty,/Plateformes françaises non encore renseignées/);
+ assert.match(empty,/Offres de streaming non confirmées/);
  assert.doesNotMatch(empty,/Disney\+/);
  assert.doesNotMatch(empty,/Aucune disponibilité française vérifiée/);
 });
