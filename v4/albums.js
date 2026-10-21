@@ -1,4 +1,5 @@
 import{esc,photo,money,heading}from'../v3/views.js?v=5.3.0';
+import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 export function personalAlbumsPage(s){
  const genreCounts=new Map();
  for(const c of s.cards)for(const g of c.series?.genres||[])genreCounts.set(g,(genreCounts.get(g)||0)+1);
@@ -16,7 +17,7 @@ export function personalAlbumsPage(s){
  '<section style="margin-top:28px"><div class="section-head"><div><span class="caps">SÉLECTIONS DU CLUB</span><h2>Albums partagés par les joueurs</h2></div></div>'+
  (publicAlbums.length?'<div class="sc4-album-grid">'+publicAlbums.map(a=>'<button class="sc4-album sc4-album-public" data-view-album="'+esc(a.album_id)+'"><div class="sc4-album-top"><span class="caps">◉ PUBLIC</span><span>▦ '+money(a.cards_count)+'</span></div><h3>'+esc(a.title)+'</h3><p>Par '+esc(a.username)+'</p><span class="sc4-album-open">Parcourir cette saison ↗</span></button>').join('')+'</div>':'<div class="empty">Aucun album public pour le moment. Sois le premier à partager ta sélection !</div>')+'</section>'+
  '<section style="margin-top:29px"><div class="section-head"><div><span class="caps">AUTOMATIQUES</span><h2>Mes univers par genre</h2></div></div>'+
- (genreCounts.size?'<div class="sc4-album-grid">'+[...genreCounts].sort((a,b)=>b[1]-a[1]).map(([genre,n])=>'<button class="sc4-album sc4-album-public" data-album="'+esc(genre)+'"><span class="caps">GENRE</span><h3>'+esc(genre)+'</h3><p>▦ '+n+' cartes à retrouver</p><span class="sc4-album-open">Explorer ↗</span></button>').join('')+'</div>':'<div class="empty">Ouvre ton premier booster pour remplir tes albums de genre.</div>')+'</section></div>';
+ (genreCounts.size?'<div class="sc4-album-grid">'+[...genreCounts].sort((a,b)=>b[1]-a[1]).map(([genre,n])=>'<button class="sc4-album sc4-album-public" data-album="'+esc(genre)+'"><span class="caps">GENRE</span><h3>'+esc(genreFR(genre))+'</h3><p>▦ '+n+' cartes à retrouver</p><span class="sc4-album-open">Explorer ↗</span></button>').join('')+'</div>':'<div class="empty">Ouvre ton premier booster pour remplir tes albums de genre.</div>')+'</section></div>';
 }
 export function albumDialog(s,a,data=[]){
  const own=(s.personalAlbums||[]).some(x=>x.album_id===a.album_id);
