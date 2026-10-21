@@ -133,6 +133,15 @@ export function fusions(s){
   return card(c,'<button type="button" class="sc60-fuse-select '+(chosen?'picked':'')+'" data-fusion-pick="'+esc(c.id)+'" aria-pressed="'+chosen+'" aria-label="'+(chosen?'Retirer de la sélection : ':'Ajouter à la sélection : ')+esc(c.series?.name||'Carte')+'">'+(chosen?'✓ Sélectionnée':'＋ Sélectionner')+'</button>'+
    (c.isLast?'<div class="sc60-fuse-last">Dernier exemplaire</div>':'<div class="sc60-fuse-spare">Doublon disponible</div>'));
  }).join('');
+ const picked=plan.selectedCards.map(c=>
+  '<button type="button" data-fusion-pick="'+esc(c.id)+'" title="Retirer de la sélection" aria-label="Retirer '+esc(c.series?.name||'Série')+' de la fusion">'+
+   '<span>'+esc(c.series?.name||'Carte')+'</span>'+(c.isLast?' ⚠ Dernière copie':' ✕')+'</button>').join('');
+ const tray='<section class="sc8-fusion-tray" aria-label="Cartes sélectionnées pour la fusion">'+
+   '<h3>Ton panier de fusion · '+current+'/10</h3>'+
+   (picked?'<div class="sc8-fusion-picked">'+picked+'</div>':
+    '<div class="sc8-fusion-empty">Aucune carte sélectionnée. Utilise « Sélection intelligente » pour privilégier tes doublons.</div>')+
+   '<p>'+(plan.ready?'Prêt à fusionner : vérifie le récapitulatif avant de confirmer.':
+    'Encore '+plan.missing+' carte'+(plan.missing===1?'':'s')+' à sélectionner · clique sur une carte pour la retirer.')+'</p></section>';
  const footer='<div class="sc60-fuse-pages"><span>Cartes '+(all.length?page*perPage+1:0)+'–'+Math.min(all.length,(page+1)*perPage)+' sur '+all.length+'</span>'+
   '<div><button class="btn subtle" data-fusion-page="-1" '+(page===0?'disabled':'')+'>← Précédent</button>'+
   '<button class="btn subtle" data-fusion-page="1" '+(page>=totalPages-1?'disabled':'')+'>Suivant →</button></div></div>';
@@ -144,7 +153,7 @@ export function fusions(s){
  '<label class="sc60-protect"><input type="checkbox" id="fusionProtectLast" '+(preserve?'checked':'')+'> Préserver mes dernières copies</label>'+
  '<button class="btn subtle" id="fusionAuto" '+(!plan.allowed.length?'disabled':'')+'>✦ Sélection intelligente</button>'+
  '<button class="btn subtle" id="fusionClear" '+(!current?'disabled':'')+'>Effacer</button></div>'+
- (current?'<div class="sc60-progress"><span style="width:'+current*10+'%"></span></div>':'')+
+ (current?'<div class="sc60-progress" role="progressbar" aria-label="Cartes sélectionnées" aria-valuemin="0" aria-valuemax="10" aria-valuenow="'+current+'"><span style="width:'+current*10+'%"></span></div>':'')+tray+
  '<div class="sc60-fusion-notice" role="note">🔒 Les cartes protégées, réservées, en vente ou non certifiées France sont exclues. '+(preserve?'Les dernières copies de séries sont également préservées.':'Attention : la dernière copie d’une série peut maintenant être consommée.')+'</div>'+
  (all.length?'<div class="grid sc60-fuse-grid">'+items+'</div>'+footer:
   '<div class="sc60-empty"><h2>Aucune carte utilisable pour ce rang</h2><p>'+ (plan.uniqueOnly&&preserve?'Désactive « Préserver mes dernières copies » uniquement si tu souhaites utiliser des exemplaires uniques.':'Ouvre des boosters pour obtenir de nouvelles cartes ou choisis une autre rareté.')+'</p><button class="btn subtle" data-route="packs">Ouvrir des paquets</button></div>')+
