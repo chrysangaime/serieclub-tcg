@@ -7,6 +7,7 @@
  */
 import {whereToWatchLink,amazonSearchLink,amazonIsAffiliate} from '../v3/discovery.js?v=5.3.0';
 import {renderFranceAvailability,getFrenchOriginChannel} from '../v5/fr-watch.js?v=5.3.0';
+import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -61,7 +62,7 @@ const photo = (value, alt, className = '') => {
 };
 const display = value => value != null && value !== '' ? String(value) : '—';
 const genrePills = (genres=[]) => (Array.isArray(genres)?genres:[])
-  .slice(0,8).map(g=>'<span>'+escapeHTML(g)+'</span>').join('');
+  .slice(0,8).map(g=>'<span>'+escapeHTML(genreFR(g))+'</span>').join('');
 
 async function getJSON(path, allow404=false) {
   const hit = cache.get(path);
