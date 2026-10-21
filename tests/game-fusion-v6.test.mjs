@@ -87,7 +87,7 @@ test('fusion : interface affiche conséquences et confirmation obligatoire avant
  assert.match(html,/data-fusion-pick/);
  assert.match(html,/id="fusionSubmit"[^>]*disabled/);
  const prepared=fusions({...s,fusionSelected:autoFusion(fusionPlan(cards,'Commune',[],[],true))});
- assert.match(prepared,/Examiner ma fusion/);
+ assert.match(prepared,/Fusionner 10 → 1 · Vérifier/);
  assert.doesNotMatch(prepared,/id="fusionSubmit"[^>]*disabled/);
  const app=fs.readFileSync('v3/app.js','utf8');
  assert.match(app,/previewFusion\(\)/);
