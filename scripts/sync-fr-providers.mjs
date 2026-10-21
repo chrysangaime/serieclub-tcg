@@ -147,14 +147,22 @@ export async function run(){
   const show=queued[i];
   try{
    const res=await fetchFRShow(show,token,checked_at);
+   const existing=raw.titles[String(show.id)];
    if(res){
-    // Publish the public availability and separately certify eligibility
-    // server-side. Unknown series remain excluded from new packs.
+    // A positive FR provider match supersedes an old manually sourced offer.
+    // An API response with no providers is NOT evidence the earlier JustWatch
+    // observation was false, so retain its historical, dated record.
     if(await recordFranceEligibility(show,res,supabase,service))verifiedFrance++;
-    raw.titles[String(show.id)]=res;inserted++;
-   }
-   else { // Do not invent a provider for an unresolvable title.
-    raw.titles[String(show.id)]={country:'FR',tmdb_id:null,checked_at,url:null,offers:[]};
+    if(hasVerifiedFranceOffer(res)||existing?.source!=='justwatch_fr_editorial'){
+     raw.titles[String(show.id)]=res;
+    }
+    inserted++;
+   }else{
+    // Keep dated, attributed historical French evidence when TMDB returns
+    // no confident match, rather than replacing it with an empty result.
+    if(existing?.source!=='justwatch_fr_editorial'){
+     raw.titles[String(show.id)]={country:'FR',tmdb_id:null,checked_at,url:null,offers:[]};
+    }
     notMatched++;
    }
   }catch(err){
