@@ -2,6 +2,59 @@
   "schema": 1,
   "region": "FR",
   "source": "TMDB/JustWatch",
-  "updated_at": null,
-  "titles": {}
+  "updated_at": "2026-10-21T07:10:00Z",
+  "titles": {
+    "430": {
+      "country": "FR",
+      "source": "justwatch_fr_editorial",
+      "source_name": "JustWatch France",
+      "tmdb_id": null,
+      "checked_at": "2026-09-10T19:22:39+02:00",
+      "url": "https://www.justwatch.com/fr/serie/the-x-files",
+      "offers": [
+        {
+          "type": "flatrate",
+          "name": "Disney+",
+          "provider_id": 337,
+          "logo_path": null
+        },
+        {
+          "type": "flatrate",
+          "name": "Amazon Prime Video",
+          "provider_id": 9,
+          "logo_path": null
+        },
+        {
+          "type": "flatrate",
+          "name": "SFR Play",
+          "provider_id": 0,
+          "logo_path": null
+        },
+        {
+          "type": "flatrate",
+          "name": "Molotov TV",
+          "provider_id": 0,
+          "logo_path": null
+        },
+        {
+          "type": "ads",
+          "name": "M6+",
+          "provider_id": 0,
+          "logo_path": null
+        },
+        {
+          "type": "buy",
+          "name": "Apple TV Store",
+          "provider_id": 2,
+          "logo_path": null
+        },
+        {
+          "type": "buy",
+          "name": "Amazon Video",
+          "provider_id": 10,
+          "logo_path": null
+        }
+      ]
+    }
+  }
 }
