@@ -44,11 +44,13 @@ Les séries sans score sont repérées `pending` / « À classer » et **ne sort
 
 ## Activation nécessaire — les modifications SQL ne sont pas exécutées depuis GitHub
 
-**Prérequis :** avoir exécuté toutes les migrations jusqu'à `supabase/game_v4.sql`.
+**Prérequis :** `schema.sql`, `game.sql`, `game_v2.sql` et `game_v3.sql`.
 
-1. Dans le SQL Editor Supabase du projet SérieClub, exécuter le contenu intégral de **[supabase/game_v5.sql](supabase/game_v5.sql)**.
-2. Lancer ensuite manuellement le workflow GitHub **[Synchroniser le catalogue TVmaze](https://github.com/chrysangaime/serieclub-tcg/actions/workflows/sync-catalog.yml)** avec le bouton « Run workflow » afin de renseigner `popularity_weight` et d'attribuer les rangs aux titres encore en attente.
+1. **Méthode recommandée :** dans le SQL Editor Supabase, exécuter le contenu intégral de **[supabase/install_v4_v5.sql](supabase/install_v4_v5.sql)**. Ce fichier installe V4 (marché et échanges) et V5 (rare­té fixe) au cours d'une seule transaction : aucune partie ne sera appliquée si une instruction échoue. Si V4 est déjà installée, les opérations prévues sont réexécutables.
+2. Lancer ensuite manuellement le workflow GitHub **[Synchroniser le catalogue TVmaze](https://github.com/chrysangaime/serieclub-tcg/actions/workflows/sync-catalog.yml)** avec « Run workflow » afin de renseigner `popularity_weight` et de classer les séries encore en attente.
 3. Recharger le navigateur et vérifier le classement dans Catalogue et Collection.
+
+**Alternative :** exécuter `supabase/game_v4.sql` puis `supabase/game_v5.sql`, dans cet ordre précis. Si la V5 retourne `relation public.card_trade_offers does not exist`, cela signifie que V4 n'a pas été appliquée : utiliser le fichier d'installation combinée plutôt que relancer V5 isolément.
 
 **Précaution :** l'activation normalise la rareté des anciennes cartes. Les annonces et propositions d'échange encore ouvertes peuvent être annulées pour empêcher des transactions sur un ancien rang devenu incorrect. Les copies ne sont pas supprimées, et les crédits restent inchangés.
 
