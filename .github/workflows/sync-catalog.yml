@@ -3,26 +3,51 @@ on:
   workflow_dispatch:
     inputs:
       pages:
-        description: 'Nombre de pages TVmaze (1-100, 250 séries environ/page)'
+        description: 'Pages TVmaze à parcourir (1 à 400, 100 par défaut)'
         required: false
-        default: '20'
+        default: '100'
+      start_page:
+        description: 'Page de départ facultative (sinon reprise automatique)'
+        required: false
+        default: ''
+  push:
+    paths:
+      - 'scripts/import-tvmaze.mjs'
+      - '.github/workflows/sync-catalog.yml'
   schedule:
     - cron: '25 3 * * 0'
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: import-tvmaze-catalog
+  cancel-in-progress: false
 jobs:
   sync:
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
       - uses: actions/setup-node@v5
         with:
           node-version: '22'
           package-manager-cache: false
-      - name: Importer les séries et affiches
+      - name: Importer les séries, identifier les diffuseurs français
         env:
           SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          TVMAZE_PAGES: ${{ inputs.pages || '20' }}
+          TVMAZE_PAGES: ${{ inputs.pages || '100' }}
+          TVMAZE_START_PAGE: ${{ inputs.start_page || '' }}
         run: node scripts/import-tvmaze.mjs
+      - name: Enregistrer le point de reprise du catalogue
+        run: |
+          if test -f data/tvmaze-import-state.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/tvmaze-import-state.json
+            if ! git diff --cached --quiet; then
+              git commit -m "data: memoriser la progression de l'import TVmaze"
+              git push
+            fi
+          fi
