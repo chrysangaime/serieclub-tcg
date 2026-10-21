@@ -668,7 +668,8 @@ function globalClick(e){
  }
 
  const route=e.target.closest('[data-route]');if(route){e.preventDefault();change(route.dataset.route);return}
- if(e.target.closest('#menuToggle')){document.body.classList.toggle('drawer-open');return}
+ if(e.target.closest('#menuToggle')){const opened=document.body.classList.toggle('drawer-open');$('menuToggle')?.setAttribute('aria-expanded',String(opened));return}
+ if(e.target.closest('#drawerBackdrop')){document.body.classList.remove('drawer-open');$('menuToggle')?.setAttribute('aria-expanded','false');return}
  if(e.target.closest('[data-auth]')){openAuth();return}
  if(e.target.closest('#authLogin')){authenticate(false);return}
  if(e.target.closest('#authRegister')){authenticate(true);return}
@@ -717,7 +718,11 @@ function globalClick(e){
  const lock=e.target.closest('[data-lock]');if(lock){toggleLock(lock.dataset.lock,lock.dataset.next==='true');return}
  const series=e.target.closest('[data-series]');if(series){openSeriesDetail(series.dataset.series);return}
  const wish=e.target.closest('[data-wish]');if(wish){toggleWishlist(Number(wish.dataset.wish));return}
- if(e.target.closest('#catalogSearch')){state.catalogQuery=$('catalogQuery').value;loadCatalog(true);return}
+ if(e.target.closest('#catalogSearch')){clearTimeout(searchTimer);state.catalogQuery=$('catalogQuery')?.value||'';loadCatalog(true);return}
+ if(e.target.closest('#catalogReset')){
+  clearTimeout(searchTimer);state.catalogQuery='';state.catalogRarity='';state.catalogGenre='';state.catalogDecade='';state.catalogSort='name';
+  loadCatalog(true);return;
+ }
  if(e.target.closest('#catalogMore')){loadCatalog(false);return}
  if(e.target.closest('#fusionAuto')){state.fusionSelected=state.cards.filter(c=>c.rarity===state.fusionRank&&(!c.series?.rarity||c.rarity===c.series.rarity)&&c.series?.fr_verified===true&&!c.locked&&!c.reserved_trade_id&&!(state.marketActivity||[]).some(l=>l.card_id===c.id&&l.status==='active')).slice(0,10).map(c=>c.id);render();return}
  if(e.target.closest('#fusionSubmit')){doFusion();return}
@@ -738,6 +743,8 @@ async function saveUsername(){
  state.username=name;state.bio=bio;state.favoriteGenre=favoriteGenre;render();toast('Profil enregistré et visible dans Le Signal.')
 }
 function globalChange(e){
+ const facet={catalogRarity:'catalogRarity',catalogGenre:'catalogGenre',catalogDecade:'catalogDecade',catalogSort:'catalogSort'}[e.target.id];
+ if(facet){state[facet]=e.target.value;clearTimeout(searchTimer);loadCatalog(true);return}
  if(e.target.id==='actorOnlyClub'){state.actorOnlyClub=e.target.checked;render();return}
  if(e.target.id==='marketRarity'){state.marketRarity=e.target.value;render();return}
  if(e.target.id==='rarityFilter'){state.rank=e.target.value;state.collectionPage=0;render();return}
@@ -750,14 +757,31 @@ document.addEventListener('click',globalClick);
 document.addEventListener('change',globalChange);
 document.addEventListener('input',e=>{
  if(e.target.id==='collectionSearch'){state.filter=e.target.value;state.collectionPage=0;const position=e.target.selectionStart;render();const input=$('collectionSearch');input?.focus();input?.setSelectionRange(position,position)}
- if(e.target.id==='catalogQuery')state.catalogQuery=e.target.value;
+ if(e.target.id==='catalogQuery'){
+  state.catalogQuery=e.target.value;
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(()=>{if(state.route==='catalog'&&state.catalogMode==='series')loadCatalog(true)},420);
+ }
  if(e.target.id==='actorSearchQuery')state.actorQuery=e.target.value;
  if(e.target.id==='marketSearch'||e.target.id==='peopleSearch'){
   const type=e.target.id==='marketSearch'?'marketQuery':'peopleFilter';state[type]=e.target.value;
   const pos=e.target.selectionStart;render();const input=$(e.target.id);input?.focus();input?.setSelectionRange(pos,pos);
  }
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&e.target.id==='catalogQuery')loadCatalog(true);if(e.key==='Enter'&&e.target.id==='actorSearchQuery')searchCatalogueActors()});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){
+  if(document.body.classList.contains('drawer-open')){document.body.classList.remove('drawer-open');$('menuToggle')?.setAttribute('aria-expanded','false')}
+  else closeModal();
+ }
+ if(e.key==='Enter'&&e.target.id==='catalogQuery'){clearTimeout(searchTimer);loadCatalog(true)}
+ if(e.key==='Enter'&&e.target.id==='actorSearchQuery')searchCatalogueActors();
+ if(e.key==='/'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&
+    !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)&&
+    $('overlay')?.classList.contains('hidden')){
+  e.preventDefault();if(state.route!=='catalog')change('catalog');
+  $('catalogQuery')?.focus({preventScroll:true});
+ }
+});
 $('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeModal()});
 supa.auth.onAuthStateChange(()=>setTimeout(loadSession,75));
 state.route=safeRoute();render();loadSession();if(['catalog','games'].includes(state.route))loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();
