@@ -1,0 +1,44 @@
+name: Actualiser les plateformes de streaming France
+on:
+  workflow_dispatch:
+    inputs:
+      max_titles:
+        description: "Séries à synchroniser (1 à 400, 120 par défaut)"
+        required: false
+        default: "120"
+  schedule:
+    - cron: "30 4 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: sync-fr-providers
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Synchroniser les offres françaises depuis TMDB / JustWatch
+        env:
+          TMDB_READ_ACCESS_TOKEN: ${{ secrets.TMDB_READ_ACCESS_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
+          MAX_TITLES: ${{ github.event.inputs.max_titles || '120' }}
+        run: node scripts/sync-fr-providers.mjs
+      - name: Publier uniquement le fichier public des disponibilités FR
+        run: |
+          if ! git diff --quiet -- data/watch-fr.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/watch-fr.json
+            git commit -m "data: actualiser les disponibilités de streaming en France"
+            git push
+          else
+            echo "Aucune mise à jour nécessaire."
+          fi
