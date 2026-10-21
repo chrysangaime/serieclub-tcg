@@ -6,7 +6,7 @@ import {catalogue} from '../v3/views.js';
 test('la page catalogue affiche le vrai nombre de séries France, même quand une page ne contient que 36 fiches',()=>{
  const html=catalogue({catalogMode:'series',catalogTotal:2033,
   catalog:[],cards:[],catalogQuery:'',catalogLoading:false,catalogError:'',catalogMore:false});
- assert.match(html,/2\\s033 séries éligibles en France/);
+ assert.match(html,/2\s033 séries éligibles en France/);
  assert.match(html,/0 affichées/);
  assert.match(html,/Catalogue France/);
 });
