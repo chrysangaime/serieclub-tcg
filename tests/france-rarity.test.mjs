@@ -1,4 +1,5 @@
 import test from 'node:test';
+import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {card,officialRarity,raritySlug} from '../v3/views.js';
 import {selectCollection,collectionStudio} from '../v5/collection.js';
@@ -7,7 +8,7 @@ import {whereToWatchLink} from '../v3/discovery.js';
 import {
  getFrenchOriginChannel,normalizeFranceOffers,renderFranceAvailability,justwatchFranceUrl
 } from '../v5/fr-watch.js';
-import {matchTVShow,normalizeFRResult} from '../scripts/sync-fr-providers.mjs';
+import {matchTVShow,normalizeFRResult,hasVerifiedFranceOffer,recordFranceEligibility} from '../scripts/sync-fr-providers.mjs';
 
 test('the canonical series rank wins over the historical card rank',()=>{
  const old={id:'old',series_id:31,rarity:'Commune',series:{
@@ -93,4 +94,43 @@ test('the search fallback links directly to JustWatch France, never Google',()=>
  assert.equal(whereToWatchLink('How I Met Your Mother'),justwatchFranceUrl());
  assert.equal(whereToWatchLink('Any show'),'https://www.justwatch.com/fr');
  assert.ok(!whereToWatchLink('Lost').includes('google.com'));
+});
+
+test('official French offers certify eligibility while non-FR or empty records never do',async()=>{
+ const checked_at=new Date().toISOString();
+ const show={id:7171,name:'Fiction validée',premiered:'2018-03-01'};
+ const verified={
+  country:'FR',tmdb_id:7171,checked_at,
+  offers:[{type:'flatrate',provider_id:8,name:'Netflix'}]
+ };
+ const missing={country:'FR',tmdb_id:7171,checked_at,offers:[]};
+ const overseas={...verified,country:'US'};
+ assert.equal(hasVerifiedFranceOffer(verified),true);
+ assert.equal(hasVerifiedFranceOffer(missing),false);
+ assert.equal(hasVerifiedFranceOffer(overseas),false);
+ const saved=[];
+ const previous=globalThis.fetch;
+ globalThis.fetch=async (url,config)=>{
+  saved.push({url:String(url),config});
+  return {ok:true,status:204,text:async()=>''};
+ };
+ try{
+  assert.equal(await recordFranceEligibility(show,missing,'https://unit.test','service'),false);
+  assert.equal(await recordFranceEligibility(show,overseas,'https://unit.test','service'),false);
+  assert.equal(saved.length,0);
+  assert.equal(await recordFranceEligibility(show,verified,'https://unit.test','service'),true);
+  assert.equal(saved.length,1);
+  assert.match(saved[0].url,/fr_verified=is\.false/);
+  const payload=JSON.parse(saved[0].config.body);
+  assert.equal(payload.fr_verified,true);
+  assert.equal(payload.fr_verification_method,'tmdb_fr_offer');
+  assert.match(payload.fr_evidence_url,/locale=FR/);
+ }finally{globalThis.fetch=previous}
+});
+
+test('French original TVmaze network requires explicit FR country code before verification',()=>{
+ const code=fs.readFileSync(new URL('../scripts/import-tvmaze.mjs',import.meta.url),'utf8');
+ assert.match(code,/network\?\.country\?\.code==='FR'/);
+ assert.match(code,/webChannel\?\.country\?\.code==='FR'/);
+ assert.match(code,/fr_verified=is\.false/);
 });
