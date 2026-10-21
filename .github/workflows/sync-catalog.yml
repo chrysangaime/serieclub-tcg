@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       pages:
-        description: 'Pages TVmaze à parcourir (1 à 400, 100 par défaut)'
+        description: 'Pages TVmaze à parcourir (1 à 400, 300 par défaut)'
         required: false
-        default: '100'
+        default: '300'
       start_page:
         description: 'Page de départ facultative (sinon reprise automatique)'
         required: false
@@ -37,7 +37,7 @@ jobs:
         env:
           SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          TVMAZE_PAGES: ${{ inputs.pages || '100' }}
+          TVMAZE_PAGES: ${{ inputs.pages || '300' }}
           TVMAZE_START_PAGE: ${{ inputs.start_page || '' }}
         run: node scripts/import-tvmaze.mjs
       - name: Enregistrer le point de reprise du catalogue
