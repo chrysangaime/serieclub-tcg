@@ -9,6 +9,18 @@ const ESC={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>ESC[c]);
 const asId=v=>Number.isSafeInteger(Number(v))&&Number(v)>0?String(v):null;
 const ALLOWED=new Set(['flatrate','free','ads','rent','buy']);
+/** Repli minimal daté, contrôlé dans le cache TMDB France du 21/10/2026. */
+const spotlightOffers={
+ '2993':{
+  country:'FR',tmdb_id:66732,checked_at:'2026-10-21T11:25:36.326Z',
+  url:'https://www.themoviedb.org/tv/66732/watch?locale=FR',
+  offers:[
+   {type:'flatrate',provider_id:8,name:'Netflix',logo_path:'/rK1KljqmbvO9HQa1PBFLILWah72.png'},
+   {type:'flatrate',provider_id:1796,name:'Netflix Standard with Ads',logo_path:'/eGUwOOIxcazwEBxqJpSN5sWEu6V.png'}
+  ]
+ }
+};
+
 
 export function getFrenchOriginChannel(show={}){
  const channels=[show.network,show.webChannel];
@@ -106,8 +118,8 @@ export function renderFranceAvailability(record=null,show={}){
   content=offersList([...buying,...renting],link);
  }else{
   intro=announced?'Diffusion annoncée en France':'Où regarder en France ?';
-  content='<span class="sc56-no-offers">Plateformes françaises non encore renseignées'+
-    (proof?(announced?' · diffusion française annoncée':' · diffusion française attestée'):'')+'</span>';
+  content='<span class="sc56-no-offers">'+
+   (announced?'Plateformes à venir':'Offres de streaming non confirmées')+'</span>';
  }
  const secondary=subscription.length&&(
    buying.length||renting.length)
@@ -119,10 +131,10 @@ export function renderFranceAvailability(record=null,show={}){
  const warning=data?.historical?' · relevé ancien : offres pas confirmées aujourd’hui, à vérifier avant de souscrire':
   data?.stale?' · offres à revérifier':'';
  const source=data?'France · '+(editorial?'JustWatch':'TMDB / JustWatch')+
-  ' · relevé du '+date+warning:
-  (proof?(announced?'France · diffusion annoncée, plateformes à venir':'France · diffusion attestée, plateformes à vérifier'):'France · diffusion à vérifier');
+   ' · '+date+warning:
+   (proof?(announced?'Sortie française annoncée':'Diffusion en France confirmée'):'Offres en France à confirmer');
  const direct=data?.url&&editorial?'Ouvrir la fiche JustWatch France ↗':
-  data?.url?'Vérifier sur TMDB France ↗':'Chercher sur JustWatch France ↗';
+  data?.url?'Voir les offres en France ↗':'Voir sur JustWatch France ↗';
  const note=origin.length?'<span class="sc56-origin">'+(announced?'Chaîne prévue en France : ':'Diffusion en France : ')+origin.map(esc).join(', ')+'</span>':'';
  const evidenceUrl=safeWatchLink(show.fr_evidence_url)||
   safeProviderLink(show.fr_evidence_url,'Disney+')||
@@ -150,6 +162,6 @@ export async function getFrenchOffersByShow(id){
    .catch(()=>({titles:{}}));
  }
  const data=await cache.promise;
- return data?.titles?.[key]||null;
+ return data?.titles?.[key]||spotlightOffers[key]||null;
 }
 export function justwatchFranceUrl(){return ROOT}
