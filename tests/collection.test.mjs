@@ -6,7 +6,7 @@ const make=(id,show,name,rarity='Rare',extras={})=>({
  id,owner_id:'u1',series_id:show,rarity,locked:false,reserved_trade_id:null,
  obtained_at:'2026-10-20T10:00:00Z',
  series:{id:show,name,image_url:'https://example.org/'+show+'.jpg',
-  genres:['Drama'],premiered:'2004-01-01',rarity,rarity_source:'popularity'},...extras
+  genres:['Drama'],premiered:'2004-01-01',rarity,rarity_source:'popularity',fr_verified:true},...extras
 });
 const cards=[
  make('l1',1,'Lost','Légendaire'),
@@ -100,4 +100,20 @@ test('CSV export is one row per unique show, Excel-friendly and injection-resist
  assert.doesNotMatch(dangerous,/\r\n"=HYPERLINK/);
  const semicolon=collectionCSV([make('e2',57,'A; "B"','Rare')],[],[]);
  assert.match(semicolon,/"A; ""B"""/);
+});
+
+test('legacy cards survive without French proof but are excluded from playable goals and resale suggestions',()=>{
+ const old=make('historic',92,'Unverified Show','Rare',{
+  series:{id:92,name:'Unverified Show',rarity:'Rare',
+   rarity_source:'popularity',fr_verified:false,
+   image_url:'https://example.org/historical.jpg',genres:['Drama']}
+ });
+ const data=deriveCollection([old,{...old,id:'historic2'}],[],[]);
+ assert.equal(data.unique,1);
+ assert.equal(data.groups[0].eligible,false);
+ assert.equal(data.groups[0].sellableCopy,null);
+ const html=collectionStudio({...state,cards:[old,{...old,id:'historic2'}],
+  collectionMode:'duplicates'});
+ assert.match(html,/Diffusion à vérifier/);
+ assert.doesNotMatch(html,/data-sell-copy=/);
 });
