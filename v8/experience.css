@@ -1,0 +1,67 @@
+/* SérieClub V8.0 — défis visuellement distincts, modal tactile, fusion ergonomique. */
+
+/* Régression Android : la croix du résumé booster doit dominer toutes les couches. */
+#overlay .opening-dialog{position:relative;isolation:isolate}
+#overlay .opening-dialog>.close{
+ display:grid;place-items:center;position:absolute!important;top:10px!important;right:10px!important;
+ width:48px;min-width:48px;height:48px;min-height:48px;border-radius:50%;
+ z-index:100!important;pointer-events:auto!important;touch-action:manipulation;
+ background:#342e37f2;color:#ffedda;border:1px solid #ac9488;
+ font:700 26px/1 Arial,sans-serif;cursor:pointer;
+}
+#overlay .opening-dialog>.close:hover{background:#544551;color:#fff}
+#overlay .opening-dialog>.close:focus-visible{outline:3px solid #9ee6d8;outline-offset:2px}
+#overlay .opening-dialog .sc7-opening{z-index:1;padding-top:37px}
+
+/* Affiche : une portion recadrée NETTE. Pas un simple filtre de flou. */
+.sc7-clue.sc8-poster:not(.is-revealed){position:relative;border-color:#efc58b}
+.sc7-clue.sc8-poster:not(.is-revealed) img{
+ width:100%;height:100%;object-fit:cover;filter:none!important;
+ transform:scale(2.35)!important;transform-origin:61% 33%;image-rendering:auto!important;
+}
+/* Pixels : downsampling physique à 10 %, agrandi en nearest-neighbor. */
+.sc7-clue.sc8-pixel:not(.is-revealed){position:relative;border-color:#8bd3df}
+.sc7-clue.sc8-pixel:not(.is-revealed) img,
+.sc60-mystery .sc7-training-pixel{
+ width:10%!important;height:10%!important;max-width:none!important;
+ object-fit:cover!important;image-rendering:pixelated!important;
+ transform-origin:top left!important;transform:scale(10)!important;
+ filter:none!important;display:block;
+}
+.sc7-clue.sc8-pixel.is-revealed img{width:100%;height:100%;filter:none;transform:none;image-rendering:auto}
+.sc60-mystery{overflow:hidden;position:relative}
+.sc60-mystery .sc8-training-poster{
+ width:100%;height:100%;object-fit:cover;filter:none!important;
+ transform:scale(2.35)!important;transform-origin:61% 33%;
+}
+.sc60-mystery .sc7-training-pixel{position:absolute;inset:0 auto auto 0}
+
+.sc7-mode .sc8-retry{margin:0 0 10px!important;color:#a4e3da;font-weight:800;font-size:11px}
+.sc7-mode .btn:disabled{color:#d6cfc8!important;background:#4b4549!important;opacity:.72}
+.sc8-training-cooldown{display:inline-flex;padding:9px 12px;border:1px solid #5c827e;border-radius:9px;color:#b4e4d9;font-weight:750;font-size:12px}
+
+/* Fusion : toujours comprendre quels doublons vont être consommés. */
+.sc8-fusion-tray{
+ border:1px solid #71604b;background:linear-gradient(120deg,#353035,#25242b);
+ border-radius:13px;padding:13px;margin:16px 0;
+}
+.sc8-fusion-tray h3{font:800 15px/1.3 "DM Sans",sans-serif;margin:0 0 10px;color:#f0d4a7}
+.sc8-fusion-picked{display:flex;gap:8px;flex-wrap:wrap}
+.sc8-fusion-picked button{
+ display:inline-flex;align-items:center;gap:7px;min-height:38px;max-width:min(270px,100%);
+ border:1px solid #877053;border-radius:8px;padding:7px 10px;
+ background:#2d2a2b;color:#f5e2c6;font:700 11px/1.3 "DM Sans",sans-serif;
+}
+.sc8-fusion-picked button span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.sc8-fusion-picked button:hover{border-color:#fbd9a3;background:#44362d}
+.sc8-fusion-tray p{font-size:11px;margin:7px 0 0;color:#cbbdac}
+.sc8-fusion-hint{color:#d3c6c2;font-size:12px;margin:0 0 8px}
+.sc8-fusion-empty{font-size:12px;color:#9fd4c8;border:1px dashed #5a8077;padding:12px;border-radius:9px}
+@media(max-width:600px){
+ .sc8-fusion-tray{padding:10px}
+ #overlay .opening-dialog .sc7-opening{padding-top:32px}
+ #overlay .opening-dialog>.close{top:8px!important;right:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .sc7-clue.sc8-poster img,.sc7-clue.sc8-pixel img{transition:none!important}
+}
