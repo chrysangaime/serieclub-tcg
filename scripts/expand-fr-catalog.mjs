@@ -8,6 +8,7 @@
 import fs from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {resolve} from 'node:path';
+import {tmdbRequest,tmdbAuthError} from './tmdb-auth.mjs';
 
 const TMDB='https://api.themoviedb.org/3';
 const MAZE='https://api.tvmaze.com';
@@ -58,13 +59,20 @@ async function requestJSON(url,headers={},allow404=false){
    if(res.ok)return await res.json();
    if(![429,500,502,503,504].includes(res.status))throw Error('HTTP '+res.status+' '+new URL(url).pathname);
   }catch(err){
-   if(attempt===3)throw err;
+   if(attempt===3||/^HTTP 4\d\d\b/.test(err.message))throw err;
   }finally{clearTimeout(timer)}
   await pause(800*(attempt+1));
  }
  throw Error('Échec API après plusieurs tentatives');
 }
-async function tmdb(path,token){return requestJSON(TMDB+path,{Authorization:'Bearer '+token})}
+async function tmdb(path,token){
+ const auth=tmdbRequest(path,token);
+ try{return await requestJSON(auth.url,auth.headers)}
+ catch(error){
+  if(/^HTTP 401\b/.test(error.message))throw Error(tmdbAuthError(auth.mode));
+  throw error;
+ }
+}
 async function tvmaze(path){return requestJSON(MAZE+path,{},true)}
 
 async function resolveTVmaze(candidate,token){
@@ -132,6 +140,7 @@ export async function run(){
   return; // L'import TVmaze indépendant reste actif ; aucune fausse preuve ajoutée.
  }
  if(!key)throw Error('Secret SUPABASE_SERVICE_ROLE_KEY manquant');
+ console.log('Méthode TMDB détectée : '+tmdbRequest('/discover/tv?page=1',token).mode);
  if(!/^https:\/\/[a-z0-9.-]+$/i.test(base))throw Error('URL Supabase invalide');
  const pageCount=limit(process.env.FR_DISCOVERY_PAGES,20,60);
  const budget=limit(process.env.FR_DISCOVERY_BUDGET,400,1000);
