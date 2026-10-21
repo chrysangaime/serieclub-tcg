@@ -4,7 +4,7 @@ import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDeta
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.2.0';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.2.0';
-import{collectionStudio}from'../v5/collection.js?v=5.2.0';
+import{collectionStudio,collectionCSV}from'../v5/collection.js?v=5.2.0';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
@@ -531,6 +531,16 @@ async function authenticate(register){
  $('overlay').classList.add('hidden');await loadSession();toast('Bienvenue dans le club !')
 }
 function closeModal(){detailRequestId++;const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
+function exportCollection(){
+ if(!state.user||!state.cards.length){toast('Aucune carte à exporter.',true);return}
+ const csv=collectionCSV(state.cards,state.wishes,state.marketActivity);
+ const blob=new Blob(['\uFEFF',csv],{type:'text/csv;charset=utf-8'});
+ const url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download='serieclub-collection-'+new Date().toISOString().slice(0,10)+'.csv';
+ document.body.append(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),3000);
+ toast('Ta collection a été exportée au format CSV.');
+}
 async function exportData(){
  const payload={exported_at:new Date().toISOString(),username:state.username,wallet:state.wallet,cards:state.cards,wishlist:state.wishes};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -620,6 +630,7 @@ function globalClick(e){
  if(e.target.closest('#openPack')){openPack();return}
  if(e.target.closest('[data-daily]')){claimDaily();return}
  if(e.target.closest('#openingDone')){closeModal();change('collection');return}
+ if(e.target.closest('[data-export-collection]')){exportCollection();return}
  const switchMode=e.target.closest('[data-collection-mode]');
  if(switchMode){state.collectionMode=switchMode.dataset.collectionMode;state.collectionPage=0;render();return}
  const rankChip=e.target.closest('[data-collection-rank]');
