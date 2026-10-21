@@ -1,4 +1,4 @@
-# SérieClub TCG — V5.3 « France et raretés officielles »
+# SérieClub TCG — V5.3.1 « France et raretés officielles »
 
 **Site** : https://chrysangaime.github.io/serieclub-tcg/
 
@@ -30,6 +30,7 @@ Le script renvoie deux compteurs : `anciennes_cartes_a_corriger` puis `ecarts_ap
 - Une chaîne ou plateforme est identifiée comme diffuseur français seulement si `network.country.code === 'FR'` ou `webChannel.country.code === 'FR'` dans les données TVmaze.
 - Les premières diffusions mondiales restent identifiées en tant que telles (année de création) ; elles ne sont pas annoncées comme dates de diffusion en France.
 - Les synopsis français et les listes compactes d'acteurs sont conservés.
+- Les genres importés en anglais depuis TVmaze s'affichent désormais en français (Drame, Comédie, Mystère, Horreur, etc.) dans les fiches, les albums, le profil et les listes, sans modifier les codes utilisés pour filtrer les données.
 
 ## 3. « Où regarder en France ? » : API officielles et vraie disponibilité
 
