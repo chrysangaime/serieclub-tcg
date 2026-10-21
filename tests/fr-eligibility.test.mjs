@@ -24,10 +24,10 @@ test('catalogue description explicitly limits playable series to confirmed Frenc
  const html=catalogue(state);
  assert.match(html,/Catalogue France/);
  assert.match(html,/diffusion.*France/i);
- assert.match(html,/n’est pas forcément inédite en France/);
+ assert.match(html,/diffusion française confirmée/i);
  const script=fs.readFileSync('v3/app.js','utf8');
  assert.match(script,/\.eq\('fr_verified',true\)\.neq\('rarity_source','pending'\)/);
- assert.match(script,/Active la migration France V5\.4/);
+ assert.doesNotMatch(script,/Active la migration France V5\.4/);
  assert.match(script,/\.eq\('fr_verified',true\)/);
 });
 
@@ -46,13 +46,13 @@ test('known verified French broadcasts show the official source in the series sh
  const html=showDetailHTML({},verified,{
   source:'editorial',text:'Une série située dans les années 80.'
  });
- assert.match(html,/diffusion attestée/);
+ assert.match(html,/Diffusion en France confirmée/);
  assert.match(html,/https:\/\/www\.netflix\.com\/fr\/title\/80057281/);
  assert.match(html,/Légendaire/);
- assert.doesNotMatch(html,/France · diffusion à vérifier/);
+ assert.doesNotMatch(html,/Offres en France à confirmer/);
  const other=showDetailHTML({},pending,{source:'unavailable'});
- assert.match(other,/France · diffusion à vérifier/);
- assert.match(other,/Plateformes françaises non encore renseignées/);
+ assert.match(other,/Offres en France à confirmer/);
+ assert.match(other,/Offres de streaming non confirmées/);
 });
 test('no historic series is deleted by server eligibility migration',()=>{
  const sql=fs.readFileSync('supabase/game_v5_4_fr.sql','utf8');
