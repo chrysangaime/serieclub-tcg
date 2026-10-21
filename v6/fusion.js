@@ -45,8 +45,35 @@ export function fusionPlan(cards=[],rank='Commune',selected=[],marketActivity=[]
   protectLast};
 }
 export function autoFusion(plan){
- // Priorité absolue aux exemplaires superflus, déterminisme pour les tests.
- return plan.allowed.slice(0,10).map(c=>String(c.id));
+ // Ne pas vider aveuglément les doublons d'une même série avant les autres.
+ // 1. Doublons sûrs; 2. Derniers exemplaires seulement si autorisés.
+ // Dans chaque catégorie, un exemplaire par série et par passage,
+ // les plus anciens en premier. Aucun gain aléatoire simulé ici.
+ if(!plan?.allowed?.length)return [];
+ const chosen=[],seen=new Set();
+ for(const tier of [false,true]){
+  const groups=new Map();
+  for(const card of plan.allowed.filter(c=>Boolean(c.isLast)===tier)){
+   const key=String(card.series_id);
+   if(!groups.has(key))groups.set(key,[]);
+   groups.get(key).push(card);
+  }
+  for(const copies of groups.values())
+   copies.sort((a,b)=>(Date.parse(a.obtained_at)||0)-(Date.parse(b.obtained_at)||0));
+  while(chosen.length<10){
+   let changed=false;
+   for(const copies of groups.values()){
+    const card=copies.shift();
+    if(!card)continue;
+    const id=String(card.id);
+    if(!seen.has(id)){chosen.push(id);seen.add(id);changed=true}
+    if(chosen.length>=10)break;
+   }
+   if(!changed)break;
+  }
+  if(chosen.length>=10)break;
+ }
+ return chosen;
 }
 export function fusionConfirmation(plan){
  if(!plan?.ready)return null;
