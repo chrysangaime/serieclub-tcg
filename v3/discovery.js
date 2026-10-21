@@ -22,12 +22,12 @@ export function platformStrip(){
  return '<section class="stream-zone" aria-label="Explorer les plateformes de streaming">'+
  '<div class="platform-header"><div><span class="caps">L’UNIVERS DES SÉRIES</span><h2>Les séries sont partout. Le club les réunit.</h2><p>Explore les services de streaming et découvre où chercher tes prochaines séries favorites.</p></div><span class="note">7 services à explorer ↗</span></div>'+
  '<div class="platform-row">'+platforms.map(p=>'<a class="platform-chip" href="'+p.url+'" target="_blank" rel="noopener noreferrer" aria-label="Visiter '+esc(p.name)+'"><span class="platform-mark '+esc(p.id)+'" aria-hidden="true">'+esc(p.mark)+'</span>'+esc(p.name)+' ↗</a>').join('')+'</div>'+
- '<div class="platform-disclaimer">Liens informatifs vers les plateformes, pas de garantie de disponibilité par série. SérieClub est indépendant des services présentés et n’est pas sponsorisé par eux.</div></section>';
+ '<div class="platform-disclaimer">Les disponibilités varient selon les séries.</div></section>';
 }
 
 export function seasonShelf(series=[]){
  if(!Array.isArray(series)||series.length===0){
-  return '<section class="season-shelf" aria-label="La sélection Halloween"><div class="caps">ÉVÉNEMENT · OCTOBRE</div><div class="shelf-head"><div><h2>La saison des frissons.</h2><p>Une sélection de séries d’horreur, de suspense et de mystère à retrouver dès que le catalogue aura été synchronisé.</p></div></div></section>';
+  return '<section class="season-shelf" aria-label="La sélection Halloween"><div class="caps">ÉVÉNEMENT · OCTOBRE</div><div class="shelf-head"><div><h2>La saison des frissons.</h2><p>Horreur, suspense et mystère.</p></div></div></section>';
  }
  return '<section class="season-shelf" aria-label="La sélection Halloween">'+
  '<div class="shelf-head"><div><span class="caps sc-season-tag">LA SÉLECTION D’OCTOBRE</span><h2>À regarder la lumière allumée.</h2><p>Horreur, suspense, mystère et fantastique : découvre de vraies séries du catalogue, puis explore où les regarder.</p></div><span class="note">Sélection éditoriale · pas un indicateur de disponibilité</span></div>'+
@@ -63,7 +63,6 @@ export function seriesDetail(s){
  '<a class="btn primary" href="'+whereToWatchLink(title)+'" target="_blank" rel="noopener noreferrer">Consulter JustWatch France ↗</a>'+
  '<a class="btn subtle" href="'+amazonSearchLink(title)+'" target="_blank" rel="noopener noreferrer">Rechercher un coffret ↗</a>'+
  '</div>'+
- '<p class="ad-label">'+(amazonIsAffiliate()?'Lien Amazon pouvant générer une commission pour SérieClub, sans coût supplémentaire pour toi.':'Lien marchand de recherche non affilié pour le moment.')+
- ' SérieClub n’est affilié à aucun diffuseur et ne certifie aucune disponibilité de streaming.</p>'+
+ (amazonIsAffiliate()?'<p class="ad-label">Lien affilié Amazon.</p>':'')+
  '</div></div>';
 }
