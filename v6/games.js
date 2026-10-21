@@ -3,9 +3,16 @@
  * Uniquement des séries certifiées pour la France (vérification serveur au chargement).
  */
 const esc=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
-const shuffle=(items,rng=Math.random)=>[...items].sort(()=>rng()-.5);
+const shuffle=(items,rng=Math.random)=>{
+ const out=[...items];
+ for(let i=out.length-1;i>0;i--){
+  const j=Math.min(i,Math.max(0,Math.floor(rng()*(i+1))));
+  [out[i],out[j]]=[out[j],out[i]];
+ }
+ return out;
+};
 const year=s=>Number(String(s?.premiered||'').slice(0,4));
-const valid=s=>Number.isSafeInteger(Number(s?.id))&&s?.name&&/^https:\/\//.test(s?.image_url||'')&&year(s)>=1900&&year(s)<=2100&&s.fr_verified===true;
+const valid=s=>Number.isSafeInteger(Number(s?.id))&&s?.name&&/^https:\/\//.test(s?.image_url||'')&&year(s)>=1900&&Date.parse(String(s.premiered))<=Date.now()&&s.fr_verified===true;
 const pick=(items,n,rng)=>shuffle(items,rng).slice(0,n);
 export function quizQuestion(type,pool,rng=Math.random){
  const list=pool.filter(valid);
@@ -33,7 +40,7 @@ export function quizQuestion(type,pool,rng=Math.random){
 }
 export function newQuiz(type,pool,rng=Math.random){
  const question=quizQuestion(type,pool,rng);
- return question?{type,pool,question,round:1,total:5,score:0,answered:false,finished:false}:null;
+ return question?{type,pool,question,usedIds:question.items.map(x=>x.id),round:1,total:5,score:0,answered:false,finished:false}:null;
 }
 export function answerQuiz(session,id){
  if(!session||session.answered||session.finished)return session;
@@ -43,10 +50,10 @@ export function answerQuiz(session,id){
 export function nextQuiz(session,rng=Math.random){
  if(!session?.answered)return session;
  if(session.round>=session.total)return {...session,finished:true};
- const excludes=new Set(session.question.items.map(x=>x.id));
+ const excludes=new Set(session.usedIds||session.question.items.map(x=>x.id));
  const available=session.pool.filter(x=>!excludes.has(x.id));
  const question=quizQuestion(session.type,available.length>=4?available:session.pool,rng);
- return question?{...session,question,round:session.round+1,answered:false,correct:undefined}:session;
+ return question?{...session,question,usedIds:[...excludes,...question.items.map(x=>x.id)],round:session.round+1,answered:false,correct:undefined}:session;
 }
 export function quizHTML(session){
  if(!session)return '<div class="sc60-quiz-empty">Impossible de constituer une manche avec des séries françaises vérifiées.</div>';
