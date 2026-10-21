@@ -5,7 +5,7 @@ import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=5.3.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.4.0';
 import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.4.0';
-import{collectionStudio,collectionCSV}from'../v5/collection.js?v=5.4.0';
+import{collectionStudio,collectionCSV}from'../v5/collection.js?v=5.4.1';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 const $=id=>document.getElementById(id);
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
