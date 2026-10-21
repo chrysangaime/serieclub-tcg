@@ -4,6 +4,35 @@
   "source": "TMDB/JustWatch",
   "updated_at": "2026-10-21T07:10:00Z",
   "titles": {
+    "171": {
+      "country": "FR",
+      "source": "justwatch_fr_editorial",
+      "source_name": "JustWatch France",
+      "checked_at": "2026-10-17T06:43:34+02:00",
+      "tmdb_id": null,
+      "url": "https://www.justwatch.com/fr/serie/how-i-met-your-mother",
+      "offers": [
+        {
+          "type": "flatrate",
+          "name": "Disney+",
+          "provider_id": 337,
+          "logo_path": null,
+          "provider_url": "https://www.disneyplus.com/fr-fr/browse/entity-bc68ac79-3ace-4427-9ec0-5ee6f314d194"
+        },
+        {
+          "type": "buy",
+          "name": "Apple TV Store",
+          "provider_id": 2,
+          "logo_path": null
+        },
+        {
+          "type": "buy",
+          "name": "Amazon Video",
+          "provider_id": 10,
+          "logo_path": null
+        }
+      ]
+    },
     "430": {
       "country": "FR",
       "source": "justwatch_fr_editorial",
