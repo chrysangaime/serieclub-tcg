@@ -105,6 +105,6 @@ test('fusion : interface affiche conséquences et confirmation obligatoire avant
 test('jeux : nouvelle arène et grille accessible en France',()=>{
  const html=games({wallet:{experience:120},quiz:null});
  for(const type of ['poster','timeline','year'])assert.match(html,new RegExp('data-challenge="'+type+'"'));
- assert.match(html,/5 manches/);
- assert.match(html,/aucun crédit/i);
+ assert.match(html,/5 questions/);
+ assert.match(html,/Les récompenses en crédits seront disponibles prochainement/);
 });
