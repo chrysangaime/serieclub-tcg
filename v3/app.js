@@ -398,6 +398,7 @@ async function openSeriesDetail(id){
  const initial=findLocalShow(numeric)||{};
  showDetailLoading('Chargement de la série…');
  const remote=getShowDetails(numeric).catch(()=>null);
+ // Re-read the authoritative France verification on every modal open.
  const canonical=supa.from('series')
   .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url')
   .eq('id',numeric).maybeSingle();
