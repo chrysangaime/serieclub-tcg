@@ -697,7 +697,8 @@ async function loadRewardStatus(){
  if(!state.user){state.rewardStatus=offlineChallengeStatus();if(state.route==='games')render();return}
  try{
   const {data,error}=await supa.rpc('rewarded_quiz_status');
-  state.rewardStatus=error||data?.limit_per_mode_hours!==24?offlineChallengeStatus():data;
+  state.rewardStatus=error?offlineChallengeStatus():data?.limit_per_mode_hours===24?data:
+    data?.enabled===true?{...data,legacy:true,modes:trainingModeStatus(readTrainingStarts())}:offlineChallengeStatus();
  }catch{state.rewardStatus=offlineChallengeStatus()}
  if(state.route==='games')render();
 }
@@ -713,6 +714,11 @@ async function startRewardedChallenge(type){
    state.rewardError=data.message||'Plus de parties récompensées aujourd’hui.';
   }else if(data?.status==='active'){
    state.rewardQuiz=data;
+   if(state.rewardStatus?.legacy&&!data.resumed){
+    const updated=startTraining(readTrainingStarts(),data.mode);
+    if(updated){try{localStorage.setItem(TRAINING_KEY,JSON.stringify(updated))}catch{/* stockage facultatif */}}
+    state.rewardStatus={...state.rewardStatus,modes:trainingModeStatus(readTrainingStarts())};
+   }
   }else{
    state.rewardError='Impossible de commencer ce défi. Réessaie.';
   }
@@ -765,6 +771,10 @@ async function chooseChallenge(type){
  if(!gameModes.includes(type)||state.quizLoading||state.rewardBusy)return;
  if(state.rewardStatus?.enabled===true&&state.rewardStatus?.limit_per_mode_hours===24){await startRewardedChallenge(type);return}
  const starts=readTrainingStarts();
+ if(state.rewardStatus?.enabled===true){
+  if(!canStartTraining(starts,type)){state.rewardError='Ce défi a déjà été joué sur cet appareil. Reviens dans 24 heures.';render();return}
+  await startRewardedChallenge(type);return;
+ }
  if(!canStartTraining(starts,type)){
   state.quizError='Ce défi a déjà été joué. Il sera disponible 24 heures après le début de la dernière partie.';
   if(state.route==='games')render();return;
