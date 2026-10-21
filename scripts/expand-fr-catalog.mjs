@@ -51,20 +51,35 @@ export function collectFrenchOffers(region){
  return offers.slice(0,45);
 }
 
+/**
+ * TVmaze : environ 20 appels / 10 s par IP. Respecter le débit et le
+ * Retry-After sans faire échouer tout un lot lors d'un HTTP 429 temporaire.
+ * Les URL de requête ne sont JAMAIS écrites dans les logs (clé API v3).
+ */
 async function requestJSON(url,headers={},allow404=false){
- for(let attempt=0;attempt<4;attempt++){
-  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),12000);
+ let last='Erreur réseau temporaire';
+ const safePath=new URL(url).hostname+new URL(url).pathname;
+ for(let attempt=0;attempt<6;attempt++){
+  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
+  let retryAfter=0;
   try{
    const res=await fetch(url,{headers:{Accept:'application/json',...headers},signal:ctl.signal});
    if(res.status===404&&allow404)return null;
    if(res.ok)return await res.json();
-   if(![429,500,502,503,504].includes(res.status))throw Error('HTTP '+res.status+' '+new URL(url).pathname);
+   if(![429,500,502,503,504].includes(res.status))
+    throw Error('HTTP '+res.status+' '+safePath);
+   last='HTTP '+res.status+' '+safePath;
+   const retrySeconds=Number(res.headers.get('retry-after'));
+   if(res.status===429&&Number.isFinite(retrySeconds)&&retrySeconds>0)
+    retryAfter=Math.min(20000,retrySeconds*1000);
   }catch(err){
-   if(attempt===3||/^HTTP 4\d\d\b/.test(err.message))throw err;
+   if(/^HTTP (?:400|401|403|404|405|422)\b/.test(err.message))throw err;
+   last=err?.name==='AbortError'?'Délai dépassé '+safePath:
+    String(err?.message||'Erreur réseau').slice(0,140);
   }finally{clearTimeout(timer)}
-  await pause(800*(attempt+1));
+  if(attempt<5)await pause(Math.max(retryAfter,(attempt+1)*2500));
  }
- throw Error('Échec API après plusieurs tentatives');
+ throw Error('Échec API après reprises : '+last);
 }
 async function tmdb(path,token){
  const auth=tmdbRequest(path,token);
@@ -74,7 +89,14 @@ async function tmdb(path,token){
   throw error;
  }
 }
-async function tvmaze(path){return requestJSON(MAZE+path,{},true)}
+let lastTVmazeCall=0;
+async function tvmaze(path){
+ // Sérialiser et limiter volontairement à ~14 appels / 10 secondes.
+ const elapsed=Date.now()-lastTVmazeCall;
+ if(elapsed<720)await pause(720-elapsed);
+ lastTVmazeCall=Date.now();
+ return requestJSON(MAZE+path,{'User-Agent':'SerieClubTCG/5.8 (github.com/chrysangaime/serieclub-tcg)'},true);
+}
 
 /** TVmaze renvoie plusieurs homonymes : ne garder qu'une correspondance unique. */
 export function pickExactTVmaze(candidate,search=[]){
