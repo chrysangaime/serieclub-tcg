@@ -164,12 +164,13 @@ export function profile(s){
  return '<div class="page-content">'+heading('Mon profil','Ton identité et ta progression au sein du club.')+'<div class="metric-row"><div class="metric"><strong>'+money(s.cards.length)+'</strong><span>Cartes</span></div><div class="metric"><strong>'+money(s.wallet?.boosters_opened)+'</strong><span>Paquets ouverts</span></div><div class="metric"><strong>'+money(s.wallet?.credits)+'</strong><span>Crédits</span></div><div class="metric"><strong>'+money(s.wallet?.experience)+'</strong><span>XP</span></div></div><div class="panel"><h2>'+esc(s.username||'Bienvenue dans le club')+'</h2><p>'+(s.user?esc(s.user.email):'Connecte-toi pour jouer et sauvegarder ta progression.')+'</p>'+(s.user?'<div class="row"><input class="input" id="usernameInput" maxlength="24" value="'+esc(s.username||'')+'" placeholder="Pseudonyme"></div><div class="row" style="margin:12px 0"><input class="input" id="bioInput" maxlength="160" style="width:100%" value="'+esc(s.bio||'')+'" placeholder="Une phrase sur tes séries favorites (160 caractères)"></div><div class="row"><label for="favoriteGenre">Genre favori</label><select id="favoriteGenre"><option value="">À découvrir</option>'+['Drama','Comedy','Action','Horror','Thriller','Mystery','Science-Fiction','Fantasy','Animation','Crime','Romance','Family'].map(g=>'<option value="'+esc(g)+'" '+(s.favoriteGenre===g?'selected':'')+'>'+esc(genreFR(g))+'</option>').join('')+'</select><button class="btn primary" id="usernameSave">Enregistrer mon profil</button><button class="btn subtle" id="signout">Déconnexion</button></div>':'<button class="btn primary" data-auth>Connexion / inscription</button>')+'</div></div>';
 }
 export function games(s){
- const online=s.rewardStatus?.enabled===true&&s.rewardStatus?.limit_per_mode_hours===24;
+ const online=s.rewardStatus?.enabled===true;
+ const upgraded=online&&s.rewardStatus?.limit_per_mode_hours===24;
  const remaining=Number(s.rewardStatus?.remaining_today??4);
  const menu=gameCards(s.rewardStatus||{},s.quizRecords||{});
  const intro=online?
    '<div class="sc7-rewards-bar"><strong>✦ +10 crédits par bonne réponse</strong><strong>+30 pour un sans-faute</strong><span>'+
-    remaining+' défi'+(remaining===1?'':'s')+' disponible'+(remaining===1?'':'s')+' · 1 tentative par jeu toutes les 24 heures</span></div>':
+    (upgraded?remaining+' défi'+(remaining===1?'':'s')+' disponible'+(remaining===1?'':'s')+' · 1 tentative par jeu toutes les 24 h':remaining+' partie'+(remaining===1?'':'s')+' récompensée'+(remaining===1?'':'s')+' restante'+(remaining===1?'':'s')+' (quota serveur actuel)')+'</span></div>':
    '<div class="sc7-rewards-bar"><strong>Entraînement</strong><span>Une tentative par jeu toutes les 24 h. Aucun crédit distribué dans ce mode.</span></div>';
  const playing=s.rewardQuiz
   ?rewardQuizHTML(s.rewardQuiz,s.rewardFeedback,s.rewardBusy)
