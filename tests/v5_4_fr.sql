@@ -93,3 +93,18 @@ BEGIN
 END $$;
 
 SELECT 'V5.4 réussie : séries françaises prouvées, anciens exemplaires, boosters, Halloween, fusions et souhaits' AS resultat;
+
+
+-- Prépare un vrai identifiant TVMaze en état « à vérifier » pour tester le
+-- correctif éditorial V5.5 juste après ce scénario CI.
+INSERT INTO public.series(
+ id,name,premiered,genres,image_url,popularity_weight,rating_average
+) VALUES (
+ 430,'The X-Files','1993-09-10',ARRAY['Drama','Crime','Science-Fiction'],
+ 'https://example.org/the-x-files-tvmaze-430.jpg',92,8.6
+) ON CONFLICT (id) DO NOTHING;
+DO $$
+BEGIN
+ IF (SELECT fr_verified FROM public.series WHERE id=430) IS DISTINCT FROM false
+ THEN RAISE EXCEPTION 'Fiche X-Files de test censée ne pas être encore certifiée';END IF;
+END $$;
