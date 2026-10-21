@@ -1,4 +1,4 @@
-# SérieClub TCG — V5.4 : seules les séries prouvées en France sont jouables
+# SérieClub TCG — V5.4.1 : seules les séries prouvées en France sont jouables
 
 ## La règle retenue
 
