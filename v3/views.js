@@ -1,6 +1,8 @@
 import {platformStrip,seasonShelf} from './discovery.js?v=5.3.1';
 import {actorCatalogueView} from '../v4/series.js?v=5.6.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
+import {fusionPlan,fusionRanks,nextFusionRank} from '../v6/fusion.js?v=6.0.0';
+import {quizHTML} from '../v6/games.js?v=6.0.0';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
  ['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits'],['market','◇','Le Comptoir'],
@@ -114,15 +116,57 @@ export function rankings(s){
  return '<div class="page-content">'+heading('Classement','Les collectionneurs les plus actifs.')+'<div class="panel"><table class="ranking-table"><thead><tr><th>#</th><th>Joueur</th><th>Cartes</th><th>Séries</th></tr></thead><tbody>'+(s.rankings.length?s.rankings.map((x,i)=>'<tr><td>'+(i+1)+'</td><td><b>'+esc(x.username)+'</b></td><td>'+money(x.card_count)+'</td><td>'+money(x.unique_series)+'</td></tr>').join(''):'<tr><td colspan="4">Aucun résultat pour le moment.</td></tr>')+'</tbody></table></div></div>';
 }
 export function fusions(s){
- const selling=new Set((s.marketActivity||[]).filter(x=>x.status==='active'&&x.seller_id===s.user?.id).map(x=>x.card_id));
- const eligible=s.cards.filter(c=>officialRarity(c)===s.fusionRank&&c.rarity===officialRarity(c)&&!c.locked&&!c.reserved_trade_id&&!selling.has(c.id));
- return '<div class="page-content">'+heading('Fusions','Dix cartes d’une même rareté deviennent une nouvelle carte du niveau supérieur.')+'<div class="panel"><div class="row"><select id="fusionRank">'+ranks.slice(0,6).map(r=>'<option '+(r===s.fusionRank?'selected':'')+'>'+r+'</option>').join('')+'</select><button class="btn subtle" id="fusionAuto">Sélection automatique</button><span class="note">'+s.fusionSelected.length+'/10 · '+eligible.length+' disponibles</span><button class="btn primary" id="fusionSubmit" '+(s.fusionSelected.length===10?'':'disabled')+'>Fusionner 10 → 1</button></div><div class="notice">La fusion détruit définitivement les dix cartes utilisées. Les cartes protégées sont exclues.</div>'+(eligible.length?'<div class="grid">'+eligible.map(c=>card(c,'<label class="card-action" style="display:block;cursor:pointer"><input type="checkbox" data-fuse="'+esc(c.id)+'" '+(s.fusionSelected.includes(c.id)?'checked':'')+'> Sélectionner</label>')).join('')+'</div>':'<div class="empty">Aucune carte admissible de cette rareté.</div>')+'</div></div>';
+ const preserve=s.fusionProtectLast!==false;
+ const plan=fusionPlan(s.cards||[],s.fusionRank,s.fusionSelected||[],s.marketActivity||[],preserve);
+ const current=plan.selected.length,target=plan.target||'—';
+ const all=plan.allowed,perPage=24,totalPages=Math.max(1,Math.ceil(all.length/perPage));
+ const page=Math.min(Math.max(0,Number(s.fusionPage)||0),totalPages-1);
+ const subset=all.slice(page*perPage,(page+1)*perPage);
+ const chips=fusionRanks.slice(0,6).map(rank=>{
+  const stats=fusionPlan(s.cards||[],rank,[],s.marketActivity||[],true);
+  const count=stats.allowed.length;
+  return '<button class="sc60-rank-chip '+(s.fusionRank===rank?'active':'')+'" data-fusion-rank="'+esc(rank)+'" aria-pressed="'+(s.fusionRank===rank)+'">'+esc(rank)+'<small>'+count+' doublon'+(count===1?'':'s')+'</small></button>';
+ }).join('');
+ const items=subset.map(c=>{
+  const chosen=plan.selected.includes(String(c.id));
+  return card(c,'<button type="button" class="sc60-fuse-select '+(chosen?'picked':'')+'" data-fusion-pick="'+esc(c.id)+'" aria-pressed="'+chosen+'" aria-label="'+(chosen?'Retirer de la sélection : ':'Ajouter à la sélection : ')+esc(c.series?.name||'Carte')+'">'+(chosen?'✓ Sélectionnée':'＋ Sélectionner')+'</button>'+
+   (c.isLast?'<div class="sc60-fuse-last">Dernier exemplaire</div>':'<div class="sc60-fuse-spare">Doublon disponible</div>'));
+ }).join('');
+ const footer='<div class="sc60-fuse-pages"><span>Cartes '+(all.length?page*perPage+1:0)+'–'+Math.min(all.length,(page+1)*perPage)+' sur '+all.length+'</span>'+
+  '<div><button class="btn subtle" data-fusion-page="-1" '+(page===0?'disabled':'')+'>← Précédent</button>'+
+  '<button class="btn subtle" data-fusion-page="1" '+(page>=totalPages-1?'disabled':'')+'>Suivant →</button></div></div>';
+ return '<div class="page-content sc60-fusion">'+heading('Atelier de fusion','Transforme 10 cartes de même rareté en une carte du rang supérieur, choisie par le jeu.')+
+ '<div class="sc60-fusion-hero"><div><span class="caps">ÉVOLUTION DES CARTES</span><h2>'+esc(s.fusionRank)+' <span>→</span> '+esc(target)+'</h2><p>Chaque fusion consomme définitivement 10 cartes et crée une carte officiellement classée du niveau supérieur en France.</p></div>'+
+ '<div class="sc60-fusion-ring"><strong>'+current+'<small>/10</small></strong><span>cartes choisies</span></div></div>'+
+ '<div class="sc60-rank-row" aria-label="Rareté de départ">'+chips+'</div>'+
+ '<div class="sc60-fusion-tools"><div><strong>'+plan.duplicates+' doublons disponibles</strong><p>'+plan.uniqueOnly+' dernières copies · '+(plan.missing?'il manque '+plan.missing+' carte'+(plan.missing>1?'s':''):'sélection complète')+'</p></div>'+
+ '<label class="sc60-protect"><input type="checkbox" id="fusionProtectLast" '+(preserve?'checked':'')+'> Préserver mes dernières copies</label>'+
+ '<button class="btn subtle" id="fusionAuto" '+(!plan.allowed.length?'disabled':'')+'>✦ Sélection intelligente</button>'+
+ '<button class="btn subtle" id="fusionClear" '+(!current?'disabled':'')+'>Effacer</button></div>'+
+ (current?'<div class="sc60-progress"><span style="width:'+current*10+'%"></span></div>':'')+
+ '<div class="sc60-fusion-notice" role="note">🔒 Les cartes protégées, réservées, en vente ou non certifiées France sont exclues. '+(preserve?'Les dernières copies de séries sont également préservées.':'Attention : la dernière copie d’une série peut maintenant être consommée.')+'</div>'+
+ (all.length?'<div class="grid sc60-fuse-grid">'+items+'</div>'+footer:
+  '<div class="sc60-empty"><h2>Aucune carte utilisable pour ce rang</h2><p>'+ (plan.uniqueOnly&&preserve?'Désactive « Préserver mes dernières copies » uniquement si tu souhaites utiliser des exemplaires uniques.':'Ouvre des boosters pour obtenir de nouvelles cartes ou choisis une autre rareté.')+'</p><button class="btn subtle" data-route="packs">Ouvrir des paquets</button></div>')+
+ '<div class="sc60-fuse-action"><div><strong>'+current+' / 10 sélectionnées</strong><small>Gain : une carte '+esc(target)+' · +100 XP selon la règle serveur</small></div>'+
+ '<button id="fusionSubmit" class="btn primary" '+(!plan.ready||s.busy?'disabled':'')+'>Examiner ma fusion →</button></div></div>';
 }
 export function profile(s){
  return '<div class="page-content">'+heading('Mon profil','Ton identité et ta progression au sein du club.')+'<div class="metric-row"><div class="metric"><strong>'+money(s.cards.length)+'</strong><span>Cartes</span></div><div class="metric"><strong>'+money(s.wallet?.boosters_opened)+'</strong><span>Paquets ouverts</span></div><div class="metric"><strong>'+money(s.wallet?.credits)+'</strong><span>Crédits</span></div><div class="metric"><strong>'+money(s.wallet?.experience)+'</strong><span>XP</span></div></div><div class="panel"><h2>'+esc(s.username||'Bienvenue dans le club')+'</h2><p>'+(s.user?esc(s.user.email):'Connecte-toi pour jouer et sauvegarder ta progression.')+'</p>'+(s.user?'<div class="row"><input class="input" id="usernameInput" maxlength="24" value="'+esc(s.username||'')+'" placeholder="Pseudonyme"></div><div class="row" style="margin:12px 0"><input class="input" id="bioInput" maxlength="160" style="width:100%" value="'+esc(s.bio||'')+'" placeholder="Une phrase sur tes séries favorites (160 caractères)"></div><div class="row"><label for="favoriteGenre">Genre favori</label><select id="favoriteGenre"><option value="">À découvrir</option>'+['Drama','Comedy','Action','Horror','Thriller','Mystery','Science-Fiction','Fantasy','Animation','Crime','Romance','Family'].map(g=>'<option value="'+esc(g)+'" '+(s.favoriteGenre===g?'selected':'')+'>'+esc(genreFR(g))+'</option>').join('')+'</select><button class="btn primary" id="usernameSave">Enregistrer mon profil</button><button class="btn subtle" id="signout">Déconnexion</button></div>':'<button class="btn primary" data-auth>Connexion / inscription</button>')+'</div></div>';
 }
 export function games(s){
- return '<div class="page-content">'+heading('Jeux & défis','Des jeux de découverte gratuits, sans récompense de crédits pour le moment.')+'<div class="guide-grid"><div class="panel"><div class="caps">OBSERVATION</div><h2>Affiche mystère</h2><p>Une affiche floutée. Une série à retrouver.</p><button class="btn primary" data-challenge="poster">Jouer</button></div><div class="panel"><div class="caps">CHRONOLOGIE</div><h2>Avant ou après ?</h2><p>Devine laquelle de deux séries a commencé en premier.</p><button class="btn primary" data-challenge="timeline">Jouer</button></div><div class="panel"><div class="caps">EXPÉRIENCE</div><h2>'+money(s.wallet?.experience)+' XP</h2><p>Ouvre des boosters et fusionne des cartes pour progresser.</p></div></div><div id="challengeStage" style="margin-top:25px"></div></div>';
+ const cards=[
+ ['poster','⌕','OBSERVATION','Affiche mystère','Une image floutée, quatre propositions. Retrouve la série !'],
+ ['timeline','◷','CHRONOLOGIE','Avant ou après ?','Compare deux séries et retrouve la première diffusée.'],
+ ['year','✦','CULTURE SÉRIES','La bonne année','Retrouve la série ayant débuté une année précise.']
+ ];
+ const menu='<div class="sc60-games-grid">'+cards.map(([key,ico,label,title,desc])=>
+ '<article class="sc60-game-tile"><div class="sc60-game-icon">'+ico+'</div><span class="caps">'+label+'</span><h2>'+title+'</h2><p>'+desc+'</p>'+
+ '<div class="sc60-game-meta">5 manches · score sur 5</div><button class="btn primary" data-challenge="'+key+'">Jouer →</button></article>').join('')+'</div>'+
+ '<div class="sc60-games-note"><strong>Des parties vraiment gratuites</strong><p>Les jeux testent tes connaissances sur les séries certifiées pour la France. Le score reste dans la partie : pas de fausses récompenses en crédits, XP ou cartes.</p></div>';
+ return '<div class="page-content sc60-games">'+heading('Jeux & défis','Trois jeux de culture séries, cinq manches et des défis toujours renouvelés.')+
+ '<div class="sc60-games-hero"><div><span class="caps">SÉRIECLUB · L’ARÈNE</span><h2>À toi de jouer.</h2><p>Reconnais les affiches, maîtrise les dates et défie ta mémoire.</p></div><div class="sc60-games-hero-stat"><strong>'+money(s.wallet?.experience||0)+'</strong><span>XP de collection</span></div></div>'+
+ (s.quiz?quizHTML(s.quiz):menu)+(s.quizLoading?'<div class="sc60-loading" role="status">Préparation des questions françaises…</div>':'')+
+ '</div>';
 }
 export function rules(){
  const data=[['01','PAQUETS','5 cartes par ouverture. Dix paquets maximum en réserve, recharge de 10 minutes.'],['02','RARETÉS','Chaque série a un seul rang officiel, identique pour tous les exemplaires. Sept niveaux, de Commune à Unique.'],['03','FUSIONS','Dix cartes d’un rang deviennent une autre série classée officiellement au rang supérieur.'],['04','HALLOWEEN','Paquet saisonnier du 1er au 31 octobre, au moins une série d’horreur ou thriller.'],['05','RÉCOMPENSES','25 crédits et 50 XP par ouverture. 100 crédits une fois par jour.'],['06','COMPTE','Cartes sauvegardées sur Supabase, protégées par contrôle de propriétaire.'],['07','LE STUDIO','Retrouve tes séries, doublons, cartes protégées et souhaits pour organiser ta collection.']];
