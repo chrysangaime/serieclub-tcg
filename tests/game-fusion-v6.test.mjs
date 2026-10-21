@@ -28,6 +28,14 @@ test('quiz : 3 modes, cinq manches, bonnes réponses et aucune distribution fict
   assert.match(quizHTML(active),/aucun crédit ni XP ajouté/);
  }
 });
+test('quiz année : même si plusieurs séries ont débuté la même année, il n’existe qu’une réponse exacte',()=>{
+ const repeated=Array.from({length:18},(_,i)=>series(i+200,1990+Math.floor(i/3)));
+ const q=quizQuestion('year',repeated,()=>0.27);
+ assert.ok(q);
+ const years=q.items.map(x=>Number(x.premiered.slice(0,4)));
+ assert.equal(new Set(years).size,4);
+ assert.equal(q.items.filter(x=>String(x.id)===q.answer).length,1);
+});
 test('quiz : une série non vérifiée France ou une date ambiguë est exclue',()=>{
  const wrong=[...pool.slice(0,3),{...series(99),fr_verified:false}];
  assert.equal(newQuiz('poster',wrong),null);
