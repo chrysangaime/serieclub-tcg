@@ -16,7 +16,8 @@ export function gameCards(status={},records={}){
   const [symbol,title,description]=levels[type];
   const info=status?.modes?.[type];
   const retry=Date.parse(info?.next_available_at||'');
-  const locked=info?.available===false&&Number.isFinite(retry)&&retry>Date.now();
+  const resume=active&&status?.active_mode===type;
+  const locked=!resume&&info?.available===false&&Number.isFinite(retry)&&retry>Date.now();
   const next=locked?new Date(retry).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
   return '<article class="sc7-mode sc7-mode-'+type+'">'+
    '<div class="sc7-mode-art"><span aria-hidden="true">'+symbol+'</span>'+
@@ -25,7 +26,7 @@ export function gameCards(status={},records={}){
     (active?'DÉFI RÉCOMPENSÉ':'ENTRAÎNEMENT')+'</span><h2>'+esc(title)+'</h2><p>'+esc(description)+'</p>'+
    '<div class="sc7-mode-meta"><span>5 questions</span><span>'+(active?'80 crédits max':'Sans crédits')+'</span></div>'+ 
    (locked?'<p class="sc8-retry">Disponible le '+esc(next)+'</p>':'')+
-   '<button class="btn primary" data-challenge="'+type+'"'+(locked?' disabled':'')+'>'+(locked?'À demain':'Jouer')+' <span aria-hidden="true">↗</span></button></div></article>'
+   '<button class="btn primary" data-challenge="'+type+'"'+(locked?' disabled':'')+'>'+(resume?'Reprendre':locked?'À demain':'Jouer')+' <span aria-hidden="true">↗</span></button></div></article>'
  }).join('')+'</div>';
 }
 export function rewardQuizHTML(session,feedback=null,busy=false){
