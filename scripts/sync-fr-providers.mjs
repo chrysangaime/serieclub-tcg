@@ -70,6 +70,39 @@ export async function fetchFRShow(show,token,checked_at){
  if(!france)return {country:'FR',tmdb_id:matched.id,checked_at,url:null,offers:[]};
  return normalizeFRResult(show,matched,france,checked_at);
 }
+/**
+ * Evidence of AT LEAST ONE real offer from country FR proves that the series
+ * has been distributed in France at some point. A missing offer NEVER revokes
+ * a previous historical verification.
+ */
+export function hasVerifiedFranceOffer(record){
+ return record?.country==='FR' && Number.isSafeInteger(record?.tmdb_id) &&
+  record.tmdb_id>0 && Array.isArray(record.offers) &&
+  record.offers.some(p=>TYPE_KEYS.includes(p?.type)&&Number.isSafeInteger(p?.provider_id)&&p.provider_id>0);
+}
+export async function recordFranceEligibility(show,record,supabase,key){
+ if(!hasVerifiedFranceOffer(record))return false;
+ // Region FR evidence (when present) links to the individual TMDB title.
+ const evidence='https://www.themoviedb.org/tv/'+record.tmdb_id+'/watch?locale=FR';
+ const resp=await fetch(supabase+'/rest/v1/series?id=eq.'+encodeURIComponent(show.id)+
+  '&fr_verified=is.false',{
+   method:'PATCH',
+   headers:{apikey:key,Authorization:'Bearer '+key,
+    'Content-Type':'application/json','Prefer':'return=minimal'},
+   body:JSON.stringify({
+    fr_verified:true,fr_verification_method:'tmdb_fr_offer',
+    fr_evidence_url:evidence,fr_verified_at:record.checked_at
+   })
+  });
+ if(!resp.ok){
+  const body=await resp.text();
+  if(resp.status===400&&/fr_verified|fr_verification_method|schema cache/i.test(body)){
+   throw Error('Migration française absente : exécute supabase/game_v5_4_fr.sql avant la synchronisation TMDB.');
+  }
+  throw Error('Preuve de disponibilité FR : HTTP '+resp.status+' '+body.slice(0,200));
+ }
+ return true;
+}
 async function getCatalog(supabase,key){
  let out=[],offset=0;
  do{
@@ -99,12 +132,17 @@ export async function run(){
    now-Date.parse(raw.titles[String(s.id)].checked_at||0)>TTL)
   .slice(0,Math.max(1,Math.min(MAX,400)));
  console.log('Catalogue :',shows.length,'séries. A examiner :',queued.length);
- let inserted=0,notMatched=0,failed=0;
+ let inserted=0,notMatched=0,failed=0,verifiedFrance=0;
  for(let i=0;i<queued.length;i++){
   const show=queued[i];
   try{
    const res=await fetchFRShow(show,token,checked_at);
-   if(res){raw.titles[String(show.id)]=res;inserted++;}
+   if(res){
+    // Publish the public availability and separately certify eligibility
+    // server-side. Unknown series remain excluded from new packs.
+    if(await recordFranceEligibility(show,res,supabase,service))verifiedFrance++;
+    raw.titles[String(show.id)]=res;inserted++;
+   }
    else { // Do not invent a provider for an unresolvable title.
     raw.titles[String(show.id)]={country:'FR',tmdb_id:null,checked_at,url:null,offers:[]};
     notMatched++;
@@ -119,7 +157,8 @@ export async function run(){
  await fs.mkdir(path.dirname(STORE),{recursive:true});
  await fs.writeFile(STORE,JSON.stringify(raw,null,0)+'\n');
  console.log('Disponibilités FR :',inserted,'titres associés,',notMatched,
-   'sans correspondance,',failed,'échecs. Total cache :',Object.keys(raw.titles).length);
+   'sans correspondance,',failed,'échecs. SérieClub vérifiées FR :',verifiedFrance,
+   '. Total cache :',Object.keys(raw.titles).length);
  if(failed>12)throw Error('Trop d’échecs TMDB : vérifier les quotas et la connexion');
 }
 const invoked=process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url);
