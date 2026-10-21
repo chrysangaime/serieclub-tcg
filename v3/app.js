@@ -293,33 +293,54 @@ async function claimQuest(key){
  finally{state.busy=false}
 }
 async function loadCatalog(reset=false){
- if(state.catalogLoading)return;
+ // Toute nouvelle recherche peut remplacer une précédente en cours.
+ // Une pagination simultanée, en revanche, ne doit pas charger deux fois la même page.
+ if(state.catalogLoading&&!reset)return;
+ const request=++catalogRequestId;
  const page=reset?0:state.catalogPage;
+ if(reset){state.catalog=[];state.catalogPage=0;state.catalogMore=true;state.catalogTotal=null}
  state.catalogLoading=true;state.catalogError='';
- if(state.route==='catalog')render();
- const queryPage=withRarity=>{
+ if(state.route==='catalog'&&state.catalogMode==='series')render();
+ try{
   let query=supa.from('series')
     .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url',{count:'exact'})
     .eq('fr_verified',true).neq('rarity_source','pending')
-    .not('image_url','is',null).order('name')
-    .range(page*36,page*36+35);
-  if(state.catalogQuery.trim()){
-   query=query.ilike('name','%'+state.catalogQuery.trim().replace(/[%_]/g,'')+'%');
+    .not('image_url','is',null);
+  const name=state.catalogQuery.trim().replace(/[%_(),]/g,'').slice(0,90);
+  if(name)query=query.ilike('name','%'+name+'%');
+  if(ranks.includes(state.catalogRarity))query=query.eq('rarity',state.catalogRarity);
+  const allowedGenres=['Drama','Comedy','Crime','Thriller','Mystery','Science-Fiction','Fantasy','Horror','Action','Adventure','Romance','Animation','Documentary','Family'];
+  if(allowedGenres.includes(state.catalogGenre))query=query.contains('genres',[state.catalogGenre]);
+  const decade=state.catalogDecade;
+  if(decade==='before1950')query=query.lt('premiered','1950-01-01');
+  else if(/^\\d{4}$/.test(decade||'')&&Number(decade)>=1950&&Number(decade)<=2020){
+   query=query.gte('premiered',decade+'-01-01').lt('premiered',String(Number(decade)+10)+'-01-01');
   }
-  return query;
- };
- try{
-  // Fail closed: never return unverified series if the migration is missing.
-  const {data,error,count}=await queryPage(true);
+  switch(state.catalogSort){
+   case 'recent':query=query.order('premiered',{ascending:false,nullsFirst:false});break;
+   case 'oldest':query=query.order('premiered',{ascending:true,nullsFirst:false});break;
+   case 'popular':query=query.order('popularity_weight',{ascending:false,nullsFirst:false});break;
+   default:query=query.order('name',{ascending:true});break;
+  }
+  const {data,error,count}=await query.order('id',{ascending:true})
+   .range(page*36,page*36+35);
+  if(request!==catalogRequestId)return;
   if(error)throw error;
   state.catalog=reset?[...(data||[])]:state.catalog.concat(data||[]);
   state.catalogTotal=Number.isSafeInteger(count)?count:null;
   state.catalogMore=(data||[]).length===36 && (state.catalogTotal===null||state.catalog.length<state.catalogTotal);
   state.catalogPage=page+1;
- }catch(e){state.catalogError=/fr_verified|schema cache|column/i.test(e.message)
-  ?'Active la migration France V5.4 pour afficher uniquement les séries diffusées en France.'
-  :'Catalogue indisponible : '+e.message}
- finally{state.catalogLoading=false;if(state.route==='catalog')render()}
+ }catch(e){
+  if(request!==catalogRequestId)return;
+  state.catalogError=/fr_verified|schema cache|column/i.test(e.message)
+   ?'La migration France doit être activée pour filtrer le catalogue.'
+   :'Catalogue indisponible : '+e.message;
+ }finally{
+  if(request===catalogRequestId){
+   state.catalogLoading=false;
+   if(state.route==='catalog'&&state.catalogMode==='series')render();
+  }
+ }
 }
 async function loadSeasonShows(){
  if(!monthHalloween())return;
