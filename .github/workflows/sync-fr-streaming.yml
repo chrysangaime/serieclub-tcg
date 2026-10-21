@@ -38,6 +38,7 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add data/watch-fr.json
             git commit -m "data: actualiser les disponibilités de streaming en France"
+            git pull --rebase origin main
             git push
           else
             echo "Aucune mise à jour nécessaire."
