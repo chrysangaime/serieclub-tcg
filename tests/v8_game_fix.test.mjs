@@ -33,6 +33,14 @@ test('jeu verrouillé côté interface ; trois autres modes restent jouables',()
  assert.match(ui,/Mosaïque pixel/);
  assert.match(ui,/Détail mystère/);
 });
+test('une partie commencée reste reprenable même pendant son délai de 24 heures',()=>{
+ const until=new Date(Date.now()+COOLDOWN_MS).toISOString();
+ const html=gameCards({enabled:true,limit_per_mode_hours:24,active_mode:'poster',
+  modes:{poster:{available:false,next_available_at:until}}});
+ assert.match(html,/data-challenge="poster">Reprendre/);
+ assert.doesNotMatch(html,/data-challenge="poster" disabled/);
+});
+
 test('affiche et pixels ont deux présentations vraiment différentes',()=>{
  const pool=Array.from({length:30},(_,i)=>({
   id:i+1,name:'Série '+i,image_url:'https://example.org/'+i+'.jpg',
