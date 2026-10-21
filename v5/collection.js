@@ -29,7 +29,7 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
    rarity:rank,genre:first.series?.genres||[],eligible:Boolean(first.series?.image_url)&&first.series?.rarity_source!=='pending',
    cards:items,count:items.length,duplicates:Math.max(0,items.length-1),
    protectedCount,blockedCount,
-   sellableCopy:items.length>1&&free.length>0?free[free.length-1]:null,
+   sellableCopy:items.length>1&&free.length>0&&(protectedCount>0||free.length>=2)?free[free.length-1]:null,
    lastObtained:items.reduce((best,c)=>Math.max(best,Date.parse(c.obtained_at)||0),0)
   };
  });
