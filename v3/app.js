@@ -366,7 +366,10 @@ async function openSeriesDetail(id){
   }
   // The canonical series rank is stored in Supabase, never derived from a
   // card's historic rarity, a TVmaze popularity weight or a selected filter.
-  if(!base.rarity||base.fr_verified===undefined){
+  {
+    // Read the authoritative French proof on EVERY modal open. Previously
+    // a cached series could permanently show "France à vérifier" even after
+    // the server had already validated the show.
     const {data:canonical,error:catalogError}=await supa.from('series')
       .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url')
       .eq('id',numeric).maybeSingle();
@@ -380,6 +383,15 @@ async function openSeriesDetail(id){
     if(!detailReady(token))return;
     const target=$('overlay').querySelector('[data-fr-watch]');
     if(target)target.innerHTML=renderFranceAvailability(record,show);
+    if(record?.source==='justwatch_fr_editorial'&&record.country==='FR'&&
+       record.url==='https://www.justwatch.com/fr/serie/the-x-files'&&numeric===430&&
+       base.fr_verified!==true){
+      const proof=$('overlay').querySelector('[data-fr-proof]');
+      if(proof)proof.innerHTML='<div class="sc54-fr-unverified">'+
+       '<b>🇫🇷 Diffusion en France confirmée par JustWatch</b>'+
+       '<small>La disponibilité française est attestée ; la mise à jour de son éligibilité dans Supabase reste à activer.</small>'+
+       '</div>';
+    }
   }).catch(()=>{/* Provider data remains explicitly unverified. */});
   // Localized synopsis is loaded independently: never blocks cast or navigation.
   getFrenchSynopsis(show,stripSummary(show.summary||base.summary))
