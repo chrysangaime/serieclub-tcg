@@ -1,0 +1,12 @@
+{
+  "next_page": 21,
+  "updated_at": "2026-10-21T11:25:36.326Z",
+  "last_run": {
+    "pages": 20,
+    "examined": 400,
+    "confirmed": 391,
+    "no_match": 4,
+    "no_fr_offer": 0,
+    "errors": 5
+  }
+}
