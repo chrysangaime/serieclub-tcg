@@ -9,6 +9,7 @@ import fs from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {resolve} from 'node:path';
 import {tmdbRequest,tmdbAuthError} from './tmdb-auth.mjs';
+import {discoveryCursor,discoveryParams,advanceDiscovery,discoveryLabel,saveDiscoveryCursor} from './fr-discovery-plan.mjs';
 
 const TMDB='https://api.themoviedb.org/3';
 const MAZE='https://api.tvmaze.com';
@@ -150,17 +151,27 @@ export async function run(){
  ]);
  const state=JSON.parse(stateFile),watch=JSON.parse(watchFile);
  if(!watch.titles||typeof watch.titles!=='object')throw Error('Cache FR incorrect');
- let nextPage=limit(process.env.FR_START_PAGE||state.next_page,1,500);
+ const cursor=discoveryCursor(state,process.env.FR_DISCOVERY_MODE||'auto');
+ if(process.env.FR_START_PAGE){
+  const chosen=limit(process.env.FR_START_PAGE,1,500);
+  if(cursor.mode==='popular')cursor.popular.page=chosen;
+  else cursor.archive.page=chosen;
+ }
  const checked_at=new Date().toISOString();
+ console.log('Découverte TMDB : '+discoveryLabel(cursor)+' | '+pageCount+' pages max, '+budget+' titres max.');
  let discovered=0,approved=0,noMatch=0,withoutOffers=0,errors=0,processedPages=0;
- let totalPages=500;
  for(let j=0;j<pageCount&&discovered<budget;j++){
-  const params=new URLSearchParams({language:'fr-FR',watch_region:'FR',
-   with_watch_monetization_types:'flatrate|free|ads|rent|buy',
-   include_adult:'false',sort_by:'popularity.desc',page:String(nextPage)});
-  const page=await tmdb('/discover/tv?'+params,token);
-  totalPages=Math.max(1,Math.min(500,Number(page.total_pages)||500));
-  if(nextPage>totalPages){nextPage=1;j--;continue}
+  const periodLabel=discoveryLabel(cursor);
+  const activePage=cursor.mode==='popular'?cursor.popular.page:cursor.archive.page;
+  const page=await tmdb('/discover/tv?'+discoveryParams(cursor),token);
+  const totalPages=Math.max(0,Math.min(500,Number(page.total_pages)||0));
+  if(activePage>totalPages){
+   // Un catalogue trimestriel/annuel peut contenir moins de pages
+   // qu'à la précédente synchronisation. Avancer sans boucler sur la même page.
+   advanceDiscovery(cursor,totalPages);
+   console.log('Tranche épuisée : '+periodLabel+' -> '+discoveryLabel(cursor));
+   continue;
+  }
   for(const candidate of Array.isArray(page.results)?page.results:[]){
    if(discovered>=budget)break;
    if(!validId(candidate.id)||!year(candidate.first_air_date)||!candidate.original_name)continue;
@@ -186,21 +197,22 @@ export async function run(){
    await pause(550); // rester courtois envers TVmaze et TMDB
   }
   processedPages++;
-  nextPage=nextPage>=totalPages?1:nextPage+1;
+  advanceDiscovery(cursor,totalPages);
   console.log('Découverte FR : page',processedPages+'/'+pageCount,
-   '| vérifiées',approved,'| sans correspondance',noMatch);
+   '| '+periodLabel,'| vérifiées',approved,'| sans correspondance',noMatch);
  }
  if(processedPages===0)throw Error('Aucune page de découverte traitée');
  watch.updated_at=checked_at;
- state.next_page=nextPage;state.updated_at=checked_at;
- state.last_run={pages:processedPages,examined:discovered,confirmed:approved,
+ saveDiscoveryCursor(state,cursor);
+ state.updated_at=checked_at;
+ state.last_run={mode:cursor.mode,pages:processedPages,examined:discovered,confirmed:approved,
   no_match:noMatch,no_fr_offer:withoutOffers,errors};
  await Promise.all([
   fs.writeFile(WATCH,JSON.stringify(watch)+'\n'),
   fs.writeFile(STATE,JSON.stringify(state,null,2)+'\n')
  ]);
  console.log('Terminé :',JSON.stringify(state.last_run),
-  '| page suivante',nextPage,'| titres FR historiques en cache',Object.keys(watch.titles).length);
+  '| prochaine tranche',discoveryLabel(cursor),'| titres FR en cache',Object.keys(watch.titles).length);
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
  run().catch(e=>{console.error(e.message);process.exitCode=1});
