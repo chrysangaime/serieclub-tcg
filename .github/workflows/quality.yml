@@ -80,6 +80,14 @@ jobs:
           assert.ok(oneStep.indexOf('create table if not exists public.card_trade_offers') <
             oneStep.indexOf('CREATE OR REPLACE FUNCTION public.enforce_card_series_rarity'),
             'La V4 doit être exécutée avant la V5');
+          // Ne jamais réintroduire un délimiteur de bloc PostgreSQL "DO $".
+          for(const [path,sql] of [
+            ['supabase/game_v5.sql',fs.readFileSync('supabase/game_v5.sql','utf8')],
+            ['supabase/install_v4_v5.sql',oneStep]
+          ]){
+            assert.doesNotMatch(sql,/^\\s*DO\\s+\\$(?!\\$)/gm, path+' contient DO $ au lieu de DO $');
+            assert.doesNotMatch(sql,/^\\s*END\\s+\\$(?!\\$)/gm, path+' contient END $; au lieu de END $;');
+          }
           assert.equal((oneStep.match(/^BEGIN;/gm)||[]).length,1,'Installateur : transaction unique');
           assert.equal((oneStep.match(/^COMMIT;/gm)||[]).length,1,'Installateur : commit unique');
           const raritySql=fs.readFileSync('supabase/game_v5.sql','utf8');
