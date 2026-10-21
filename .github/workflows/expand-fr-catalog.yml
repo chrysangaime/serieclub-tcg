@@ -53,7 +53,7 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add data/watch-fr.json data/catalog-fr-state.json
             git commit -m "data: enrichir le catalogue confirmé France"
-            git pull --rebase origin main
+            git pull --rebase -X theirs origin main
             git push
           else
             echo "Pas de nouvelles données françaises."
