@@ -108,3 +108,19 @@
 .sc54-fr-unverified b{color:#f7d49d}
 .sc54-collection-pending{display:block;color:#f9ce90!important;font-size:9px;line-height:1.5;margin-top:7px}
 @media(max-width:600px){.sc54-fr-intro{font-size:11px}.sc54-fr-cert,.sc54-fr-unverified{padding:8px 9px}}
+
+/* V5.5 — transparence : anciennes cartes écartées, offres FR datées */
+.sc55-archived-info{
+ display:block;margin:0 0 15px;padding:11px 14px;
+ border:1px solid #508f8b;border-radius:10px;
+ background:linear-gradient(125deg,#204047,#1f3144);
+ color:#bfeee6;font-size:11px;line-height:1.55
+}
+.sc55-archived-info b{color:#e6fff7}
+.sc55-fr-error{border-color:#b58362;background:#42352f;color:#f9d2ac}
+.sc53-watch-outdated{
+ margin:10px 0 8px;padding:7px 10px;
+ background:#4b3931;border:1px solid #b08351;
+ border-radius:7px;color:#fce3b2;
+ font-size:10px!important;line-height:1.55
+}
