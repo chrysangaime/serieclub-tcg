@@ -124,3 +124,71 @@
  border-radius:7px;color:#fce3b2;
  font-size:10px!important;line-height:1.55
 }
+
+
+/* V5.6 — DISPONIBLE SUR : badges des services FR compacts dans l'en-tête.
+   Les noms stylisés ne sont pas des logos officiels incorporés. */
+.sc56-where{
+ margin:14px 0 12px;padding:10px 0 7px;
+ border-top:1px solid #466477;border-bottom:1px solid #354d64;
+ background:transparent;min-width:0
+}
+.sc56-main{
+ display:flex;align-items:center;flex-wrap:wrap;column-gap:11px;row-gap:7px;
+}
+.sc56-label{
+ color:#e7f8f4;font:800 13px/1.4 "Space Grotesk","DM Sans",sans-serif;
+ letter-spacing:-.01em;white-space:normal
+}
+.sc56-providers{display:inline-flex;gap:6px;flex-wrap:wrap;vertical-align:middle;min-width:0}
+.sc56-provider{
+ text-decoration:none!important;display:inline-flex;align-items:center;gap:6px;
+ min-height:30px;padding:6px 10px;border-radius:8px;
+ border:1px solid #7597a5;background:#263d51;color:#effffc!important;
+ font:850 11px/1.25 "Space Grotesk","DM Sans",sans-serif;
+ box-shadow:0 3px 13px #07122039;white-space:normal;
+ transition:background .15s ease,border-color .15s ease,transform .15s ease
+}
+.sc56-provider:hover,.sc56-provider:focus-visible{
+ transform:translateY(-1px);border-color:#a9f8e4;
+ box-shadow:0 3px 15px #67f1d327
+}
+.sc56-provider img{height:17px;width:17px;border-radius:3px;object-fit:contain;flex:none}
+.sc56-provider-arrow{font-size:10px;opacity:.55}
+.sc56-brand-disney{background:#133c80;border-color:#578ad5;color:#ffffff!important;letter-spacing:.02em}
+.sc56-brand-prime{background:#173c56;border-color:#288ab5;color:#b3f1ff!important}
+.sc56-brand-netflix{background:#2e202e;border-color:#9f4049;color:#ff666f!important}
+.sc56-brand-apple{background:#323e4d;border-color:#8b9bac}
+.sc56-brand-amazon{background:#35333c;border-color:#7e7780}
+.sc56-brand-canal{background:#30333e;border-color:#94919b}
+.sc56-brand-max{background:#393164;border-color:#8880bf}
+.sc56-brand-m6{background:#394e5a;border-color:#80b9c1}
+.sc56-secondary{
+ display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+ margin-top:8px;padding-left:0
+}
+.sc56-secondary>span:not(.sc56-providers){
+ font-size:10px;color:#b6cad4;font-weight:750
+}
+.sc56-secondary .sc56-provider{
+ min-height:25px;padding:4px 8px;font-size:10px;
+ background:#29384a;border-color:#536f80;color:#d9ebf5!important
+}
+.sc56-no-offers{font-size:11px;color:#b7c8d2}
+.sc56-foot{
+ display:flex;align-items:center;flex-wrap:wrap;column-gap:12px;row-gap:3px;
+ margin-top:7px;color:#8faab8;font:500 9px/1.5 "DM Sans",sans-serif
+}
+.sc56-foot>a{color:#9ae0d5!important;text-decoration:underline;text-underline-offset:2px}
+.sc56-origin{font-size:9px;opacity:.85}
+@media(max-width:600px){
+ .sc56-label{font-size:12px;flex:0 0 100%}
+ .sc56-main{gap:5px}
+ .sc56-provider{font-size:10px;min-height:29px;padding:5px 8px}
+ .sc56-foot{font-size:9px}
+ .sc56-secondary .sc56-provider{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .sc56-provider{transition:none}
+ .sc56-provider:hover{transform:none}
+}
