@@ -284,8 +284,7 @@ SET fr_verified=true,
     fr_verified_at=now()
 WHERE s.id=430
   AND lower(btrim(s.name))='the x-files'
-  AND EXTRACT(YEAR FROM s.premiered)=1993
-  AND s.fr_verified IS DISTINCT FROM true;
+  AND EXTRACT(YEAR FROM s.premiered)=1993;
 
 -- Les classements comptent UNIQUEMENT les séries jouables en France.
 -- Les anciennes cartes restent stockées mais ne donnent plus de points
