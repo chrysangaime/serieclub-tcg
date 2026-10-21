@@ -631,7 +631,7 @@ grant execute on function public.album_card_data(uuid) to authenticated;
 -- V5 : UNE RARETÉ OFFICIELLE PAR SÉRIE
 -- Préflight : ne pas démarrer la reclassification si la V4 manque.
 -- Le diagnostic est volontairement explicite et la transaction reste atomique.
-DO $
+DO $$
 BEGIN
  IF to_regclass('public.card_trade_offers') IS NULL
     OR to_regclass('public.card_listings') IS NULL
@@ -644,7 +644,7 @@ BEGIN
     MESSAGE='SérieClub : migration V4 absente (marché ou échanges non créés).',
     HINT='Exécute d’abord supabase/game_v4.sql, puis relance game_v5.sql. Ou utilise le fichier install_v4_v5.sql.';
  END IF;
-END $;
+END $$;
 ALTER TABLE public.series ADD COLUMN IF NOT EXISTS rarity text NOT NULL DEFAULT 'Commune';
 ALTER TABLE public.series ADD COLUMN IF NOT EXISTS popularity_weight numeric(7,2);
 ALTER TABLE public.series ADD COLUMN IF NOT EXISTS rating_average numeric(4,2);
