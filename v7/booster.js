@@ -10,7 +10,7 @@ export const rarityTier=r=>{
 export const quality=r=>['mythique','unique','legendaire','epique'].includes(rarityTier(r));
 export function openingFrame(cards,step=0,reduced=false){
  const list=Array.isArray(cards)?cards.slice(0,5):[];
- const opened=Math.min(list.length,Math.max(0,step-1));
+ const opened=Math.min(list.length,Math.max(0,step));
  const sealed=step===0,summary=step>list.length,now=opened>0?list[opened-1]:null;
  const rank=now?.rarity||'Commune';
  const rare=quality(rank);
