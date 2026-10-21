@@ -51,7 +51,7 @@ export function quizQuestion(type,pool,rng=Math.random){
  }
  options=shuffle(options,rng);
  if(type==='poster'||type==='pixel')return {type,items:options,target,answer:String(target.id),
-  description:'Reconnais cette affiche de série.'};
+  description:type==='poster'?'De quelle série provient ce détail d’affiche ?':'Quelle série se cache derrière cette mosaïque de pixels ?'};
  if(type==='year')return {type,items:options,target,answer:String(target.id),
   description:'Quelle série a commencé en '+year(target)+' ?'};
  return null;
@@ -76,10 +76,10 @@ export function nextQuiz(session,rng=Math.random){
 export function quizHTML(session){
  if(!session)return '<div class="sc60-quiz-empty">Impossible de constituer une manche avec des séries françaises vérifiées.</div>';
  const q=session.question;
- if(session.finished)return '<div class="sc60-finish" role="status"><div class="sc60-medal">✦</div><h2>Partie terminée !</h2><strong>'+session.score+' / '+session.total+'</strong><p>'+ (session.score===session.total?'Sans-faute ! Tu connais tes séries.':'Belle partie ! À toi d’améliorer ce score.')+'</p><button class="btn primary" data-quiz-restart="'+esc(session.type)+'">Rejouer</button><button class="btn subtle" data-quiz-home>Choisir un autre jeu</button><p class="note">Partie gratuite · aucun crédit ni XP ajouté</p></div>';
+ if(session.finished)return '<div class="sc60-finish" role="status"><div class="sc60-medal">✦</div><h2>Partie terminée !</h2><strong>'+session.score+' / '+session.total+'</strong><p>'+ (session.score===session.total?'Sans-faute ! Tu connais tes séries.':'Belle partie ! À toi d’améliorer ce score.')+'</p><span class="sc8-training-cooldown">Reviens dans 24 h pour ce jeu.</span><button class="btn subtle" data-quiz-home>Choisir un autre jeu</button><p class="note">Partie gratuite · aucun crédit ni XP ajouté</p></div>';
  let title=q.type==='poster'?'Affiche mystère':q.type==='pixel'?'Pixel secret':q.type==='timeline'?'Avant ou après ?':'La bonne année';
  let visual='';
- if(q.type==='poster'||q.type==='pixel')visual='<div class="sc60-mystery"><img class="'+(session.answered?'':q.type==='pixel'?'sc7-training-pixel':'sc60-blurred')+'" src="'+esc(q.target.image_url)+'" alt="'+(session.answered?'Affiche de '+esc(q.target.name):'Affiche volontairement floutée à deviner')+'"></div>';
+ if(q.type==='poster'||q.type==='pixel')visual='<div class="sc60-mystery"><img class="'+(session.answered?'':q.type==='pixel'?'sc7-training-pixel sc8-pixel':'sc8-training-poster')+'" src="'+esc(q.target.image_url)+'" alt="'+(session.answered?'Affiche de '+esc(q.target.name):'Détail ou mosaïque d’affiche à deviner')+'"></div>';
  const choices=q.items.map(x=>{
   const correct=session.answered&&String(x.id)===q.answer;
   const wrong=session.answered&&!correct&&String(x.id)===String(session.choice);
