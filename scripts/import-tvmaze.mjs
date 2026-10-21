@@ -101,5 +101,16 @@ await fs.writeFile(CURSOR_FILE,JSON.stringify({
  next_page:nextPage,updated_at:new Date().toISOString(),
  previous_start:startPage, imported,france_verified_updates:frVerified
 },null,2)+'\n');
+// Contrôle de résultat : compter les séries françaises déjà certifiées
+// dans Supabase, et non supposer que chaque PATCH crée une nouvelle preuve.
+try{
+ const countResponse=await fetch(base+'/rest/v1/series?select=id&fr_verified=eq.true',{
+  method:'HEAD',headers:{apikey:key,Authorization:'Bearer '+key,Prefer:'count=exact'}
+ });
+ if(countResponse.ok){
+  const count=countResponse.headers.get('content-range')?.split('/')[1];
+  if(count&&count!=='*')console.log('TOTAL SERIES FRANÇAISES VÉRIFIÉES EN BASE :',count);
+ }
+}catch(error){console.warn('Comptage final indisponible :',error.message)}
 console.log('Imported '+imported+' series. France-origin verified updates: '+
  frVerified+'. Next TVmaze page: '+nextPage);
