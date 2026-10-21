@@ -66,7 +66,7 @@ export function catalogue(s){
  const opt=(value,label,current)=>'<option value="'+esc(value)+'"'+(current===value?' selected':'')+'>'+esc(label)+'</option>';
  const genres=[['','Tous les genres'],['Drama','Drame'],['Comedy','Comédie'],['Crime','Policier'],['Thriller','Thriller'],['Mystery','Mystère'],['Science-Fiction','Science-fiction'],['Fantasy','Fantastique'],['Horror','Horreur'],['Action','Action'],['Adventure','Aventure'],['Romance','Romance'],['Animation','Animation'],['Documentary','Documentaire'],['Family','Famille']];
  const decades=[['','Toutes les époques'],['2020','Années 2020'],['2010','Années 2010'],['2000','Années 2000'],['1990','Années 1990'],['1980','Années 1980'],['1970','Années 1970'],['1960','Années 1960'],['1950','Années 1950'],['before1950','Avant 1950']];
- const sorting=[['name','Titre A → Z'],['recent','Plus récentes'],['oldest','Plus anciennes'],['popular','Popularité TVmaze']];
+ const sorting=[['name','Titre A → Z'],['recent','Plus récentes'],['oldest','Plus anciennes'],['popular','Popularité']];
  const chosen={rarity:s.catalogRarity||'',genre:s.catalogGenre||'',decade:s.catalogDecade||'',sort:s.catalogSort||'name'};
  const active=Boolean((s.catalogQuery||'').trim()||chosen.rarity||chosen.genre||chosen.decade||chosen.sort!=='name');
  const countText=Number.isSafeInteger(s.catalogTotal)
@@ -93,7 +93,7 @@ export function catalogue(s){
       (active?'<button class="btn primary" id="catalogReset">Effacer les filtres</button>':'')+'</div>';
  return '<div class="page-content sc59-catalog">'+
   heading('Catalogue France','Explore les séries diffusées en France, aujourd’hui ou autrefois, et prépare ta collection.')+
-  '<div class="sc54-fr-intro">🇫🇷 <b>Diffusion en France vérifiée.</b> Chaque série est appuyée sur une preuve française ; une série absente n’est pas forcément inédite en France : sa diffusion peut encore être en cours de vérification.</div>'+
+  '<div class="sc54-fr-intro">🇫🇷 <b>Diffusion en France vérifiée.</b> Toutes les séries présentées ont une diffusion française confirmée.</div>'+
   '<div class="sc5-mode"><button class="btn primary" data-catalog-mode="series" aria-pressed="true">▦ Par série</button>'+
   '<button class="btn subtle" data-catalog-mode="actors" aria-pressed="false">♙ Par acteur</button></div>'+
   '<section class="sc59-explorer" aria-label="Rechercher et filtrer les séries">'+filters+
@@ -173,10 +173,10 @@ export function rules(){
  return '<div class="page-content">'+heading('Règles du jeu','Comment commencer ta collection.')+'<div class="guide-grid">'+data.map(([n,t,d])=>'<div class="guide-item"><div class="big">'+n+'</div><h2>'+t+'</h2><p>'+d+'</p></div>').join('')+'</div></div>';
 }
 export function settings(s){
- return '<div class="page-content">'+heading('Paramètres','Confort et informations de ton compte.')+'<div class="panel"><h2>Confort visuel</h2><label class="row"><input id="reduceMotion" type="checkbox" '+(s.reduceMotion?'checked':'')+'> Réduire les animations</label><p class="note">Cette préférence est enregistrée dans ce navigateur.</p><hr class="divider"><h2>Mes données</h2><p>Les cartes sont conservées dans Supabase. Le classement ne montre que le pseudonyme et les totaux.</p><button class="btn subtle" id="exportData">Exporter mes données de jeu</button></div></div>';
+ return '<div class="page-content">'+heading('Paramètres','Confort et informations de ton compte.')+'<div class="panel"><h2>Confort visuel</h2><label class="row"><input id="reduceMotion" type="checkbox" '+(s.reduceMotion?'checked':'')+'> Réduire les animations</label><p class="note">Cette préférence est enregistrée dans ce navigateur.</p><hr class="divider"><h2>Mes données</h2><p>Ta collection est sauvegardée sur ton compte. Le classement public affiche ton pseudonyme et tes résultats.</p><button class="btn subtle" id="exportData">Exporter mes données de jeu</button></div></div>';
 }
 export function placeholder(route){
- const info={premiere:['Première','Fonctionnalités et personnalisations facultatives en préparation. Aucun abonnement n’est actuellement proposé.'],market:['Marché','Le marché attend un moteur de transaction sécurisé. Aucun achat ou vente fictif n’est disponible.'],community:['Communauté','Les amis, échanges et messagerie nécessitent encore leur infrastructure sécurisée.'],referral:['Parrainage','Le programme de parrainage sera lancé après validation de la protection contre les abus.']};
+ const info={premiere:['Première','Bientôt disponible.'],market:['Marché','Bientôt disponible.'],community:['Communauté','Bientôt disponible.'],referral:['Parrainage','Bientôt disponible.']};
  const [t,d]=info[route]||['En préparation','Cette fonctionnalité sera disponible dans une prochaine version.'];
  return '<div class="page-content">'+heading(t,d)+'<div class="panel"><h2 class="serif" style="text-transform:none">Le club s’agrandit.</h2><p>Nous privilégions de vraies fonctionnalités, avec une sauvegarde fiable et sans simulation de transactions.</p><button class="btn primary" data-route="packs">Retour aux paquets</button></div></div>';
 }
