@@ -20,5 +20,5 @@ test('le navigateur récupère le dernier cache des diffuseurs France sans expos
  const src=fs.readFileSync('v5/fr-watch.js','utf8');
  assert.match(src,/searchParams\.set\('hour'/);
  assert.doesNotMatch(src,/TMDB_READ_ACCESS_TOKEN/);
- assert.match(fs.readFileSync('index.html','utf8'),/v5\/fr-watch\.js\?v=5\.8\.0/);
+ assert.match(fs.readFileSync('index.html','utf8'),/v5\/fr-watch\.js\?v=6\.1\.0/);
 });
