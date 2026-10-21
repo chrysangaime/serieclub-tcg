@@ -26,7 +26,7 @@
 
 `npm run check` et `npm test` sont exécutés par GitHub Actions, en complément des tests SQL anti-fraude du jeu. `tests/experience-v59.test.mjs` vérifie les fonctions d'exploration, la navigation mobile, les états de chargement et le parcours gratuit d'inscription.
 
-Le dernier relevé vérifié avant cette livraison était de **2 033 séries jouables certifiées France**. Ce total est un point de départ, pas une estimation du nombre de séries anciennes couvertes par les futures synchronisations.
+Au **21 octobre 2026 à 14:50 UTC**, un audit Supabase a confirmé **2 091 séries jouables certifiées France** (dont 435 avec preuve TMDB/JustWatch FR). Le nouvel import patrimonial a traité quatre pages complètes des années 1990–1994, puis marqué le passage comme **partiel** en raison de réponses HTTP 502 de TVmaze. La reprise doit recommencer à la page 5. Les 81 correspondances contrôlées durant ce passage ne représentent pas 81 nouvelles séries uniques : seules 58 certifications nettes supplémentaires ont été constatées depuis l’audit à 2 033.
 
 ## Liens
 - Site : https://chrysangaime.github.io/serieclub-tcg/
