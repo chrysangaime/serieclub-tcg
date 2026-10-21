@@ -100,7 +100,7 @@ async function loadSession(){
   const {data:{user},error}=await supa.auth.getUser();
   if(error&&!/session missing/i.test(error.message))console.warn('Auth:',error.message);
   state.user=user||null;
-  if(!user){state.username='';state.bio='';state.favoriteGenre='';state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;render();return}
+  if(!user){state.rewardStatus={enabled:false};state.rewardQuiz=null;state.rewardFeedback=null;state.username='';state.bio='';state.favoriteGenre='';state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;render();return}
   await ensureProfile(user);
   const status=await supa.rpc('get_booster_status');
   if(status.error)console.warn('Réserve:',status.error.message);
@@ -131,6 +131,7 @@ async function loadSession(){
   if(wi.error&&wi.error.code!=='42P01')console.warn('Wishlist:',wi.error.message);
   render();
   loadDaily();
+  if(state.route==='games')loadRewardStatus();
   if(state.route==='market')loadMarket();
   if(state.route==='collection'){loadCollectionGoal();loadMySales()}
   if(state.route==='community')loadPeople();
