@@ -141,7 +141,7 @@ export async function getFrenchOffersByShow(id){
  const key=asId(id);
  if(!key)return null;
  if(!cache.promise){
-  const url=new URL('../data/watch-fr.json?v=5.6.0',import.meta.url);
+  const url=new URL('../data/watch-fr.json?v=5.6.1',import.meta.url);
   cache.promise=fetch(url,{headers:{Accept:'application/json'}})
    .then(async r=>{if(!r.ok)throw Error('Offres FR indisponibles');return r.json()})
    .catch(()=>({titles:{}}));
