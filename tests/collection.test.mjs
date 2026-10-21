@@ -42,7 +42,7 @@ test('one series is counted once; similarly named shows with different IDs remai
  assert.equal(x.missing.length,2);
  assert.deepEqual(x.missing.map(w=>w.series_id),[42,43]);
  assert.equal(x.rankStats.find(s=>s.rank==='Légendaire').series,2);
- assert.equal(x.groups.find(g=>g.id==='2').rarity,'Commune');
+ assert.equal(x.groups.find(g=>g.id==='2').rarity,'À classer');
 });
 
 test('studio supports duplicates, uniques, protected and exact wishlist gaps',()=>{
