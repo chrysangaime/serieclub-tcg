@@ -34,10 +34,10 @@ export function seasonShelf(series=[]){
 }
 
 export function whereToWatchLink(title){
- // Une recherche du titre sur JustWatch via un moteur connu, sans inventer
- // de deep link ou la disponibilité du programme en France.
- const search='site:justwatch.com/fr/serie/ '+String(title||'').trim()+' streaming';
- return 'https://www.google.com/search?q='+encodeURIComponent(search);
+ // Fallback officiel sans secret : accès direct au moteur JustWatch France.
+ // Un lien personnalisé vérifié n'est proposé que par le module France
+ // après synchronisation des offres TMDB/JustWatch.
+ return 'https://www.justwatch.com/fr';
 }
 export function amazonSearchLink(title){
  const term=(String(title||'').trim()+' coffret Blu-ray DVD série').trim();
@@ -59,7 +59,7 @@ export function seriesDetail(s){
  '<div class="detail-tags">'+genres.map(g=>'<span>'+esc(g)+'</span>').join('')+'</div>'+
  '<p>Tu connais la série ? Découvre les services de streaming et les éventuels coffrets. Les offres et leur disponibilité en France sont à vérifier directement auprès des marchands.</p>'+
  '<div class="external-actions">'+
- '<a class="btn primary" href="'+whereToWatchLink(title)+'" target="_blank" rel="noopener noreferrer">Chercher où regarder ↗</a>'+
+ '<a class="btn primary" href="'+whereToWatchLink(title)+'" target="_blank" rel="noopener noreferrer">Consulter JustWatch France ↗</a>'+
  '<a class="btn subtle" href="'+amazonSearchLink(title)+'" target="_blank" rel="noopener noreferrer">Rechercher un coffret ↗</a>'+
  '</div>'+
  '<p class="ad-label">'+(amazonIsAffiliate()?'Lien Amazon pouvant générer une commission pour SérieClub, sans coût supplémentaire pour toi.':'Lien marchand de recherche non affilié pour le moment.')+
