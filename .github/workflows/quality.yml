@@ -132,10 +132,13 @@ jobs:
           assert.equal((raritySql.match(/\$\$/g)||[]).length%2,0,'Corps SQL V5 incomplet');
           const frSql=fs.readFileSync('supabase/game_v5_4_fr.sql','utf8');
           for(const name of ['enforce_new_card_fr_origin','enforce_new_wishlist_fr',
-                             'enforce_new_trade_fr','playable_fr_series','pick_official_pack','fuse_cards']){
+                             'enforce_new_listing_fr','enforce_new_offer_fr','playable_fr_series','pick_official_pack','fuse_cards']){
             assert.ok(frSql.includes(name),'Contrôle V5.4 absent : '+name);
           }
-          assert.equal((frSql.match(/\\$\\$/g)||[]).length%2,0,'Délimiteurs V5.4 incorrects');
+          assert.equal((frSql.match(/\$\$/g)||[]).length%2,0,'Délimiteurs V5.4 incorrects');
+          assert.doesNotMatch(frSql,/^\s*DO\s+\$(?!\$)/gm,'Bloc DO mal délimité dans V5.4');
+          assert.doesNotMatch(frSql,/^\s*END\s+\$(?!\$)/gm,'Bloc END mal délimité dans V5.4');
+          assert.doesNotMatch(frSql,/\bAS\s+\$(?!\$)/gm,'Définition de fonction V5.4 mal délimitée');
           assert.match(frSql,/the x-files/);
           assert.match(frSql,/stranger things/);
           assert.match(frSql,/how i met your mother/);
