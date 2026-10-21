@@ -50,6 +50,24 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
  };
 }
 
+/**
+ * Export compatible Excel FR : une ligne par série, non par copie.
+ * Neutralise l'injection de formules CSV dans les tableurs.
+ */
+export function collectionCSV(cards=[],wishes=[],activity=[]){
+ const groups=deriveCollection(cards,wishes,activity).groups
+  .sort((a,b)=>a.name.localeCompare(b.name,'fr'));
+ const head=['Série','ID TVmaze','Première diffusion','Rareté officielle',
+  'Exemplaires','Doublons','Protégées','Engagées','Genres'];
+ const safe=value=>{
+  let val=String(value??'');
+  if(/^\s*[=+\-@]/.test(val))val="'"+val;
+  return '"'+val.replace(/"/g,'""').replace(/\r|\n/g,' ')+'"';
+ };
+ const rows=[head,...groups.map(g=>[g.name,g.id,String(g.premiered).slice(0,10),g.rarity,
+  g.count,g.duplicates,g.protectedCount,g.blockedCount,g.genre.join(', ')])];
+ return rows.map(row=>row.map(safe).join(';')).join('\r\n');
+}
 function sortGroups(groups,mode){
  const out=[...groups];
  if(mode==='name')out.sort((a,b)=>a.name.localeCompare(b.name,'fr'));
@@ -172,7 +190,7 @@ export function collectionStudio(state){
   '<span>Page '+(v.page+1)+' sur '+v.pages+'</span>'+
   '<button class="btn subtle small" data-collection-page="'+(v.page+1)+'" '+(v.page===v.pages-1?'disabled':'')+'>Suivant →</button></nav>':'';
  return '<div class="page-content sc52-collection"><header class="sc52-heading"><div><span class="caps">SÉRIECLUB · LE STUDIO</span><h1>MA COLLECTION</h1><p>Retrouve tes séries, organise tes exemplaires et repère les doublons que tu peux échanger.</p></div>'+
-  '<button class="btn subtle" data-route="catalog">Explorer le catalogue ↗</button></header>'+
+  '<div class="sc52-heading-actions"><button class="btn subtle" data-route="catalog">Explorer le catalogue ↗</button><button class="btn subtle" data-export-collection '+(!state.user||!d.totalCards?'disabled':'')+'>Exporter CSV ↓</button></div></header>'+
   statsPanel(state,d)+rankBars+
   '<div class="sc52-tabs" role="group" aria-label="Mode de consultation">'+
   modes.map(([mode,label,n])=>'<button data-collection-mode="'+mode+'" class="'+(v.mode===mode?'active':'')+'" aria-pressed="'+(v.mode===mode)+'">'+esc(label)+' <span>'+money(n)+'</span></button>').join('')+'</div>'+
