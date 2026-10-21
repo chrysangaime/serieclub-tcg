@@ -16,7 +16,7 @@ export function gameCards(status={},records={}){
   const [symbol,title,description]=levels[type];
   const info=status?.modes?.[type];
   const retry=Date.parse(info?.next_available_at||'');
-  const locked=active&&info?.available===false&&Number.isFinite(retry)&&retry>Date.now();
+  const locked=info?.available===false&&Number.isFinite(retry)&&retry>Date.now();
   const next=locked?new Date(retry).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
   return '<article class="sc7-mode sc7-mode-'+type+'">'+
    '<div class="sc7-mode-art"><span aria-hidden="true">'+symbol+'</span>'+
