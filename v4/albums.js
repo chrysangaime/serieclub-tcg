@@ -1,4 +1,4 @@
-import{esc,photo,money,heading}from'../v3/views.js?v=5.3.0';
+import{esc,photo,money,heading}from'../v3/views.js?v=5.3.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 export function personalAlbumsPage(s){
  const genreCounts=new Map();
