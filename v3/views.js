@@ -69,7 +69,7 @@ export function rankings(s){
 }
 export function fusions(s){
  const selling=new Set((s.marketActivity||[]).filter(x=>x.status==='active'&&x.seller_id===s.user?.id).map(x=>x.card_id));
- const eligible=s.cards.filter(c=>c.rarity===s.fusionRank&&!c.locked&&!c.reserved_trade_id&&!selling.has(c.id));
+ const eligible=s.cards.filter(c=>officialRarity(c)===s.fusionRank&&c.rarity===officialRarity(c)&&!c.locked&&!c.reserved_trade_id&&!selling.has(c.id));
  return '<div class="page-content">'+heading('Fusions','Dix cartes d’une même rareté deviennent une nouvelle carte du niveau supérieur.')+'<div class="panel"><div class="row"><select id="fusionRank">'+ranks.slice(0,6).map(r=>'<option '+(r===s.fusionRank?'selected':'')+'>'+r+'</option>').join('')+'</select><button class="btn subtle" id="fusionAuto">Sélection automatique</button><span class="note">'+s.fusionSelected.length+'/10 · '+eligible.length+' disponibles</span><button class="btn primary" id="fusionSubmit" '+(s.fusionSelected.length===10?'':'disabled')+'>Fusionner 10 → 1</button></div><div class="notice">La fusion détruit définitivement les dix cartes utilisées. Les cartes protégées sont exclues.</div>'+(eligible.length?'<div class="grid">'+eligible.map(c=>card(c,'<label class="card-action" style="display:block;cursor:pointer"><input type="checkbox" data-fuse="'+esc(c.id)+'" '+(s.fusionSelected.includes(c.id)?'checked':'')+'> Sélectionner</label>')).join('')+'</div>':'<div class="empty">Aucune carte admissible de cette rareté.</div>')+'</div></div>';
 }
 export function profile(s){
