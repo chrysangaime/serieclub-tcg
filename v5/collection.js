@@ -159,8 +159,8 @@ function statsPanel(view,data){
   '<div><strong>'+money(data.duplicates)+'</strong><span>Exemplaires en doublon</span></div>'+
   '<div><strong>'+money(data.tradableDuplicates)+'</strong><span>Séries avec doublon vendable</span></div>'+
   '</div>'+
-  (total>0?'<div class="sc52-completion"><div><b>Exploration du catalogue</b><span>'+money(eligibleOwned)+' / '+money(total)+' séries classées possédées · '+percentage+' %</span></div><div class="sc52-progress"><span style="width:'+percentage+'%"></span></div><small>Indicateur de découverte, calculé sur les séries classées et illustrées. Les doublons et les anciennes séries sans preuve française ne comptent qu’une fois ou sont exclus du total.</small></div>':
-  '<p class="sc52-stats-note">Découvre des séries en ouvrant des paquets. Le pourcentage global sera affiché lorsque le catalogue sera disponible.</p>');
+  (total>0?'<div class="sc52-completion"><div><b>Exploration du catalogue</b><span>'+money(eligibleOwned)+' / '+money(total)+' séries classées possédées · '+percentage+' %</span></div><div class="sc52-progress"><span style="width:'+percentage+'%"></span></div><small>Chaque série différente compte une seule fois.</small></div>':
+  '<p class="sc52-stats-note">Ouvre des paquets pour enrichir ta collection.</p>');
 }
 export function collectionStudio(state){
  const v=selectCollection(state),d=v.data;
@@ -199,8 +199,8 @@ export function collectionStudio(state){
  return '<div class="page-content sc52-collection"><header class="sc52-heading"><div><span class="caps">SÉRIECLUB · LE STUDIO</span><h1>MA COLLECTION</h1><p>Retrouve tes séries, organise tes exemplaires et repère les doublons que tu peux échanger.</p></div>'+
   '<div class="sc52-heading-actions"><button class="btn subtle" data-route="catalog">Explorer le catalogue ↗</button><button class="btn subtle" data-export-collection '+(!state.user||!d.totalCards?'disabled':'')+'>Exporter CSV ↓</button></div></header>'+
   (state.frMigrationError?'<div class="sc55-archived-info sc55-fr-error">'+esc(state.frMigrationError)+'</div>':'')+
-  (state.excludedCardsCount>0?'<div class="sc55-archived-info">🇫🇷 <b>'+money(state.excludedCardsCount)+' ancienne'+(state.excludedCardsCount>1?'s cartes exclues':' carte exclue')+'</b> du jeu : diffusion française non encore vérifiée. Elles ne comptent plus dans la collection et restent conservées en base jusqu’à confirmation.</div>':'')+
-  statsPanel(state,d)+(d.rarityConflicts?'<div class="notice sc53-rarity-warning">'+money(d.rarityConflicts)+' anciennes cartes ont encore une rareté historique différente en base. L’affichage respecte la rareté officielle de leur série ; une synchronisation serveur est prévue.</div>':'')+rankBars+
+  (state.excludedCardsCount>0?'<div class="sc55-archived-info">🇫🇷 <b>'+money(state.excludedCardsCount)+' carte'+(state.excludedCardsCount>1?'s':'')+' archivée'+(state.excludedCardsCount>1?'s':'')+'</b> · Diffusion française à confirmer.</div>':'')+
+  statsPanel(state,d)+(d.rarityConflicts?'<div class="notice sc53-rarity-warning">'+money(d.rarityConflicts)+' cartes ont été réévaluées selon la rareté officielle des séries.</div>':'')+rankBars+
   '<div class="sc52-tabs" role="group" aria-label="Mode de consultation">'+
   modes.map(([mode,label,n])=>'<button data-collection-mode="'+mode+'" class="'+(v.mode===mode?'active':'')+'" aria-pressed="'+(v.mode===mode)+'">'+esc(label)+' <span>'+money(n)+'</span></button>').join('')+'</div>'+
   (state.genre?'<div class="notice">Genre sélectionné : '+esc(state.genre)+' <button class="btn small subtle" data-clear-genre>Afficher tous les genres</button></div>':'')+
