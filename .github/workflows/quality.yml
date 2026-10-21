@@ -16,6 +16,8 @@ jobs:
           package-manager-cache: false
       - name: Vérifier la syntaxe JavaScript
         run: |
+          npm run check
+          npm test
           node --check v3/views.js
           node --check v3/discovery.js
           node --check v3/config.js
