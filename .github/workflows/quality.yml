@@ -7,12 +7,13 @@ permissions:
   contents: read
 jobs:
   checks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
       - name: Vérifier la syntaxe JavaScript
         run: |
           node --check v3/views.js
@@ -112,7 +113,7 @@ jobs:
           console.log('Contrôles des pages et du SQL réussis');
           JS
   database:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:16
@@ -134,7 +135,7 @@ jobs:
       PGPASSWORD: serieclub_ci
       PGDATABASE: serieclub
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Installer le client PostgreSQL
         run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
       - name: Initialiser les rôles Supabase simulés
