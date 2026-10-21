@@ -1,0 +1,99 @@
+/* SérieClub TCG V5.9 — expérience de catalogue et navigation mobile.
+   Extension progressive : aucune modification des cartes ni de leur logique jeu. */
+.sc59-explorer{
+ border:1px solid #534941;border-radius:16px;
+ background:linear-gradient(155deg,#2a282b,#222226 75%);
+ padding:17px 19px 14px;margin:17px 0 21px;
+ box-shadow:0 14px 32px #00000020;
+}
+.sc59-search-row{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.sc59-search-input{position:relative;flex:1 1 270px}
+.sc59-search-input>span{position:absolute;left:15px;top:50%;transform:translateY(-50%);font:700 25px Georgia,serif;color:#e9bd78;pointer-events:none}
+.sc59-search-input input{padding:13px 14px 13px 43px;width:100%;min-height:46px;background:#191a1f;border-color:#585057;font-size:15px}
+.sc59-search-input input:focus{border-color:#e9bd78;box-shadow:0 0 0 3px #e9bd7824}
+.sc59-search-row>.btn{min-height:46px}
+.sc59-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:13px}
+.sc59-filter-grid label{display:flex;flex-direction:column;gap:6px;color:#d5cbc3;font-weight:750;font-size:11px}
+.sc59-filter-grid select{width:100%;min-height:42px;font-size:12px;background:#1c1d22;color:#faf0e7;border:1px solid #5c5359}
+.sc59-filter-grid select:focus-visible{outline:2px solid #e9bd78;outline-offset:2px}
+.sc59-results{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:15px;color:#d7cec2;font-size:12px;font-weight:600}
+.sc59-clear{border:none;background:transparent;color:#ffdb9b;text-decoration:underline;text-underline-offset:4px;padding:4px 0;font-size:12px;font-weight:700}
+.sc59-clear:hover{color:#fff0ca}
+.sc59-catalog .page-title{margin-bottom:16px}
+.sc59-catalog-grid{grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:15px}
+.sc59-catalog-grid .collect-card{height:100%;transition:transform .17s ease,box-shadow .17s ease}
+.sc59-catalog-grid .collect-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px #00000038}
+.sc59-catalog-grid .card-action{min-height:38px}
+.sc59-catalog-grid .card-action:focus-visible{outline:2px solid #f5d9a5;outline-offset:-3px}
+.sc59-more{display:flex;justify-content:center;margin:25px auto}
+.sc59-more .btn{min-height:46px}
+.sc59-empty{text-align:center;padding:54px 16px;border:1px dashed #66584d;border-radius:14px;background:#242327}
+.sc59-empty>span{font:46px Georgia,serif;color:#e9bd78}
+.sc59-empty h2{font-size:28px;margin:8px 0 4px}
+.sc59-empty p{margin:0 auto 16px;max-width:420px}
+.sc59-skeleton-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.sc59-skeleton{padding:10px;background:#25252b;border:1px solid #403b40;border-radius:12px}
+.sc59-skeleton>div{aspect-ratio:2/3;border-radius:7px;background:#39373c}
+.sc59-skeleton>span{display:block;width:95%;height:11px;margin-top:11px;border-radius:6px;background:#39373c}
+.sc59-skeleton>span:last-child{width:60%}
+@keyframes sc59pulse{50%{opacity:.38}}
+.sc59-skeleton>div,.sc59-skeleton>span{animation:sc59pulse 1.3s ease-in-out infinite}
+#mobileNav{display:none}
+#drawerBackdrop{display:none}
+@media(min-width:861px){
+ #mobileNav{display:none!important}
+ .sc59-catalog-grid{grid-template-columns:repeat(auto-fill,minmax(174px,1fr))}
+}
+@media(max-width:1050px){
+ .sc59-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sc59-skeleton-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:860px){
+ body{padding-bottom:calc(70px + env(safe-area-inset-bottom,0px))}
+ #mobileNav{
+  position:fixed;bottom:0;left:0;right:0;z-index:105;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:3px;padding:5px 7px calc(5px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid #665540;background:#1d1e23f5;
+  box-shadow:0 -12px 32px #0006;backdrop-filter:blur(20px)
+ }
+ .sc59-mobile-link{
+  min-height:58px;min-width:0;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:2px;border:1px solid transparent;border-radius:9px;
+  background:transparent;color:#bbb3b2;font-size:11px;font-weight:800;touch-action:manipulation
+ }
+ .sc59-mobile-link span{font:24px/1.1 Arial,sans-serif}
+ .sc59-mobile-link small{font:700 10px/1.4 "DM Sans",sans-serif;color:inherit}
+ .sc59-mobile-link.active{color:#f6d19a;background:#3b332e;border-color:#755d42}
+ .sc59-mobile-link:focus-visible{outline:2px solid #f6d19a;outline-offset:-2px}
+ .app-footer{padding-bottom:20px}
+ #toast{bottom:calc(82px + env(safe-area-inset-bottom,0px));left:12px;right:12px;max-width:unset}
+ body.drawer-open #drawerBackdrop{
+  display:block;position:fixed;inset:0;z-index:200;background:#0009;
+  border:none;width:100%;height:100%;cursor:pointer
+ }
+ body.drawer-open #sidebar{z-index:201}
+ body.drawer-open #mobileNav{z-index:80}
+ .sc59-catalog .page-content{padding-bottom:90px}
+}
+@media(max-width:600px){
+ .sc59-explorer{padding:14px 12px;border-radius:11px}
+ .sc59-search-row>.btn{flex:0 0 auto;padding:10px 12px}
+ .sc59-search-input{flex:1 1 165px}
+ .sc59-filter-grid{gap:9px}
+ .sc59-filter-grid select{padding:9px 7px;font-size:11px}
+ .sc59-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .sc59-skeleton-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sc59-empty{padding:28px 15px}
+ .sc59-results{font-size:11px}
+}
+@media(max-width:380px){
+ .sc59-search-row>.btn{flex:1 1 100%}
+ .sc59-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+ .sc59-skeleton>div,.sc59-skeleton>span{animation:none}
+ .sc59-catalog-grid .collect-card{transition:none}
+ .sc59-catalog-grid .collect-card:hover{transform:none}
+}
+body.reduce-motion .sc59-skeleton>div,body.reduce-motion .sc59-skeleton>span{animation:none}
