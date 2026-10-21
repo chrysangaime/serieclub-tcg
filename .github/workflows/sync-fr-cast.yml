@@ -36,13 +36,13 @@ jobs:
         run: node scripts/sync-fr-cast.mjs
       - name: Publier les distributions vérifiées sans secret
         run: |
-          if ! git diff --quiet -- data/cast-fr.json || test ! -f data/cast-fr.json; then
+          git add data/cast-fr.json
+          if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/cast-fr.json
-            if ! git diff --cached --quiet; then
-              git commit -m "data: actualiser la distribution des séries France"
-              git pull --rebase -X theirs origin main
-              git push
-            fi
+            git commit -m "data: actualiser la distribution des séries France"
+            git pull --rebase -X theirs origin main
+            git push
+          else
+            echo "Casting déjà à jour."
           fi
