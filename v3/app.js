@@ -313,7 +313,7 @@ async function loadCatalog(reset=false){
   if(allowedGenres.includes(state.catalogGenre))query=query.contains('genres',[state.catalogGenre]);
   const decade=state.catalogDecade;
   if(decade==='before1950')query=query.lt('premiered','1950-01-01');
-  else if(/^\\d{4}$/.test(decade||'')&&Number(decade)>=1950&&Number(decade)<=2020){
+  else if(/^\d{4}$/.test(decade||'')&&Number(decade)>=1950&&Number(decade)<=2020){
    query=query.gte('premiered',decade+'-01-01').lt('premiered',String(Number(decade)+10)+'-01-01');
   }
   switch(state.catalogSort){
