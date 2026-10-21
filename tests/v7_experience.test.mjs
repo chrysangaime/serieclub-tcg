@@ -35,11 +35,11 @@ test('animation accessible : réduction des mouvements désactive les particules
 test('quatre défis, menu récompensé uniquement si serveur actif, sans promesse trompeuse',()=>{
  assert.deepEqual(gameModes,['poster','pixel','timeline','year']);
  const free=games({wallet:{credits:100},quiz:null, rewardStatus:{enabled:false}});
- assert.match(free,/Défis libres/);
+ assert.match(free,/Entraînement/);
  assert.doesNotMatch(free,/Jusqu’à 80 crédits/);
- const paid=games({wallet:{credits:100},quiz:null,rewardStatus:{enabled:true,remaining_today:2}});
+ const paid=games({wallet:{credits:100},quiz:null,rewardStatus:{enabled:true,limit_per_mode_hours:24,remaining_today:2}});
  assert.match(paid,/\+10 crédits par bonne réponse/);
- assert.match(paid,/2 parties récompensées restantes/);
+ assert.match(paid,/2 défis disponibles/);
  for(const type of gameModes)assert.match(paid,new RegExp('data-challenge="'+type+'"'));
 });
 test('partie récompensée : jamais de révélation de la réponse avant validation serveur',()=>{
@@ -68,7 +68,7 @@ test('mode pixel disponible aussi en entraînement non récompensé',()=>{
  assert.match(src,/submit_rewarded_quiz_answer/);
  assert.match(src,/start_rewarded_quiz/);
  assert.match(src,/openingFrame\(openingCards/);
- assert.match(src,/if\(state\.rewardStatus\?\.enabled===true\)/);
+ assert.match(src,/state\.rewardStatus\?\.enabled===true&&state\.rewardStatus\?\.limit_per_mode_hours===24/);
  const migration=fs.readFileSync('supabase/game_v7_quiz.sql','utf8');
  assert.match(migration,/FOR UPDATE/);
  assert.match(migration,/auth\.uid\(\)/);
