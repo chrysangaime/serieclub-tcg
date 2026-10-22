@@ -366,3 +366,49 @@ body:before{content:none!important}
   transform:none!important
  }
 }
+
+/* V12.1: polished streaming toolbar and responsive priorities. */
+#topbar .top-actions{flex:1 1 auto;min-width:0;justify-content:flex-end}
+#topbar .sc12-search-icon{width:20px;height:20px;color:var(--tv-cyan);display:grid;place-items:center}
+#topbar .sc12-search-icon svg{display:block;width:19px;height:19px}
+#topbar .sc12-balance{display:flex;align-items:center;border:1px solid var(--tv-line);
+ border-radius:12px;background:var(--tv-elevated);padding:2px;gap:2px;white-space:nowrap}
+#topbar .sc12-balance .credit-pill{border:none!important;background:transparent!important;
+ box-shadow:none!important;padding:7px 9px!important}
+#topbar .sc12-add-credit{display:grid;place-items:center;cursor:pointer;font-size:18px;
+ font-weight:900;color:var(--tv-highlight);width:31px;height:31px;
+ background:color-mix(in srgb,var(--tv-cyan) 13%,var(--tv-surface));
+ border:1px solid color-mix(in srgb,var(--tv-cyan) 28%,var(--tv-line));border-radius:9px}
+#topbar .sc12-add-credit:hover{background:color-mix(in srgb,var(--tv-cyan) 21%,var(--tv-surface))}
+#topbar .sc12-account{display:flex;align-items:center;gap:9px;padding:4px 13px 4px 5px!important}
+#topbar .sc12-account-face{width:32px;height:32px;flex:none;display:grid;place-items:center;
+ background:linear-gradient(135deg,#7dd3db,#8e92e1);color:#0b2539;font-weight:900;
+ border-radius:50%;box-shadow:0 0 0 2px color-mix(in srgb,var(--tv-cyan) 28%,transparent)}
+#topbar .sc12-mobile-search{display:none}
+@media(min-width:861px) and (max-width:1450px){
+ #topbar .sc4-bell,#topbar #motionToggle,#topbar .top-btn[aria-label="Langue : français"]{display:none!important}
+ #topbar .sc12-global-search{flex-basis:240px}
+}
+@media(min-width:861px) and (max-width:1120px){
+ #topbar .top-btn[data-route="rules"]{display:none!important}
+ #topbar .sc12-global-search{flex-basis:180px}
+ #topbar .credit-pill span{display:none}
+ #topbar .sc12-account>span:last-child{display:none}
+}
+@media(max-width:860px){
+ #topbar .sc12-mobile-search{display:grid;place-items:center;min-width:40px;max-width:40px;
+  height:40px;padding:8px!important}
+ #topbar .sc12-mobile-search svg{width:20px;height:20px}
+ #topbar .sc12-account>span:last-child{display:none}
+ #topbar .sc12-account{padding:4px!important;min-width:42px}
+ #topbar .sc12-balance{max-width:107px}
+ #topbar .sc12-balance .credit-pill{font-size:10px!important;padding:6px!important}
+ #topbar .sc12-balance .credit-pill span{display:none}
+ #topbar .sc12-add-credit{width:27px;height:27px}
+ #topbar .sc4-bell,#topbar #motionToggle,#topbar .top-btn[aria-label="Langue : français"]{display:none!important}
+}
+@media(max-width:390px){
+ #topbar .sc12-balance .credit-pill{font-size:9px!important}
+ #topbar .sc12-account-face{width:29px;height:29px}
+ #topbar .sc10-theme-toggle{width:35px!important;min-width:35px!important;padding:0!important}
+}
