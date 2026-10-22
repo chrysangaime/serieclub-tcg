@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="SérieClub TCG">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="SériesClubTCG">
 <defs>
  <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#71fff0"/><stop offset=".58" stop-color="#27cbe6"/><stop offset="1" stop-color="#8e83f9"/></linearGradient>
  <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="white" stop-opacity=".40"/><stop offset=".55" stop-color="white" stop-opacity="0"/></linearGradient>

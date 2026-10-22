@@ -1,5 +1,5 @@
 /**
- * SérieClub V12 — véritable page d'accueil TV/SVOD.
+ * SériesClubTCG V12 — véritable page d'accueil TV/SVOD.
  * Aucun mécanisme de jeu ni probabilité ne se trouve ici.
  * Les 2 paquets réels restent classic/halloween ; Premium est un aperçu,
  * pas un booster inventé ou une vente.
@@ -47,7 +47,7 @@ function packVisual(type){
  const label=key==='premium'?'PREMIUM':key==='halloween'?'HALLOWEEN':'ORIGINAL';
  const mark=key==='premium'?'✦':key==='halloween'?'☾':'▣';
  return '<span class="sc14-pack-visual--'+key+' sc15-foil sc15-foil--'+key+'">'+
- '<span class="sc15-foil-stripe"></span><strong>SÉRIE<em>CLUB</em></strong>'+
+ '<span class="sc15-foil-stripe"></span><strong>SÉRIES<em>CLUB</em>TCG</strong>'+
  '<small>TRADING CARD GAME</small><span class="sc15-foil-mark">'+mark+'</span>'+
  '<b>'+label+'</b><small>'+(key==='premium'?'APERÇU · EN PRÉPARATION':'5 SÉRIES · 7 RARETÉS')+'</small>'+
  '<span class="sc15-foil-stripe sc15-foil-stripe-bottom"></span></span>';
@@ -55,7 +55,7 @@ function packVisual(type){
 function heroPosters(shows){
  // Source : séries déjà vérifiées et disponibles dans le catalogue France.
  const pictures=shows.filter(x=>photo(x.image_url)).slice(0,3);
- if(!pictures.length)return '<span class="sc15-tv-fallback">▶ <strong>SÉRIECLUB</strong></span>';
+ if(!pictures.length)return '<span class="sc15-tv-fallback">▶ <strong>SÉRIESCLUBTCG</strong></span>';
  return '<div class="sc15-hero-posters">'+pictures.map((x,i)=>
  '<span class="sc15-hero-poster sc15-hero-poster-'+i+'"><img alt="" loading="'+(i?'lazy':'eager')+'" src="'+photo(x.image_url)+'"></span>'
  ).join('')+'<span class="sc15-onair">● À L’AFFICHE</span></div>';

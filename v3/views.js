@@ -23,7 +23,7 @@ export const timecode=s=>String(Math.floor(Math.max(0,s)/60)).padStart(2,'0')+':
 export function foil(type='classic'){
  const horror=type==='halloween';
  const art=horror?'<svg viewBox="0 0 130 120" aria-hidden="true"><defs><radialGradient id="moonT"><stop stop-color="#ffe9aa"/><stop offset="1" stop-color="#f39678"/></radialGradient></defs><circle cx="65" cy="53" r="42" fill="url(#moonT)"/><path d="M65 51 56 33 52 45 C40 43 32 27 13 36 L23 53 Q11 57 7 77 Q25 66 36 81 Q42 66 54 74 L65 91 L76 74 Q88 66 94 81 Q105 66 123 77 Q119 57 107 53 L117 36 C98 27 90 43 78 45 L74 33Z" fill="#21172d" stroke="#663554" stroke-width="1.6"/><circle cx="60" cy="55" r="1.7" fill="#f7c599"/><circle cx="70" cy="55" r="1.7" fill="#f7c599"/></svg>':'<svg viewBox="0 0 120 120" aria-hidden="true"><rect x="23" y="33" width="74" height="56" rx="12" fill="none" stroke="currentColor" stroke-width="2"/><path d="M36 70 48 56 60 67 74 48 84 60" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="34" r="5" fill="currentColor"/><path d="M48 25 Q60 12 73 25 M42 20 Q60 2 80 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
- return '<div class="foil '+(horror?'halloween':'')+'" aria-label="Pochette '+(horror?'Halloween':'Classique')+'"><div class="foil-face"><div class="foil-shimmer"></div><div class="foil-name">SÉRIECLUB<small>TRADING CARD GAME</small></div><div class="foil-emblem">'+art+'</div><div class="foil-foot">'+(horror?'HALLOWEEN':'ORIGINAL')+'</div><span class="foil-mini">5 CARTES • 7 RARETÉS</span></div></div>';
+ return '<div class="foil '+(horror?'halloween':'')+'" aria-label="Pochette '+(horror?'Halloween':'Classique')+'"><div class="foil-face"><div class="foil-shimmer"></div><div class="foil-name">SÉRIESCLUBTCG<small>TRADING CARD GAME</small></div><div class="foil-emblem">'+art+'</div><div class="foil-foot">'+(horror?'HALLOWEEN':'ORIGINAL')+'</div><span class="foil-mini">5 CARTES • 7 RARETÉS</span></div></div>';
 }
 /** Official rank belongs to a TV show; a card cannot have its own rank. */
 export function officialRarity(cardOrShow){
@@ -179,7 +179,7 @@ export function games(s){
   :s.quiz?quizHTML(s.quiz):menu;
  return '<div class="page-content sc7-games">'+
   heading('Jeux & défis','Une autre façon de vivre tes séries.')+
-  '<div class="sc7-hero"><div><span class="sc7-hero-kicker">SÉRIECLUB · L’ARÈNE</span>'+
+  '<div class="sc7-hero"><div><span class="sc7-hero-kicker">SÉRIESCLUBTCG · L’ARÈNE</span>'+
    '<h2>Joue. Gagne.<br>Collectionne.</h2>'+
    '<p>Affiches cultes, mémoire et chronologie : quatre défis, cinq questions et des surprises à chaque partie.</p></div>'+
    '<div class="sc7-hero-stat"><strong>'+money(s.wallet?.credits||0)+'</strong><small>Crédits disponibles</small></div></div>'+

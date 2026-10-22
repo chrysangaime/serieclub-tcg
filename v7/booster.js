@@ -22,8 +22,8 @@ export function openingFrame(cards,step=0,reduced=false){
    :'<button class="btn primary" id="openingDone">Voir ma collection →</button>')+'</div>';
  if(sealed){
   return '<div class="sc7-opening sc7-sealed" role="group" aria-label="Ouverture de paquet">'+
-   '<p class="sc7-opening-kicker">SÉRIECLUB · 5 CARTES</p><h2>Le moment de vérité.</h2>'+
-   '<div class="sc7-sealed-pack" aria-hidden="true"><span>SC</span><strong>SÉRIECLUB</strong><small>5 CARTES À DÉCOUVRIR</small></div>'+
+   '<p class="sc7-opening-kicker">SÉRIESCLUBTCG · 5 CARTES</p><h2>Le moment de vérité.</h2>'+
+   '<div class="sc7-sealed-pack" aria-hidden="true"><span>SC</span><strong>SÉRIESCLUBTCG</strong><small>5 CARTES À DÉCOUVRIR</small></div>'+
    '<p class="sc7-pack-sub">Les cinq cartes ont été ajoutées à ta collection.</p>'+actions+'</div>';
  }
  if(summary){
