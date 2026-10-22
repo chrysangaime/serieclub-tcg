@@ -1,6 +1,6 @@
 {
   "name": "serieclub-tcg",
-  "version": "8.0.0",
+  "version": "8.1.0",
   "private": true,
   "type": "module",
   "description": "Application Web de collection de cartes de series TV",
