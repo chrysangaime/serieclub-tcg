@@ -267,3 +267,7 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v19_top20.sql
       - name: Tester les listes et la récompense non fraudable des Top 20
         run: psql -v ON_ERROR_STOP=1 -f tests/v19_top20_rewards.sql
+      - name: Installer le suivi de collection V20
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v20_collection_automation.sql
+      - name: Tester souhaits automatiques et protection des cartes
+        run: psql -v ON_ERROR_STOP=1 -f tests/v20_collection_automation.sql
