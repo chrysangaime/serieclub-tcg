@@ -14,8 +14,8 @@ import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=6.1.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.6.1';
-import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=19.0.0';
-import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=19.0.0';
+import{personalAlbumsPage,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.0.0';
+import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.0.0';
 import{collectionStudio,collectionCSV}from'../v5/collection.js?v=5.6.1';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 function readQuizRecords(){
@@ -58,7 +58,7 @@ function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus
 
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions',store:'premium'};
-const state={route:'packs',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',paymentsMode:'disabled',premiumActive:false,paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',paymentsMode:'disabled',premiumActive:false,paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,trackedSeasons:[],officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let openingCards=null,openingStep=0;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
@@ -144,7 +144,7 @@ async function loadSession(){
   const {data:{user},error}=await supa.auth.getUser();
   if(error&&!/session missing/i.test(error.message))console.warn('Auth:',error.message);
   state.user=user||null;
-  if(!user){state.rewardStatus={enabled:false};state.rewardQuiz=null;state.rewardFeedback=null;state.username='';state.bio='';state.favoriteGenre='';state.avatarSeriesId=null;state.bannerSeriesId=null;state.officialSeasons=null;state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;state.premiumActive=false;render();return}
+  if(!user){state.rewardStatus={enabled:false};state.rewardQuiz=null;state.rewardFeedback=null;state.username='';state.bio='';state.favoriteGenre='';state.avatarSeriesId=null;state.bannerSeriesId=null;state.officialSeasons=null;state.trackedSeasons=[];state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;state.premiumActive=false;render();return}
   await ensureProfile(user);
   const status=await supa.rpc('get_booster_status');
   if(status.error)console.warn('Réserve:',status.error.message);
@@ -224,6 +224,7 @@ async function loadOfficialSeasons(){
  if(!state.user){state.officialSeasons=null;state.officialSeasonError='';return}
  const {data,error}=await supa.rpc('my_official_seasons');
  state.officialSeasons=error?null:data||[];
+ await loadTrackedSeasons();
  state.officialSeasonError=error?'Les récompenses officielles attendent leur activation sur Supabase.':'';
  if(['albums','profile'].includes(state.route))render();
 }
@@ -243,11 +244,87 @@ async function openOfficialSeasonDetails(id){
   const {data,error}=await supa.rpc('get_official_season_titles',{p_season_id:id});
   if(error)throw error;
   if(!overlay.classList.contains('hidden'))
-   overlay.innerHTML=officialSeasonDetailsHTML(item,data||[]);
+   overlay.innerHTML=officialSeasonDetailsHTML(item,data||[],{user:!!state.user,tracked:state.trackedSeasons.includes(id),wishes:state.wishes.map(w=>Number(w.series_id))});
  }catch{
   if(!overlay.classList.contains('hidden'))
-   overlay.innerHTML=officialSeasonDetailsHTML(item,[]);
+   overlay.innerHTML=officialSeasonDetailsHTML(item,[],{user:!!state.user});
  }
+}
+
+
+/** Suivi des saisons : seule la base peut ajouter les souhaits ou protéger les cartes. */
+async function loadTrackedSeasons(){
+ if(!state.user){state.trackedSeasons=[];return}
+ const {data,error}=await supa.rpc('my_tracked_seasons');
+ state.trackedSeasons=error?[]:(data||[]).map(x=>x.season_id);
+}
+async function syncSeasonTargets(id=null){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {data,error}=await supa.rpc('sync_official_collection',{p_season_id:id});
+  if(error)throw error;
+  const stats=Array.isArray(data)?data[0]:data;
+  await loadSession();
+  await loadAlbums();
+  toast('Suivi activé : '+Number(stats?.wishes_added||0)+' souhait(s) ajouté(s), '+
+   Number(stats?.cards_protected||0)+' carte(s) protégée(s), '+
+   Number(stats?.series_owned||0)+' série(s) déjà possédée(s).');
+  if(id)await openOfficialSeasonDetails(id);
+ }catch(e){toast('Suivi des saisons : '+e.message,true)}
+ finally{state.busy=false}
+}
+async function unfollowSeason(id){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {error}=await supa.rpc('unfollow_official_collection',{p_season_id:id});
+  if(error)throw error;
+  await loadTrackedSeasons();render();
+  toast('Suivi arrêté. Les protections existantes sont conservées.');
+  await openOfficialSeasonDetails(id);
+ }catch(e){toast('Arrêt du suivi : '+e.message,true)}
+ finally{state.busy=false}
+}
+async function syncPersonalAlbum(id){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {data,error}=await supa.rpc('sync_personal_album_collection',{p_album_id:id});
+  if(error)throw error;
+  const stats=Array.isArray(data)?data[0]:data;
+  await loadSession();await loadAlbums();await openAlbum(id);
+  toast('Saison préparée : '+Number(stats?.wishes_added||0)+' souhait(s), '+
+       Number(stats?.cards_protected||0)+' carte(s) nouvellement protégée(s).');
+ }catch(e){toast('Préparation : '+e.message,true)}
+ finally{state.busy=false}
+}
+async function addPersonalTarget(id,seriesId){
+ if(!state.user){openAuth();return}
+ const {error}=await supa.rpc('add_series_to_personal_album',{
+  p_album_id:id,p_series_id:Number(seriesId)});
+ if(error){toast('Saison : '+error.message,true);return}
+ await loadSession();await loadAlbums();await openAlbum(id);
+ toast('Série ajoutée : souhait enregistré ou carte protégée.');
+}
+async function removePersonalTarget(id,seriesId){
+ if(!state.user){openAuth();return}
+ const {error}=await supa.rpc('remove_series_from_personal_album',{
+  p_album_id:id,p_series_id:Number(seriesId)});
+ if(error){toast('Saison : '+error.message,true);return}
+ await openAlbum(id);toast('Titre retiré des objectifs de cette saison.');
+}
+async function searchPersonalSeries(id){
+ const term=($('albumSeriesSearch')?.value||'').trim();
+ const target=$('albumSeriesResults');if(!target)return;
+ if(term.length<2){target.textContent='Saisis au moins deux caractères.';return}
+ target.textContent='Recherche des séries disponibles en France…';
+ const {data,error}=await supa.rpc('search_personal_album_series',{p_search:term});
+ target.innerHTML=error?'<p class="note">Recherche indisponible : migration V20 nécessaire.</p>':
+ albumSeriesSearchResults({album_id:id},data||[]);
 }
 
 async function claimOfficialSeason(id){
@@ -271,6 +348,7 @@ async function loadAlbums(){
  state.albumError=errors.length?'Active la migration SQL V4 des albums : '+errors[0]:'';
  state.personalAlbums=own.data||[];state.publicAlbums=shared.data||[];
  state.officialSeasons=official.error?null:official.data||[];
+ await loadTrackedSeasons();
  state.officialSeasonError=official.error?'Activer la migration SQL V10 des saisons officielles.':'';
  if(state.route==='albums')render();
 }
@@ -281,7 +359,8 @@ async function openAlbum(id){
  const {data,error}=await supa.rpc('album_card_data',{p_album_id:id});
  if(error){toast('Album : '+error.message,true);return}
  $('overlay').classList.remove('hidden');
- $('overlay').innerHTML=albumDialog(state,album,data||[]);
+ const targets=await supa.rpc('personal_album_targets',{p_album_id:id});
+ $('overlay').innerHTML=albumDialog(state,album,data||[],targets.error?[]:targets.data||[]);
 }
 async function albumMutation(rpc,args,msg,id){
  if(!state.user){openAuth();return}
@@ -1151,10 +1230,17 @@ function globalClick(e){
  if(e.target.closest('#motionToggle')){state.reduceMotion=!state.reduceMotion;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render();return}
 
  if(e.target.closest('#createAlbum')){createAlbum();return}
+ if(e.target.closest('[data-sync-all-seasons]')){syncSeasonTargets(null);return}
+ const syncSeason=e.target.closest('[data-sync-season]');if(syncSeason){syncSeasonTargets(syncSeason.dataset.syncSeason);return}
+ const unfollow=e.target.closest('[data-unfollow-season]');if(unfollow){unfollowSeason(unfollow.dataset.unfollowSeason);return}
  const seasonDetail=e.target.closest('[data-season-details]');if(seasonDetail){openOfficialSeasonDetails(seasonDetail.dataset.seasonDetails);return}
  const official=e.target.closest('[data-claim-season]');if(official){claimOfficialSeason(official.dataset.claimSeason);return}
  const viewAlbum=e.target.closest('[data-view-album]');if(viewAlbum){openAlbum(viewAlbum.dataset.viewAlbum);return}
  const deleteAlb=e.target.closest('[data-delete-album]');if(deleteAlb){deleteAlbum(deleteAlb.dataset.deleteAlbum);return}
+ const syncAlb=e.target.closest('[data-sync-personal-album]');if(syncAlb){syncPersonalAlbum(syncAlb.dataset.syncPersonalAlbum);return}
+ const searchAlb=e.target.closest('[data-album-search]');if(searchAlb){searchPersonalSeries(searchAlb.dataset.albumSearch);return}
+ const addTarget=e.target.closest('[data-add-album-target]');if(addTarget){addPersonalTarget(addTarget.dataset.albumId,addTarget.dataset.addAlbumTarget);return}
+ const removeTarget=e.target.closest('[data-remove-album-target]');if(removeTarget){removePersonalTarget(removeTarget.dataset.albumId,removeTarget.dataset.removeAlbumTarget);return}
  const addAlb=e.target.closest('#albumAddCard');if(addAlb){addAlbumCard(addAlb.dataset.albumId);return}
  const removeAlb=e.target.closest('[data-album-remove]');if(removeAlb){removeAlbumCard(removeAlb.dataset.albumId,removeAlb.dataset.albumRemove);return}
  if(e.target.closest('#createListing')){createListing();return}

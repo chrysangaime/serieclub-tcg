@@ -1,0 +1,31 @@
+/* V20 — ergonomie du suivi d'albums et des opérations en lot. */
+.sc20-all-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:18px 0 21px;padding:17px 20px;border-radius:16px;background:var(--tv-elevated);border:1px solid var(--tv-line)}
+.sc20-all-toolbar>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.sc20-all-toolbar strong{color:var(--tv-text);font-size:15px;font-weight:900}
+.sc20-all-toolbar small{color:var(--tv-sub);font-size:12px;line-height:1.5}
+.sc20-all-toolbar button{flex-shrink:0;min-height:43px}
+.sc20-follow-caption{color:var(--tv-sub);font-size:10px;line-height:1.5}
+.sc19-top20.is-tracked{border-color:color-mix(in srgb,var(--tv-highlight) 55%,var(--tv-line))!important}
+.sc20-follow-panel{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:16px 0 22px;padding:17px;border-radius:14px;background:var(--tv-elevated);border:1px solid var(--tv-line)}
+.sc20-follow-panel strong{display:block;color:var(--tv-text);font-size:15px;margin-bottom:5px}
+.sc20-follow-panel p{color:var(--tv-sub);font-size:12px;line-height:1.6;margin:0;max-width:54ch}
+.sc20-follow-buttons{display:flex;flex-direction:column;gap:8px;min-width:190px}
+.sc20-follow-buttons .btn{min-height:41px;font-size:11px;white-space:normal;line-height:1.4}
+.sc20-album-targets{padding:17px;margin:19px 0;background:var(--tv-elevated);border:1px solid var(--tv-line);border-radius:15px}
+.sc20-album-targets .section-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.sc20-album-targets .section-head h3{font-size:17px;color:var(--tv-text)!important;margin:6px 0}
+.sc20-album-targets .section-head span{font-size:11px;color:var(--tv-sub);white-space:nowrap}
+.sc20-album-search{display:flex;gap:8px;margin:14px 0}
+.sc20-album-search .input{min-width:0;flex:1}
+.sc20-album-search-results{display:grid;gap:6px;max-height:255px;overflow-y:auto}
+.sc20-search-result{width:100%;display:flex;align-items:center;text-align:left;gap:12px;padding:7px 10px;background:var(--tv-surface);border:1px solid var(--tv-line);color:var(--tv-text);border-radius:10px;cursor:pointer}
+.sc20-search-result:hover{border-color:var(--tv-highlight)}
+.sc20-search-result img,.sc20-search-result>span:first-child{width:37px;height:49px;object-fit:cover;border-radius:5px}
+.sc20-search-result strong{flex:1;font-size:12px}
+.sc20-search-result>span:last-child{font-size:11px;color:var(--tv-highlight);font-weight:850}
+.sc20-album-target-grid{display:grid;gap:7px;margin:16px 0}
+.sc20-album-target{display:flex;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--tv-line);border-radius:9px;background:var(--tv-surface)}
+.sc20-album-target strong{flex:1;font-size:12px;color:var(--tv-text)}
+.sc20-album-target span{font-size:11px;color:var(--tv-sub)}
+.sc20-album-disclaimer{font-size:11px;line-height:1.5;color:var(--tv-sub)}
+@media(max-width:720px){.sc20-all-toolbar,.sc20-follow-panel{align-items:stretch;flex-direction:column}.sc20-all-toolbar button{width:100%}.sc20-follow-buttons{width:100%}.sc20-album-target{flex-wrap:wrap}.sc20-album-target strong{flex-basis:100%}}

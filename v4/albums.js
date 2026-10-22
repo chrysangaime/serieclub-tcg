@@ -21,11 +21,27 @@ export function personalAlbumsPage(s){
  '<section style="margin-top:29px"><div class="section-head"><div><span class="caps">AUTOMATIQUES</span><h2>Mes univers par genre</h2></div></div>'+
  (genreCounts.size?'<div class="sc4-album-grid">'+[...genreCounts].sort((a,b)=>b[1]-a[1]).map(([genre,n])=>'<button class="sc4-album sc4-album-public" data-album="'+esc(genre)+'"><span class="caps">GENRE</span><h3>'+esc(genreFR(genre))+'</h3><p>▦ '+n+' cartes à retrouver</p><span class="sc4-album-open">Explorer ↗</span></button>').join('')+'</div>':'<div class="empty">Ouvre ton premier booster pour remplir tes albums de genre.</div>')+'</section></div>';
 }
-export function albumDialog(s,a,data=[]){
+export function albumDialog(s,a,data=[],targets=[]){
  const own=(s.personalAlbums||[]).some(x=>x.album_id===a.album_id);
  const already=new Set(data.map(x=>x.card_id));
  const candidates=s.cards.filter(c=>!already.has(c.id));
  return '<div class="dialog sc4-album-dialog" role="dialog" aria-modal="true" aria-label="Album '+esc(a.title)+'"><button class="close" data-close aria-label="Fermer">×</button><div class="caps">'+(own?'MA SAISON PERSONNELLE':'ALBUM PUBLIC DU CLUB')+'</div><h2>'+esc(a.title)+'</h2><p>'+esc(a.description||'Une saison créée par un passionné de séries.')+'</p><small>'+data.length+' cartes</small>'+
  (own?'<div class="row sc4-album-add"><select class="input" id="albumCardSelect"><option value="">Choisir une carte à ajouter…</option>'+candidates.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.series?.name||'Série')+' · '+esc(c.rarity)+'</option>').join('')+'</select><button class="btn primary small" id="albumAddCard" data-album-id="'+esc(a.album_id)+'" '+(!candidates.length?'disabled':'')+'>Ajouter</button></div>':'')+
+ (own?'<section class="sc20-album-targets"><div class="section-head"><div><span class="caps">SÉRIES À COLLECTIONNER</span><h3>Préparer ma saison sans avoir les cartes</h3></div><span>'+targets.length+' titres choisis</span></div>'+
+ '<div class="sc20-album-search"><input class="input" id="albumSeriesSearch" placeholder="Rechercher une série diffusée en France…" minlength="2" maxlength="80">'+
+ '<button class="btn small primary" data-album-search="'+esc(a.album_id)+'" type="button">Rechercher</button></div>'+
+ '<div class="sc20-album-search-results" id="albumSeriesResults" aria-live="polite"></div>'+
+ '<div class="sc20-album-target-grid">'+targets.map(t=>'<div class="sc20-album-target"><strong>'+esc(t.name)+'</strong><span>'+(t.owned?(t.locked?'🔒 Carte protégée':'✓ Possédée'):'☆ Dans mes souhaits')+'</span><button type="button" class="btn subtle small" data-remove-album-target="'+esc(t.series_id)+'" data-album-id="'+esc(a.album_id)+'">Retirer</button></div>').join('')+'</div>'+
+ '<button class="btn small primary" data-sync-personal-album="'+esc(a.album_id)+'" type="button">☆ Synchroniser souhaits et cartes protégées</button>'+
+ '<p class="sc20-album-disclaimer">Les séries manquantes sont suivies automatiquement et un nouvel exemplaire sera protégé, sans bloquer tes doublons.</p></section>':'')+
  (data.length?'<div class="sc4-album-cards">'+data.map(c=>'<div class="sc4-album-card"><img src="'+photo(c.image_url)+'" alt="" loading="lazy"><div><b>'+esc(c.series_name)+'</b><small>'+esc(c.rarity)+'</small>'+(own?'<button class="btn subtle small" data-album-remove="'+esc(c.card_id)+'" data-album-id="'+esc(a.album_id)+'">Retirer</button>':'')+'</div></div>').join('')+'</div>':'<div class="empty">Cet album ne contient pas encore de carte.</div>')+'</div>';
+}
+
+/** Seuls les résultats France reconnus du serveur sont rendus, sans HTML externe. */
+export function albumSeriesSearchResults(a,rows=[]){
+ const id=esc(a?.album_id||'');
+ if(!rows.length)return '<p class="note">Aucune série française correspondante dans le catalogue.</p>';
+ return rows.map(s=>'<button type="button" class="sc20-search-result" data-add-album-target="'+esc(s.series_id)+'" data-album-id="'+id+'">'+
+ (photo(s.image_url)?'<img src="'+photo(s.image_url)+'" alt="" loading="lazy">':'<span aria-hidden="true">▣</span>')+
+ '<strong>'+esc(s.name)+'</strong><span>＋ Ajouter à ma saison</span></button>').join('');
 }
