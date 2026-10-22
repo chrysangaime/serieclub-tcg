@@ -120,13 +120,13 @@ ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.verify_profile_card_art(
 -- Les profils publics n'exposent que les images déjà publiques des séries.
 CREATE OR REPLACE FUNCTION public.public_profile_art()
 RETURNS TABLE(player_id uuid,avatar_image_url text,banner_image_url text)
-LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public,pg_temp AS $
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public,pg_temp AS $seasons$
  SELECT p.id,a.image_url,b.image_url FROM public.profiles p
  LEFT JOIN public.series a ON a.id=p.avatar_series_id
  LEFT JOIN public.series b ON b.id=p.banner_series_id
  WHERE p.avatar_series_id IS NOT NULL OR p.banner_series_id IS NOT NULL
  ORDER BY p.created_at DESC LIMIT 200;
-$;
+$seasons$;
 REVOKE ALL ON FUNCTION public.public_profile_art() FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.public_profile_art() TO authenticated;
 COMMIT;
