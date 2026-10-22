@@ -1,0 +1,198 @@
+/* SérieClub V12.1 — Same production streaming identity throughout every rubric.
+   Preserves rarity-specific colors and game logic; uses the same day/night tokens
+   as svod.css. */
+:root{--tv-radius:16px}
+#page>.page-content,.page-content{max-width:1630px}
+.page-content:not(.sc12-home .page-content){
+ background:transparent;color:var(--tv-text)
+}
+.page-title{margin:0 0 25px!important;padding:0 0 20px!important;
+ border-color:var(--tv-line)!important}
+.page-title h1,.sc52-heading h1{font-family:'DM Sans',sans-serif!important;
+ font-weight:950!important;font-size:clamp(27px,3vw,43px)!important;
+ letter-spacing:-.045em!important;line-height:1.07!important;
+ text-transform:none!important;color:var(--tv-text)!important}
+.page-title p{color:var(--tv-sub)!important;max-width:670px;font-size:13px!important}
+.panel,.metric,.sc4-box,.sc4-album,.sc4-quest,.sc4-listing,.sc4-person,
+.sc7-mode,.sc7-quiz,.sc60-quiz,.sc10-season-card,.sc10-premium-card,.sc10-credit-shop{
+ border-radius:var(--tv-radius)!important;
+ border:1px solid var(--tv-line)!important;
+ background:var(--tv-surface)!important;
+ color:var(--tv-text)!important;
+ box-shadow:var(--tv-shadow)!important
+}
+.panel h2,.panel h3,.metric strong,.sc4-box h2,.sc4-album h3,.sc7-mode h2,
+.sc7-quiz h2,.sc60-quiz h2,.sc10-season-card h3{
+ color:var(--tv-text)!important
+}
+.panel p,.metric span,.sc4-box p,.sc4-album p,.sc7-mode p,.sc10-season-card p{
+ color:var(--tv-sub)!important
+}
+.btn.primary{
+ background:linear-gradient(110deg,#5ee8ed,#97f7e8)!important;
+ color:#073043!important;border-color:#9cfbf3!important;
+ box-shadow:0 7px 18px #2cb1be2d!important;
+ border-radius:11px!important;font-weight:850!important
+}
+.btn.primary:hover:not(:disabled){background:linear-gradient(110deg,#89fbf0,#c1fff3)!important}
+.btn.subtle,.btn:not(.primary):not(.selected){
+ background:var(--tv-elevated)!important;color:var(--tv-text)!important;
+ border:1px solid var(--tv-line)!important;border-radius:11px
+}
+.btn.subtle:hover:not(:disabled){border-color:var(--tv-cyan)!important}
+input,select,textarea,.input{
+ color:var(--tv-text)!important;
+ background:var(--tv-surface)!important;
+ border:1px solid var(--tv-line)!important;
+ border-radius:12px!important
+}
+select option{background:var(--tv-surface);color:var(--tv-text)}
+input:focus-visible,select:focus-visible,textarea:focus-visible,
+button:focus-visible,.card-action:focus-visible{outline:2px solid var(--tv-cyan)!important;outline-offset:3px}
+.caps,.sc7-mode-eyebrow,.sc10-season-section .caps{color:var(--tv-highlight)!important}
+/* Catalogue and collection: actual media shelves, stronger poster framing */
+.sc59-explorer{background:var(--tv-surface)!important;border-color:var(--tv-line)!important;
+ padding:clamp(15px,2vw,23px)!important;border-radius:var(--tv-radius)!important;
+ box-shadow:var(--tv-shadow)}
+.sc59-search-input input,.sc59-filter-grid select{background:var(--tv-elevated)!important;color:var(--tv-text)!important}
+.sc59-results,.sc59-filter-grid label{color:var(--tv-sub)!important}
+.sc59-catalog-grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr))!important;gap:clamp(11px,1.3vw,20px)!important}
+.collect-card,.sc52-group-card{
+ border-radius:14px!important;overflow:hidden;
+ box-shadow:0 12px 24px #0613262b!important;
+ transition:transform .19s,box-shadow .19s
+}
+.collect-card:hover,.sc52-group-card:hover{
+ transform:translateY(-4px);
+ box-shadow:0 17px 33px #06132666!important
+}
+.sc53-poster-wrap img,.sc52-group-poster img{object-fit:cover}
+.collect-card .card-title{font-weight:850;color:var(--tv-text)!important}
+.sc52-group-body,.sc52-controls,.sc52-completion,.sc52-rank-stat{
+ background:var(--tv-surface)!important;color:var(--tv-text)!important;
+ border-color:var(--tv-line)!important
+}
+.sc52-group-actions button{min-height:41px}
+.sc52-tabs button,.sc52-rank-stat{
+ border-radius:11px!important;border-color:var(--tv-line)!important
+}
+.sc52-tabs button.active,.sc52-rank-stat.active{
+ background:color-mix(in srgb,var(--tv-cyan) 18%,var(--tv-elevated))!important;
+ color:var(--tv-highlight)!important;border-color:var(--tv-cyan)!important
+}
+.sc52-heading h1,.sc52-results-head h2{color:var(--tv-text)!important}
+/* Games: streaming show spotlight + clear interaction */
+.sc7-hero,.sc60-fusion-hero,.sc10-shop-hero,.sc4-hero{
+ background:linear-gradient(112deg,#111b3a,#27366e 54%,#402351)!important;
+ border:1px solid #55629c!important;
+ color:#f5f5ff!important;border-radius:20px!important;
+ box-shadow:0 19px 43px #060f2a4d!important
+}
+.sc7-hero h2,.sc60-fusion-hero h2,.sc10-shop-hero h1,.sc4-hero h1{
+ color:#f8f3ff!important
+}
+.sc7-hero p,.sc60-fusion-hero p,.sc10-shop-hero p{
+ color:#dce7fa!important
+}
+.sc7-mode{overflow:hidden;transition:transform .2s,border-color .2s}
+.sc7-mode:hover{transform:translateY(-4px);border-color:var(--tv-cyan)!important}
+.sc7-mode-art{background:linear-gradient(145deg,var(--tv-elevated),var(--tv-surface))!important}
+.sc7-mode-content{padding:18px}
+.sc7-mode-meta,.sc7-quiz-top,.sc7-help,.sc7-quit,
+.sc60-quit,.sc60-caveat{color:var(--tv-sub)!important}
+.sc7-quiz,.sc60-quiz{padding:clamp(15px,2.3vw,29px)!important}
+.sc7-answer,.sc60-choice{
+ background:var(--tv-elevated)!important;color:var(--tv-text)!important;
+ border:1px solid var(--tv-line)!important;border-radius:11px!important;
+ min-height:58px;transition:background .18s,border-color .18s
+}
+.sc7-answer:hover:not(:disabled),.sc60-choice:hover:not(:disabled){
+ border-color:var(--tv-cyan)!important;
+ background:color-mix(in srgb,var(--tv-cyan) 9%,var(--tv-elevated))!important
+}
+/* Correct/incorrect semantics stay recognizable across light and dark. */
+.sc7-answer.is-correct,.sc60-choice.is-correct{background:#115846!important;color:#fff!important;border-color:#51ddb8!important}
+.sc7-answer.is-wrong,.sc60-choice.is-wrong{background:#7c2a3e!important;color:#fff!important;border-color:#f4a7ba!important}
+.sc7-rewards-bar{background:var(--tv-surface)!important;border-color:var(--tv-line)!important}
+.sc7-rewards-bar span{color:var(--tv-sub)!important}
+/* Saisons: achievement shelves rather than generic spreadsheet blocks */
+.sc4-album-hero,.sc4-community-hero,.sc4-quest-hero{
+ background:linear-gradient(110deg,#182b53,#392954)!important;
+ border:1px solid #557195!important;border-radius:19px;color:#f2f8ff!important
+}
+.sc10-season-card{min-height:235px;gap:10px;padding:21px!important}
+.sc10-season-card>span:first-child{filter:drop-shadow(0 4px 9px #04122640);font-size:30px}
+.sc10-season-card h3{font-weight:950!important;letter-spacing:-.02em!important}
+.sc10-season-card small{color:var(--tv-sub)!important}
+.sc10-progress{background:var(--tv-elevated)!important;border-radius:100px!important}
+.sc10-progress>span{background:linear-gradient(90deg,#23c8d4,#60ecc6)!important}
+.sc10-badge-strip span{background:#144d5b;color:#e6fffc;border:1px solid #41bcc7}
+/* Premium / profile: visibly part of the same product */
+.sc10-shop-hero,.sc10-profile-hero{overflow:hidden}
+.sc10-premium-card,.sc10-credit-shop{padding:clamp(17px,2vw,28px)!important}
+.sc10-premium-card h2{font-size:clamp(26px,2.8vw,38px)!important}
+.sc10-price{color:var(--tv-highlight)!important}
+.sc10-pack-list article{border-radius:12px;border-color:var(--tv-line)!important}
+.sc10-profile-banner{background-position:center!important;background-size:cover!important}
+.sc10-profile-art-pickers select{min-height:43px}
+.sc4-person,.sc4-album,.sc4-listing{transition:transform .2s,border-color .2s}
+.sc4-person:hover,.sc4-album:hover,.sc4-listing:hover{
+ border-color:var(--tv-cyan)!important;transform:translateY(-2px)
+}
+/* Fusions: keep rarity and last-copy protection visible, but modernize framing */
+.sc60-fusion-tools,.sc8-fusion-tray,.sc60-fusion-notice{
+ background:var(--tv-surface)!important;border-color:var(--tv-line)!important;
+ color:var(--tv-text)!important;border-radius:14px
+}
+.sc8-fusion-picked button,.sc60-protect{
+ color:var(--tv-text)!important;background:var(--tv-elevated)!important;
+ border-color:var(--tv-line)!important
+}
+.sc60-fuse-action{position:relative;z-index:2}
+.sc60-progress{background:var(--tv-elevated)!important;border-radius:100px!important}
+/* Dialogs: cinema glass overlay, no impaired close targets */
+.modal:not(.hidden){backdrop-filter:blur(9px);background:#030b15c4!important}
+.sc5-dialog,.opening-dialog,.sc4-album-dialog,.sc4-offer-modal,.sc60-confirm{
+ background:var(--tv-surface)!important;border-color:var(--tv-line)!important;
+ color:var(--tv-text)!important;border-radius:20px!important;box-shadow:0 30px 100px #01091599!important
+}
+.sc5-dialog h2,.opening-dialog h2,.sc60-confirm h2{color:var(--tv-text)!important}
+.sc5-dialog p,.opening-dialog p,.sc60-confirm p{color:var(--tv-sub)!important}
+.opening-dialog>.close,.sc5-dialog>.close{
+ background:var(--tv-elevated)!important;color:var(--tv-text)!important;
+ border:1px solid var(--tv-line)!important;min-width:46px;min-height:46px;border-radius:50%!important
+}
+:root[data-theme="day"] .page-content{background:transparent!important}
+:root[data-theme="day"] .sc7-hero,:root[data-theme="day"] .sc60-fusion-hero,
+:root[data-theme="day"] .sc10-shop-hero,:root[data-theme="day"] .sc4-hero,
+:root[data-theme="day"] .sc4-album-hero{
+ background:linear-gradient(112deg,#192b58,#26345a 56%,#50335a)!important;color:#f5f5ff!important
+}
+:root[data-theme="day"] .sc7-hero h2,:root[data-theme="day"] .sc10-shop-hero h1,
+:root[data-theme="day"] .sc4-hero h1,:root[data-theme="day"] .sc4-album-hero h1{color:#fff6ed!important}
+:root[data-theme="day"] .sc7-hero p,:root[data-theme="day"] .sc10-shop-hero p{color:#dce8f9!important}
+:root[data-theme="day"] .sc7-mode,:root[data-theme="day"] .sc59-explorer,
+:root[data-theme="day"] .sc60-quiz,:root[data-theme="day"] .sc7-quiz,
+:root[data-theme="day"] .sc4-box,:root[data-theme="day"] .sc10-season-card,
+:root[data-theme="day"] .sc10-premium-card{
+ background:#fff!important;border-color:var(--tv-line)!important;color:var(--tv-text)!important
+}
+:root[data-theme="day"] .sc7-answer,:root[data-theme="day"] .sc60-choice{
+ background:#f1f6ff!important;color:var(--tv-text)!important;border-color:var(--tv-line)!important
+}
+:root[data-theme="day"] .sc7-answer.is-correct,:root[data-theme="day"] .sc60-choice.is-correct{
+ background:#115846!important;color:#fff!important
+}
+:root[data-theme="day"] .sc7-answer.is-wrong,:root[data-theme="day"] .sc60-choice.is-wrong{
+ background:#7c2a3e!important;color:#fff!important
+}
+@media(max-width:860px){
+ .sc7-mode-grid{gap:10px!important}
+ .sc10-season-card{min-height:200px}
+ .sc59-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .collect-card,.sc52-group-card,.sc7-mode,.sc4-person,.sc4-album,.sc4-listing{transition:none!important}
+ .collect-card:hover,.sc52-group-card:hover,.sc7-mode:hover,.sc4-person:hover,
+ .sc4-album:hover,.sc4-listing:hover{transform:none!important}
+}
