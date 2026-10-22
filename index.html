@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("sc10-theme")==="day"?"day":"night"}catch{document.documentElement.dataset.theme="night"}</script>
 <meta name="theme-color" content="#121a29">
 <meta name="description" content="SérieClub TCG : ouvre des paquets de séries TV, collectionne tes cartes, participe aux défis et découvre l'édition saisonnière Halloween. Jeu gratuit.">
 <meta property="og:title" content="SérieClub TCG — Le club des séries à collectionner">
@@ -20,13 +21,18 @@
 <link rel="stylesheet" href="./v6/experience.css?v=6.0.1">
 <link rel="stylesheet" href="./v7/experience.css?v=7.0.0">
 <link rel="stylesheet" href="./v8/experience.css?v=8.1.0">
-<link rel="modulepreload" href="./v3/views.js?v=8.1.0">
+<link rel="stylesheet" href="./v10/experience.css?v=10.0.0">
+<link rel="modulepreload" href="./v3/views.js?v=10.0.0">
 <link rel="modulepreload" href="./v7/arena.js?v=8.0.0">
 <link rel="modulepreload" href="./v8/game-limits.js?v=8.0.0">
+<link rel="modulepreload" href="./v10/pixel-canvas.js?v=10.0.0">
+<link rel="modulepreload" href="./v10/seasons.js?v=10.0.0">
+<link rel="modulepreload" href="./v10/profile.js?v=10.0.0">
+<link rel="modulepreload" href="./v10/store.js?v=10.0.0">
 <link rel="modulepreload" href="./v7/booster.js?v=7.0.0">
 <link rel="modulepreload" href="./v3/discovery.js?v=6.1.0">
 <link rel="modulepreload" href="./v4/club.js?v=5.6.1">
-<link rel="modulepreload" href="./v4/albums.js?v=5.6.1">
+<link rel="modulepreload" href="./v4/albums.js?v=10.0.0">
 <link rel="modulepreload" href="./v4/series.js?v=6.1.0">
 <link rel="modulepreload" href="./v4/synopsis-fr.js?v=5.1.0">
 <link rel="modulepreload" href="./v5/collection.js?v=5.6.1">
@@ -46,6 +52,6 @@
 <div id="overlay" class="modal hidden"></div>
 <div id="toast" class="hidden" role="status" aria-live="polite"></div>
 <noscript><p style="margin:20px">SérieClub TCG nécessite JavaScript pour ouvrir les paquets et synchroniser votre collection.</p></noscript>
-<script type="module" src="./v3/app.js?v=8.1.1"></script>
+<script type="module" src="./v3/app.js?v=10.0.0"></script>
 </body>
 </html>
