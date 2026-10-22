@@ -65,7 +65,7 @@ function packCard(s,type,foil){
 function posterShelf(shows){
  const display=shows.slice(0,12);
  if(!display.length)return '<div class="sc12-rail-empty">De nouvelles séries seront affichées ici après synchronisation du catalogue France.</div>';
- return '<div class="sc12-title-rail" role="list">'+display.map((show,i)=>
+ return '<div class="sc12-title-rail" id="sc13-show-rail" role="list">'+display.map((show,i)=>
   '<button class="sc12-show-poster" type="button" role="listitem" data-series="'+esc(show.id)+'" aria-label="Voir la fiche de '+esc(show.name)+'">'+
   '<img src="'+photo(show.image_url)+'" alt="" loading="'+(i<5?'eager':'lazy')+'">'+
   '<span class="sc12-show-caption"><b>'+esc(show.name)+'</b><small>Découvrir la série ↗</small></span></button>'
@@ -82,7 +82,37 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
  const shows=visibleShows(s);
  const chosen=s.pack==='halloween'&&halloween?'Halloween':'Original';
  const available=Number(stock)>0;
- const hero=halloween?
+ const slides=halloween?[
+  {tag:'ÉVÉNEMENT · OCTOBRE',title:'Les nuits',highlight:'d’octobre',
+   strap:'Horreur, suspense et mystères à collectionner.',
+   intro:'Retrouve les séries qui font frissonner dans ton paquet Halloween. Cinq cartes, sept raretés, sans achat.',
+   action:'Découvrir le paquet Halloween',target:'event'},
+  {tag:'DÉCOUVERTE · FRANCE',title:'Tes séries.',highlight:'Ton univers.',
+   strap:'Ta prochaine série culte n’attend que toi.',
+   intro:'Explore le catalogue France, ajoute les séries à tes souhaits et construis une collection à ton image.',
+   action:'Explorer les séries',target:'catalog'},
+  {tag:'DÉFIS · COLLECTION',title:'Une saison.',highlight:'Une légende.',
+   strap:'Complète les collections thématiques pour débloquer des badges.',
+   intro:'Des Saisons officielles et personnalisées : retrouve tes séries et avance à ton rythme.',
+   action:'Mes Saisons',target:'albums'}
+ ]:[
+  {tag:'LE CLUB DES SÉRIES TV',title:'Tes séries.',highlight:'Ton univers.',
+   strap:'La collection prend vie à chaque découverte.',
+   intro:'Ouvre des paquets gratuits, découvre des séries diffusées en France et collectionne les affiches qui ont marqué la télévision.',
+   action:'Choisir un paquet',target:'event'},
+  {tag:'SÉRIES · DÉCOUVERTES',title:'Ce soir.',highlight:'Une nouvelle série.',
+   strap:'Explore les univers dont tu ne te lasseras jamais.',
+   intro:'De la comédie au fantastique, retrouve les séries certifiées pour la France et enrichis ta liste de souhaits.',
+   action:'Parcourir le catalogue',target:'catalog'},
+  {tag:'COLLECTION · SAISONS',title:'L’histoire.',highlight:'C’est toi.',
+   strap:'Retrouve tes séries, accumule des cartes et gagne des badges.',
+   intro:'Les Saisons proposent des objectifs thématiques pour donner encore plus de sens à ta collection.',
+   action:'Découvrir les Saisons',target:'albums'}
+ ];
+ const slide=((Number(s.heroSlide)||0)%slides.length+slides.length)%slides.length;
+ const hero=slides[slide];
+ /* Baselines conservées pour compatibilité avec les événements saisonniers. */
+ const unusedLegacyHero=halloween?
   {tag:'ÉVÉNEMENT · OCTOBRE',title:'Les nuits',highlight:'d’octobre',
    strap:'Horreur, suspense et mystères à collectionner.',
    intro:'Explore un univers de séries cultes avec notre paquet saisonnier. Cinq cartes, sept raretés, zéro achat.',
@@ -91,12 +121,16 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
    strap:'La collection prend vie à chaque découverte.',
    intro:'Ouvre des paquets gratuits, découvre des séries diffusées en France et collectionne les affiches qui ont marqué la télévision.',
    action:'Choisir un paquet'};
+ void unusedLegacyHero;
  const mainCTA=s.user?(available?'Ouvrir le paquet '+chosen:'Réserve épuisée'):'Commencer à jouer';
  return '<section class="hero-packs sc12-home"><div class="pack-section">'+
-  '<div class="sc12-banner" aria-label="'+esc(hero.tag)+'"><div class="sc12-banner-content"><span class="sc12-banner-tag">✦ '+hero.tag+'</span>'+
+  '<div class="sc12-banner sc13-cinema-banner" aria-label="'+esc(hero.tag)+'"><div class="sc12-banner-content sc13-banner-content"><div class="sc13-hero-head"><span class="sc13-hero-flag">✦ '+esc(hero.tag)+'</span>'+
+  '<div class="sc13-hero-controls"><button type="button" data-hero-slide-prev aria-label="Bannière précédente">‹</button><div class="sc13-hero-dots">'+
+   slides.map((_,i)=>'<button type="button" data-hero-slide="'+i+'" aria-current="'+(i===slide)+'" aria-label="Voir la bannière '+(i+1)+'"></button>').join('')+
+   '</div><button type="button" data-hero-slide-next aria-label="Bannière suivante">›</button></div></div>'+
   '<h1>'+hero.title+'<br><em>'+hero.highlight+'</em></h1>'+
   '<strong>'+hero.strap+'</strong><p>'+hero.intro+'</p>'+
-  '<div class="sc12-banner-actions"><button class="sc12-hero-cta" type="button" data-home-event>✧ '+esc(hero.action)+' <span aria-hidden="true">→</span></button>'+
+  '<div class="sc12-banner-actions"><button class="sc12-hero-cta" type="button" data-hero-action="'+hero.target+'">✧ '+esc(hero.action)+' <span aria-hidden="true">→</span></button>'+
   '<button class="sc12-hero-secondary" type="button" data-route="catalog">Explorer les séries ↗</button></div>'+
   '</div><div class="sc12-banner-art" aria-hidden="true"><span class="sc12-orbit sc12-orbit-a">▣</span><span class="sc12-orbit sc12-orbit-b">✦</span></div></div>'+
   '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton paquet</h2><p>5 séries par paquet · 7 raretés · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
@@ -118,7 +152,7 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<div class="sc12-quick-card"><strong>Ton prochain épisode</strong><p>Découvre des séries, complète tes Saisons officielles et débloque des badges.</p>'+
   '<button type="button" data-route="albums">Voir mes Saisons →</button></div></aside></div>'+
   '<div class="sc12-shelf-head"><div><span class="sc12-eyebrow">TON PROGRAMME</span><h2>À découvrir ce soir</h2><p>Une sélection par univers, comme sur une plateforme de streaming.</p></div><button type="button" class="sc12-text-link" data-route="catalog">Voir le catalogue →</button></div>'+
-  '<div class="sc12-genre-rail" role="list">'+
+  '<div class="sc12-genre-rail" id="sc13-genre-rail" role="list">'+
   '<button type="button" role="listitem" class="sc12-genre-card sc12-genre-classics" data-home-decade="1990"><span class="sc12-genre-symbol">★</span><span>Séries cultes</span></button>'+
   featuredGenres.map(g=>'<button type="button" role="listitem" class="sc12-genre-card sc12-genre-'+g.tone+'" data-home-genre="'+g.id+'">'+genreArt(shows,g.id)+
    '<span class="sc12-genre-symbol">'+g.symbol+'</span><span>'+esc(g.label)+'</span></button>').join('')+
