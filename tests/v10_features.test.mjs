@@ -8,8 +8,8 @@ import {storePage,offers} from '../v10/store.js';
 import {profile,settings,navItems} from '../v3/views.js';
 
 test('les pixels deviennent véritablement plus gros à chaque manche',()=>{
- assert.deepEqual([1,2,3,4,5].map(n=>pixelGrid(n)[0]),[13,10,9,7,6]);
- assert.equal(pixelGrid(0)[0],13);assert.equal(pixelGrid(99)[0],6);
+ assert.deepEqual([1,2,3,4,5].map(n=>pixelGrid(n)[0]),[22,19,17,15,13]);
+ assert.equal(pixelGrid(0)[0],22);assert.equal(pixelGrid(99)[0],13);
  const code=fs.readFileSync('v10/pixel-canvas.js','utf8');
  assert.match(code,/canvas\.width=width/);
  assert.match(code,/context\.drawImage\(img,0,0,width,height\)/);
@@ -20,7 +20,7 @@ test('les pixels deviennent véritablement plus gros à chaque manche',()=>{
  assert.match(css,/image-rendering:pixelated/);
  assert.match(css,/sc10-pixel-canvas/);
 });
-test('l’indice Pixel dessine vraiment une mosaïque de 10x15 pixels au canvas (manche 2)',()=>{
+test('l’indice Pixel dessine vraiment une mosaïque de 19x29 pixels au canvas (manche 2)',()=>{
  const oldDocument=globalThis.document;
  const drawCalls=[],appended=[];
  const classes=new Set();
@@ -45,9 +45,9 @@ test('l’indice Pixel dessine vraiment une mosaïque de 10x15 pixels au canvas 
   const img={complete:true,naturalWidth:400,naturalHeight:600,
    closest:()=>wrapper};
   assert.equal(pixelateImage(img,2),true);
-  assert.equal(canvas.width,10);
-  assert.equal(canvas.height,15);
-  assert.deepEqual(drawCalls,[{w:10,h:15}]);
+  assert.equal(canvas.width,19);
+  assert.equal(canvas.height,29);
+  assert.deepEqual(drawCalls,[{w:19,h:29}]);
   assert.equal(appended.length,1);
   assert.equal(classes.has('sc10-pixel-ready'),true);
  }finally{
