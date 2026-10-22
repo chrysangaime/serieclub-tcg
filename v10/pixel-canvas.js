@@ -13,7 +13,8 @@ export function pixelateImage(img,round=1){
  if(!wrap||wrap.classList.contains('is-revealed'))return false;
  wrap.querySelector('.sc10-pixel-canvas')?.remove();
  const canvas=document.createElement('canvas');
- const width=pixelGrid(round),height=Math.max(1,Math.round(width*img.naturalHeight/img.naturalWidth));
+ const [width]=pixelGrid(round);
+ const height=Math.max(1,Math.round(width*img.naturalHeight/img.naturalWidth));
  canvas.width=width;canvas.height=height;
  canvas.className='sc10-pixel-canvas';
  canvas.setAttribute('role','img');
