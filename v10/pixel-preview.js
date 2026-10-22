@@ -2,6 +2,7 @@
  * Banc d'essai visuel Pixels. Il n'ouvre AUCUNE partie, n'appelle AUCUNE RPC
  * de récompense et n'utilise jamais le quota local / serveur 24 heures.
  */
+import {pixelGrid} from './pixel-canvas.js';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({
  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'
 }[c]));
@@ -25,7 +26,7 @@ export function pixelPreviewHTML(preview){
     '<div class="sc11-preview-stages" role="group" aria-label="Choisir la difficulté">'+
      [1,2,3,4,5].map(n=>'<button type="button" data-pixel-preview-round="'+n+'" class="'+(round===n?'active':'')+
        '" aria-pressed="'+(round===n)+'" aria-label="Manche '+n+'">'+n+'</button>').join('')+'</div>'+
-    '<small>Manche '+round+'/5 · '+[13,10,9,7,6][round-1]+' pixels de largeur</small></div>'+
+    '<small>Manche '+round+'/5 · '+pixelGrid(round)[0]+' pixels de largeur</small></div>'+
     '<div data-quiz-round="'+round+'" class="sc11-preview-frame sc9-visual--pixel'+(revealed?' is-revealed':'')+
       '" role="img" aria-label="'+(revealed?'Affiche originale : '+esc(item.name):'Affiche mystère fortement pixellisée')+'">'+
       '<img class="sc11-preview-source" src="'+httpsImage(item.image_url)+'" alt="'+(revealed?'Affiche de '+esc(item.name):'')+'" loading="eager" decoding="async"></div>'+
