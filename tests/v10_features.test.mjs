@@ -102,8 +102,8 @@ test('Premium et achats : prix clairs sans checkout trompeur ou crédits client 
  assert.deepEqual(offers.packs.map(x=>x.eur),[0.99,2.49,4.99]);
  const html=storePage();
  assert.match(html,/1,99 €|1\.99/);
- assert.match(html,/aucun prélèvement/);
- assert.match(html,/Abonnement non disponible/);
+ assert.match(html,/Paiement non activé/);
+ assert.match(html,/Abonnement bientôt disponible/);
  assert.match(html,/disabled/);
  assert.ok(navItems.some(([key])=>key==='store'));
  const sql=fs.readFileSync('supabase/game_v10_commerce_ready.sql','utf8');
