@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {pixelGrid} from '../v10/pixel-canvas.js';
+import {pixelGrid,pixelateImage} from '../v10/pixel-canvas.js';
 import {profileArtPanel} from '../v10/profile.js';
 import {officialSeasonCatalog,officialSeasonHTML,seasonBadges} from '../v10/seasons.js';
 import {storePage,offers} from '../v10/store.js';
@@ -19,6 +19,41 @@ test('les pixels deviennent véritablement plus gros à chaque manche',()=>{
  const css=fs.readFileSync('v10/experience.css','utf8');
  assert.match(css,/image-rendering:pixelated/);
  assert.match(css,/sc10-pixel-canvas/);
+});
+test('l’indice Pixel dessine vraiment une mosaïque de 10x15 pixels au canvas (manche 2)',()=>{
+ const oldDocument=globalThis.document;
+ const drawCalls=[],appended=[];
+ const classes=new Set();
+ const wrapper={
+  classList:{contains:c=>classes.has(c),add:c=>classes.add(c)},
+  querySelector:()=>null,
+  append:canvas=>appended.push(canvas)
+ };
+ const canvas={
+  width:0,height:0,className:'',
+  setAttribute(){},
+  getContext:()=>({imageSmoothingEnabled:false,
+   drawImage:(image,x,y,w,h)=>{
+    assert.equal(typeof w,'number');
+    assert.equal(typeof h,'number');
+    assert.ok(w>0&&h>0);
+    drawCalls.push({w,h});
+   }})
+ };
+ globalThis.document={createElement:tag=>{assert.equal(tag,'canvas');return canvas}};
+ try{
+  const img={complete:true,naturalWidth:400,naturalHeight:600,
+   closest:()=>wrapper};
+  assert.equal(pixelateImage(img,2),true);
+  assert.equal(canvas.width,10);
+  assert.equal(canvas.height,15);
+  assert.deepEqual(drawCalls,[{w:10,h:15}]);
+  assert.equal(appended.length,1);
+  assert.equal(classes.has('sc10-pixel-ready'),true);
+ }finally{
+  if(oldDocument===undefined)delete globalThis.document;
+  else globalThis.document=oldDocument;
+ }
 });
 test('nuit par défaut et jour mémorisé et accessibles sans compte',()=>{
  const app=fs.readFileSync('v3/app.js','utf8');
