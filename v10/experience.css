@@ -88,3 +88,10 @@ html[data-theme="day"] .sc60-fuse-grid .collect-card{background:#f9f0e6}
 .sc4-person[style*="background-image"]{background-position:center;background-size:cover;border-color:#baa77d}
 .sc4-person[style*="background-image"] .sc4-person-info h3,.sc4-person[style*="background-image"] .sc4-person-info p{color:#fff6ea;text-shadow:0 1px 4px #000b}
 html[data-theme="day"] .sc4-person[style*="background-image"]{color:#fff}
+
+/* Sur les écrans étroits, le basculement de thème reste accessible et compact. */
+@media(max-width:680px){
+ .sc10-theme-toggle{font-size:0!important;width:40px;min-width:40px;min-height:40px;padding:0!important;display:grid;place-items:center}
+ .sc10-theme-toggle::before{content:"☾";font-size:21px;line-height:1}
+ html[data-theme="day"] .sc10-theme-toggle::before{content:"☀"}
+}
