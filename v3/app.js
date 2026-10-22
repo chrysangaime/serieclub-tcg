@@ -23,10 +23,22 @@ function readQuizRecords(){
 }
 const $=id=>document.getElementById(id);
 const TRAINING_KEY='sc8-quiz-cooldowns';
+const PIXEL_REPAIR_KEY='sc8.1-pixel-visibility-restored';
 function readTrainingStarts(){
  try{
   const value=JSON.parse(localStorage.getItem(TRAINING_KEY)||'{}');
-  return value&&typeof value==='object'?value:{};
+  const starts=value&&typeof value==='object'?value:{};
+  // Le jeu Pixels V8 consommait une tentative sans jamais afficher l'image.
+  // Rendre UNE fois cette tentative d'entraînement lors du correctif V8.1.
+  // Les autres jeux et les quotas à crédits sur Supabase sont inchangés.
+  if(!localStorage.getItem(PIXEL_REPAIR_KEY)){
+   if(starts.pixel!==undefined){
+    delete starts.pixel;
+    localStorage.setItem(TRAINING_KEY,JSON.stringify(starts));
+   }
+   localStorage.setItem(PIXEL_REPAIR_KEY,'yes');
+  }
+  return starts;
  }catch{return {}}
 }
 function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus(readTrainingStarts())}}
