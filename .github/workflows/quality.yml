@@ -242,3 +242,7 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v7_1_24h.sql
       - name: Vérifier cinq manches, délai de 24 h par jeu et anti-fraude
         run: psql -v ON_ERROR_STOP=1 -f tests/v7_rewarded_quiz.sql
+      - name: Installer saisons officielles et avatars SérieClub V10
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v10_seasons_profiles.sql
+      - name: Tester badges, crédits uniques et profil strictement propriétaire
+        run: psql -v ON_ERROR_STOP=1 -f tests/v10_seasons_profiles.sql
