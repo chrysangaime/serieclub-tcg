@@ -4,12 +4,13 @@ import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 import {fusionPlan,fusionRanks,nextFusionRank} from '../v6/fusion.js?v=8.0.0';
 import {quizHTML} from '../v6/games.js?v=8.1.0';
 import {gameCards,rewardQuizHTML} from '../v7/arena.js?v=8.0.0';
+import {profileArtPanel} from '../v10/profile.js?v=10.0.0';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
  ['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits'],['market','◇','Le Comptoir'],
  ['community','♧','Le Signal'],['games','♜','Jeux & défis'],['quests','✦','Missions'],
  ['fusion','⚒','Fusions'],['rankings','♙','Classement'],['profile','♙','Profil'],
- ['settings','☷','Paramètres']
+ ['store','✦','Premium & crédits'],['settings','☷','Paramètres']
 ];
 export const ranks=['Commune','Peu commune','Rare','Épique','Légendaire','Mythique','Unique'];
 export const esc=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
@@ -56,7 +57,7 @@ export function packs(s){
 }
 export function collection(s){
  const q=(s.filter||'').toLowerCase(),list=s.cards.filter(c=>(!s.rank||c.rarity===s.rank)&&(!s.genre||(c.series?.genres||[]).includes(s.genre))&&(!q||c.series?.name?.toLowerCase().includes(q)));
- return '<div class="page-content">'+heading('Ma collection','Une collection synchronisée, carte par carte.')+'<div class="metric-row"><div class="metric"><strong>'+money(s.cards.length)+'</strong><span>Cartes</span></div><div class="metric"><strong>'+money(new Set(s.cards.map(c=>c.series_id)).size)+'</strong><span>Séries uniques</span></div><div class="metric"><strong>'+money(s.cards.filter(c=>c.locked).length)+'</strong><span>Cartes protégées</span></div><div class="metric"><strong>'+money(s.wallet?.experience)+'</strong><span>Expérience</span></div></div>'+(s.genre?'<div class="notice">Album : '+esc(s.genre)+' <button class="btn small" data-clear-genre>Tout afficher</button></div>':'')+'<div class="row" style="margin-bottom:20px"><input class="input" id="collectionSearch" placeholder="Rechercher mes cartes..." value="'+esc(s.filter||'')+'"><select id="rarityFilter"><option value="">Toutes les raretés</option>'+ranks.map(r=>'<option '+(s.rank===r?'selected':'')+'>'+esc(r)+'</option>').join('')+'</select><span class="note">'+list.length+' résultats</span></div>'+(list.length?'<div class="grid">'+list.map(c=>card(c,'<button class="card-action" data-series="'+esc(c.series_id)+'">✧ Voir la série</button><button class="card-action" data-lock="'+esc(c.id)+'" data-next="'+(!c.locked)+'">'+(c.locked?'Déprotéger':'🔒 Protéger')+'</button>')).join('')+'</div>':'<div class="empty">Aucune carte. Ouvre un paquet pour commencer.</div>')+'</div>';
+ return '<div class="page-content">'+heading('Ma collection','Une collection synchronisée, carte par carte.') +profileArtPanel(s)+'<div class="metric-row"><div class="metric"><strong>'+money(s.cards.length)+'</strong><span>Cartes</span></div><div class="metric"><strong>'+money(new Set(s.cards.map(c=>c.series_id)).size)+'</strong><span>Séries uniques</span></div><div class="metric"><strong>'+money(s.cards.filter(c=>c.locked).length)+'</strong><span>Cartes protégées</span></div><div class="metric"><strong>'+money(s.wallet?.experience)+'</strong><span>Expérience</span></div></div>'+(s.genre?'<div class="notice">Album : '+esc(s.genre)+' <button class="btn small" data-clear-genre>Tout afficher</button></div>':'')+'<div class="row" style="margin-bottom:20px"><input class="input" id="collectionSearch" placeholder="Rechercher mes cartes..." value="'+esc(s.filter||'')+'"><select id="rarityFilter"><option value="">Toutes les raretés</option>'+ranks.map(r=>'<option '+(s.rank===r?'selected':'')+'>'+esc(r)+'</option>').join('')+'</select><span class="note">'+list.length+' résultats</span></div>'+(list.length?'<div class="grid">'+list.map(c=>card(c,'<button class="card-action" data-series="'+esc(c.series_id)+'">✧ Voir la série</button><button class="card-action" data-lock="'+esc(c.id)+'" data-next="'+(!c.locked)+'">'+(c.locked?'Déprotéger':'🔒 Protéger')+'</button>')).join('')+'</div>':'<div class="empty">Aucune carte. Ouvre un paquet pour commencer.</div>')+'</div>';
 }
 /** Catalogue France : filtres réellement exécutés par Supabase, pas sur la seule page courante. */
 export function catalogue(s){
@@ -193,7 +194,7 @@ export function rules(){
  return '<div class="page-content">'+heading('Règles du jeu','Comment commencer ta collection.')+'<div class="guide-grid">'+data.map(([n,t,d])=>'<div class="guide-item"><div class="big">'+n+'</div><h2>'+t+'</h2><p>'+d+'</p></div>').join('')+'</div></div>';
 }
 export function settings(s){
- return '<div class="page-content">'+heading('Paramètres','Confort et informations de ton compte.')+'<div class="panel"><h2>Confort visuel</h2><label class="row"><input id="reduceMotion" type="checkbox" '+(s.reduceMotion?'checked':'')+'> Réduire les animations</label><p class="note">Cette préférence est enregistrée dans ce navigateur.</p><hr class="divider"><h2>Mes données</h2><p>Ta collection est sauvegardée sur ton compte. Le classement public affiche ton pseudonyme et tes résultats.</p><button class="btn subtle" id="exportData">Exporter mes données de jeu</button></div></div>';
+ return '<div class="page-content">'+heading('Paramètres','Confort et informations de ton compte.')+'<div class="panel"><h2>Confort visuel</h2><div class="sc10-theme-settings" aria-label="Apparence du site"><button type="button" class="btn subtle '+(s.theme==='night'?'active':'')+'" data-theme-choice="night" aria-pressed="'+(s.theme==='night')+'">☾ Nuit</button><button type="button" class="btn subtle '+(s.theme==='day'?'active':'')+'" data-theme-choice="day" aria-pressed="'+(s.theme==='day')+'">☀ Jour</button><span>Thème nuit par défaut, choix conservé sur cet appareil.</span></div><hr class="divider"><label class="row"><input id="reduceMotion" type="checkbox" '+(s.reduceMotion?'checked':'')+'> Réduire les animations</label><p class="note">Cette préférence est enregistrée dans ce navigateur.</p><hr class="divider"><h2>Mes données</h2><p>Ta collection est sauvegardée sur ton compte. Le classement public affiche ton pseudonyme et tes résultats.</p><button class="btn subtle" id="exportData">Exporter mes données de jeu</button></div></div>';
 }
 export function placeholder(route){
  const info={premiere:['Première','Bientôt disponible.'],market:['Marché','Bientôt disponible.'],community:['Communauté','Bientôt disponible.'],referral:['Parrainage','Bientôt disponible.']};
