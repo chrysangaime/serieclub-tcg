@@ -97,13 +97,13 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS banner_series_id bigint REF
 CREATE OR REPLACE FUNCTION public.verify_profile_card_art()
 RETURNS trigger LANGUAGE plpgsql SET search_path=public,pg_temp AS $$
 BEGIN
- IF NEW.avatar_series_id IS DISTINCT FROM OLD.avatar_series_id
+ IF (TG_OP='INSERT' OR NEW.avatar_series_id IS DISTINCT FROM OLD.avatar_series_id)
     AND NEW.avatar_series_id IS NOT NULL
     AND NOT EXISTS(SELECT 1 FROM public.player_cards c JOIN public.series s ON s.id=c.series_id
       WHERE c.owner_id=NEW.id AND c.series_id=NEW.avatar_series_id AND s.image_url LIKE 'https://%') THEN
   RAISE EXCEPTION 'Choisis une affiche de série présente dans ta collection pour ton avatar';
  END IF;
- IF NEW.banner_series_id IS DISTINCT FROM OLD.banner_series_id
+ IF (TG_OP='INSERT' OR NEW.banner_series_id IS DISTINCT FROM OLD.banner_series_id)
     AND NEW.banner_series_id IS NOT NULL
     AND NOT EXISTS(SELECT 1 FROM public.player_cards c JOIN public.series s ON s.id=c.series_id
       WHERE c.owner_id=NEW.id AND c.series_id=NEW.banner_series_id AND s.image_url LIKE 'https://%') THEN
@@ -112,6 +112,6 @@ BEGIN
  RETURN NEW;
 END $$;
 DROP TRIGGER IF EXISTS sc_verify_profile_art ON public.profiles;
-CREATE TRIGGER sc_verify_profile_art BEFORE UPDATE OF avatar_series_id,banner_series_id
+CREATE TRIGGER sc_verify_profile_art BEFORE INSERT OR UPDATE OF avatar_series_id,banner_series_id
 ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.verify_profile_card_art();
 COMMIT;
