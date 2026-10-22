@@ -7,7 +7,7 @@ import{openingFrame}from'../v7/booster.js?v=7.0.0';
 import{gameModes}from'../v7/arena.js?v=10.1.0';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=8.0.0';
-import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=11.0.0';
+import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=12.0.0';
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6.1.0';
@@ -55,13 +55,14 @@ function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus
 
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions',store:'premium'};
-const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let openingCards=null,openingStep=0;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
 function loadRouteData(route){
+ if(route==='packs'&&!state.homeShows.length)loadHomeShows();
  if(route==='catalog'&&state.catalogMode==='series'&&!state.catalog.length)loadCatalog(true);
  if(route==='rankings')loadRankings();
  if(route==='collection'){loadCollectionGoal();if(state.user)loadMySales()}
@@ -92,11 +93,11 @@ function renderChrome(){
  const pending=state.tradeOffers.filter(o=>o.status==='pending'&&o.seller_id===state.user?.id).length;
  const sections={packs:'DÉCOUVRIR',collection:'COLLECTIONNER',market:'LA COMMUNAUTÉ',games:'JOUER',profile:'MON ESPACE'};
  const nav=navItems.map(([key,icon,title])=>(sections[key]?'<div class="side-group-label" role="presentation">'+sections[key]+'</div>':'')+'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico" aria-hidden="true">'+navigationIcon(key,esc(icon))+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':key==='market'&&pending?'<span class="count">'+pending+'</span>':'')+'</button>').join('');
- $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark">S</span><span>SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav>'+(monthHalloween()?'<div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div>':'')+'<div class="side-account" data-route="profile"><div class="avatar sc10-directory-avatar"'+
+ $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark" aria-hidden="true">S</span><span class="sc12-logo-word">SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav>'+(monthHalloween()?'<div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div>':'')+'<div class="side-account" data-route="profile"><div class="avatar sc10-directory-avatar"'+
  (state.avatarSeriesId&&state.cards.some(c=>String(c.series_id)===String(state.avatarSeriesId))?
   ' style="background-image:url(&quot;'+photo(state.cards.find(c=>String(c.series_id)===String(state.avatarSeriesId)).series.image_url)+'&quot;)"':'')+'>'+
  (state.avatarSeriesId&&state.cards.some(c=>String(c.series_id)===String(state.avatarSeriesId))?'':esc((state.username||'S').slice(0,1).toUpperCase()))+'</div><div><b>'+esc(state.username||'Mon compte')+'</b><small>'+money(state.cards.length)+' cartes dans ma collection</small></div></div>';
- $('topbar').innerHTML='<div class="row"><button class="top-btn mobile-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><span class="crumb">'+esc(navName(state.route)).toUpperCase()+'</span></div><div class="top-actions"><button class="top-btn hide-mobile" id="topSearch" aria-label="Rechercher une série">⌕ Rechercher</button><button class="sc10-theme-toggle" data-theme-toggle title="Changer le thème" aria-label="Basculer entre jour et nuit">'+(state.theme==='day'?'☀ Jour':'☾ Nuit')+'</button><button class="top-btn sc4-bell" data-route="market" aria-label="Offres d’échange reçues">✧'+(pending?'<span class="sc4-bell-number">'+pending+'</span>':'')+'</button><button class="top-btn hide-mobile" data-route="rules">Règles du jeu</button><span class="credit-pill">Ⓒ &nbsp;'+money(state.wallet?.credits)+'<span>crédits</span></span><button class="top-btn" data-auth>'+(state.user?'Mon compte':'Connexion')+'</button><button class="top-btn hide-mobile" id="motionToggle" title="Animations">◐</button><span class="top-btn" aria-label="Langue : français">🇫🇷 FR</span></div>';
+ $('topbar').innerHTML='<div class="row"><button class="top-btn mobile-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><span class="crumb">'+esc(navName(state.route)).toUpperCase()+'</span></div><div class="top-actions"><form id="globalSearchForm" class="sc12-global-search" role="search" aria-label="Rechercher une série"><span aria-hidden="true">⌕</span><input id="globalSearchInput" type="search" autocomplete="off" maxlength="90" placeholder="Rechercher une série, un acteur, un univers…" aria-label="Rechercher dans SérieClub"><button id="topSearch" type="submit" aria-label="Lancer la recherche">→</button></form><button class="sc10-theme-toggle" data-theme-toggle title="Changer le thème" aria-label="Basculer entre jour et nuit">'+(state.theme==='day'?'☀ Jour':'☾ Nuit')+'</button><button class="top-btn sc4-bell" data-route="market" aria-label="Offres d’échange reçues">✧'+(pending?'<span class="sc4-bell-number">'+pending+'</span>':'')+'</button><button class="top-btn hide-mobile" data-route="rules">Règles du jeu</button><span class="credit-pill">Ⓒ &nbsp;'+money(state.wallet?.credits)+'<span>crédits</span></span><button class="top-btn" data-auth>'+(state.user?'Mon compte':'Connexion')+'</button><button class="top-btn hide-mobile" id="motionToggle" title="Animations">◐</button><span class="top-btn" aria-label="Langue : français">🇫🇷 FR</span></div>';
  if(monthHalloween()){
   $('topbar').querySelector('.crumb')?.insertAdjacentHTML('afterend','<span class="top-season-tag hide-mobile">☾ LES NUITS D’OCTOBRE</span>');
  }
@@ -421,6 +422,38 @@ async function loadCatalog(reset=false){
    if(state.route==='catalog'&&state.catalogMode==='series')render();
   }
  }
+}
+async function loadHomeShows(){
+ if(state.homeLoading||state.homeShows.length)return;
+ state.homeLoading=true;
+ try{
+  const featured=['Stranger Things','The Walking Dead','Breaking Bad','Lost','Wednesday','Friends',
+   'The Last of Us','Game of Thrones','The Office','Sherlock','Dark','Outlander',
+   'Doctor Who','The X-Files','The Mandalorian','24'];
+  const opts=()=>supa.from('series').select('id,name,image_url,genres,premiered')
+    .eq('fr_verified',true).neq('rarity_source','pending')
+    .not('image_url','is',null);
+  const [curated,popular]=await Promise.all([
+   opts().in('name',featured).limit(22),
+   opts().order('popularity_weight',{ascending:false,nullsFirst:false}).limit(28)
+  ]);
+  const all=[...(curated.error?[]:curated.data||[]),...(popular.error?[]:popular.data||[])];
+  const ids=new Set();
+  state.homeShows=all.filter(x=>{
+   if(!x?.id||!/^https:\/\//.test(x.image_url||'')||ids.has(String(x.id)))return false;
+   ids.add(String(x.id));return true;
+  }).slice(0,36);
+  if(state.route==='packs')render();
+ }catch(e){console.warn('Sélection des séries France temporairement indisponible',e?.message)}
+ finally{state.homeLoading=false}
+}
+function submitGlobalSearch(){
+ const query=($('globalSearchInput')?.value||'').trim().slice(0,90);
+ if(query){
+  state.catalogQuery=query;state.catalog=[];state.catalogPage=0;
+  state.catalogRarity='';state.catalogGenre='';state.catalogDecade='';
+ }
+ change('catalog');$('catalogQuery')?.focus({preventScroll:true});
 }
 async function loadSeasonShows(){
  if(!monthHalloween())return;
@@ -949,6 +982,26 @@ function advanceQuiz(){
  render();
 }
 function globalClick(e){
+ if(e.target.closest('[data-home-event]')){
+  if(monthHalloween())state.pack='halloween';
+  render();
+  document.getElementById('svod-packs')?.scrollIntoView({
+   block:'start',behavior:state.reduceMotion?'auto':'smooth'
+  });
+  return;
+ }
+ const homeGenre=e.target.closest('[data-home-genre]');
+ if(homeGenre){
+  state.catalogGenre=homeGenre.dataset.homeGenre;
+  state.catalogQuery='';state.catalogDecade='';state.catalogRarity='';
+  state.catalog=[];state.catalogPage=0;change('catalog');return;
+ }
+ const homeEra=e.target.closest('[data-home-decade]');
+ if(homeEra){
+  state.catalogDecade=homeEra.dataset.homeDecade;
+  state.catalogGenre='';state.catalogQuery='';state.catalogRarity='';
+  state.catalog=[];state.catalogPage=0;change('catalog');return;
+ }
  if(e.target.closest('[data-pixel-preview]')){openPixelPreview();return}
  if(e.target.closest('[data-pixel-preview-close]')){state.pixelPreview=null;render();return}
  const stage=e.target.closest('[data-pixel-preview-round]');
@@ -999,7 +1052,7 @@ function globalClick(e){
   state.actorQuery='';state.actorError='';state.actorLoading=false;render();return;
  }
 
- if(e.target.closest('#topSearch')){change('catalog');$('catalogQuery')?.focus({preventScroll:true});return}
+ if(e.target.closest('#topSearch')){e.preventDefault();submitGlobalSearch();return}
  if(e.target.closest('[data-theme-toggle]')){chooseTheme(state.theme==='day'?'night':'day');return}
  const themeChoice=e.target.closest('[data-theme-choice]');if(themeChoice){chooseTheme(themeChoice.dataset.themeChoice);return}
  const route=e.target.closest('[data-route]');if(route){e.preventDefault();change(route.dataset.route);return}
@@ -1031,7 +1084,7 @@ function globalClick(e){
  const answer=e.target.closest('[data-respond-trade]');if(answer){respondTradeOffer(answer.dataset.respondTrade,answer.dataset.accept==='true');return}
  const follow=e.target.closest('[data-follow]');if(follow){toggleFollow(follow.dataset.follow);return}
  const claim=e.target.closest('[data-claim-quest]');if(claim){claimQuest(claim.dataset.claimQuest);return}
- const pack=e.target.closest('[data-pack]');if(pack){state.pack=pack.dataset.pack;render();return}
+ const pack=e.target.closest('[data-pack]');if(pack){if(pack.disabled)return;state.pack=pack.dataset.pack;render();document.getElementById('svod-packs')?.scrollIntoView({block:'start',behavior:'auto'});return}
  if(e.target.closest('#openPack')){openPack();return}
  if(e.target.closest('[data-daily]')){claimDaily();return}
  if(e.target.closest('#openingNext')){advanceOpening();return}
@@ -1128,6 +1181,11 @@ function globalChange(e){
  if(e.target.matches('[data-fuse]')){const id=e.target.dataset.fuse;if(e.target.checked){if(state.fusionSelected.length===10){e.target.checked=false;return}state.fusionSelected.push(id)}else state.fusionSelected=state.fusionSelected.filter(x=>x!==id);render();return}
  if(e.target.id==='reduceMotion'){state.reduceMotion=e.target.checked;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render()}
 }
+document.addEventListener('submit',event=>{
+ if(event.target?.id==='globalSearchForm'){
+  event.preventDefault();submitGlobalSearch();
+ }
+});
 document.addEventListener('click',globalClick);
 // Les images TVmaze/TMDB peuvent devenir momentanément indisponibles.
 // Ne pas laisser le joueur face à quatre réponses sans indice.
