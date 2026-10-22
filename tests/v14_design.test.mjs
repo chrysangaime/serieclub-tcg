@@ -5,7 +5,7 @@ import {svodHome} from '../v12/home.js';
 const read=p=>fs.readFileSync(p,'utf8');
 test('V14 est prioritaire dans les thèmes Jour et Nuit',()=>{
  const html=read('index.html'),css=read('v14/rebuild.css');
- assert.ok(html.indexOf('v14/rebuild.css')>html.indexOf('v13/experience.css'));
+ assert.ok(html.indexOf('v15/cinema.css')>html.indexOf('v13/experience.css'));
  assert.match(css,/:root\[data-theme="night"\]/);
  assert.match(css,/:root\[data-theme="day"\]/);
  assert.match(css,/url\('\.\.\/v12\/cinema-hero\.svg'\)/);

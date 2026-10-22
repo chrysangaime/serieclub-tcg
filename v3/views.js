@@ -6,7 +6,7 @@ import {quizHTML} from '../v6/games.js?v=8.1.0';
 import {gameCards,rewardQuizHTML} from '../v7/arena.js?v=10.1.0';
 import {pixelPreviewHTML} from '../v10/pixel-preview.js?v=10.2.0';
 import {profileArtPanel} from '../v10/profile.js?v=10.0.0';
-import {svodHome} from '../v12/home.js?v=14.0.0';
+import {svodHome} from '../v12/home.js?v=15.0.0';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
  ['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits'],['market','◇','Le Comptoir'],

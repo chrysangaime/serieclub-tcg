@@ -42,16 +42,23 @@ function progressItem(icon,label,description,value,max,tone){
   '<small>'+esc(description)+'</small><div class="sc12-bar" role="progressbar" aria-label="'+esc(label)+'" aria-valuenow="'+shown+'" aria-valuemin="0" aria-valuemax="'+cap+'"><i style="width:'+Math.round(shown/cap*100)+'%"></i></div></div></div>';
 }
 function packVisual(type){
- // Ce visuel appartient à la vitrine. L'ouverture réelle conserve foil().
- const premium=type==='premium',halloween=type==='halloween';
- const key=premium?'premium':halloween?'halloween':'original';
- const title=premium?'PREMIUM':halloween?'HALLOWEEN':'ORIGINAL';
- const glyph=premium?'✦':halloween?'☾':'▶';
- return '<span class="sc14-pack-visual sc14-pack-visual--'+key+'">'+
-  '<span class="sc14-pack-brand">SÉRIECLUB</span>'+
-  '<span class="sc14-pack-screen" aria-hidden="true">'+glyph+'</span>'+
-  '<span class="sc14-pack-name">'+title+'</span>'+
-  '<span class="sc14-pack-footnote">'+(premium?'APERÇU · EN PRÉPARATION':'5 SÉRIES · 7 RARETÉS')+'</span></span>';
+ // Un visuel de sélection, distinct de la véritable ouverture des boosters.
+ const key=type==='premium'?'premium':type==='halloween'?'halloween':'original';
+ const label=key==='premium'?'PREMIUM':key==='halloween'?'HALLOWEEN':'ORIGINAL';
+ const mark=key==='premium'?'✦':key==='halloween'?'☾':'▣';
+ return '<span class="sc14-pack-visual--'+key+' sc15-foil sc15-foil--'+key+'">'+
+ '<span class="sc15-foil-stripe"></span><strong>SÉRIE<em>CLUB</em></strong>'+
+ '<small>TRADING CARD GAME</small><span class="sc15-foil-mark">'+mark+'</span>'+
+ '<b>'+label+'</b><small>'+(key==='premium'?'APERÇU · EN PRÉPARATION':'5 SÉRIES · 7 RARETÉS')+'</small>'+
+ '<span class="sc15-foil-stripe sc15-foil-stripe-bottom"></span></span>';
+}
+function heroPosters(shows){
+ // Source : séries déjà vérifiées et disponibles dans le catalogue France.
+ const pictures=shows.filter(x=>photo(x.image_url)).slice(0,3);
+ if(!pictures.length)return '<span class="sc15-tv-fallback">▶ <strong>SÉRIECLUB</strong></span>';
+ return '<div class="sc15-hero-posters">'+pictures.map((x,i)=>
+ '<span class="sc15-hero-poster sc15-hero-poster-'+i+'"><img alt="" loading="'+(i?'lazy':'eager')+'" src="'+photo(x.image_url)+'"></span>'
+ ).join('')+'<span class="sc15-onair">● À L’AFFICHE</span></div>';
 }
 function packCard(s,type,foil){
  const halloween=type==='halloween',premium=type==='premium';
@@ -71,8 +78,8 @@ function packCard(s,type,foil){
  const background=shots.map((show,i)=>'<img class="sc12-pack-backdrop sc12-pack-backdrop-'+i+'" src="'+photo(show.image_url)+'" alt="" loading="lazy">').join('');
  return '<article class="sc12-pack-tile sc12-pack-'+type+(type==='classic'?' sc12-pack-original':'')+(selected?' is-active':'')+(disabled?' is-disabled':'')+'">'+
   '<span class="sc12-pack-badge">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span>'+
-  '<div class="sc12-pack-art" aria-hidden="true">'+background+'<span class="sc12-pack-glow"></span>'+emblem+'</div>'+
-  '<div class="sc12-pack-copy"><h3>'+title+'</h3><p>'+text+'</p>'+action+'</div></article>';
+  '<div class="sc12-pack-art sc15-pack-art" aria-hidden="true">'+background+'<span class="sc12-pack-glow"></span>'+emblem+'</div>'+
+  '<div class="sc12-pack-copy sc15-pack-copy"><h3>'+title+'</h3><p>'+text+'</p>'+action+'</div></article>';
 }
 function posterShelf(shows){
  const display=shows.slice(0,12);
@@ -137,7 +144,7 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
  void unusedLegacyHero;
  const mainCTA=s.user?(available?'Ouvrir le paquet '+chosen:'Réserve épuisée'):'Commencer à jouer';
  return '<section class="hero-packs sc12-home"><div class="pack-section">'+
-  '<div class="sc12-banner sc13-cinema-banner" aria-label="'+esc(hero.tag)+'"><div class="sc12-banner-content sc13-banner-content"><div class="sc13-hero-head"><span class="sc13-hero-flag">✦ '+esc(hero.tag)+'</span>'+
+  '<div class="sc12-banner sc13-cinema-banner sc15-hero" aria-label="'+esc(hero.tag)+'"><div class="sc12-banner-content sc13-banner-content"><div class="sc13-hero-head"><span class="sc13-hero-flag">✦ '+esc(hero.tag)+'</span>'+
   '<div class="sc13-hero-controls"><button type="button" data-hero-slide-prev aria-label="Bannière précédente">‹</button><div class="sc13-hero-dots">'+
    slides.map((_,i)=>'<button type="button" data-hero-slide="'+i+'" aria-current="'+(i===slide)+'" aria-label="Voir la bannière '+(i+1)+'"></button>').join('')+
    '</div><button type="button" data-hero-slide-next aria-label="Bannière suivante">›</button></div></div>'+
@@ -145,19 +152,20 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<strong>'+hero.strap+'</strong><p>'+hero.intro+'</p>'+
   '<div class="sc12-banner-actions"><button class="sc12-hero-cta" type="button" data-hero-action="'+hero.target+'">✧ '+esc(hero.action)+' <span aria-hidden="true">→</span></button>'+
   '<button class="sc12-hero-secondary" type="button" data-route="catalog">Explorer les séries ↗</button></div>'+
-  '</div><div class="sc12-banner-art" aria-hidden="true"><span class="sc12-orbit sc12-orbit-a">▣</span><span class="sc12-orbit sc12-orbit-b">✦</span></div></div>'+
-  '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton paquet</h2><p>5 séries par paquet · 7 raretés · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
-  '<div class="sc12-home-grid"><div class="sc12-pack-column"><div class="pack-options sc12-pack-options">'+
+  '</div><div class="sc12-banner-art sc15-hero-art" aria-hidden="true">'+heroPosters(shows)+'<span class="sc12-orbit sc12-orbit-a">▣</span><span class="sc12-orbit sc12-orbit-b">✦</span></div></div>'+
+  '<div class="sc15-strip"><span>● LE CLUB DES SÉRIES</span><span>SÉRIES EN FRANCE</span><span>5 CARTES PAR PAQUET</span><span>7 RARETÉS</span></div>'+
+  '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton <em>paquet.</em></h2><p>5 séries par paquet · 7 raretés · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
+  '<div class="sc12-home-grid sc15-home-grid"><div class="sc12-pack-column sc15-pack-column"><div class="pack-options sc12-pack-options sc15-pack-options">'+
   packCard({...s,isOctober:halloween},'classic',foil)+
   packCard({...s,isOctober:halloween},'halloween',foil)+
   packCard({...s,isOctober:halloween},'premium',foil)+
-  '</div><div class="sc12-open-bar"><div class="sc12-stock"><span class="sc12-stock-icon" aria-hidden="true">◈</span><div><strong><span class="sc12-stock-number">'+esc(stock)+'</span> / '+esc(max)+' paquets</strong>'+
+  '</div><div class="sc12-open-bar sc15-open"><div class="sc12-stock"><span class="sc12-stock-icon" aria-hidden="true">◈</span><div><strong><span class="sc12-stock-number">'+esc(stock)+'</span> / '+esc(max)+' paquets</strong>'+
   '<small id="packTimer">'+(stock==='—'?'Connecte-toi pour consulter ta réserve':Number(stock)>=Number(max)?'Réserve pleine':seconds?'Prochain paquet dans '+timecode(seconds):'Disponible')+'</small></div></div>'+
   '<button id="openPack" class="btn primary sc12-open-btn" type="button"'+(s.user&&!available?' disabled':'')+'>'+
   (s.user?esc(mainCTA):'Commencer à jouer<br><small>Créer un compte gratuit</small>')+' <span aria-hidden="true">→</span></button>'+
   '<button class="sc12-daily-btn" type="button" data-daily>✦ Récupérer mes 100 crédits quotidiens ↗</button>'+
   '</div><p class="sc12-rules-note">Le paquet Halloween partage la même réserve et les mêmes probabilités que l’Original. Premium : aperçu uniquement, aucune vente active.</p></div>'+
-  '<aside class="sc12-profile-column" aria-label="Ma progression"><div class="sc12-progress-card"><div class="sc12-aside-head"><h3>Mon avancement</h3><button data-route="profile" class="sc12-text-link" type="button">Mon profil →</button></div>'+
+  '<aside class="sc12-profile-column sc15-progress" aria-label="Ma progression"><div class="sc12-progress-card"><div class="sc12-aside-head"><h3>Mon avancement</h3><button data-route="profile" class="sc12-text-link" type="button">Mon profil →</button></div>'+
   progressItem('ϟ','Explorateur','Ouvrir dix paquets',opened,10,'cyan')+
   progressItem('▧','Collectionneur','Détenir cinquante cartes',cards.length,50,'violet')+
   progressItem('✦','Sérievore','Découvrir dix séries différentes',uniq,10,'blue')+
