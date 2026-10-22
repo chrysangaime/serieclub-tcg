@@ -27,7 +27,7 @@ test('V12 construit un vrai accueil SVOD distinct de la page historique',()=>{
  assert.match(html,/Mon avancement/);
  assert.match(html,/data-route="albums"/);
  assert.match(html,/3 635|3 635/);
- assert.match(html,/7 \/ 10 paquets/);
+ assert.match(html,/7<\/span> \/ 10 paquets/);
  assert.match(html,/id="packTimer"/);
  assert.match(html,/id="openPack"/);
  assert.match(html,/data-daily/);
