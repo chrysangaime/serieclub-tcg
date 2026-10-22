@@ -1,5 +1,6 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{storePage}from'../v10/store.js?v=10.0.0';
+import{navigationIcon}from'../v11/icons.js?v=11.0.0';
 import{updatePixelClues}from'../v10/pixel-canvas.js?v=10.0.1';
 import{quizQuestion,newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=10.0.0';
 import{openingFrame}from'../v7/booster.js?v=7.0.0';
@@ -89,7 +90,8 @@ window.addEventListener('popstate',syncBrowserRoute);
 window.addEventListener('hashchange',()=>{if(safeRoute()!==state.route)syncBrowserRoute()});
 function renderChrome(){
  const pending=state.tradeOffers.filter(o=>o.status==='pending'&&o.seller_id===state.user?.id).length;
- const nav=navItems.map(([key,icon,title])=>'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico">'+esc(icon)+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':key==='market'&&pending?'<span class="count">'+pending+'</span>':'')+'</button>').join('');
+ const sections={packs:'DÉCOUVRIR',collection:'COLLECTIONNER',market:'LA COMMUNAUTÉ',games:'JOUER',profile:'MON ESPACE'};
+ const nav=navItems.map(([key,icon,title])=>(sections[key]?'<div class="side-group-label" role="presentation">'+sections[key]+'</div>':'')+'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico" aria-hidden="true">'+navigationIcon(key,esc(icon))+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':key==='market'&&pending?'<span class="count">'+pending+'</span>':'')+'</button>').join('');
  $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark">S</span><span>SÉRIE<strong>CLUB</strong><em> TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav>'+(monthHalloween()?'<div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div>':'')+'<div class="side-account" data-route="profile"><div class="avatar sc10-directory-avatar"'+
  (state.avatarSeriesId&&state.cards.some(c=>String(c.series_id)===String(state.avatarSeriesId))?
   ' style="background-image:url(&quot;'+photo(state.cards.find(c=>String(c.series_id)===String(state.avatarSeriesId)).series.image_url)+'&quot;)"':'')+'>'+
@@ -101,7 +103,7 @@ function renderChrome(){
  const mobile=[['packs','▤','Paquets'],['collection','▣','Collection'],['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits']];
  const bottom=$('mobileNav');
  if(bottom)bottom.innerHTML=mobile.map(([route,icon,label])=>
-   '<button type="button" data-route="'+route+'" class="sc59-mobile-link'+(state.route===route?' active':'')+'" aria-current="'+(state.route===route?'page':'false')+'" aria-label="'+label+'"><span aria-hidden="true">'+icon+'</span><small>'+label+'</small></button>').join('');
+   '<button type="button" data-route="'+route+'" class="sc59-mobile-link'+(state.route===route?' active':'')+'" aria-current="'+(state.route===route?'page':'false')+'" aria-label="'+label+'"><span aria-hidden="true">'+navigationIcon(route,icon)+'</span><small>'+label+'</small></button>').join('');
 }
 function render(){
  document.documentElement.dataset.theme=state.theme;
