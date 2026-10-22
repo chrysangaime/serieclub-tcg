@@ -77,9 +77,12 @@ export function quizHTML(session){
  if(!session)return '<div class="sc60-quiz-empty">Impossible de constituer une manche avec des séries françaises vérifiées.</div>';
  const q=session.question;
  if(session.finished)return '<div class="sc60-finish" role="status"><div class="sc60-medal">✦</div><h2>Partie terminée !</h2><strong>'+session.score+' / '+session.total+'</strong><p>'+ (session.score===session.total?'Sans-faute ! Tu connais tes séries.':'Belle partie ! À toi d’améliorer ce score.')+'</p><span class="sc8-training-cooldown">Reviens dans 24 h pour ce jeu.</span><button class="btn subtle" data-quiz-home>Choisir un autre jeu</button><p class="note">Partie gratuite · aucun crédit ni XP ajouté</p></div>';
- let title=q.type==='poster'?'Affiche mystère':q.type==='pixel'?'Pixel secret':q.type==='timeline'?'Avant ou après ?':'La bonne année';
+ let title=q.type==='poster'?'Détail mystère':q.type==='pixel'?'Mosaïque pixel':q.type==='timeline'?'Avant ou après ?':'La bonne année';
  let visual='';
- if(q.type==='poster'||q.type==='pixel')visual='<div class="sc60-mystery"><img class="'+(session.answered?'':q.type==='pixel'?'sc7-training-pixel sc8-pixel':'sc8-training-poster')+'" src="'+esc(q.target.image_url)+'" alt="'+(session.answered?'Affiche de '+esc(q.target.name):'Détail ou mosaïque d’affiche à deviner')+'"></div>';
+ if(q.type==='poster'||q.type==='pixel')visual='<div class="sc60-mystery sc9-visual sc9-visual--'+q.type+(session.answered?' is-revealed':'')+'" role="group" aria-label="'+(q.type==='pixel'?'Mosaïque de pixels à identifier':'Fragment d’affiche à identifier')+'">'+
+  '<img class="sc9-clue-image '+(session.answered?'sc9-revealed':q.type==='pixel'?'sc7-training-pixel sc8-pixel':'sc8-training-poster')+'" src="'+esc(q.target.image_url)+'" alt="'+(session.answered?'Affiche de '+esc(q.target.name):'Indice de série à deviner')+'" loading="eager" decoding="async">'+
+  '<span class="sc9-image-error" role="status" hidden>Image indisponible. Clique sur « Changer d’indice » pour continuer.</span>'+
+  '<button type="button" class="sc9-retry-clue" data-quiz-change-clue hidden>Changer d’indice ↻</button></div>';
  const choices=q.items.map(x=>{
   const correct=session.answered&&String(x.id)===q.answer;
   const wrong=session.answered&&!correct&&String(x.id)===String(session.choice);
