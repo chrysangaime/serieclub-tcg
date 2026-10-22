@@ -1,0 +1,114 @@
+/* SérieClub V13 — immersive SVOD shell, responsive and accessible.
+   Applied after every old stylesheet. Original game mechanics unchanged. */
+:root[data-theme="night"]{
+ --sc13-bg:#050d1a;--sc13-surface:#101d32;--sc13-glass:#0e1d33ed;
+ --sc13-stroke:#314a69;--sc13-text:#f4f8ff;--sc13-muted:#b8cbe0;
+ --sc13-highlight:#61f1e9;--sc13-side:#071326;
+}
+:root[data-theme="day"]{
+ --sc13-bg:#eef5fb;--sc13-surface:#fff;--sc13-glass:#fffffff0;
+ --sc13-stroke:#d1dfed;--sc13-text:#102943;--sc13-muted:#415d76;
+ --sc13-highlight:#076d8a;--sc13-side:#fff;
+}
+html[data-theme] body{background:var(--sc13-bg)!important;color:var(--sc13-text)!important}
+html[data-theme] #sidebar{background:var(--sc13-side)!important}
+html[data-theme] #sidebar .logo{
+ display:flex!important;align-items:center!important;gap:11px!important;
+ transform:none!important;rotate:0deg!important;text-decoration:none!important;
+ line-height:1!important
+}
+html[data-theme] #sidebar .logo>*{transform:none!important;rotate:0deg!important}
+html[data-theme] #sidebar .logo .logo-mark{
+ display:grid!important;place-items:center!important;
+ transform:none!important;rotate:0deg!important;font-style:normal!important;
+ flex:0 0 42px!important;width:42px!important;height:42px!important;
+}
+html[data-theme] #sidebar .logo .sc12-logo-word{
+ transform:none!important;rotate:0deg!important;display:inline-flex!important;
+ align-items:baseline!important;line-height:1.1!important;letter-spacing:-.035em!important;
+}
+html[data-theme] #sidebar .logo .sc12-logo-word em{margin-left:3px!important}
+html[data-theme] #topbar{
+ background:var(--sc13-glass)!important;
+ border-bottom:1px solid var(--sc13-stroke)!important;
+}
+html[data-theme] .sc12-banner{
+ border-radius:22px!important;border:1px solid #76a4ce72!important;
+ box-shadow:0 24px 70px #0005!important;overflow:hidden!important;isolation:isolate
+}
+html[data-theme="night"] .sc12-banner{
+ background:linear-gradient(90deg,#071021 4%,#0b173aab 57%,#1c274b31),
+ url('./cinema-hero.svg') center/cover!important;
+}
+html[data-theme="day"] .sc12-banner{
+ background:linear-gradient(90deg,#f9fcffef 0%,#f0f8ffe5 28%,#e6f2ff4d 64%,transparent),
+ url('./cinema-hero.svg') center/cover!important;
+}
+.sc13-hero-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.sc13-hero-controls{display:flex;align-items:center;gap:6px}
+.sc13-hero-controls button{
+ background:#0b1d39b8;border:1px solid #b7d3e26b;color:#f5fdff;
+ border-radius:50%;min-width:39px;height:39px;cursor:pointer;font-size:19px;
+}
+.sc13-hero-controls button:hover{background:#277f9f}
+.sc13-hero-dots{display:flex;align-items:center;justify-content:center;gap:6px}
+.sc13-hero-dots button{
+ width:9px;height:9px;min-width:9px;padding:0;border-radius:50%;border:0;
+ background:#a2b4ca;cursor:pointer;transition:width .18s ease
+}
+.sc13-hero-dots button[aria-current="true"]{width:24px;border-radius:10px;background:#66e6e0}
+.sc13-hero-dots button:focus-visible{outline:3px solid #f5c16e}
+.sc13-banner-content h1{margin-top:18px}
+.sc13-cinema-banner .sc12-banner-actions{flex-wrap:wrap}
+.sc13-hero-flag{
+ display:inline-flex;align-items:center;gap:7px;padding:7px 11px;
+ font-size:10px;font-weight:850;letter-spacing:.17em;
+ border-radius:99px;background:#5ae5e021;border:1px solid #6fe3e64d;
+ color:#99f8f0
+}
+html[data-theme="day"] .sc13-hero-flag{color:#086a78;background:#cdf3f299;border-color:#7acccd}
+html[data-theme] .sc12-pack-tile{
+ border-radius:18px!important;overflow:hidden;box-shadow:0 14px 36px #070f2136!important;
+ transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease;
+}
+html[data-theme] .sc12-pack-tile:hover{
+ transform:translateY(-5px);box-shadow:0 23px 55px #07122455!important
+}
+.sc12-pack-art{isolation:isolate}
+.sc12-pack-copy h3{font-size:23px!important}
+.sc13-rail-wrap{position:relative}
+.sc13-rail-controls{display:flex;gap:8px;align-items:center}
+.sc13-rail-controls button{
+ min-width:38px;min-height:38px;border:1px solid var(--sc13-stroke);
+ border-radius:12px;background:var(--sc13-surface);color:var(--sc13-text);
+ font-size:20px;font-weight:800;cursor:pointer
+}
+.sc13-rail-controls button:hover{border-color:var(--sc13-highlight);color:var(--sc13-highlight)}
+.sc12-title-rail,.sc12-genre-rail{
+ scrollbar-width:thin;scrollbar-color:var(--sc13-stroke) transparent;
+ scroll-snap-type:x proximity;overscroll-behavior-inline:contain
+}
+.sc12-title-rail>* ,.sc12-genre-rail>*{scroll-snap-align:start}
+.sc12-show-poster{transition:transform .2s,border-color .2s}
+.sc12-show-poster:hover{transform:translateY(-4px)}
+html[data-theme] .sc12-profile-column .sc12-progress-card{
+ border-radius:17px!important;border:1px solid var(--sc13-stroke)!important
+}
+html[data-theme="day"] .sc13-hero-controls button{background:#ecf7ff;color:#153653;border-color:#c9dce9}
+html[data-theme="day"] .sc13-hero-dots button{background:#7898ac}
+html[data-theme="day"] .sc13-hero-dots button[aria-current="true"]{background:#087e91}
+html[data-theme="day"] .sc12-banner h1,
+html[data-theme="day"] .sc12-banner .sc12-banner-content>strong{
+ color:#15314c!important;text-shadow:none!important
+}
+html[data-theme="day"] .sc12-banner-content p{color:#294d69!important}
+html[data-theme="day"] .sc12-banner-content h1 em{color:#7a398e!important}
+@media(max-width:860px){
+ .sc13-hero-controls button{min-width:37px;height:37px}
+ .sc13-hero-head{align-items:flex-start}
+ .sc13-cinema-banner .sc12-banner-content{padding-bottom:24px}
+}
+@media(prefers-reduced-motion:reduce){
+ .sc12-pack-tile,.sc12-show-poster,.sc13-hero-dots button{transition:none!important}
+ .sc12-pack-tile:hover,.sc12-show-poster:hover{transform:none!important}
+}
