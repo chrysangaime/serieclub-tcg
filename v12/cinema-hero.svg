@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="650" viewBox="0 0 1600 650" preserveAspectRatio="xMidYMid slice">
+<defs>
+ <linearGradient id="sky" x2="0.72" y2="1"><stop stop-color="#071327"/><stop offset=".48" stop-color="#182847"/><stop offset="1" stop-color="#60334e"/></linearGradient>
+ <radialGradient id="moonlight"><stop stop-color="#bfc8ff" stop-opacity=".6"/><stop offset="1" stop-color="#7d83e8" stop-opacity="0"/></radialGradient>
+ <radialGradient id="light"><stop stop-color="#ffd3a2" stop-opacity=".82"/><stop offset="1" stop-color="#ffad6c" stop-opacity="0"/></radialGradient>
+ <linearGradient id="ground" x2="0" y2="1"><stop stop-color="#242743"/><stop offset="1" stop-color="#060e1d"/></linearGradient>
+ <linearGradient id="fade"><stop stop-color="#071326" stop-opacity="1"/><stop offset=".60" stop-color="#09172b" stop-opacity=".24"/><stop offset="1" stop-color="#09172b" stop-opacity="0"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+ <pattern id="star" width="137" height="103" patternUnits="userSpaceOnUse"><circle cx="16" cy="30" r="1.4" fill="#e0dfff" opacity=".65"/><circle cx="97" cy="66" r="1.1" fill="#c4dcff" opacity=".55"/></pattern>
+</defs>
+<rect width="1600" height="650" fill="url(#sky)"/>
+<rect width="1600" height="650" fill="url(#star)"/>
+<circle cx="1250" cy="145" r="215" fill="url(#moonlight)"/>
+<circle cx="1250" cy="145" r="87" fill="#e3def5" opacity=".94"/>
+<circle cx="1222" cy="125" r="14" fill="#9b9bb7" opacity=".16"/>
+<circle cx="1275" cy="164" r="22" fill="#a9aac1" opacity=".13"/>
+<path d="M0 510 Q270 470 540 515 Q830 465 1050 507 Q1290 470 1600 508V650H0Z" fill="url(#ground)"/>
+<!-- atmospheres -->
+<ellipse cx="1090" cy="540" rx="540" ry="52" fill="#9ca6ee" opacity=".12" filter="url(#glow)"/>
+<ellipse cx="1345" cy="430" rx="280" ry="130" fill="#ff985f" opacity=".10" filter="url(#glow)"/>
+<!-- haunted cinematic manor -->
+<g transform="translate(940 169)">
+ <ellipse cx="320" cy="260" rx="270" ry="140" fill="url(#light)" opacity=".35"/>
+ <path d="M30 342V164L75 164V101L130 69L185 101V164H243V103L320 36L395 103V164H444V85L503 51L559 85V164H598V342Z" fill="#0d192c" stroke="#546080" stroke-width="5"/>
+ <path d="M65 164V113L130 76L195 113V163M263 104L320 49L376 104M457 90L503 62L546 90" fill="none" stroke="#7380ae" stroke-width="5"/>
+ <path d="M279 342V236Q281 185 320 185Q358 185 360 236V342" fill="#f1aa73" opacity=".84"/>
+ <path d="M290 342V239Q290 206 320 206Q349 206 349 239V342" fill="#101729"/>
+ <path d="M320 206V341" stroke="#c47e5c" stroke-width="4"/>
+ <g fill="#f9bd82"><rect x="94" y="201" width="33" height="49" rx="12"/><rect x="151" y="201" width="33" height="49" rx="12"/><rect x="94" y="277" width="33" height="41" rx="10"/><rect x="151" y="277" width="33" height="41" rx="10"/><rect x="418" y="201" width="30" height="49" rx="12"/><rect x="476" y="201" width="31" height="49" rx="12"/><rect x="418" y="278" width="30" height="41" rx="10"/><rect x="476" y="278" width="31" height="41" rx="10"/><rect x="308" y="135" width="25" height="37" rx="12"/></g>
+ <g stroke="#453751" stroke-width="5"><path d="M110 201v49m58-49v49m-58 27v41m58-41v41m266-117v49m57-49v49m-57 28v41m57-41v41M320 135v36"/></g>
+ <path d="M-6 345H635M20 365H616" stroke="#171927" stroke-width="11"/>
+ <g fill="#142138"><path d="M17 156V66h16v90M561 162V53h17v109M264 103V-4h17v100M357 103V-4h17v100"/><path d="M20 55l8-30 9 30M561 49l8-28 9 28M264 -4l8-28 9 28M357-4l8-28 9 28"/></g>
+</g>
+<!-- autumn trees & silhouetted foliage -->
+<g stroke="#101727" fill="none" stroke-linecap="round">
+ <path d="M1570 610Q1530 420 1570 190M1570 310L1491 218M1566 378l-103-54M1570 246l42-88" stroke-width="22"/>
+ <path d="M832 610Q880 421 838 193M842 301l-110-112M850 350l80-90M824 436l-108-62" stroke-width="17"/>
+</g>
+<g fill="#d46b54" opacity=".72"><circle cx="1533" cy="173" r="31"/><circle cx="1480" cy="248" r="25"/><circle cx="1572" cy="202" r="36"/><circle cx="1451" cy="317" r="24"/><circle cx="826" cy="194" r="27"/><circle cx="751" cy="228" r="23"/><circle cx="921" cy="257" r="19"/><circle cx="753" cy="367" r="15"/></g>
+<!-- mist & light -->
+<ellipse cx="1308" cy="545" rx="300" ry="64" fill="#b693cf" opacity=".20" filter="url(#glow)"/>
+<ellipse cx="870" cy="559" rx="265" ry="34" fill="#96a2e9" opacity=".18" filter="url(#glow)"/>
+<!-- streamer collectible layered frames -->
+<g transform="translate(1400 175) rotate(13)">
+ <rect x="-26" y="-25" width="152" height="211" rx="13" fill="#100f25" stroke="#9c81d8" stroke-width="6"/>
+ <rect x="-16" y="-13" width="132" height="186" rx="6" fill="#2d3264"/>
+ <path d="M-8 155L30 67L67 117L85 92L110 155Z" fill="#111f3d"/>
+ <circle cx="71" cy="44" r="24" fill="#bfc1fa"/>
+ <path d="M47 171Q71 103 91 171" fill="#111525"/>
+ <path d="M7 12L99 12" stroke="#93c7ef" opacity=".35"/>
+</g>
+<g transform="translate(1468 344) rotate(-13)">
+ <rect width="114" height="168" rx="10" fill="#14162d" stroke="#56b5c6" stroke-width="6"/>
+ <rect x="9" y="10" width="96" height="147" rx="6" fill="#234766"/>
+ <circle cx="56" cy="47" r="19" fill="#ddc2a9"/>
+ <path d="M19 143Q57 67 94 143" fill="#071c2f"/>
+</g>
+<!-- cinema fade to reserve left-space for CSS headline -->
+<rect width="1600" height="650" fill="url(#fade)"/>
+</svg>
