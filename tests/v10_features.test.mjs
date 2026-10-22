@@ -62,7 +62,7 @@ test('nuit par défaut et jour mémorisé et accessibles sans compte',()=>{
  assert.match(app,/state\.theme=next==='day'\?'day':'night'/);
  assert.match(app,/localStorage\.setItem\('sc10-theme'/);
  assert.match(html,/document\.documentElement\.dataset\.theme/);
- assert.match(html,/v10\/experience\.css\?v=10\.0\.0/);
+ assert.match(html,/v10\/experience\.css\?v=10\.\d+\.\d+/);
  const settingsHtml=settings({theme:'day'});
  assert.match(settingsHtml,/data-theme-choice="night"/);
  assert.match(settingsHtml,/data-theme-choice="day"/);
