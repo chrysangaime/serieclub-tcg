@@ -12,7 +12,7 @@ ON CONFLICT(id) DO UPDATE SET
 
 -- Séries synthétiques réservées aux classements éditoriaux (sans source plateforme).
 INSERT INTO public.series(id,name,premiered,genres,image_url,fr_verified,fr_verification_method,fr_evidence_url,fr_verified_at,popularity_weight)
-SELECT 992000+i,'Édition Top20 thème '+i,
+SELECT 992000+i,'Édition Top20 thème '||i,
  CASE WHEN i<=25 THEN DATE '1988-01-01' WHEN i<=50 THEN DATE '2014-06-01' ELSE DATE '2022-06-01' END,
  CASE WHEN i<=25 THEN ARRAY['Drama']::text[]
       WHEN i<=50 THEN ARRAY['Science-Fiction','Fantasy']::text[]
