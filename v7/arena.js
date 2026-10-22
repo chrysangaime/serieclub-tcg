@@ -47,7 +47,7 @@ export function rewardQuizHTML(session,feedback=null,busy=false){
  const isTimeline=display.mode==='timeline';
  const isPixel=display.mode==='pixel';
  const img=safeImg(q.poster);
- const poster=img?'<div class="sc7-clue '+(isPixel?'sc7-pixel sc8-pixel':'sc7-poster sc8-poster')+
+ const poster=img?'<div data-quiz-round="'+Number(display.round||1)+'" class="sc7-clue '+(isPixel?'sc7-pixel sc8-pixel':'sc7-poster sc8-poster')+
    (feedback?' is-revealed':'')+'"><img src="'+img+'" alt="'+(feedback?'Affiche dévoilée':'Indice visuel de série à reconnaître')+
    '" loading="eager"></div>':'';
  const buttons=choices.map(c=>{
