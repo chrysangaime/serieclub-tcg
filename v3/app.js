@@ -1,6 +1,6 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{storePage}from'../v10/store.js?v=10.0.0';
-import{updatePixelClues}from'../v10/pixel-canvas.js?v=10.0.0';
+import{updatePixelClues}from'../v10/pixel-canvas.js?v=10.0.1';
 import{quizQuestion,newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=10.0.0';
 import{openingFrame}from'../v7/booster.js?v=7.0.0';
 import{gameModes}from'../v7/arena.js?v=10.0.0';
