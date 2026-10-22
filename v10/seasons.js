@@ -36,13 +36,14 @@ function seasonCard(row,live){
  const total=isTop?20:Math.max(1,Number(row.target_count)||8);
  const owned=live?Math.max(0,Math.min(total,Number(row.owned)||0)):0;
  const claimed=live&&row.claimed===true,ready=live&&owned>=total;
+ const tracked=Array.isArray(row.trackedSeasons)&&row.trackedSeasons.includes(row.id);
  const badge=String(row.badge||'🏆 Collectionneur');
  const icon=badge.split(' ')[0];
  const progress=live?Math.round(owned/total*100):0;
  const status=claimed?'Badge débloqué':!live?'Activation serveur nécessaire':ready?'Objectif atteint':'+'+Number(row.reward_credits||0)+' crédits à gagner';
  return '<article class="sc10-season-card sc19-season-card'+
   (isTop?' sc19-top20 sc19-top20-'+esc(String(row.service||'club')):' sc19-classic')+
-  (claimed?' is-claimed':'')+'">'+
+  (claimed?' is-claimed':'')+(tracked?' is-tracked':'')+'">'+
   '<div class="sc19-season-top"><span class="sc19-season-icon" aria-hidden="true">'+esc(icon)+'</span>'+
   '<span class="sc19-season-kind">'+(isTop?'TOP 20 · ÉDITION 2026':'SAISON CLASSIQUE')+'</span></div>'+
   '<h3>'+esc(row.title)+'</h3><p>'+esc(row.description)+'</p>'+
@@ -56,14 +57,14 @@ function seasonCard(row,live){
     (!ready?' disabled':'')+'>'+(ready?'Débloquer '+esc(badge)+' · +'+row.reward_credits+' crédits':
       'Continuer ma collection')+'</button>')+
   (isTop?'<button class="sc19-season-guide" type="button" data-season-details="'+esc(row.id)+'">'+
-   'Voir les 20 séries à collectionner <span aria-hidden="true">↗</span></button>':'')+
+   'Voir les 20 séries à collectionner <span aria-hidden="true">↗</span></button>'+ '<span class="sc20-follow-caption">'+(tracked?'✓ Suivi automatique actif':'Souhaits et protections automatiques disponibles')+'</span>':'')+
   '</article>';
 }
 export function officialSeasonHTML(s={}){
  const serverRows=Array.isArray(s.officialSeasons)?s.officialSeasons:[];
  const serverById=new Map(serverRows.map(r=>[r.id,r]));
  const rows=officialSeasonCatalog.map(base=>serverById.has(base.id)?
-  {...base,...serverById.get(base.id)}:{...base,owned:0,claimed:false});
+  {...base,...serverById.get(base.id),trackedSeasons:s.trackedSeasons||[]}:{...base,owned:0,claimed:false,trackedSeasons:s.trackedSeasons||[]});
  const old=rows.slice(0,6).map(r=>seasonCard(r,serverById.has(r.id))).join('');
  const new20=rows.slice(6).map(r=>seasonCard(r,serverById.has(r.id))).join('');
  return '<section class="sc10-season-section sc19-season-section" aria-label="Saisons officielles">'+
@@ -78,25 +79,26 @@ export function officialSeasonHTML(s={}){
  '<h3>Les Top 20 du Club</h3><p>Six sélections exigeantes, 20 titres précis chacune. Séries diffusées en France, liste fixe pour toute l’édition.</p>'+
  '</div><span>02 / 02</span></div>'+
  '<p class="sc19-editorial-note">Sélections éditoriales classées selon la popularité du catalogue. Il ne s’agit pas des Top 20 officiels de visionnage des plateformes. Les listes sont figées afin de préserver ta progression.</p>'+
- '<div class="sc10-season-grid sc19-top20-grid">'+new20+'</div>'+
+ '<div class="sc20-all-toolbar"><div><strong>Préparer toutes mes saisons Top 20</strong><small>Les manquantes vont aux souhaits ; un exemplaire possédé est protégé automatiquement.</small></div>'+ '<button class="btn primary" data-sync-all-seasons type="button" '+(!s.user?'disabled':'')+'>✦ Préparer mes 6 Top 20</button></div>'+ '<div class="sc10-season-grid sc19-top20-grid">'+new20+'</div>'+
  '</section>';
 }
 /** Liste provenant de Supabase : aucun titre inventé dans le client. */
-export function officialSeasonDetailsHTML(season,rows=[]){
+export function officialSeasonDetailsHTML(season,rows=[],options={}){
  const id=esc(season?.id||''),title=esc(season?.title||'Top 20 du Club');
  const valid=Array.isArray(rows)&&rows.length===20&&rows.every(x=>Number.isSafeInteger(Number(x.series_id))&&Number(x.series_id)>0);
  const owned=valid?rows.filter(x=>x.owned===true).length:0;
+ const followed=options.tracked===true,authenticated=options.user===true;
  return '<div class="dialog sc19-season-dialog" role="dialog" aria-modal="true" aria-label="Sélection '+title+'">'+
   '<button type="button" class="close" data-close aria-label="Fermer">×</button>'+
   '<span class="caps">TOP 20 DU CLUB · FRANCE · ÉDITION 2026</span><h2>'+title+'</h2>'+
   '<p>Réunis les 20 séries précises de cette édition. Leur présence sur une plateforme était documentée lors de la sélection 2026 et peut évoluer.</p>'+
-  (valid?'<div class="sc19-detail-progress"><strong>'+owned+' / 20 séries possédées</strong>'+
+  (valid?'<div class="sc20-follow-panel"><div><strong>'+(followed?'✓ Suivi intelligent actif':'Préparer automatiquement ma collection')+'</strong><p>'+(followed?'Les futurs tirages seront protégés et les séries manquantes resteront dans tes souhaits.':'Un clic ajoute les titres manquants aux souhaits et protège un seul exemplaire de chaque série possédée.')+'</p></div>'+ (authenticated?'<div class="sc20-follow-buttons"><button class="btn primary" type="button" data-sync-season="'+id+'">'+(followed?'Actualiser les souhaits et protections':'Suivre et préparer la saison')+'</button>'+(followed?'<button class="btn subtle" type="button" data-unfollow-season="'+id+'">Arrêter le suivi</button>':'')+'</div>':'<button class="btn subtle" type="button" data-auth>Se connecter pour suivre</button>')+'</div>'+ '<div class="sc19-detail-progress"><strong>'+owned+' / 20 séries possédées</strong>'+
    '<div class="sc10-progress"><span style="width:'+Math.round(owned/20*100)+'%"></span></div></div>'+
    '<div class="sc19-detail-grid">'+rows.map(r=>'<button type="button" class="sc19-detail-item'+
     (r.owned?' is-owned':'')+'" data-series="'+Number(r.series_id)+'">'+
     '<span class="sc19-detail-poster">'+(photo(r.image_url)?'<img src="'+photo(r.image_url)+'" alt="" loading="lazy">':'<span aria-hidden="true">▣</span>')+
     '<span class="sc19-detail-rank">'+String(Number(r.rank_number)||'?')+'</span></span>'+
-    '<strong>'+esc(r.name)+'</strong><small>'+(r.owned?'✓ Dans ta collection':'À collectionner')+'</small></button>').join('')+'</div>':
+    '<strong>'+esc(r.name)+'</strong><small>'+(r.owned?'✓ Dans ta collection':options.wishes?.includes(Number(r.series_id))?'★ Dans mes souhaits':'À collectionner')+'</small></button>').join('')+'</div>':
    '<div class="sc10-season-unavailable" role="status">Cette sélection n’est pas encore activée dans la base du jeu. Les 20 titres seront visibles une fois validés.</div>')+
   '<p class="sc19-detail-foot">Défi fondé sur les séries françaises certifiées du catalogue. Les badges et crédits sont vérifiés par le serveur.</p>'+
  '</div>';
