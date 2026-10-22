@@ -213,8 +213,23 @@ jobs:
       PGDATABASE: serieclub
     steps:
       - uses: actions/checkout@v5
-      - name: Installer le client PostgreSQL
-        run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
+      - name: Vérifier le client PostgreSQL disponible
+        run: |
+          if command -v psql >/dev/null 2>&1; then
+            psql --version
+          else
+            # Le dépôt tiers Microsoft de certaines images GitHub renvoie 403.
+            # Il n'est pas nécessaire pour installer postgresql-client.
+            for f in /etc/apt/sources.list.d/*; do
+              [ -f "$f" ] || continue
+              if grep -q 'packages.microsoft.com' "$f"; then
+                sudo mv "$f" "$f.disabled"
+              fi
+            done
+            sudo apt-get update -qq
+            sudo apt-get install -y postgresql-client
+            psql --version
+          fi
       - name: Initialiser les rôles Supabase simulés
         run: psql -v ON_ERROR_STOP=1 -f tests/pg_bootstrap.sql
       - name: Appliquer les migrations réelles
