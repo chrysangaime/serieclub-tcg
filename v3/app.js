@@ -1,19 +1,19 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{storePage}from'../v10/store.js?v=10.0.0';
 import{updatePixelClues}from'../v10/pixel-canvas.js?v=10.0.0';
-import{quizQuestion,newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=8.1.0';
+import{quizQuestion,newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=10.0.0';
 import{openingFrame}from'../v7/booster.js?v=7.0.0';
-import{gameModes}from'../v7/arena.js?v=8.0.0';
+import{gameModes}from'../v7/arena.js?v=10.0.0';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=8.0.0';
-import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=8.1.0';
+import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=10.0.0';
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6.1.0';
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=6.1.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.6.1';
-import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=5.6.1';
+import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=10.0.0';
 import{collectionStudio,collectionCSV}from'../v5/collection.js?v=5.6.1';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 function readQuizRecords(){
