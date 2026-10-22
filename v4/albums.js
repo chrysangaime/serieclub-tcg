@@ -1,6 +1,6 @@
 import{esc,photo,money,heading}from'../v3/views.js?v=5.6.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
-import {officialSeasonHTML} from '../v10/seasons.js?v=10.0.0';
+import {officialSeasonHTML} from '../v10/seasons.js?v=19.0.0';
 export function personalAlbumsPage(s){
  const genreCounts=new Map();
  for(const c of s.cards)for(const g of c.series?.genres||[])genreCounts.set(g,(genreCounts.get(g)||0)+1);

@@ -14,7 +14,8 @@ import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=6.1.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.6.1';
-import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=10.0.0';
+import{personalAlbumsPage,albumDialog}from'../v4/albums.js?v=19.0.0';
+import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=19.0.0';
 import{collectionStudio,collectionCSV}from'../v5/collection.js?v=5.6.1';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 function readQuizRecords(){
@@ -226,6 +227,29 @@ async function loadOfficialSeasons(){
  state.officialSeasonError=error?'Les récompenses officielles attendent leur activation sur Supabase.':'';
  if(['albums','profile'].includes(state.route))render();
 }
+/**
+ * Détails Top 20 : lire les 20 membres certifiés dans Supabase.
+ * Aucun titre ou progression ne provient d'une approximation locale.
+ */
+async function openOfficialSeasonDetails(id){
+ const item=officialSeasonCatalog.find(x=>x.id===id&&x.elite);
+ if(!item)return;
+ const overlay=$('overlay');
+ overlay.classList.remove('hidden');
+ overlay.innerHTML='<div class="dialog sc19-season-dialog" role="dialog" aria-modal="true">'+
+  '<button class="close" data-close aria-label="Fermer">×</button>'+
+  '<h2>'+esc(item.title)+'</h2><p>Chargement de la sélection française…</p></div>';
+ try{
+  const {data,error}=await supa.rpc('get_official_season_titles',{p_season_id:id});
+  if(error)throw error;
+  if(!overlay.classList.contains('hidden'))
+   overlay.innerHTML=officialSeasonDetailsHTML(item,data||[]);
+ }catch{
+  if(!overlay.classList.contains('hidden'))
+   overlay.innerHTML=officialSeasonDetailsHTML(item,[]);
+ }
+}
+
 async function claimOfficialSeason(id){
  if(!state.user){openAuth();return}
  if(state.busy)return;
@@ -1127,6 +1151,7 @@ function globalClick(e){
  if(e.target.closest('#motionToggle')){state.reduceMotion=!state.reduceMotion;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render();return}
 
  if(e.target.closest('#createAlbum')){createAlbum();return}
+ const seasonDetail=e.target.closest('[data-season-details]');if(seasonDetail){openOfficialSeasonDetails(seasonDetail.dataset.seasonDetails);return}
  const official=e.target.closest('[data-claim-season]');if(official){claimOfficialSeason(official.dataset.claimSeason);return}
  const viewAlbum=e.target.closest('[data-view-album]');if(viewAlbum){openAlbum(viewAlbum.dataset.viewAlbum);return}
  const deleteAlb=e.target.closest('[data-delete-album]');if(deleteAlb){deleteAlbum(deleteAlb.dataset.deleteAlbum);return}

@@ -69,7 +69,7 @@ test('nuit par défaut et jour mémorisé et accessibles sans compte',()=>{
  assert.match(settingsHtml,/aria-pressed="true"/);
 });
 test('saisons officielles visibles, revendication réservée aux joueurs ayant atteint le seuil',()=>{
- assert.equal(officialSeasonCatalog.length,6);
+ assert.equal(officialSeasonCatalog.length,12);
  const preview=officialSeasonHTML({});
  assert.match(preview,/Les Saisons à compléter/);
  assert.match(preview,/Retour dans les années 90/);
