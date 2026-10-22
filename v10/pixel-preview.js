@@ -2,7 +2,7 @@
  * Banc d'essai visuel Pixels. Il n'ouvre AUCUNE partie, n'appelle AUCUNE RPC
  * de récompense et n'utilise jamais le quota local / serveur 24 heures.
  */
-import {pixelGrid} from './pixel-canvas.js';
+import {pixelGrid} from './pixel-canvas.js?v=10.2.0';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({
  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'
 }[c]));
