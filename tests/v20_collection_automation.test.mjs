@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {officialSeasonCatalog,officialSeasonHTML,officialSeasonDetailsHTML} from '../v10/seasons.js';
 import {albumDialog,albumSeriesSearchResults} from '../v4/albums.js';
+import {marketPage} from '../v4/club.js';
 const source=p=>fs.readFileSync(p,'utf8');
 test('Top20 : suivi activable à l’unité et en lot, sans récompense gratuite',()=>{
  const ss=officialSeasonCatalog.map(x=>({...x,owned:0,claimed:false}));
@@ -42,4 +43,19 @@ test('Automatisation strictement serveur et protection d’un seul exemplaire',(
  assert.match(app,/sync_personal_album_collection/);
  assert.match(app,/my_tracked_seasons/);
  assert.doesNotMatch(sql,/UPDATE public\.player_wallets SET credits/);
+});
+
+test('Comptoir : les annonces des souhaits remontent et peuvent être filtrées',()=>{
+ const entries=[
+  {listing_id:'first',series_id:11,series_name:'Première',rarity:'Commune',seller_id:'other',price:50},
+  {listing_id:'wanted',series_id:22,series_name:'Recherchée',rarity:'Rare',seller_id:'other',price:100}
+ ];
+ const context={user:{id:'test'},cards:[],wishes:[{series_id:22}],wallet:{credits:300},
+  marketListings:entries,marketActivity:[],tradeOffers:[],marketWishOnly:true};
+ const html=marketPage(context);
+ assert.match(html,/data-market-wishes/);
+ assert.match(html,/1 annonce\(s\) correspondant/);
+ assert.match(html,/Souhait recherché/);
+ assert.match(html,/Recherchée/);
+ assert.doesNotMatch(html,/Première/);
 });

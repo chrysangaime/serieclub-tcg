@@ -29,3 +29,12 @@
 .sc20-album-target span{font-size:11px;color:var(--tv-sub)}
 .sc20-album-disclaimer{font-size:11px;line-height:1.5;color:var(--tv-sub)}
 @media(max-width:720px){.sc20-all-toolbar,.sc20-follow-panel{align-items:stretch;flex-direction:column}.sc20-all-toolbar button{width:100%}.sc20-follow-buttons{width:100%}.sc20-album-target{flex-wrap:wrap}.sc20-album-target strong{flex-basis:100%}}
+
+/* Liens entre souhaits et Comptoir, visibles sans surcharger les annonces. */
+.sc20-market-wishlist-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:19px 0;padding:14px 17px;border-radius:14px;background:var(--tv-elevated);border:1px solid var(--tv-line)}
+.sc20-market-wishlist-bar>div{display:flex;flex-direction:column;gap:5px}
+.sc20-market-wishlist-bar strong{font-size:14px;color:var(--tv-text)}
+.sc20-market-wishlist-bar small{font-size:11px;color:var(--tv-sub)}
+.sc20-market-wishlist-bar button{min-height:40px;font-size:12px}
+.sc20-wanted-label{display:inline-block;margin:2px 0 0 6px;border-radius:6px;padding:3px 6px;border:1px solid var(--tv-highlight);color:var(--tv-highlight);font-size:10px;font-weight:850;line-height:1.3}
+@media(max-width:620px){.sc20-market-wishlist-bar{align-items:stretch;flex-direction:column}.sc20-market-wishlist-bar button{width:100%}}
