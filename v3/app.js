@@ -57,7 +57,7 @@ function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus
 
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions',store:'premium'};
-const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let openingCards=null,openingStep=0;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
@@ -984,6 +984,17 @@ function advanceQuiz(){
  render();
 }
 function globalClick(e){
+ const heroControl=e.target.closest('[data-hero-slide]');
+ if(heroControl){state.heroSlide=Number(heroControl.dataset.heroSlide)||0;render();return}
+ if(e.target.closest('[data-hero-slide-next]')){state.heroSlide=(state.heroSlide+1)%3;render();return}
+ if(e.target.closest('[data-hero-slide-prev]')){state.heroSlide=(state.heroSlide+2)%3;render();return}
+ const heroAction=e.target.closest('[data-hero-action]');
+ if(heroAction){
+  const choice=heroAction.dataset.heroAction;
+  if(choice==='catalog'||choice==='albums'){change(choice);return}
+  if(monthHalloween())state.pack='halloween';
+  render();document.getElementById('svod-packs')?.scrollIntoView({block:'start',behavior:state.reduceMotion?'auto':'smooth'});return;
+ }
  if(e.target.closest('[data-home-event]')){
   if(monthHalloween())state.pack='halloween';
   render();
