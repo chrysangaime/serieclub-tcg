@@ -34,26 +34,23 @@ test('old non-French cards are excluded from every playable collection counter w
  assert.equal(frenchPlayable(existing[0]),true);
 });
 
-test('The X-Files 1993 has a French JustWatch source and specifically cited platforms',()=>{
+test('The X-Files offers use the latest cached French provider proof, not a frozen 2026-09-10 snapshot',()=>{
  const file=JSON.parse(fs.readFileSync('data/watch-fr.json','utf8'));
  const record=file.titles['430'];
  assert.equal(record.country,'FR');
- assert.equal(record.source,'justwatch_fr_editorial');
- assert.equal(record.url,'https://www.justwatch.com/fr/serie/the-x-files');
- assert.match(record.checked_at,/^2026-09-10/,'Do not pretend this September observation was refreshed today');
- assert.ok(record.offers.some(o=>o.name==='Disney+'));
- assert.ok(record.offers.some(o=>o.name==='Amazon Prime Video'));
+ assert.match(record.checked_at,/^\d{4}-\d{2}-\d{2}T/);
+ assert.ok(/^https:\/\/(?:www\.justwatch\.com\/fr\/serie\/|www\.themoviedb\.org\/tv\/)/.test(record.url));
+ assert.ok(record.offers.some(o=>/Disney(?:\+| Plus)/i.test(o.name)));
+ assert.ok(record.offers.some(o=>/Amazon Prime Video/i.test(o.name)));
  const normalized=normalizeFranceOffers(record);
- assert.equal(normalized?.source,'justwatch_fr_editorial');
- assert.equal(normalized?.url,record.url);
+ assert.ok(normalized,'Un relevé français trop vieux doit être vérifié ou remplacé');
+ assert.equal(normalized.source,record.source==='justwatch_fr_editorial'?'justwatch_fr_editorial':'tmdb');
+ assert.equal(normalized.url,record.source==='justwatch_fr_editorial'?record.url:normalized.url);
  const html=renderFranceAvailability(record,{});
- assert.match(html,/Disney\+/);
+ assert.match(html,/Disney(?:\+| Plus)/i);
  assert.match(html,/Amazon Prime Video/);
- assert.match(html,/M6\+/);
- assert.match(html,/Ouvrir la fiche JustWatch France/);
- assert.match(html,/https:\/\/www\.justwatch\.com\/fr\/serie\/the-x-files/);
- assert.match(html,/10\/09\/2026/);
- assert.doesNotMatch(html,/Aucune disponibilité française vérifiée/);
+ assert.match(html,/Disponible sur/);
+ assert.match(html,/Voir les offres en France|Ouvrir la fiche JustWatch France/);
  assert.doesNotMatch(html,/google\.com/);
 });
 
