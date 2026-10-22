@@ -93,7 +93,7 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<div class="sc12-banner-actions"><button class="sc12-hero-cta" type="button" data-home-event>✧ '+esc(hero.action)+' <span aria-hidden="true">→</span></button>'+
   '<button class="sc12-hero-secondary" type="button" data-route="catalog">Explorer les séries ↗</button></div>'+
   '</div><div class="sc12-banner-art" aria-hidden="true"><span class="sc12-orbit sc12-orbit-a">▣</span><span class="sc12-orbit sc12-orbit-b">✦</span></div></div>'+
-  '<div class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton paquet</h2><p>5 séries par paquet · 7 raretés · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
+  '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton paquet</h2><p>5 séries par paquet · 7 raretés · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
   '<div class="sc12-home-grid"><div class="sc12-pack-column"><div class="pack-options sc12-pack-options">'+
   packCard({...s,isOctober:halloween},'classic',foil)+
   packCard({...s,isOctober:halloween},'halloween',foil)+
