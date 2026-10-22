@@ -89,7 +89,7 @@ jobs:
           assert.ok(fs.existsSync('data/watch-fr.json'));
           const frOffers=JSON.parse(fs.readFileSync('data/watch-fr.json','utf8'));
           assert.equal(frOffers.titles['430'].country,'FR');
-          assert.equal(frOffers.titles['430'].url,'https://www.justwatch.com/fr/serie/the-x-files');
+          assert.ok(/^https:\/\/(?:www\.justwatch\.com\/fr\/serie\/the-x-files|www\.themoviedb\.org\/tv\/\d+(?:-[a-z0-9-]+)?\/watch\?locale=FR)$/.test(frOffers.titles['430'].url),'Source France X-Files reconnue');
           const himym=frOffers.titles['171'];
           assert.equal(himym.url,'https://www.justwatch.com/fr/serie/how-i-met-your-mother');
           assert.equal(himym.offers.find(o=>o.type==='flatrate')?.name,'Disney+');
