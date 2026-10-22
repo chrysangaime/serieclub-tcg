@@ -1,11 +1,13 @@
 import{esc,photo,money,heading}from'../v3/views.js?v=5.6.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
+import {officialSeasonHTML} from '../v10/seasons.js?v=10.0.0';
 export function personalAlbumsPage(s){
  const genreCounts=new Map();
  for(const c of s.cards)for(const g of c.series?.genres||[])genreCounts.set(g,(genreCounts.get(g)||0)+1);
  const own=s.personalAlbums||[],publicAlbums=s.publicAlbums||[];
  return '<div class="page-content sc4-page"><div class="sc4-hero sc4-album-hero"><span class="caps">SÉRIECLUB · MES SAISONS</span><h1>CHAQUE COLLECTION<br><em>RACONTE UNE HISTOIRE.</em></h1><p>Compose tes propres saisons de séries favorites, partage tes sélections avec le club et retrouve tes cartes par genre. Une expérience inspirée des collections de séries, pas des films.</p></div>'+
  (s.albumError?'<div class="notice">'+esc(s.albumError)+'</div>':'')+
+ officialSeasonHTML(s)+
  '<div class="sc4-split"><section class="sc4-box"><span class="caps">CRÉATION</span><h2>Créer ma saison</h2><p>Un album personnel contient jusqu’à 100 cartes et peut rester privé ou être visible par tous les collectionneurs.</p>'+
  '<label for="newAlbumTitle">Nom de l’album</label><input class="input" id="newAlbumTitle" maxlength="48" placeholder="Ex. Mes séries cultes, Nuit blanche…">'+
  '<label for="newAlbumDescription">Description</label><input class="input" id="newAlbumDescription" maxlength="160" placeholder="Pourquoi cette sélection ?">'+
