@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import vm from 'node:vm';
 import {GAME_MODES,COOLDOWN_MS,trainingModeStatus,canStartTraining,startTraining} from '../v8/game-limits.js';
 import {gameCards,rewardQuizHTML} from '../v7/arena.js';
 import {quizQuestion,quizHTML,newQuiz} from '../v6/games.js';
@@ -131,4 +132,26 @@ test('pixels : le conteneur de l’indice a toujours une hauteur réelle avant l
  assert.match(app,/function changeQuizClue\(\)/);
  assert.match(app,/document\.addEventListener\('error'/);
  assert.match(app,/\[data-quiz-change-clue\]/);
+});
+
+test('la tentative Pixel perdue est recréditée une fois, sans remettre à zéro les autres jeux',()=>{
+ const app=fs.readFileSync('v3/app.js','utf8');
+ const start=app.indexOf("const TRAINING_KEY=");
+ const end=app.indexOf("function offlineChallengeStatus()",start);
+ assert.ok(start>=0 && end>start);
+ const snippet=app.slice(start,end);
+ const data=new Map([['sc8-quiz-cooldowns',JSON.stringify({pixel:10000,poster:20000,year:30000})]]);
+ const localStorage={
+  getItem(key){return data.get(key)??null},
+  setItem(key,value){data.set(key,String(value))}
+ };
+ const first=vm.runInNewContext(snippet+';readTrainingStarts()', {localStorage});
+ assert.equal(first.pixel,undefined);
+ assert.equal(first.poster,20000);
+ assert.equal(first.year,30000);
+ assert.equal(data.get('sc8.1-pixel-visibility-restored'),'yes');
+ data.set('sc8-quiz-cooldowns',JSON.stringify({pixel:40000,poster:20000,year:30000}));
+ const second=vm.runInNewContext(snippet+';readTrainingStarts()', {localStorage});
+ assert.equal(second.pixel,40000,'le correctif ne doit pas permettre de rejouer indéfiniment');
+ assert.equal(second.poster,20000);
 });
