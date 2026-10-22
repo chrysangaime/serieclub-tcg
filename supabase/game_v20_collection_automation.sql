@@ -213,11 +213,48 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public,pg_temp AS $$
  SELECT s.id,s.name,s.image_url FROM public.series s
  WHERE auth.uid() IS NOT NULL AND char_length(trim(coalesce(p_search,''))) BETWEEN 2 AND 80
  AND s.fr_verified IS TRUE AND s.rarity_source<>'pending'
- AND s.name ILIKE '%'||replace(replace(replace(trim(p_search),'\\','\\\\'),'%','\\%'),'_','\\_')||'%' ESCAPE '\\'
+ AND s.name ILIKE '%'||replace(replace(replace(trim(p_search),'!','!!'),'%','!%'),'_','!_')||'%' ESCAPE '!'
  ORDER BY s.popularity_weight DESC NULLS LAST,s.name,s.id LIMIT 12;
 $$;
 REVOKE ALL ON FUNCTION public.search_personal_album_series(text) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.search_personal_album_series(text) TO authenticated;
+
+
+-- Protection groupée des cartes d'un album personnel, y compris les anciens
+-- albums où les séries n'étaient enregistrées que via des cartes possédées.
+CREATE OR REPLACE FUNCTION public.sync_personal_album_collection(p_album_id uuid)
+RETURNS TABLE(wishes_added integer,cards_protected integer,series_owned integer)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,pg_temp AS $
+DECLARE uid uuid:=auth.uid();r record;n integer;
+BEGIN
+ IF uid IS NULL OR NOT EXISTS(
+ SELECT 1 FROM public.player_albums WHERE id=p_album_id AND owner_id=uid
+ ) THEN RAISE EXCEPTION 'Album inaccessible';END IF;
+ PERFORM pg_advisory_xact_lock(hashtextextended(uid::text,20));
+ wishes_added:=0;cards_protected:=0;series_owned:=0;
+ FOR r IN
+ SELECT DISTINCT series_id FROM (
+  SELECT t.series_id FROM public.player_album_targets t WHERE t.album_id=p_album_id
+  UNION
+  SELECT c.series_id FROM public.player_album_cards a
+  JOIN public.player_cards c ON c.id=a.card_id
+  WHERE a.album_id=p_album_id AND c.owner_id=uid
+ ) all_series
+ LOOP
+  IF EXISTS(SELECT 1 FROM public.player_cards c WHERE c.owner_id=uid AND c.series_id=r.series_id) THEN
+   series_owned:=series_owned+1;
+   DELETE FROM public.player_wishlist WHERE owner_id=uid AND series_id=r.series_id;
+   cards_protected:=cards_protected+public.protect_collection_copy(uid,r.series_id);
+  ELSE
+   INSERT INTO public.player_wishlist(owner_id,series_id) VALUES(uid,r.series_id) ON CONFLICT DO NOTHING;
+   GET DIAGNOSTICS n=ROW_COUNT;
+   wishes_added:=wishes_added+n;
+  END IF;
+ END LOOP;
+ RETURN NEXT;
+END $;
+REVOKE ALL ON FUNCTION public.sync_personal_album_collection(uuid) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.sync_personal_album_collection(uuid) TO authenticated;
 
 -- Les acquisitions retirent automatiquement les souhaits.
 -- Un seul exemplaire est verrouillé si la série appartient à une saison suivie
