@@ -75,8 +75,8 @@ test('V12 est chargé en dernier et les deux thèmes utilisent les mêmes compos
  const css=fs.readFileSync('v12/svod.css','utf8');
  const app=fs.readFileSync('v3/app.js','utf8');
  assert.ok(html.indexOf('v12/svod.css')>html.indexOf('v11/design-system.css'));
- assert.match(html,/v3\/app\.js\?v=1[234568]\.\d+\.\d+/);
- assert.match(html,/v12\/home\.js\?v=1[234568]\.\d+\.\d+/);
+ assert.match(html,/v3\/app\.js\?v=1[2345689]\.\d+\.\d+/);
+ assert.match(html,/v12\/home\.js\?v=1[2345689]\.\d+\.\d+/);
  assert.match(css,/:root\[data-theme="night"\]/);
  assert.match(css,/:root\[data-theme="day"\]/);
  assert.match(css,/#sidebar \.logo \.logo-mark/);

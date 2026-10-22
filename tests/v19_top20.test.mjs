@@ -15,7 +15,7 @@ test('Sans migration, les Top20 sont des aperçus, jamais des récompenses activ
  assert.match(h,/Top 20 Netflix France/);
  assert.match(h,/Top 20 Prime Video France/);
  assert.match(h,/Top 20 Disney\+ France/);
- assert.match(h,/Top 20 SF & Fantasy/);
+ assert.match(h,/Top 20 SF &amp; Fantasy/);
  assert.match(h,/Top 20 séries cultes/);
  assert.match(h,/Top 20 thrillers/);
  assert.match(h,/Activation serveur nécessaire/);

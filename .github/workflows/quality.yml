@@ -261,3 +261,9 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v10_seasons_profiles.sql
       - name: Tester badges, crédits uniques et profil strictement propriétaire
         run: psql -v ON_ERROR_STOP=1 -f tests/v10_seasons_profiles.sql
+      - name: Préparer les candidats France des Top 20 (base de test seulement)
+        run: psql -v ON_ERROR_STOP=1 -f tests/v19_top20_seed.sql
+      - name: Installer les six Top 20 du Club et leurs listes figées
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v19_top20.sql
+      - name: Tester les listes et la récompense non fraudable des Top 20
+        run: psql -v ON_ERROR_STOP=1 -f tests/v19_top20_rewards.sql
