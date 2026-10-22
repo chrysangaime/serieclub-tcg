@@ -5,7 +5,8 @@
  */
 export const pixelGrid=round=>{
  const step=Math.min(5,Math.max(1,Number(round)||1));
- return [[13,19],[10,15],[9,13],[7,11],[6,9]][step-1];
+ // Équilibre V10.2 : de 22 à 13 pixels, difficulté croissante mais accessible.
+ return [[22,33],[19,29],[17,26],[15,23],[13,20]][step-1];
 };
 export function pixelateImage(img,round=1){
  if(!img?.complete||!img.naturalWidth||!img.naturalHeight)return false;
