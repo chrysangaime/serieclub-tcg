@@ -75,3 +75,15 @@ test('Invalid provider links and HTML are not injected into new platform badges'
  assert.match(html,/&lt;img onerror=alert\(1\)&gt;/);
  assert.equal(normalizeFranceOffers({...hostile,country:'US'}),null);
 });
+
+test('TMDB cache slug URLs are accepted only on the official watch page',()=>{
+ const now=new Date().toISOString();
+ const rec={country:'FR',checked_at:now,
+  url:'https://www.themoviedb.org/tv/4087-the-x-files/watch?locale=FR',
+  offers:[{type:'flatrate',name:'Disney Plus'}]};
+ const html=renderFranceAvailability(rec);
+ assert.match(html,/https:\/\/www\.themoviedb\.org\/tv\/4087-the-x-files\/watch\?locale=FR/);
+ assert.match(html,/Voir les offres en France/);
+ const evil={...rec,url:'https://www.themoviedb.org/tv/4087-the-x-files/edit?locale=FR'};
+ assert.doesNotMatch(renderFranceAvailability(evil),/4087-the-x-files\/edit/);
+});

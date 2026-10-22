@@ -36,7 +36,7 @@ function safeWatchLink(value){
   const url=new URL(String(value||''));
   if(url.protocol!=='https:')return null;
   if(['www.themoviedb.org','themoviedb.org'].includes(url.hostname)
-   && /^\/tv\/\d+\/watch\/?$/.test(url.pathname))return url.href;
+   && /^\/tv\/\d+(?:-[a-z0-9-]+)?\/watch\/?$/.test(url.pathname))return url.href;
   if(url.hostname==='www.justwatch.com'&&
    /^\/fr\/serie\/[a-z0-9-]+(?:\/saison-\d+)?\/?$/.test(url.pathname))return url.href;
  }catch{/* Drop unexpected links. */}
