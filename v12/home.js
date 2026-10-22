@@ -51,9 +51,15 @@ function packCard(s,type,foil){
   ?'<button class="sc12-pack-action" type="button" data-route="store">Découvrir Premium <span aria-hidden="true">↗</span></button>'
   :'<button class="sc12-pack-action" type="button" data-pack="'+type+'"'+(disabled?' disabled':'')+' aria-label="Choisir le paquet '+title+'">'+(selected?'✓ Paquet sélectionné':disabled?'Disponible en octobre':'Choisir ce paquet')+' <span aria-hidden="true">→</span></button>';
  const emblem=premium?'<span class="sc12-premium-foil" aria-hidden="true"><b>✦</b><strong>SÉRIECLUB</strong><small>APERÇU PREMIUM</small></span>':foil(type);
+ const all=visibleShows(s);
+ const themed=halloween?all.filter(x=>(x.genres||[]).some(g=>['Horror','Mystery','Thriller'].includes(g))):all;
+ const source=themed.length>=2?themed:all;
+ const start=premium?4:halloween?2:0;
+ const shots=[source[start%Math.max(source.length,1)],source[(start+1)%Math.max(source.length,1)]].filter(Boolean);
+ const background=shots.map((show,i)=>'<img class="sc12-pack-backdrop sc12-pack-backdrop-'+i+'" src="'+photo(show.image_url)+'" alt="" loading="lazy">').join('');
  return '<article class="sc12-pack-tile sc12-pack-'+type+(selected?' is-active':'')+(disabled?' is-disabled':'')+'">'+
   '<span class="sc12-pack-badge">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span>'+
-  '<div class="sc12-pack-art" aria-hidden="true"><span class="sc12-pack-glow"></span>'+emblem+'</div>'+
+  '<div class="sc12-pack-art" aria-hidden="true">'+background+'<span class="sc12-pack-glow"></span>'+emblem+'</div>'+
   '<div class="sc12-pack-copy"><h3>'+title+'</h3><p>'+text+'</p>'+action+'</div></article>';
 }
 function posterShelf(shows){
