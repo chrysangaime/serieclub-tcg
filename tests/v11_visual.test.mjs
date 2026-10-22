@@ -36,7 +36,7 @@ test('le nouveau design est chargé en dernier après les règles historiques',(
  const before=html.indexOf('v10/experience.css?v=10.1.0');
  const after=html.indexOf('v11/design-system.css?v=11.0.0');
  assert.ok(before>=0&&after>before);
- assert.match(html,/v3\/app\.js\?v=1[12345689]\.\d+\.\d+/);
+ assert.match(html,/v3\/app\.js\?v=(?:1[12345689]|20)\.\d+\.\d+/);
  assert.match(app,/v11\/icons\.js\?v=11\.0\.0/);
  assert.match(app,/function chooseTheme\(next\)/);
  assert.match(app,/document\.documentElement\.dataset\.theme=state\.theme/);
