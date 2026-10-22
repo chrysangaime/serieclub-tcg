@@ -396,3 +396,120 @@ input::placeholder,textarea::placeholder{color:var(--sc11-faint)!important}
   transform:none!important
  }
 }
+
+/*
+ * Assainissement des overrides legacy du mode jour :
+ * ces sélecteurs explicites surpassent les anciennes déclarations !important.
+ */
+html[data-theme="day"] .sc7-hero,
+html[data-theme="day"] .sc60-fusion-hero,
+html[data-theme="day"] .sc60-games-hero,
+html[data-theme="day"] .sc4-hero,
+html[data-theme="day"] .sc4-community-hero,
+html[data-theme="day"] .sc4-quest-hero,
+html[data-theme="day"] .sc4-album-hero,
+html[data-theme="day"] .sc10-shop-hero{
+ background:
+  radial-gradient(ellipse at 95% 4%,#806bb15a,transparent 50%),
+  radial-gradient(ellipse at 8% 95%,#278991a8,transparent 61%),
+  linear-gradient(112deg,#1d3654,#274361 60%,#382f5d)!important;
+ color:#effbff!important;border-color:#8197ac!important
+}
+html[data-theme="day"] .sc7-hero h2,
+html[data-theme="day"] .sc60-fusion-hero h2,
+html[data-theme="day"] .sc60-games-hero h2,
+html[data-theme="day"] .sc4-hero h1,
+html[data-theme="day"] .sc10-shop-hero h1{color:#fff0d4!important}
+html[data-theme="day"] .sc7-hero p,
+html[data-theme="day"] .sc60-fusion-hero p,
+html[data-theme="day"] .sc4-hero p,
+html[data-theme="day"] .sc10-shop-hero p{color:#e0e9f4!important}
+html[data-theme="day"] .sc7-hero-stat strong{color:#ffdea8!important}
+html[data-theme="day"] .sc7-rewards-bar,
+html[data-theme="day"] .sc7-mode,
+html[data-theme="day"] .sc8-fusion-tray,
+html[data-theme="day"] .sc7-quiz,
+html[data-theme="day"] .sc60-quiz,
+html[data-theme="day"] .sc60-fusion-tools,
+html[data-theme="day"] .sc4-box,
+html[data-theme="day"] .sc4-album,
+html[data-theme="day"] .sc4-person,
+html[data-theme="day"] .sc4-quest,
+html[data-theme="day"] .sc10-season-card,
+html[data-theme="day"] .sc10-credit-shop,
+html[data-theme="day"] .sc10-premium-card{
+ background:var(--sc11-surface)!important;
+ border-color:var(--sc11-border)!important;
+ color:var(--sc11-ink)!important
+}
+html[data-theme="day"] .sc7-mode-art{
+ background:#eef2fc!important
+}
+html[data-theme="day"] .sc7-answer,
+html[data-theme="day"] .sc60-choice{
+ color:var(--sc11-ink)!important;background:var(--sc11-surface-raised)!important;
+ border-color:var(--sc11-border)!important
+}
+html[data-theme="day"] .sc7-mode h2,
+html[data-theme="day"] .sc7-quiz h2,
+html[data-theme="day"] .sc60-quiz h2,
+html[data-theme="day"] .sc4-album h3,
+html[data-theme="day"] .sc4-box h2{color:var(--sc11-ink)!important}
+html[data-theme="day"] .sc7-mode p,
+html[data-theme="day"] .sc4-album p,
+html[data-theme="day"] .sc4-box p,
+html[data-theme="day"] .sc4-quest p{color:var(--sc11-sub)!important}
+html[data-theme="day"] .sc7-answer.is-correct,
+html[data-theme="day"] .sc60-choice.is-correct{background:#126a52!important;color:#fff!important}
+html[data-theme="day"] .sc7-answer.is-wrong,
+html[data-theme="day"] .sc60-choice.is-wrong{background:#7c3743!important;color:#fff!important}
+html[data-theme="day"] .sc59-explorer,
+html[data-theme="day"] .sc11-preview,
+html[data-theme="day"] .sc52-stats>div,
+html[data-theme="day"] .sc52-completion,
+html[data-theme="day"] .sc52-rank-stat{
+ background:var(--sc11-surface)!important;border-color:var(--sc11-border)!important;
+ color:var(--sc11-ink)!important
+}
+html[data-theme="day"] .sc59-filter-grid label,
+html[data-theme="day"] .sc59-results{color:var(--sc11-sub)!important}
+html[data-theme="day"] .sc11-preview-top h2{color:var(--sc11-ink)!important}
+html[data-theme="day"] .sc11-preview-stages button{
+ background:var(--sc11-surface-raised)!important;color:var(--sc11-ink)!important;
+ border-color:var(--sc11-border)!important
+}
+html[data-theme="day"] .sc11-preview-stages button.active{
+ background:var(--sc11-teal)!important;color:var(--sc11-teal-ink)!important
+}
+html[data-theme="day"] .btn.subtle,
+html[data-theme="day"] .btn:not(.primary):not(.selected){
+ background:var(--sc11-surface-raised)!important;
+ border-color:var(--sc11-border)!important;color:var(--sc11-ink)!important
+}
+html[data-theme="day"] .side-note,
+html[data-theme="day"] .sc10-store-note{color:var(--sc11-sub)!important}
+html[data-theme="day"] .page-title{background:transparent!important}
+html[data-theme="day"] .side-group-label{color:var(--sc11-faint)!important}
+html[data-theme="day"] .credit-pill{color:#85531a!important;background:#fff8ee!important}
+html[data-theme="day"] .sc4-person[style*="background-image"]{background-size:cover!important}
+html[data-theme="day"] .sc4-person[style*="background-image"] h3,
+html[data-theme="day"] .sc4-person[style*="background-image"] p{
+ color:#fff!important;text-shadow:0 1px 7px #000!important
+}
+.side-link .ico svg,.sc59-mobile-link svg{display:block;flex:none;width:20px;height:20px}
+.sc59-mobile-link svg{width:23px;height:23px}
+html[data-theme="day"] #sidebar .side-link.active,
+html[data-theme="day"] #mobileNav .sc59-mobile-link.active{
+ color:var(--sc11-teal)!important;
+ background:var(--sc11-tint)!important;
+ border-color:color-mix(in srgb,var(--sc11-teal) 36%,var(--sc11-border))!important
+}
+html[data-theme="day"] #sidebar .side-link:not(.active){color:var(--sc11-sub)!important}
+html[data-theme="day"] #sidebar .side-link:hover{color:var(--sc11-ink)!important}
+html[data-theme="day"] .sc10-theme-toggle,
+html[data-theme="day"] .top-btn{
+ color:var(--sc11-ink)!important;
+ background:var(--sc11-surface-raised)!important;
+ border-color:var(--sc11-border)!important
+}
+html[data-theme="day"] #mobileNav{background:var(--sc11-overlay)!important}
