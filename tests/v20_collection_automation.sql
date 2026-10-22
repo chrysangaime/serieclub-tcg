@@ -22,11 +22,9 @@ BEGIN
  IF NOT denied THEN RAISE EXCEPTION 'Suivi non-TOP20 accepté';END IF;
  -- Ajouter un objectif d'album sans carte déjà possédée.
  album:=public.create_personal_album('Mes futurs coups de coeur','Titres pas encore tirés',false);
- SELECT t.series_id INTO candidate
- FROM public.official_season_titles t
- WHERE t.season_id='top20_disney_2026'
- AND NOT EXISTS(SELECT 1 FROM public.player_cards c WHERE c.owner_id=auth.uid() AND c.series_id=t.series_id)
- LIMIT 1;
+ SELECT x.series_id INTO candidate
+ FROM public.get_official_season_titles('top20_disney_2026') x
+ WHERE NOT x.owned LIMIT 1;
  IF candidate IS NULL THEN RAISE EXCEPTION 'Aucun titre disponible';END IF;
  IF NOT public.add_series_to_personal_album(album,candidate) THEN
   RAISE EXCEPTION 'Série absente des objectifs album';END IF;
