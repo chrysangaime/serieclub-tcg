@@ -984,6 +984,16 @@ function advanceQuiz(){
  render();
 }
 function globalClick(e){
+ const railShift=e.target.closest('[data-rail-shift]');
+ if(railShift){
+  const [id,direction]=String(railShift.dataset.railShift||'').split(':');
+  const rail=['sc13-genre-rail','sc13-show-rail'].includes(id)?document.getElementById(id):null;
+  if(rail){
+   rail.scrollBy({left:(Number(direction)<0?-1:1)*Math.max(240,rail.clientWidth*.77),
+    behavior:state.reduceMotion?'instant':'smooth'});
+  }
+  return;
+ }
  const heroControl=e.target.closest('[data-hero-slide]');
  if(heroControl){state.heroSlide=Number(heroControl.dataset.heroSlide)||0;render();return}
  if(e.target.closest('[data-hero-slide-next]')){state.heroSlide=(state.heroSlide+1)%3;render();return}
