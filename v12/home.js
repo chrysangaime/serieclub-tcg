@@ -41,6 +41,18 @@ function progressItem(icon,label,description,value,max,tone){
   '<div class="sc12-milestone-body"><div class="sc12-milestone-title"><strong>'+esc(label)+'</strong><span>'+shown+'/'+cap+'</span></div>'+
   '<small>'+esc(description)+'</small><div class="sc12-bar" role="progressbar" aria-label="'+esc(label)+'" aria-valuenow="'+shown+'" aria-valuemin="0" aria-valuemax="'+cap+'"><i style="width:'+Math.round(shown/cap*100)+'%"></i></div></div></div>';
 }
+function packVisual(type){
+ // Ce visuel appartient à la vitrine. L'ouverture réelle conserve foil().
+ const premium=type==='premium',halloween=type==='halloween';
+ const key=premium?'premium':halloween?'halloween':'original';
+ const title=premium?'PREMIUM':halloween?'HALLOWEEN':'ORIGINAL';
+ const glyph=premium?'✦':halloween?'☾':'▶';
+ return '<span class="sc14-pack-visual sc14-pack-visual--'+key+'">'+
+  '<span class="sc14-pack-brand">SÉRIECLUB</span>'+
+  '<span class="sc14-pack-screen" aria-hidden="true">'+glyph+'</span>'+
+  '<span class="sc14-pack-name">'+title+'</span>'+
+  '<span class="sc14-pack-footnote">'+(premium?'APERÇU · EN PRÉPARATION':'5 SÉRIES · 7 RARETÉS')+'</span></span>';
+}
 function packCard(s,type,foil){
  const halloween=type==='halloween',premium=type==='premium';
  const title=premium?'Premium':halloween?'Halloween':'Original';
@@ -50,14 +62,14 @@ function packCard(s,type,foil){
  const action=premium
   ?'<button class="sc12-pack-action" type="button" data-route="store">Découvrir Premium <span aria-hidden="true">↗</span></button>'
   :'<button class="sc12-pack-action" type="button" data-pack="'+type+'"'+(disabled?' disabled':'')+' aria-label="Choisir le paquet '+title+'">'+(selected?'✓ Paquet sélectionné':disabled?'Disponible en octobre':'Choisir ce paquet')+' <span aria-hidden="true">→</span></button>';
- const emblem=premium?'<span class="sc12-premium-foil" aria-hidden="true"><b>✦</b><strong>SÉRIECLUB</strong><small>APERÇU PREMIUM</small></span>':foil(type);
+ const emblem=packVisual(type);
  const all=visibleShows(s);
  const themed=halloween?all.filter(x=>(x.genres||[]).some(g=>['Horror','Mystery','Thriller'].includes(g))):all;
  const source=themed.length>=2?themed:all;
  const start=premium?4:halloween?2:0;
  const shots=[source[start%Math.max(source.length,1)],source[(start+1)%Math.max(source.length,1)]].filter(Boolean);
  const background=shots.map((show,i)=>'<img class="sc12-pack-backdrop sc12-pack-backdrop-'+i+'" src="'+photo(show.image_url)+'" alt="" loading="lazy">').join('');
- return '<article class="sc12-pack-tile sc12-pack-'+type+(selected?' is-active':'')+(disabled?' is-disabled':'')+'">'+
+ return '<article class="sc12-pack-tile sc12-pack-'+type+(type==='classic'?' sc12-pack-original':'')+(selected?' is-active':'')+(disabled?' is-disabled':'')+'">'+
   '<span class="sc12-pack-badge">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span>'+
   '<div class="sc12-pack-art" aria-hidden="true">'+background+'<span class="sc12-pack-glow"></span>'+emblem+'</div>'+
   '<div class="sc12-pack-copy"><h3>'+title+'</h3><p>'+text+'</p>'+action+'</div></article>';
