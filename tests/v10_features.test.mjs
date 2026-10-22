@@ -8,8 +8,8 @@ import {storePage,offers} from '../v10/store.js';
 import {profile,settings,navItems} from '../v3/views.js';
 
 test('les pixels deviennent véritablement plus gros à chaque manche',()=>{
- assert.deepEqual([1,2,3,4,5].map(pixelGrid),[13,10,9,7,6]);
- assert.equal(pixelGrid(0),13);assert.equal(pixelGrid(99),6);
+ assert.deepEqual([1,2,3,4,5].map(n=>pixelGrid(n)[0]),[13,10,9,7,6]);
+ assert.equal(pixelGrid(0)[0],13);assert.equal(pixelGrid(99)[0],6);
  const code=fs.readFileSync('v10/pixel-canvas.js','utf8');
  assert.match(code,/canvas\.width=width/);
  assert.match(code,/context\.drawImage\(img,0,0,width,height\)/);
@@ -26,7 +26,7 @@ test('nuit par défaut et jour mémorisé et accessibles sans compte',()=>{
  assert.match(app,/function savedTheme\(/);
  assert.match(app,/state\.theme=next==='day'\?'day':'night'/);
  assert.match(app,/localStorage\.setItem\('sc10-theme'/);
- assert.match(html,/data-theme/);
+ assert.match(html,/document\\.documentElement\\.dataset\\.theme/);
  assert.match(html,/v10\/experience\.css\?v=10\.0\.0/);
  const settingsHtml=settings({theme:'day'});
  assert.match(settingsHtml,/data-theme-choice="night"/);
