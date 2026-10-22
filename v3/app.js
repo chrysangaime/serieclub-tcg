@@ -29,6 +29,8 @@ function savedTheme(){try{return localStorage.getItem('sc10-theme')==='day'?'day
 function chooseTheme(next){
  state.theme=next==='day'?'day':'night';
  document.documentElement.dataset.theme=state.theme;
+ document.querySelector('meta[name="theme-color"]')?.setAttribute(
+  'content',state.theme==='day'?'#f5f8ff':'#07101f');
  try{localStorage.setItem('sc10-theme',state.theme)}catch{/* stockage facultatif */}
  render();
 }
@@ -1245,6 +1247,6 @@ $('overlay').addEventListener('click',e=>{
  if(e.target===$('overlay'))closeModal();
 });
 supa.auth.onAuthStateChange(()=>setTimeout(loadSession,75));
-state.route=safeRoute();render();loadSession();if(state.route==='catalog')loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();
+state.route=safeRoute();render();loadSession();if(state.route==='catalog')loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();if(state.route==='packs')loadHomeShows();
 clockTimer=setInterval(()=>{if(state.stock&&state.stock.stock<10){if(state.stock.recharge_seconds>0)state.stock.recharge_seconds-=1;else{state.stock.stock=Math.min(10,state.stock.stock+1);state.stock.recharge_seconds=state.stock.stock===10?0:600}
  const t=$('packTimer');if(t)t.textContent=state.stock.stock===10?'Réserve pleine':'Prochain paquet dans '+timecode(state.stock.recharge_seconds)}},1000);
