@@ -117,4 +117,16 @@ END $$;
 DROP TRIGGER IF EXISTS sc_verify_profile_art ON public.profiles;
 CREATE TRIGGER sc_verify_profile_art BEFORE INSERT OR UPDATE OF avatar_series_id,banner_series_id
 ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.verify_profile_card_art();
+-- Les profils publics n'exposent que les images déjà publiques des séries.
+CREATE OR REPLACE FUNCTION public.public_profile_art()
+RETURNS TABLE(player_id uuid,avatar_image_url text,banner_image_url text)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public,pg_temp AS $
+ SELECT p.id,a.image_url,b.image_url FROM public.profiles p
+ LEFT JOIN public.series a ON a.id=p.avatar_series_id
+ LEFT JOIN public.series b ON b.id=p.banner_series_id
+ WHERE p.avatar_series_id IS NOT NULL OR p.banner_series_id IS NOT NULL
+ ORDER BY p.created_at DESC LIMIT 200;
+$;
+REVOKE ALL ON FUNCTION public.public_profile_art() FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.public_profile_art() TO authenticated;
 COMMIT;
