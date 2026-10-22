@@ -224,7 +224,7 @@ GRANT EXECUTE ON FUNCTION public.search_personal_album_series(text) TO authentic
 -- albums où les séries n'étaient enregistrées que via des cartes possédées.
 CREATE OR REPLACE FUNCTION public.sync_personal_album_collection(p_album_id uuid)
 RETURNS TABLE(wishes_added integer,cards_protected integer,series_owned integer)
-LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,pg_temp AS $
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,pg_temp AS $$
 DECLARE uid uuid:=auth.uid();r record;n integer;
 BEGIN
  IF uid IS NULL OR NOT EXISTS(
@@ -252,7 +252,7 @@ BEGIN
   END IF;
  END LOOP;
  RETURN NEXT;
-END $;
+END $$;
 REVOKE ALL ON FUNCTION public.sync_personal_album_collection(uuid) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.sync_personal_album_collection(uuid) TO authenticated;
 
