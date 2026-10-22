@@ -4,7 +4,7 @@ import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 import {fusionPlan,fusionRanks,nextFusionRank} from '../v6/fusion.js?v=8.0.0';
 import {quizHTML} from '../v6/games.js?v=8.1.0';
 import {gameCards,rewardQuizHTML} from '../v7/arena.js?v=10.1.0';
-import {pixelPreviewHTML} from '../v10/pixel-preview.js?v=10.1.0';
+import {pixelPreviewHTML} from '../v10/pixel-preview.js?v=10.2.0';
 import {profileArtPanel} from '../v10/profile.js?v=10.0.0';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
