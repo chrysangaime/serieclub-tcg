@@ -54,7 +54,7 @@ function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus
 
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions',store:'premium'};
-const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',players:[],peopleFilter:'',peopleError:'',dailyError:'',personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let openingCards=null,openingStep=0;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
@@ -820,6 +820,58 @@ function nextRewardedQuestion(){
  }
  if(state.route==='games')render();
 }
+async function openPixelPreview(){
+ // Aucun démarrage de jeu : lecture seule du catalogue certifié France.
+ // Ni start_rewarded_quiz, ni localStorage de quota, ni crédits.
+ if(state.quiz||state.rewardQuiz){
+  toast('Termine ou quitte le défi en cours avant de tester le rendu.',true);
+  return;
+ }
+ state.pixelPreview={items:[],index:0,round:3,revealed:false,loading:true,error:''};
+ if(state.route==='games')render();
+ try{
+  const owned=state.cards.map(c=>c.series).filter(x=>x?.image_url&&/^https:\/\//.test(x.image_url));
+  const listed=state.catalog.filter(x=>x?.image_url&&/^https:\/\//.test(x.image_url));
+  const {data,error}=await supa.from('series')
+    .select('id,name,image_url').eq('fr_verified',true)
+    .neq('rarity_source','pending').not('image_url','is',null)
+    .order('id',{ascending:false}).limit(50);
+  // Un fournisseur temporairement indisponible ne doit pas effacer
+  // les affiches déjà possédées ou présentes dans le catalogue.
+  const mixed=[...owned,...listed,...(error?[]:(data||[]))]
+    .filter(x=>x?.id&&x?.name&&/^https:\/\//.test(x.image_url||''));
+  const ids=new Set();
+  const items=mixed.filter(x=>{
+   if(ids.has(String(x.id)))return false;
+   ids.add(String(x.id));return true;
+  });
+  if(!items.length)throw Error(error?.message||'Aucune affiche française disponible.');
+  // Réorganiser les exemples pour ne pas toujours montrer la même affiche.
+  for(let i=items.length-1;i>0;i--){
+   const j=Math.floor(Math.random()*(i+1));
+   [items[i],items[j]]=[items[j],items[i]];
+  }
+  if(!state.pixelPreview)return;
+  state.pixelPreview={items,index:0,round:3,revealed:false,loading:false,error:''};
+ }catch(e){
+  if(!state.pixelPreview)return;
+  state.pixelPreview={...state.pixelPreview,loading:false,error:'Aperçu indisponible : '+e.message};
+ }
+ if(state.route==='games')render();
+}
+function changePixelPreviewRound(round){
+ if(!state.pixelPreview)return;
+ const n=Number(round);
+ if(!Number.isInteger(n)||n<1||n>5)return;
+ state.pixelPreview={...state.pixelPreview,round:n,revealed:false,error:''};
+ render();
+}
+function advancePixelPreview(){
+ const preview=state.pixelPreview;
+ if(!preview?.items?.length)return openPixelPreview();
+ state.pixelPreview={...preview,index:(preview.index+1)%preview.items.length,revealed:false,error:''};
+ render();
+}
 async function chooseChallenge(type){
  if(!gameModes.includes(type)||state.quizLoading||state.rewardBusy)return;
  if(state.rewardStatus?.enabled===true&&state.rewardStatus?.limit_per_mode_hours===24){await startRewardedChallenge(type);return}
@@ -895,6 +947,19 @@ function advanceQuiz(){
  render();
 }
 function globalClick(e){
+ if(e.target.closest('[data-pixel-preview]')){openPixelPreview();return}
+ if(e.target.closest('[data-pixel-preview-close]')){state.pixelPreview=null;render();return}
+ const stage=e.target.closest('[data-pixel-preview-round]');
+ if(stage){changePixelPreviewRound(stage.dataset.pixelPreviewRound);return}
+ if(e.target.closest('[data-pixel-preview-reveal]')){
+  if(state.pixelPreview){
+   state.pixelPreview={...state.pixelPreview,revealed:!state.pixelPreview.revealed};
+   render();
+  }
+  return;
+ }
+ if(e.target.closest('[data-pixel-preview-next]')){advancePixelPreview();return}
+ if(e.target.closest('[data-pixel-preview-refresh]')){openPixelPreview();return}
  const close=e.target.closest('[data-close]');if(close){closeModal();return}
  if(e.target.closest('[data-summary-toggle]')){
   const dialog=e.target.closest('.sc5-dialog');
