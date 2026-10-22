@@ -65,3 +65,81 @@
 @media(prefers-reduced-motion:reduce){
  .sc7-clue.sc8-poster img,.sc7-clue.sc8-pixel img{transition:none!important}
 }
+
+/* V8.1 — Réparation réelle de l'indice Pixels (bug parent de hauteur nulle).
+ * Le conteneur a une surface propre même si l'image descend à 10 % et
+ * devient positionnée en absolu. Les quatre boutons passent APRÈS l'indice.
+ */
+.sc60-quiz .sc60-mystery.sc9-visual{
+ position:relative!important;
+ width:min(220px,65vw)!important;
+ max-width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ aspect-ratio:2 / 3;
+ box-sizing:border-box;
+ display:block!important;
+ flex:none!important;
+ margin:3px auto 22px!important;
+ overflow:hidden!important;
+ isolation:isolate;
+ border:3px solid #8bceca;
+ border-radius:14px;
+ background:repeating-conic-gradient(#2c3640 0% 25%,#29313b 0% 50%) 50% / 28px 28px;
+ box-shadow:0 14px 32px #0008;
+}
+.sc60-quiz .sc9-visual.sc9-visual--poster{border-color:#e6be85}
+.sc60-quiz .sc9-visual>.sc9-clue-image{
+ position:absolute!important;
+ top:0!important;left:0!important;
+ display:block!important;
+ max-width:none!important;
+ min-width:0!important;
+ padding:0!important;margin:0!important;border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+}
+.sc60-quiz .sc9-visual--pixel:not(.is-revealed)>.sc9-clue-image{
+ width:10%!important;
+ height:10%!important;
+ object-fit:cover!important;
+ transform:scale(10)!important;
+ transform-origin:top left!important;
+ image-rendering:pixelated!important;
+ filter:none!important;
+}
+.sc60-quiz .sc9-visual--poster:not(.is-revealed)>.sc9-clue-image{
+ width:100%!important;height:100%!important;
+ object-fit:cover!important;
+ transform:scale(2.35)!important;
+ transform-origin:61% 33%!important;
+ image-rendering:auto!important;
+ filter:none!important;
+}
+.sc60-quiz .sc9-visual.is-revealed>.sc9-clue-image{
+ width:100%!important;height:100%!important;
+ object-fit:cover!important;
+ transform:none!important;
+ image-rendering:auto!important;filter:none!important;
+}
+.sc9-visual [hidden]{display:none!important}
+.sc9-visual.is-broken{
+ display:flex!important;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:14px;
+ padding:14px;
+ background:#302c32!important;
+}
+.sc9-visual.is-broken>.sc9-clue-image{display:none!important}
+.sc9-image-error{color:#f8e1bd;text-align:center;font-size:13px;line-height:1.5}
+.sc9-retry-clue{
+ color:#221e1d;background:#f5d69c;
+ font-weight:800;padding:12px;border:0;border-radius:9px;min-height:44px;
+ cursor:pointer;
+}
+.sc9-retry-clue:focus-visible{outline:3px solid #a3dce0;outline-offset:3px}
+@media(max-width:600px){
+ .sc60-quiz .sc60-mystery.sc9-visual{width:min(200px,58vw)!important}
+}
