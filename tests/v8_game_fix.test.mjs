@@ -102,3 +102,33 @@ test('migration 24 heures : quota SQL, verrou anti-double appareil, aucun efface
  assert.match(sql,/next_available_at/);
  assert.doesNotMatch(sql,/DELETE FROM public\.(?:player_cards|player_wallets)/i);
 });
+
+test('pixels : le conteneur de l’indice a toujours une hauteur réelle avant les réponses',()=>{
+ const pool=Array.from({length:12},(_,i)=>({
+  id:900+i,name:'Série test '+i,image_url:'https://example.org/'+i+'.jpg',
+  premiered:(1992+i)+'-01-01',fr_verified:true
+ }));
+ for(const mode of ['pixel','poster']){
+  const html=quizHTML(newQuiz(mode,pool,()=>0.3));
+  assert.match(html,new RegExp('sc60-mystery sc9-visual sc9-visual--'+mode));
+  const imageIndex=html.indexOf('sc9-clue-image');
+  const answersIndex=html.indexOf('sc60-choices');
+  assert.ok(imageIndex>0 && answersIndex>imageIndex,
+    'l’indice est présent avant les quatre réponses');
+  assert.match(html,/loading="eager"/);
+  assert.match(html,/data-quiz-change-clue hidden/);
+ }
+ const css=fs.readFileSync('v8/experience.css','utf8');
+ assert.match(css,/sc60-mystery\.sc9-visual\s*\{/);
+ assert.match(css,/aspect-ratio:2\s*\/\s*3/);
+ assert.match(css,/width:min\(220px,65vw\)/);
+ assert.match(css,/position:relative!important/);
+ assert.match(css,/sc9-visual--pixel:not\(\.is-revealed\)>\.sc9-clue-image/);
+ assert.match(css,/width:10%!important/);
+ assert.match(css,/transform:scale\(10\)!important/);
+ assert.match(css,/image-rendering:pixelated!important/);
+ const app=fs.readFileSync('v3/app.js','utf8');
+ assert.match(app,/function changeQuizClue\(\)/);
+ assert.match(app,/document\.addEventListener\('error'/);
+ assert.match(app,/\[data-quiz-change-clue\]/);
+});
