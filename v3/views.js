@@ -3,7 +3,8 @@ import {actorCatalogueView} from '../v4/series.js?v=6.1.0';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 import {fusionPlan,fusionRanks,nextFusionRank} from '../v6/fusion.js?v=8.0.0';
 import {quizHTML} from '../v6/games.js?v=8.1.0';
-import {gameCards,rewardQuizHTML} from '../v7/arena.js?v=8.0.0';
+import {gameCards,rewardQuizHTML} from '../v7/arena.js?v=10.1.0';
+import {pixelPreviewHTML} from '../v10/pixel-preview.js?v=10.1.0';
 import {profileArtPanel} from '../v10/profile.js?v=10.0.0';
 export const navItems=[
  ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
@@ -173,8 +174,9 @@ export function games(s){
    '<div class="sc7-rewards-bar"><strong>✦ +10 crédits par bonne réponse</strong><strong>+30 pour un sans-faute</strong><span>'+
     (upgraded?remaining+' défi'+(remaining===1?'':'s')+' disponible'+(remaining===1?'':'s')+' · 1 tentative par jeu toutes les 24 h':remaining+' partie'+(remaining===1?'':'s')+' récompensée'+(remaining===1?'':'s')+' restante'+(remaining===1?'':'s')+' (quota serveur actuel)')+'</span></div>':
    '<div class="sc7-rewards-bar"><strong>Entraînement</strong><span>Une tentative par jeu toutes les 24 h. Aucun crédit distribué dans ce mode.</span></div>';
- const playing=s.rewardQuiz
-  ?rewardQuizHTML(s.rewardQuiz,s.rewardFeedback,s.rewardBusy)
+ const playing=s.pixelPreview
+  ?pixelPreviewHTML(s.pixelPreview)
+  :s.rewardQuiz?rewardQuizHTML(s.rewardQuiz,s.rewardFeedback,s.rewardBusy)
   :s.quiz?quizHTML(s.quiz):menu;
  return '<div class="page-content sc7-games">'+
   heading('Jeux & défis','Une autre façon de vivre tes séries.')+
@@ -182,7 +184,7 @@ export function games(s){
    '<h2>Joue. Gagne.<br>Collectionne.</h2>'+
    '<p>Affiches cultes, mémoire et chronologie : quatre défis, cinq questions et des surprises à chaque partie.</p></div>'+
    '<div class="sc7-hero-stat"><strong>'+money(s.wallet?.credits||0)+'</strong><small>Crédits disponibles</small></div></div>'+
-  (!s.quiz&&!s.rewardQuiz?intro:'')+
+  (!s.quiz&&!s.rewardQuiz&&!s.pixelPreview?intro:'')+
   playing+
   (s.rewardError?'<div class="sc60-quiz-empty" role="status">'+esc(s.rewardError)+'</div>':'')+
   (s.quizError?'<div class="sc60-quiz-empty" role="status">'+esc(s.quizError)+'</div>':'')+
