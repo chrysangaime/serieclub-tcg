@@ -1,5 +1,5 @@
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
-import{newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=8.0.0';
+import{quizQuestion,newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=8.1.0';
 import{openingFrame}from'../v7/booster.js?v=7.0.0';
 import{gameModes}from'../v7/arena.js?v=8.0.0';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
@@ -811,6 +811,21 @@ async function chooseChallenge(type){
   if(request===quizRequestId){state.quizLoading=false;if(state.route==='games')render()}
  }
 }
+function changeQuizClue(){
+ // Une affiche distante indisponible ne doit pas faire perdre la tentative.
+ // Régénérer uniquement l'indice courant, sans modifier score ni numéro de manche.
+ const session=state.quiz;
+ if(!session||session.answered||session.finished||!['poster','pixel'].includes(session.type))return;
+ const excluded=new Set((session.usedIds||[]).map(String));
+ const candidates=session.pool.filter(item=>!excluded.has(String(item.id)));
+ const pool=candidates.length>=4?candidates:
+  session.pool.filter(item=>String(item.id)!==String(session.question?.target?.id));
+ const question=quizQuestion(session.type,pool);
+ if(!question){state.quizError='Aucune autre image de série disponible pour ce défi.';render();return}
+ state.quiz={...session,question,usedIds:[...excluded,...question.items.map(x=>String(x.id))]};
+ state.quizError='';
+ render();
+}
 function selectQuizAnswer(id){
  if(!state.quiz||state.quiz.answered||state.quiz.finished)return;
  state.quiz={...answerQuiz(state.quiz,id),choice:String(id)};
@@ -949,6 +964,7 @@ function globalClick(e){
  const answerBtn=e.target.closest('[data-quiz-answer]');
  if(answerBtn){selectQuizAnswer(answerBtn.dataset.quizAnswer);return}
  if(e.target.closest('[data-quiz-next]')){advanceQuiz();return}
+ if(e.target.closest('[data-quiz-change-clue]')){changeQuizClue();return}
  const restartQuiz=e.target.closest('[data-quiz-restart]');
  if(restartQuiz){chooseChallenge(restartQuiz.dataset.quizRestart);return}
  if(e.target.closest('[data-quiz-home]')){state.quiz=null;state.quizError='';state.rewardQuiz=null;state.rewardFeedback=null;state.rewardError='';render();return}
@@ -988,6 +1004,19 @@ function globalChange(e){
  if(e.target.id==='reduceMotion'){state.reduceMotion=e.target.checked;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render()}
 }
 document.addEventListener('click',globalClick);
+// Les images TVmaze/TMDB peuvent devenir momentanément indisponibles.
+// Ne pas laisser le joueur face à quatre réponses sans indice.
+document.addEventListener('error',e=>{
+ const img=e.target;
+ if(!(img instanceof HTMLImageElement)||!img.classList.contains('sc9-clue-image'))return;
+ const visual=img.closest('.sc9-visual');
+ if(!visual)return;
+ visual.classList.add('is-broken');
+ const status=visual.querySelector('.sc9-image-error');
+ const retry=visual.querySelector('[data-quiz-change-clue]');
+ if(status)status.hidden=false;
+ if(retry)retry.hidden=false;
+},true);
 document.addEventListener('change',globalChange);
 document.addEventListener('input',e=>{
  if(e.target.id==='collectionSearch'){state.filter=e.target.value;state.collectionPage=0;const position=e.target.selectionStart;render();const input=$('collectionSearch');input?.focus();input?.setSelectionRange(position,position)}
