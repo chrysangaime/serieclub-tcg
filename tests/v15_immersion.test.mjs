@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import {svodHome} from '../v12/home.js';
 test('V15 replaces V14 styling with distinct night/day palettes',()=>{
  const h=fs.readFileSync('index.html','utf8'),s=fs.readFileSync('v15/cinema.css','utf8');
- assert.match(h,/v15\/cinema\.css\?v=15\.0\.0/);
+ assert.match(h,/v15\/cinema\.css\?v=18\.0\.0/);
  assert.doesNotMatch(h,/v14\/rebuild\.css/);
  assert.match(s,/:root\[data-theme="night"\]/);
  assert.match(s,/:root\[data-theme="day"\]/);

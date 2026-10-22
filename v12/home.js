@@ -47,7 +47,7 @@ function packVisual(type){
  const label=key==='premium'?'PREMIUM':key==='halloween'?'HALLOWEEN':'ORIGINAL';
  const mark=key==='premium'?'✦':key==='halloween'?'☾':'▣';
  return '<span class="sc14-pack-visual--'+key+' sc15-foil sc15-foil--'+key+'">'+
- '<span class="sc15-foil-stripe"></span><strong>SÉRIES<em>CLUB</em>TCG</strong>'+
+ '<span class="sc15-foil-stripe"></span><strong class="sc18-foil-brand"><span>SÉRIES<em>CLUB</em></span><small>TCG</small></strong>'+
  '<small>TRADING CARD GAME</small><span class="sc15-foil-mark">'+mark+'</span>'+
  '<b>'+label+'</b><small>'+(key==='premium'?'APERÇU · EN PRÉPARATION':'5 SÉRIES · 7 RARETÉS')+'</small>'+
  '<span class="sc15-foil-stripe sc15-foil-stripe-bottom"></span></span>';
@@ -65,7 +65,7 @@ function packCard(s,type,foil){
  const title=premium?'Premium':halloween?'Halloween':'Original';
  const selected=s.pack===type;
  const disabled=halloween&&!s.isOctober;
- const text=premium?'Une formule en préparation, sans cartes exclusives pour le moment.':halloween?'Une série horrifique garantie en octobre.':'Tous les genres · sept niveaux de rareté.';
+ const text=premium?'Affirme ton identité de collectionneur avec le badge Premium. Le jeu reste gratuit.':halloween?'Une série horrifique garantie en octobre.':'Tous les genres · sept niveaux de rareté.';
  const action=premium
   ?'<button class="sc12-pack-action" type="button" data-route="store">Découvrir Premium <span aria-hidden="true">↗</span></button>'
   :'<button class="sc12-pack-action" type="button" data-pack="'+type+'"'+(disabled?' disabled':'')+' aria-label="Choisir le paquet '+title+'">'+(selected?'✓ Paquet sélectionné':disabled?'Disponible en octobre':'Choisir ce paquet')+' <span aria-hidden="true">→</span></button>';
@@ -79,7 +79,7 @@ function packCard(s,type,foil){
  return '<article class="sc12-pack-tile sc12-pack-'+type+(type==='classic'?' sc12-pack-original':'')+(selected?' is-active':'')+(disabled?' is-disabled':'')+'">'+
   '<span class="sc12-pack-badge">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span>'+
   '<div class="sc12-pack-art sc15-pack-art" aria-hidden="true">'+background+'<span class="sc12-pack-glow"></span>'+emblem+'</div>'+
-  '<div class="sc12-pack-copy sc15-pack-copy"><h3>'+title+'</h3><p>'+text+'</p>'+action+'</div></article>';
+  '<div class="sc12-pack-copy sc15-pack-copy"><h3>'+title+'</h3><p>'+text+'</p>'+ (premium?'<div class="sc18-premium-perks"><span>✦ 1,99 € / mois</span><span>✓ Badge de membre</span><span>✓ Aucun avantage de rareté</span></div>':'') +action+'</div></article>';
 }
 function posterShelf(shows){
  const display=shows.slice(0,12);
@@ -154,7 +154,7 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<button class="sc12-hero-secondary" type="button" data-route="catalog">Explorer les séries ↗</button></div>'+
   '</div><div class="sc12-banner-art sc15-hero-art" aria-hidden="true">'+heroPosters(shows)+'<span class="sc12-orbit sc12-orbit-a">▣</span><span class="sc12-orbit sc12-orbit-b">✦</span></div></div>'+
   '<div class="sc15-strip"><span>● LE CLUB DES SÉRIES</span><span>SÉRIES EN FRANCE</span><span>5 CARTES PAR PAQUET</span><span>7 RARETÉS</span></div>'+
-  '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton <em>paquet.</em></h2><p>5 séries par paquet · 7 raretés · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
+  '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton <em>paquet.</em></h2><p>5 séries par paquet · 7 niveaux de rareté · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
   '<div class="sc12-home-grid sc15-home-grid"><div class="sc12-pack-column sc15-pack-column"><div class="pack-options sc12-pack-options sc15-pack-options">'+
   packCard({...s,isOctober:halloween},'classic',foil)+
   packCard({...s,isOctober:halloween},'halloween',foil)+

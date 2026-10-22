@@ -336,3 +336,214 @@ html[data-theme] .collect-card .card-action{
  html[data-theme] .sc15-pack-options>.sc12-pack-tile{transition:none!important}
  html[data-theme] .sc15-pack-options>.sc12-pack-tile:hover{transform:none!important}
 }
+
+
+/* ===============================================================
+   V18 · Finitions visuelles réellement adaptées à l'accueil
+   Les règles ci-dessous appartiennent à la charte V15, et non à
+   une couche CSS supplémentaire. Aucun droit de tirage modifié.
+   =============================================================== */
+:root[data-theme="night"]{
+ --sc18-premium-ink:#ffe3ac;
+ --sc18-premium-soft:#d9bc91;
+ --sc18-pack-grad:linear-gradient(135deg,#131e31 0%,#1a2b43 100%);
+}
+:root[data-theme="day"]{
+ --sc18-premium-ink:#70502d;
+ --sc18-premium-soft:#6b5b49;
+ --sc18-pack-grad:linear-gradient(135deg,#ffffff 0%,#f1f7fd 100%);
+}
+/* La typographie et les titres n'ont plus d'ombres héritées. */
+html[data-theme] .sc12-home .sc12-main-head *,
+html[data-theme] .sc12-home .sc12-pack-tile *,
+html[data-theme] .sc12-home .sc15-open *,
+html[data-theme] .sc12-home .sc15-strip *{
+ text-shadow:none!important;
+}
+html[data-theme] .sc12-home .sc12-main-head h2{font-size:clamp(29px,3.3vw,43px)!important;line-height:1.15!important}
+html[data-theme] .sc12-home .sc12-main-head p{font-size:13px!important;line-height:1.6!important}
+html[data-theme] .sc15-strip{
+ font-size:11px!important;line-height:1.5!important;gap:13px!important;
+ margin:16px 3px 27px!important;
+}
+html[data-theme] .sc15-pack-options{gap:18px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-tile{
+ min-height:414px!important;box-shadow:0 14px 36px #02091627!important;
+}
+html[data-theme] .sc15-pack-options .sc15-pack-art{
+ flex:0 0 246px!important;min-height:246px!important;
+ padding:22px 15px 12px!important;
+ background:radial-gradient(circle at 55% 30%,#58a6e958,transparent 66%),#112b43!important;
+}
+html[data-theme] .sc15-pack-options .sc12-pack-halloween .sc15-pack-art{
+ background:radial-gradient(circle at 55% 30%,#c667d77a,transparent 67%),#341d52!important;
+}
+html[data-theme] .sc15-pack-options .sc12-pack-premium .sc15-pack-art{
+ background:radial-gradient(circle at 55% 30%,#e2c27868,transparent 67%),#3e2936!important;
+}
+html[data-theme] .sc15-pack-options .sc15-pack-art:before{
+ z-index:1!important;
+ background:linear-gradient(90deg,#102338aa,transparent 55%,#10233880),
+ linear-gradient(0deg,#0e1a2cc9,transparent 72%)!important;
+}
+html[data-theme] .sc15-pack-options .sc12-pack-backdrop{
+ opacity:.18!important;filter:saturate(.68) contrast(1.08) blur(1px)!important;
+ mask-image:linear-gradient(180deg,#000 0%,#000 62%,transparent 100%)!important;
+}
+html[data-theme] .sc15-pack-options .sc12-pack-glow{opacity:.18!important}
+/* Pochettes : garder du volume mais donner au nom son espace propre. */
+html[data-theme] .sc15-pack-options .sc15-foil{
+ width:184px;height:220px;padding:18px 12px 17px;
+ border-radius:9px;
+ box-shadow:0 18px 36px #0008,0 0 0 4px #ffffff0d,inset 0 0 30px #b3ffff12;
+}
+html[data-theme] .sc15-pack-options .sc15-foil--original{transform:rotate(-4deg)!important}
+html[data-theme] .sc15-pack-options .sc15-foil--halloween{transform:rotate(4deg)!important}
+.sc18-foil-brand{
+ display:flex!important;align-items:center;justify-content:center;
+ flex-direction:column;gap:2px;width:100%;line-height:1.06!important;
+ text-align:center;white-space:nowrap;
+}
+.sc15-foil .sc18-foil-brand>span{
+ display:block;font-weight:950;font-size:17px;letter-spacing:-.045em;
+}
+.sc15-foil .sc18-foil-brand>small{
+ display:block;font:900 10px/1 'DM Sans',system-ui,sans-serif;
+ letter-spacing:.38em;margin-left:.38em;color:inherit;opacity:.95;
+}
+html[data-theme] .sc15-foil .sc15-foil-mark{
+ width:65px!important;height:58px!important;min-height:58px!important;
+ font-size:33px!important;
+}
+html[data-theme] .sc15-foil>b{font-size:17px!important;letter-spacing:.11em!important}
+html[data-theme] .sc15-foil>small{font-size:8px!important;letter-spacing:.12em}
+html[data-theme] .sc15-pack-options .sc12-pack-badge{
+ font-size:11px!important;font-weight:900;letter-spacing:.10em!important;
+ padding:8px 12px!important;max-width:calc(100% - 30px);
+}
+html[data-theme] .sc15-pack-options .sc15-pack-copy{
+ padding:22px 23px 21px!important;gap:0;
+}
+html[data-theme] .sc15-pack-options .sc15-pack-copy h3{
+ font-size:clamp(24px,2.5vw,30px)!important;line-height:1.14!important;
+ margin-bottom:8px!important;font-weight:950!important;
+}
+html[data-theme] .sc15-pack-options .sc15-pack-copy p{
+ font-size:13.5px!important;line-height:1.6!important;
+ margin-bottom:18px!important;max-width:62ch;
+}
+html[data-theme] .sc15-pack-options .sc12-pack-action{
+ min-height:46px!important;font-size:13px!important;font-weight:900!important;
+ transition:filter .18s ease;
+}
+html[data-theme] .sc15-pack-options .sc12-pack-action:hover:not(:disabled){filter:brightness(1.12)}
+/* Premium : bandeau éditorial compact avec prix et bénéfices en vis-à-vis. */
+html[data-theme] .sc15-pack-options>.sc12-pack-premium{
+ height:auto!important;min-height:188px!important;
+ align-items:stretch!important;
+ background:linear-gradient(105deg,#292332 0%,#332635 65%,#4a303c 100%)!important;
+ border-color:#bf9766!important;
+}
+html[data-theme="day"] .sc15-pack-options>.sc12-pack-premium{
+ background:linear-gradient(110deg,#fffaf1 0%,#faf2e6 58%,#f1e7de 100%)!important;
+}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-art{
+ min-height:188px!important;flex:0 0 23%!important;width:23%!important;
+ padding:17px 12px!important;overflow:hidden!important;
+}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc12-pack-backdrop{opacity:.11!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-foil{
+ width:114px!important;height:151px!important;padding:15px 8px 12px;
+ transform:rotate(-4deg)!important;border-color:#e6cb95!important;
+}
+html[data-theme] .sc12-pack-premium .sc18-foil-brand>span{font-size:11px!important}
+html[data-theme] .sc12-pack-premium .sc18-foil-brand>small{font-size:7px!important;letter-spacing:.19em}
+html[data-theme] .sc12-pack-premium .sc15-foil>small{font-size:6px!important}
+html[data-theme] .sc12-pack-premium .sc15-foil>b{font-size:12px!important}
+html[data-theme] .sc12-pack-premium .sc15-foil .sc15-foil-mark{
+ width:39px!important;height:39px!important;min-height:39px!important;font-size:24px!important;
+}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-copy{
+ padding:22px 26px!important;align-items:flex-start!important;justify-content:center!important;
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(205px,auto)!important;
+ grid-template-rows:auto auto auto!important;column-gap:20px;row-gap:7px;
+ align-content:center!important;background:transparent!important;
+}
+html[data-theme] .sc12-pack-premium .sc15-pack-copy h3{
+ grid-column:1!important;grid-row:1!important;
+ font-size:28px!important;line-height:1.13!important;
+ color:var(--sc18-premium-ink)!important;
+}
+html[data-theme] .sc12-pack-premium .sc15-pack-copy p{
+ grid-column:1!important;grid-row:2!important;
+ margin:0!important;color:var(--sc18-premium-soft)!important;
+ font-size:13px!important;max-width:48ch;
+}
+.sc18-premium-perks{
+ grid-column:1!important;grid-row:3!important;display:flex;flex-wrap:wrap;gap:7px 13px;
+ color:var(--sc18-premium-ink)!important;font-size:11px!important;font-weight:800;
+ line-height:1.45;
+}
+.sc18-premium-perks span:first-child{font-size:12px}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc12-pack-action{
+ grid-column:2!important;grid-row:1 / 4!important;
+ margin:0!important;align-self:center;justify-self:end;
+ max-width:none!important;width:100%;min-width:174px;
+ min-height:47px!important;padding:12px 15px!important;
+ background:#ffdda51e!important;color:var(--sc18-premium-ink)!important;
+ border:1px solid #d6b27b!important;white-space:normal;
+}
+html[data-theme="day"] .sc12-pack-premium .sc15-pack-copy h3{color:#6e492e!important}
+html[data-theme="day"] .sc12-pack-premium .sc15-pack-copy p{color:#6d5a4b!important}
+html[data-theme="day"] .sc18-premium-perks{color:#73502f!important}
+html[data-theme="day"] .sc15-pack-options>.sc12-pack-premium .sc12-pack-action{
+ color:#73502f!important;background:#fff8ec!important;
+}
+/* Réserve et commandes à taille de lecture normale. */
+html[data-theme] .sc15-open .sc12-stock strong{font-size:16px!important}
+html[data-theme] .sc15-open .sc12-stock small{font-size:12px!important}
+html[data-theme] .sc15-open .sc12-open-btn{font-size:14px!important;font-weight:900!important}
+html[data-theme] .sc15-open .sc12-daily-btn{font-size:12px!important;line-height:1.5!important}
+html[data-theme] .sc12-rules-note{font-size:12px!important;line-height:1.7!important}
+@container sc15packs (max-width:900px){
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-copy{
+  grid-template-columns:1fr!important;grid-template-rows:auto!important;
+  gap:8px!important;
+ }
+ html[data-theme] .sc12-pack-premium .sc15-pack-copy h3,
+ html[data-theme] .sc12-pack-premium .sc15-pack-copy p,
+ .sc18-premium-perks,
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc12-pack-action{
+  grid-column:1!important;grid-row:auto!important;
+ }
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc12-pack-action{
+  justify-self:start;width:auto;min-width:200px;margin-top:3px!important;
+ }
+}
+@container sc15packs (max-width:620px){
+ html[data-theme] .sc15-pack-options{grid-template-columns:1fr!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile{min-height:0!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium{grid-column:1/-1!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-art{
+  flex:0 0 32%!important;width:32%!important;min-height:230px!important;
+ }
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-copy{
+  padding:20px!important;
+ }
+}
+@container sc15packs (max-width:470px){
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium{
+  flex-direction:column!important;
+ }
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-art{
+  flex:0 0 150px!important;min-height:150px!important;width:100%!important;
+ }
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-foil{
+  width:105px!important;height:130px!important;
+ }
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc12-pack-action{width:100%!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:hover{transform:none!important}
+}
+
