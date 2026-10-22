@@ -31,7 +31,7 @@ test('V12 construit un vrai accueil SVOD distinct de la page historique',()=>{
  assert.match(html,/id="packTimer"/);
  assert.match(html,/id="openPack"/);
  assert.match(html,/data-daily/);
- assert.match(html,/data-home-event/);
+ assert.match(html,/data-hero-action/); assert.match(html,/data-hero-slide-next/);
  assert.match(html,/id="svod-packs"/);
 });
 test('le vrai jeu n’offre que classic et halloween : premium est une vitrine, pas un booster actif',()=>{
