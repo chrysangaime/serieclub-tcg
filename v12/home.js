@@ -65,11 +65,12 @@ function packCard(s,type,foil){
 function posterShelf(shows){
  const display=shows.slice(0,12);
  if(!display.length)return '<div class="sc12-rail-empty">De nouvelles séries seront affichées ici après synchronisation du catalogue France.</div>';
- return '<div class="sc12-title-rail" id="sc13-show-rail" role="list">'+display.map((show,i)=>
+ return '<div class="sc13-rail-wrap"><div class="sc13-rail-controls" aria-label="Parcourir les séries"><button type="button" data-rail-shift="sc13-show-rail:-1" aria-label="Séries précédentes">‹</button><button type="button" data-rail-shift="sc13-show-rail:1" aria-label="Séries suivantes">›</button></div>'+
+  '<div class="sc12-title-rail" id="sc13-show-rail" role="list">'+display.map((show,i)=>
   '<button class="sc12-show-poster" type="button" role="listitem" data-series="'+esc(show.id)+'" aria-label="Voir la fiche de '+esc(show.name)+'">'+
   '<img src="'+photo(show.image_url)+'" alt="" loading="'+(i<5?'eager':'lazy')+'">'+
   '<span class="sc12-show-caption"><b>'+esc(show.name)+'</b><small>Découvrir la série ↗</small></span></button>'
- ).join('')+'</div>';
+ ).join('')+'</div></div>';
 }
 export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecode=()=>''}={}){
  const halloween=s.isOctober===true;
@@ -152,11 +153,12 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<div class="sc12-quick-card"><strong>Ton prochain épisode</strong><p>Découvre des séries, complète tes Saisons officielles et débloque des badges.</p>'+
   '<button type="button" data-route="albums">Voir mes Saisons →</button></div></aside></div>'+
   '<div class="sc12-shelf-head"><div><span class="sc12-eyebrow">TON PROGRAMME</span><h2>À découvrir ce soir</h2><p>Une sélection par univers, comme sur une plateforme de streaming.</p></div><button type="button" class="sc12-text-link" data-route="catalog">Voir le catalogue →</button></div>'+
+  '<div class="sc13-rail-wrap"><div class="sc13-rail-controls" aria-label="Parcourir les genres"><button type="button" data-rail-shift="sc13-genre-rail:-1" aria-label="Genres précédents">‹</button><button type="button" data-rail-shift="sc13-genre-rail:1" aria-label="Genres suivants">›</button></div>'+
   '<div class="sc12-genre-rail" id="sc13-genre-rail" role="list">'+
   '<button type="button" role="listitem" class="sc12-genre-card sc12-genre-classics" data-home-decade="1990"><span class="sc12-genre-symbol">★</span><span>Séries cultes</span></button>'+
   featuredGenres.map(g=>'<button type="button" role="listitem" class="sc12-genre-card sc12-genre-'+g.tone+'" data-home-genre="'+g.id+'">'+genreArt(shows,g.id)+
    '<span class="sc12-genre-symbol">'+g.symbol+'</span><span>'+esc(g.label)+'</span></button>').join('')+
-  '</div>'+
+  '</div></div>'+
   '<div class="sc12-shelf-head sc12-trending-title"><div><span class="sc12-eyebrow">LE CATALOGUE FRANCE</span><h2>Séries à l’affiche</h2><p>De vraies séries vérifiées pour la France, pas une sélection fictive.</p></div><button class="sc12-text-link" type="button" data-route="catalog">Toutes les séries →</button></div>'+
   posterShelf(shows)+
   (halloween?seasonShelf(s.seasonShows||[]):'')+
