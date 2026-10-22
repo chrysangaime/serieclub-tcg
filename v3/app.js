@@ -115,10 +115,10 @@ function render(){
  if(restoreCatalog){const input=$('catalogQuery');if(input){input.focus({preventScroll:true});if(cursor!==null)input.setSelectionRange(cursor,cursor)}}
 }
 async function ensureProfile(user){
- let {data,error}=await supa.from('profiles').select('username,bio,favorite_genre').eq('id',user.id).maybeSingle();
- if(error){const fallback=await supa.from('profiles').select('username').eq('id',user.id).maybeSingle();if(!fallback.error){data=fallback.data;error=null}}
+ let {data,error}=await supa.from('profiles').select('username,bio,favorite_genre,avatar_series_id,banner_series_id').eq('id',user.id).maybeSingle();
+ if(error){const fallback=await supa.from('profiles').select('username,bio,favorite_genre').eq('id',user.id).maybeSingle();if(!fallback.error){data=fallback.data;error=null}}
  if(error){toast('Profil indisponible : '+error.message,true);return}
- if(data?.username){state.username=data.username;state.bio=data.bio||'';state.favoriteGenre=data.favorite_genre||'';return}
+ if(data?.username){state.username=data.username;state.bio=data.bio||'';state.favoriteGenre=data.favorite_genre||'';state.avatarSeriesId=data.avatar_series_id??null;state.bannerSeriesId=data.banner_series_id??null;return}
  const username=(user.user_metadata?.username||'').trim();
  if(username.length>=3&&username.length<=24){
   const out=await supa.from('profiles').upsert({id:user.id,username},{onConflict:'id'});
@@ -134,7 +134,7 @@ async function loadSession(){
   const {data:{user},error}=await supa.auth.getUser();
   if(error&&!/session missing/i.test(error.message))console.warn('Auth:',error.message);
   state.user=user||null;
-  if(!user){state.rewardStatus={enabled:false};state.rewardQuiz=null;state.rewardFeedback=null;state.username='';state.bio='';state.favoriteGenre='';state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;render();return}
+  if(!user){state.rewardStatus={enabled:false};state.rewardQuiz=null;state.rewardFeedback=null;state.username='';state.bio='';state.favoriteGenre='';state.avatarSeriesId=null;state.bannerSeriesId=null;state.officialSeasons=null;state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;render();return}
   await ensureProfile(user);
   const status=await supa.rpc('get_booster_status');
   if(status.error)console.warn('Réserve:',status.error.message);
@@ -170,6 +170,7 @@ async function loadSession(){
   if(state.route==='collection'){loadCollectionGoal();loadMySales()}
   if(state.route==='community')loadPeople();
   if(state.route==='albums')loadAlbums();
+ if(state.route==='profile')loadOfficialSeasons();
  }catch(e){console.error('Session:',e);toast('Connexion au serveur momentanément indisponible.',true)}
  finally{refreshing=false}
 }
@@ -1029,11 +1030,13 @@ function globalClick(e){
 async function saveUsername(){
  const name=$('usernameInput')?.value.trim();if(!state.user||!name||name.length<3||name.length>24){toast('Pseudonyme entre 3 et 24 caractères.',true);return}
  const bio=($('bioInput')?.value||'').trim(),favoriteGenre=$('favoriteGenre')?.value||'';
+ const avatarValue=$('profileAvatar')?.value||null,bannerValue=$('profileBanner')?.value||null;
+ const avatarSeriesId=avatarValue?Number(avatarValue):null,bannerSeriesId=bannerValue?Number(bannerValue):null;
  if(bio.length>160||favoriteGenre.length>32){toast('Biographie trop longue.',true);return}
- let {error}=await supa.from('profiles').upsert({id:state.user.id,username:name,bio,favorite_genre:favoriteGenre},{onConflict:'id'});
- if(error&&(/bio|favorite_genre|schema cache|column/i.test(error.message))){const fallback=await supa.from('profiles').upsert({id:state.user.id,username:name},{onConflict:'id'});if(!fallback.error){toast('Pseudonyme enregistré. La biographie n’a pas pu être sauvegardée.');state.username=name;render();return}error=fallback.error}
+ let {error}=await supa.from('profiles').upsert({id:state.user.id,username:name,bio,favorite_genre:favoriteGenre,avatar_series_id:avatarSeriesId,banner_series_id:bannerSeriesId},{onConflict:'id'});
+ if(error&&(/bio|favorite_genre|avatar_series_id|banner_series_id|schema cache|column/i.test(error.message))){const fallback=await supa.from('profiles').upsert({id:state.user.id,username:name},{onConflict:'id'});if(!fallback.error){toast('Pseudonyme enregistré. La biographie n’a pas pu être sauvegardée.');state.username=name;render();return}error=fallback.error}
  if(error){toast(error.code==='23505'?'Ce pseudonyme est déjà utilisé.':error.message,true);return}
- state.username=name;state.bio=bio;state.favoriteGenre=favoriteGenre;render();toast('Profil enregistré et visible dans Le Signal.')
+ state.username=name;state.bio=bio;state.favoriteGenre=favoriteGenre;state.avatarSeriesId=avatarSeriesId;state.bannerSeriesId=bannerSeriesId;render();toast('Profil et affiches enregistrés.')
 }
 function globalChange(e){
  const facet={catalogRarity:'catalogRarity',catalogGenre:'catalogGenre',catalogDecade:'catalogDecade',catalogSort:'catalogSort'}[e.target.id];
