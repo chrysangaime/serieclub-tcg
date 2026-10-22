@@ -101,7 +101,7 @@ jobs:
           assert.match(panel,/sc56-brand-disney/);
           assert.match(panel,/sc56-secondary/);
 
-          assert.ok(frOffers.titles['430'].offers.some(o=>/Disney(?:\\+| Plus)/.test(o.name)));
+          assert.ok(frOffers.titles['430'].offers.some(o=>/Disney(?:\+| Plus)/.test(o.name)));
           assert.ok(frOffers.titles['430'].offers.some(o=>o.name==='Amazon Prime Video'));
           const franchise=await import('./v5/fr-collection.js');
           assert.equal(franchise.partitionFrenchInventory([
