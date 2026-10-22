@@ -133,6 +133,7 @@ body:before{content:none!important}
 .sc12-orbit{position:absolute;font-size:28px;filter:drop-shadow(0 0 12px #c0a1ff);color:#e0b9ff}
 .sc12-orbit-a{top:15%;right:29%}
 .sc12-orbit-b{bottom:12%;right:17%;font-size:20px}
+#svod-packs{scroll-margin-top:calc(var(--top) + 22px)}
 .sc12-main-head,.sc12-shelf-head{display:flex;align-items:flex-end;justify-content:space-between;
  gap:13px;flex-wrap:wrap;margin:28px 0 14px}
 .sc12-eyebrow{font:900 10px 'DM Sans',sans-serif;letter-spacing:.23em;color:var(--tv-cyan)}
@@ -164,6 +165,14 @@ body:before{content:none!important}
  padding:6px 7px;background:#11182e8a;border:1px solid #ffffff35}
 .sc12-pack-art{flex:1;position:relative;display:flex;align-items:center;justify-content:center;
  min-height:220px;overflow:hidden}
+.sc12-pack-backdrop{position:absolute;top:0;height:100%;width:61%;
+ object-fit:cover;opacity:.46;filter:saturate(.85) contrast(1.04);
+ z-index:-1;mask-image:linear-gradient(180deg,#000 0%,#000 70%,transparent);
+ pointer-events:none}
+.sc12-pack-backdrop-0{left:0;transform:scale(1.07) translateX(-8%)}
+.sc12-pack-backdrop-1{right:0;transform:scale(1.07) translateX(8%)}
+.sc12-pack-halloween .sc12-pack-backdrop{filter:saturate(.9) sepia(.2) hue-rotate(309deg);opacity:.51}
+.sc12-pack-premium .sc12-pack-backdrop{filter:sepia(.6) saturate(.9);opacity:.46}
 .sc12-pack-art:before{content:'';position:absolute;inset:0;opacity:.4;background:
   repeating-linear-gradient(110deg,transparent 0 27px,#fff2 28px 29px,transparent 30px 51px),
   radial-gradient(ellipse at 50% 110%,#ccdefc77,transparent 58%)}
