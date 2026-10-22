@@ -173,14 +173,35 @@ async function loadSession(){
  }catch(e){console.error('Session:',e);toast('Connexion au serveur momentanément indisponible.',true)}
  finally{refreshing=false}
 }
+async function loadOfficialSeasons(){
+ if(!state.user){state.officialSeasons=null;state.officialSeasonError='';return}
+ const {data,error}=await supa.rpc('my_official_seasons');
+ state.officialSeasons=error?null:data||[];
+ state.officialSeasonError=error?'Les récompenses officielles attendent leur activation sur Supabase.':'';
+ if(['albums','profile'].includes(state.route))render();
+}
+async function claimOfficialSeason(id){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {data,error}=await supa.rpc('claim_official_season',{p_season_id:id});
+  if(error)throw error;
+  toast('Saison terminée ! Badge gagné et +'+Number(data||0)+' crédits.');
+  await loadSession();await loadOfficialSeasons();
+ }catch(e){toast('Saison : '+e.message,true)}
+ finally{state.busy=false}
+}
 async function loadAlbums(){
  if(!state.user){state.personalAlbums=[];state.publicAlbums=[];if(state.route==='albums')render();return}
- const [own,shared]=await Promise.all([
-  supa.rpc('my_personal_albums'),supa.rpc('public_personal_albums')
+ const [own,shared,official]=await Promise.all([
+  supa.rpc('my_personal_albums'),supa.rpc('public_personal_albums'),supa.rpc('my_official_seasons')
  ]);
  const errors=[own,shared].filter(v=>v.error).map(v=>v.error.message);
  state.albumError=errors.length?'Active la migration SQL V4 des albums : '+errors[0]:'';
  state.personalAlbums=own.data||[];state.publicAlbums=shared.data||[];
+ state.officialSeasons=official.error?null:official.data||[];
+ state.officialSeasonError=official.error?'Activer la migration SQL V10 des saisons officielles.':'';
  if(state.route==='albums')render();
 }
 async function openAlbum(id){
@@ -904,6 +925,8 @@ function globalClick(e){
  }
 
  if(e.target.closest('#topSearch')){change('catalog');$('catalogQuery')?.focus({preventScroll:true});return}
+ if(e.target.closest('[data-theme-toggle]')){chooseTheme(state.theme==='day'?'night':'day');return}
+ const themeChoice=e.target.closest('[data-theme-choice]');if(themeChoice){chooseTheme(themeChoice.dataset.themeChoice);return}
  const route=e.target.closest('[data-route]');if(route){e.preventDefault();change(route.dataset.route);return}
  if(e.target.closest('#menuToggle')){const opened=document.body.classList.toggle('drawer-open');$('menuToggle')?.setAttribute('aria-expanded',String(opened));return}
  if(e.target.closest('#drawerBackdrop')){document.body.classList.remove('drawer-open');$('menuToggle')?.setAttribute('aria-expanded','false');return}
@@ -914,6 +937,7 @@ function globalClick(e){
  if(e.target.closest('#motionToggle')){state.reduceMotion=!state.reduceMotion;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render();return}
 
  if(e.target.closest('#createAlbum')){createAlbum();return}
+ const official=e.target.closest('[data-claim-season]');if(official){claimOfficialSeason(official.dataset.claimSeason);return}
  const viewAlbum=e.target.closest('[data-view-album]');if(viewAlbum){openAlbum(viewAlbum.dataset.viewAlbum);return}
  const deleteAlb=e.target.closest('[data-delete-album]');if(deleteAlb){deleteAlbum(deleteAlb.dataset.deleteAlbum);return}
  const addAlb=e.target.closest('#albumAddCard');if(addAlb){addAlbumCard(addAlb.dataset.albumId);return}
