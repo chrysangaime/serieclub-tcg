@@ -94,6 +94,9 @@ GRANT EXECUTE ON FUNCTION public.claim_official_season(text) TO authenticated;
 -- Les visuels du profil doivent provenir de séries possédées lors du choix.
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_series_id bigint REFERENCES public.series(id) ON DELETE SET NULL;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS banner_series_id bigint REFERENCES public.series(id) ON DELETE SET NULL;
+-- Les autorisations SQL et les politiques RLS sont deux contrôles distincts.
+-- L'utilisateur authentifié ne peut modifier que son propre profil (RLS existante).
+GRANT SELECT,INSERT,UPDATE ON public.profiles TO authenticated;
 CREATE OR REPLACE FUNCTION public.verify_profile_card_art()
 RETURNS trigger LANGUAGE plpgsql SET search_path=public,pg_temp AS $$
 BEGIN
