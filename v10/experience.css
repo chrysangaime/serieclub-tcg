@@ -83,3 +83,8 @@ html[data-theme="day"] .sc60-fuse-grid .collect-card{background:#f9f0e6}
 @media(max-width:950px){.sc10-season-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.sc10-season-grid,.sc10-shop-grid,.sc10-profile-art-pickers{grid-template-columns:1fr}.sc10-profile-banner{height:120px}.sc10-pack-list article{flex-wrap:wrap}.sc10-theme-toggle{padding:8px}}
 @media(prefers-reduced-motion:reduce){.sc10-pixel-canvas{transition:none}}
+
+.sc10-directory-avatar{background-position:center;background-size:cover;flex:none}
+.sc4-person[style*="background-image"]{background-position:center;background-size:cover;border-color:#baa77d}
+.sc4-person[style*="background-image"] .sc4-person-info h3,.sc4-person[style*="background-image"] .sc4-person-info p{color:#fff6ea;text-shadow:0 1px 4px #000b}
+html[data-theme="day"] .sc4-person[style*="background-image"]{color:#fff}
