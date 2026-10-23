@@ -26,7 +26,7 @@ test('Navigation à propos et liens de pied de page réellement routés',()=>{
 });
 test('La page de transparence est informative et sans fausse affiliation',()=>{
  const about=aboutPage();
- for(const phrase of ['Accès anticipé','TVmaze','TMDB','JustWatch','Supabase','aucun','avant tout lancement commercial'])
+ for(const phrase of ['Accès anticipé','TVmaze','TMDB','JustWatch','Supabase','n’éditent pas','avant tout lancement commercial'])
   assert.match(about,new RegExp(phrase,'i'));
  assert.match(about,/data-route="albums"/);
  assert.match(about,/data-route="games"/);

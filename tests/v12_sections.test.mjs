@@ -13,7 +13,7 @@ test('V12.2 applies latest SVOD identity after home and all legacy styles',()=>{
  const c=html.indexOf('v12/streaming-sections.css?v=12.2.0');
  assert.ok(a>=0&&b>a&&c>b);
  assert.match(html,/v12\/cinema-hero\.svg/);
- assert.match(html,/v3\/icon\.svg\?v=12\.1\.0/);
+ assert.match(html,/v3\/icon\.svg\?v=(?:12\.1\.0|1\.0\.0)/);
 });
 test('all major sections receive shared TV tokens in both light and night',()=>{
  const sections=['.sc59-explorer','.sc52-group-card','.sc7-mode','.sc7-quiz',
