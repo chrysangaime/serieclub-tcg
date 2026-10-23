@@ -12,13 +12,15 @@ test("Le dernier renommage non approuvé est annulé, sans toucher à la persist
  assert.match(read("v3/app.js"),/createClient\(/);
  assert.match(read("index.html"),/name="robots" content="noindex,nofollow"/);
 });
-test("Les trois workflows d'enrichissement TMDB sont uniquement manuels",()=>{
- for(const p of [".github/workflows/sync-fr-streaming.yml",".github/workflows/expand-fr-catalog.yml",".github/workflows/sync-fr-cast.yml"]){
-  const src=read(p);
-  assert.match(src,/workflow_dispatch:/,p);
-  assert.doesNotMatch(src,/^\s+schedule:/m,p);
-  assert.doesNotMatch(src,/^\s+push:/m,p);
- }
+test("Aucun import TMDB ni cache public tiers n'est encore déployé",()=>{
+ for(const p of [
+  ".github/workflows/sync-fr-streaming.yml",
+  ".github/workflows/expand-fr-catalog.yml",
+  ".github/workflows/sync-fr-cast.yml",
+  "data/watch-fr.json","data/cast-fr.json"
+ ]) assert.equal(fs.existsSync(p),false,p);
+ assert.doesNotMatch(read("v5/fr-watch.js"),/fetch\\(|watch-fr\\.json/);
+ assert.doesNotMatch(read("v5/cast-fr.js"),/fetch\\(|cast-fr\\.json/);
 });
 test("Le mode commercial reste interdit tant que les caches TMDB ne sont pas éliminés",()=>{
  assert.match(read("v3/app.js"),/paymentsMode:'disabled'/);
