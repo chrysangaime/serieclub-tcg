@@ -128,7 +128,7 @@ try {
       // récapitulatif : une précédente régression héritait d'un texte bleu
       // foncé sur des mini-cartes presque noires.
       const contrast = await page.evaluate(() => {
-        const channels = color => [...String(color).matchAll(/[\\d.]+/g)].slice(0, 3)
+        const channels = color => [...String(color).matchAll(/[0-9.]+/g)].slice(0, 3)
           .map(x => Number(x[0]));
         const luminance = triplet => triplet.reduce((total, value, index) => {
           const c = value / 255;
@@ -144,8 +144,9 @@ try {
           for (let item = element; item; item = item.parentElement) {
             const style = getComputedStyle(item);
             if (channels(style.backgroundColor).length !== 3) continue;
-            const alpha = style.backgroundColor.match(/rgba?\\([^)]*[,\\s]([01](?:\\.\\d+)?)\\)$/);
-            if (!alpha || Number(alpha[1]) > 0.99) return style.backgroundColor;
+            const opacity = style.backgroundColor.startsWith("rgba(")
+              ? Number(style.backgroundColor.match(/[0-9.]+/g)?.[3] ?? 0) : 1;
+            if (opacity >= 0.99) return style.backgroundColor;
           }
           return "rgb(255, 255, 255)";
         };
