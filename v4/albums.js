@@ -5,7 +5,7 @@ export function personalAlbumsPage(s){
  const genreCounts=new Map();
  for(const c of s.cards)for(const g of c.series?.genres||[])genreCounts.set(g,(genreCounts.get(g)||0)+1);
  const own=s.personalAlbums||[],publicAlbums=s.publicAlbums||[];
- return '<div class="page-content sc4-page"><div class="sc4-hero sc4-album-hero"><span class="caps">EPIZORA TCG · MES SAISONS</span><h1>CHAQUE COLLECTION<br><em>RACONTE UNE HISTOIRE.</em></h1><p>Compose tes propres saisons de séries favorites, partage tes sélections avec le club et retrouve tes cartes par genre. Une expérience inspirée des collections de séries, pas des films.</p></div>'+
+ return '<div class="page-content sc4-page"><div class="sc4-hero sc4-album-hero"><span class="caps">SÉRIESCLUBTCG · MES SAISONS</span><h1>CHAQUE COLLECTION<br><em>RACONTE UNE HISTOIRE.</em></h1><p>Compose tes propres saisons de séries favorites, partage tes sélections avec le club et retrouve tes cartes par genre. Une expérience inspirée des collections de séries, pas des films.</p></div>'+
  (s.albumError?'<div class="notice">'+esc(s.albumError)+'</div>':'')+
  officialSeasonHTML(s)+
  '<div class="sc4-split"><section class="sc4-box"><span class="caps">CRÉATION</span><h2>Créer ma saison</h2><p>Un album personnel contient jusqu’à 100 cartes et peut rester privé ou être visible par tous les collectionneurs.</p>'+
