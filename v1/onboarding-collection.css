@@ -37,3 +37,16 @@ html[data-theme] .sc1-recycle-confirm .sc1-recycle-actions{margin-top:14px}
 @media(max-width:690px){html[data-theme] .sc1-demo-intro{flex-direction:column;align-items:stretch;padding:13px}html[data-theme] .sc1-demo-intro button{width:100%}
 html[data-theme] .sc1-recycle{padding:13px}html[data-theme] .sc1-recycle-header{flex-direction:column}html[data-theme] .sc1-recycle-count{align-self:stretch;display:flex;justify-content:space-around;align-items:center}
 html[data-theme] .sc1-recycle-choices{grid-template-columns:1fr;max-height:295px}html[data-theme] .sc1-recycle-actions .btn{flex:1 1 100%}}
+
+/* Le Signal : invitation par code, sans messagerie ou partage d'e-mail. */
+html[data-theme] .sc1-invites{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin:22px 0;padding:19px;border:1px solid var(--tv-line);border-radius:16px;background:var(--tv-elevated)}
+html[data-theme] .sc1-invites>div:first-child{grid-column:1/-1}
+html[data-theme] .sc1-invites h2{color:var(--tv-text)!important;font-size:23px!important;margin:7px 0!important}
+html[data-theme] .sc1-invites p{font-size:12px!important;line-height:1.6!important;color:var(--tv-sub)!important;max-width:75ch;margin:0!important}
+html[data-theme] .sc1-code-controls{display:flex;align-items:end;gap:9px;min-width:0}
+html[data-theme] .sc1-code-controls label{display:flex;flex:1;flex-direction:column;gap:6px;min-width:0;font-size:11px;font-weight:850;color:var(--tv-text)}
+html[data-theme] .sc1-code-controls input{min-width:0;width:100%;height:42px;font-size:12px!important;letter-spacing:.08em;text-transform:uppercase}
+html[data-theme] .sc1-code-controls button{font-size:11px;min-height:42px;white-space:nowrap}
+html[data-theme] .sc1-invites>small{grid-column:1/-1;color:var(--tv-sub);font-size:10px;line-height:1.5}
+@media(max-width:800px){html[data-theme] .sc1-invites{grid-template-columns:1fr;padding:14px}html[data-theme] .sc1-invites>div:first-child,html[data-theme] .sc1-invites>small{grid-column:1}}
+@media(max-width:420px){html[data-theme] .sc1-code-controls{flex-wrap:wrap}html[data-theme] .sc1-code-controls button{width:100%}}
