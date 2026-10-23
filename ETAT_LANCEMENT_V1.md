@@ -1,9 +1,9 @@
-# SériesClubTCG · V1.0 — Contrôle de préparation
+# Epizora TCG · V1.0 — Contrôle de préparation
 
 Dernière vérification technique : **23 octobre 2026**. Ceci est un constat d'ingénierie, **pas** une certification légale ou une recette utilisateur.
 
 ## Validé dans le code et l'environnement connecté
-- [x] Projet unique SériesClubTCG V1.0 : aucune version technique « V22 » affichée comme version publique.
+- [x] Projet unique Epizora TCG V1.0 : aucune version technique « V22 » affichée comme version publique.
 - [x] Interface mobile jour/nuit, catalogue France, collections, albums, souhaits, Top 20, défis et achats en crédits virtuels développés.
 - [x] Quatre boosters thématiques présents en production (Netflix, Prime Video, Disney+, Télévision) avec un catalogue de séries associé.
 - [x] Halloween : deux titres classés Horror et une troisième carte thématique garanties par le sélecteur serveur, sans changer les raretés officielles.
@@ -21,7 +21,7 @@ Dernière vérification technique : **23 octobre 2026**. Ceci est un constat d'i
 ## Pas encore certifié — critères BLOQUANTS avant lancement commercial
 - [ ] **Recette vraie vie** Android, iOS et ordinateur avec comptes de test : inscription, login, rafraîchissement, attribution de cartes, doublons, échanges, profils, mode jour et nuit, installation de l'application.
 - [x] **Audit juridique initial et inventaire des médias :** 81 862 liens d'affiches TVmaze, 0 affiche principale TMDB ; crédits TVmaze/CC BY-SA et avis TMDB ajoutés ; logos SVOD issus du CDN TMDB masqués ; nouvelle page « Sources et droits » et formulaire de signalement via GitHub (public, nécessite compte GitHub, pas de compte joueur). Voir [audit juridique](AUDIT_JURIDIQUE_ET_LICENCES_V1.md) et [projet CGU/RGPD](DOSSIER_LEGAL_VALIDATION_V1.md).
-- [ ] **Autorisations et marque :** confirmation écrite TVmaze couvrant les affiches dans un jeu monétisé et ses promotions ; licence commerciale TMDB ou substitution, logo TMDB officiellement approuvé si conservé ; antériorités SériesClubTCG et confusion possible avec « Série Club » ; droits des acteurs et des fournisseurs.
+- [ ] **Autorisations et marque :** confirmation écrite TVmaze couvrant les affiches dans un jeu monétisé et ses promotions ; licence commerciale TMDB ou substitution, logo TMDB officiellement approuvé si conservé ; antériorités Epizora TCG et confusion possible avec « Série Club » ; droits des acteurs et des fournisseurs.
 - [ ] **Mentions légales et RGPD :** identité et contact de l'éditeur, politique de confidentialité, conservation, export, procédure effective de suppression des comptes et gestion des signalements.
 - [ ] **Sécurité :** revue manuelle des RPC accessibles aux comptes authentifiés ; suivi des abus et activation de la protection contre les mots de passe compromis selon le plan Supabase.
 - [ ] **Hébergement commercial et domaine :** GitHub Pages n'autorise pas l'hébergement principal d'un commerce en ligne ; choisir et valider un hébergeur commercial adapté. Domaine personnalisé : propriété du domaine, DNS, HTTPS, liens d'authentification et retours d'URL correctement configurés.
