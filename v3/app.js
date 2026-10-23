@@ -64,6 +64,16 @@ const state={route:'packs',creditPacks:null,creditPacksError:'',heroSlide:0,user
 const navName=key=>key==='about'?'À propos':navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let openingCards=null,openingStep=0,openingMeta=null;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
+/** Réponses publiques : ne jamais afficher d'erreurs techniques SQL au joueur. */
+function publicError(error){
+ const msg=String(error?.message||'');
+ if(/crédits insuffisants|solde insuffisant/i.test(msg))return 'Tu ne disposes pas d’assez de crédits.';
+ if(/récompense déjà obtenue|déjà.*obtenu/i.test(msg))return 'Cette récompense a déjà été attribuée.';
+ if(/saison incomplète/i.test(msg))return 'Il manque encore des séries pour terminer cette Saison.';
+ if(/connexion requise|profil requis|authentif/i.test(msg))return 'Connecte-toi pour continuer.';
+ if(/catalogue.*insuffisant|catalogue.*actualisation|paquet indisponible/i.test(msg))return 'Ce paquet est temporairement indisponible.';
+ return 'Cette opération n’a pas abouti. Réessaie dans quelques instants.';
+}
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
 function loadRouteData(route){
@@ -132,7 +142,7 @@ function render(){
 async function ensureProfile(user){
  let {data,error}=await supa.from('profiles').select('username,bio,favorite_genre,avatar_series_id,banner_series_id').eq('id',user.id).maybeSingle();
  if(error){const fallback=await supa.from('profiles').select('username,bio,favorite_genre').eq('id',user.id).maybeSingle();if(!fallback.error){data=fallback.data;error=null}}
- if(error){toast('Profil indisponible : '+error.message,true);return}
+ if(error){toast(publicError(error),true);return}
  if(data?.username){state.username=data.username;state.bio=data.bio||'';state.favoriteGenre=data.favorite_genre||'';state.avatarSeriesId=data.avatar_series_id??null;state.bannerSeriesId=data.banner_series_id??null;return}
  const username=(user.user_metadata?.username||'').trim();
  if(username.length>=3&&username.length<=24){
@@ -165,8 +175,8 @@ async function loadSession(){
   // Do not silently fall back to a worldwide inventory if the FR schema is absent.
   state.frMigrationError=c.error&&/fr_verified|schema cache|column/i.test(c.error.message)?
    'Collection momentanément indisponible.':'';
-  if(w.error)toast('Portefeuille : '+w.error.message,true);
-  if(c.error)toast('Collection : '+c.error.message,true);
+  if(w.error)toast(publicError(w.error),true);
+  if(c.error)toast(publicError(c.error),true);
   state.wallet=w.data||null;
   const allCards=c.error?[]:c.data||[];
   const allWishes=wi.error?[]:wi.data||[];
@@ -277,7 +287,7 @@ async function syncSeasonTargets(id=null){
    Number(stats?.cards_protected||0)+' carte(s) protégée(s), '+
    Number(stats?.series_owned||0)+' série(s) déjà possédée(s).');
   if(id)await openOfficialSeasonDetails(id);
- }catch(e){toast('Suivi des saisons : '+e.message,true)}
+ }catch(e){toast(publicError(e),true)}
  finally{state.busy=false}
 }
 async function unfollowSeason(id){
@@ -290,7 +300,7 @@ async function unfollowSeason(id){
   await loadTrackedSeasons();render();
   toast('Suivi arrêté. Les protections existantes sont conservées.');
   await openOfficialSeasonDetails(id);
- }catch(e){toast('Arrêt du suivi : '+e.message,true)}
+ }catch(e){toast(publicError(e),true)}
  finally{state.busy=false}
 }
 async function syncPersonalAlbum(id){
@@ -304,14 +314,14 @@ async function syncPersonalAlbum(id){
   await loadSession();await loadAlbums();await openAlbum(id);
   toast('Saison préparée : '+Number(stats?.wishes_added||0)+' souhait(s), '+
        Number(stats?.cards_protected||0)+' carte(s) nouvellement protégée(s).');
- }catch(e){toast('Préparation : '+e.message,true)}
+ }catch(e){toast(publicError(e),true)}
  finally{state.busy=false}
 }
 async function addPersonalTarget(id,seriesId){
  if(!state.user){openAuth();return}
  const {error}=await supa.rpc('add_series_to_personal_album',{
   p_album_id:id,p_series_id:Number(seriesId)});
- if(error){toast('Saison : '+error.message,true);return}
+ if(error){toast(publicError(error),true);return}
  await loadSession();await loadAlbums();await openAlbum(id);
  toast('Série ajoutée : souhait enregistré ou carte protégée.');
 }
@@ -319,7 +329,7 @@ async function removePersonalTarget(id,seriesId){
  if(!state.user){openAuth();return}
  const {error}=await supa.rpc('remove_series_from_personal_album',{
   p_album_id:id,p_series_id:Number(seriesId)});
- if(error){toast('Saison : '+error.message,true);return}
+ if(error){toast(publicError(error),true);return}
  await openAlbum(id);toast('Titre retiré des objectifs de cette saison.');
 }
 async function searchPersonalSeries(id){
@@ -328,7 +338,7 @@ async function searchPersonalSeries(id){
  if(term.length<2){target.textContent='Saisis au moins deux caractères.';return}
  target.textContent='Recherche des séries disponibles en France…';
  const {data,error}=await supa.rpc('search_personal_album_series',{p_search:term});
- target.innerHTML=error?'<p class="note">Recherche indisponible : migration V20 nécessaire.</p>':
+ target.innerHTML=error?'<p class="note">Recherche temporairement indisponible. Réessaie plus tard.</p>':
  albumSeriesSearchResults({album_id:id},data||[]);
 }
 
@@ -341,7 +351,7 @@ async function claimOfficialSeason(id){
   if(error)throw error;
   toast('Saison terminée ! Badge gagné et +'+Number(data||0)+' crédits.');
   await loadSession();await loadOfficialSeasons();
- }catch(e){toast('Saison : '+e.message,true)}
+ }catch(e){toast(publicError(e),true)}
  finally{state.busy=false}
 }
 async function loadAlbums(){
@@ -350,11 +360,11 @@ async function loadAlbums(){
   supa.rpc('my_personal_albums'),supa.rpc('public_personal_albums'),supa.rpc('my_official_seasons')
  ]);
  const errors=[own,shared].filter(v=>v.error).map(v=>v.error.message);
- state.albumError=errors.length?'Active la migration SQL V4 des albums : '+errors[0]:'';
+ state.albumError=errors.length?'Les Saisons personnelles sont temporairement indisponibles.':'';
  state.personalAlbums=own.data||[];state.publicAlbums=shared.data||[];
  state.officialSeasons=official.error?null:official.data||[];
  await loadTrackedSeasons();
- state.officialSeasonError=official.error?'Activer la migration SQL V10 des saisons officielles.':'';
+ state.officialSeasonError=official.error?'Les Saisons officielles sont temporairement indisponibles.':'';
  if(state.route==='albums')render();
 }
 async function openAlbum(id){
@@ -362,7 +372,7 @@ async function openAlbum(id){
  const album=state.personalAlbums.find(a=>a.album_id===id)||state.publicAlbums.find(a=>a.album_id===id);
  if(!album){toast('Album introuvable, actualise la page.',true);return}
  const {data,error}=await supa.rpc('album_card_data',{p_album_id:id});
- if(error){toast('Album : '+error.message,true);return}
+ if(error){toast(publicError(error),true);return}
  $('overlay').classList.remove('hidden');
  const targets=await supa.rpc('personal_album_targets',{p_album_id:id});
  $('overlay').innerHTML=albumDialog(state,album,data||[],targets.error?[]:targets.data||[]);
@@ -375,7 +385,7 @@ async function albumMutation(rpc,args,msg,id){
   const {error}=await supa.rpc(rpc,args);if(error)throw error;
   toast(msg);await loadAlbums();
   if(id)await openAlbum(id);
- }catch(e){toast('Album : '+e.message,true)}
+ }catch(e){toast(publicError(e),true)}
  finally{state.busy=false}
 }
 async function createAlbum(){
@@ -425,7 +435,7 @@ async function loadMarket(){
   supa.rpc('marketplace_feed'),supa.rpc('my_marketplace_activity'),supa.rpc('my_trade_offers')
  ]);
  const errors=[feed,activity,offers].filter(r=>r.error).map(r=>r.error.message);
- state.marketError=errors.length?'Active les migrations SQL V4 du Comptoir : '+errors[0]:'';
+ state.marketError=errors.length?'Le Comptoir est temporairement indisponible.':'';
  state.marketListings=feed.data||[];
  state.marketActivity=activity.data||[];
  state.tradeOffers=offers.data||[];
@@ -439,14 +449,14 @@ async function loadPeople(){
  const {data,error}=directory;
  const art=new Map((visuals.error?[]:visuals.data||[]).map(x=>[String(x.player_id),x]));
  state.players=(data||[]).map(p=>({...p,...art.get(String(p.player_id))}));
- state.peopleError=error?'Active la migration SQL V4 du Signal : '+error.message:'';
+ state.peopleError=error?'La communauté est temporairement indisponible.':'';
  if(state.route==='community')render();
 }
 async function loadDaily(){
  if(!state.user){state.daily=null;return}
  const {data,error}=await supa.rpc('get_daily_progress');
  state.daily=error?null:data?.[0]||null;
- state.dailyError=error?'Active la migration SQL V4 des Missions : '+error.message:'';
+ state.dailyError=error?'Les missions sont temporairement indisponibles.':'';
  if(state.route==='quests')render();
 }
 async function executeMarket(action,params,success){
@@ -460,7 +470,7 @@ async function executeMarket(action,params,success){
   await loadSession();
   await loadMarket();
   return data;
- }catch(e){toast('Le Comptoir : '+e.message,true)}
+ }catch(e){toast(publicError(e),true)}
  finally{state.busy=false}
 }
 function openTradeDialog(listingId){
@@ -562,7 +572,7 @@ async function loadCatalog(reset=false){
   if(request!==catalogRequestId)return;
   state.catalogError=/fr_verified|schema cache|column/i.test(e.message)
    ?'Catalogue momentanément indisponible.'
-   :'Catalogue indisponible : '+e.message;
+   :'Catalogue temporairement indisponible. Réessaie plus tard.';
  }finally{
   if(request===catalogRequestId){
    state.catalogLoading=false;
@@ -876,7 +886,7 @@ async function buyCreditPack(key){
   if(!Array.isArray(data)||data.length!==5)throw Error('Le serveur n’a pas retourné cinq cartes.');
   showOpening(data,{kind:'credit',price:Number(offer.price_credits),label:creditThemeName(key)});
   await loadSession();
- }catch(e){toast('Achat non effectué : '+e.message,true);closeModal();render()}
+ }catch(e){toast(publicError(e),true);closeModal();render()}
  finally{state.busy=false}
 }
 
