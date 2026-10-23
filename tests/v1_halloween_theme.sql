@@ -35,7 +35,7 @@ BEGIN
     count(*) FILTER(WHERE p.show_rarity IS DISTINCT FROM s.rarity) AS mismatched
    FROM chosen p JOIN public.series s ON s.id=p.show_id
   )
-  SELECT total,stats.horror,themed,invalid,dupes,mismatched
+  SELECT stats.total,stats.horror,stats.themed,stats.invalid,stats.dupes,stats.mismatched
   INTO n,horror,theme,invalid,dupes,rank_mismatch FROM stats;
   IF n<>5 OR horror<2 OR theme<3 OR invalid<>0 OR dupes<>0 OR rank_mismatch<>0 THEN
    RAISE EXCEPTION 'Halloween défectueux : cartes %, horreur %, thème %, hors France %, doublons %, raretés %',
