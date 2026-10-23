@@ -1,4 +1,4 @@
-# Epizora TCG — V1.0, préparation du lancement
+# SériesClubTCG — V1.0, préparation du lancement
 
 ## État du produit
 **Version publique unique : V1.0**. Le projet est actuellement accessible en accès anticipé, **pas officiellement lancé**.
@@ -17,7 +17,7 @@
 - Centre d'opportunités du Comptoir : échanges reçus ou envoyés, dernières annonces correspondant aux souhaits, liens directs vers les sections concernées. Pas de notifications push ni de promesse de disponibilité en temps réel.
 
 ### À ne pas confondre avec une version publique
-Les répertoires `v3/`, `v12/`, `v23/` et les migrations SQL `game_v21_...` sont **historiques et techniques**. Leur renumérotation casserait les imports, migrations et données. Les joueurs voient uniquement **Epizora TCG V1.0**.
+Les répertoires `v3/`, `v12/`, `v23/` et les migrations SQL `game_v21_...` sont **historiques et techniques**. Leur renumérotation casserait les imports, migrations et données. Les joueurs voient uniquement **SériesClubTCG V1.0**.
 
 ### Statut des paiements
 Abonnement Premium dans un parcours test/suspendu selon configuration Supabase/Stripe. Vente de crédits contre euros désactivée. L'activation live exige examens réglementaires et juridiques, tests de paiements et de résiliation, conditions contractuelles et identification de l'éditeur.
@@ -34,7 +34,7 @@ Le manifeste permet d'installer le site comme application web. Le service worker
 
 ## Préparer un véritable lancement
 
-**Nouveau nom public provisoire : Epizora TCG.** L'ancien nom est abandonné dans l'interface ; le nom du dépôt et les clés techniques restent inchangés par sécurité de migration. Validation INPI/EUIPO, domaine et documents éditeur obligatoires avant communication payante.
+**Nom actuel conservé provisoirement : SériesClubTCG.** L'ancien nom est abandonné dans l'interface ; le nom du dépôt et les clés techniques restent inchangés par sécurité de migration. Validation INPI/EUIPO, domaine et documents éditeur obligatoires avant communication payante.
 - [ ] Domaine personnalisé du nouveau nom (candidat : `epizora.fr`) à vérifier auprès de l’AFNIC puis à réserver après contrôle INPI/EUIPO ; DNS/HTTPS et URL Auth/Stripe à adapter.
 - [x] Première cartographie des licences et images réalisée : [audit juridique V1](AUDIT_JURIDIQUE_ET_LICENCES_V1.md) et [dossier CGU/RGPD à valider](DOSSIER_LEGAL_VALIDATION_V1.md). La base de production référence 81 862 affiches TVmaze, aucune affiche principale TMDB ; les logos de plateformes provenant de TMDB sont masqués en V1 et une page publique « Sources et droits » est accessible.
 - [x] Choix d'une [stratégie sans contact fournisseur](STRATEGIE_SANS_CONTACT_V1.md) : TVmaze sous licence publique CC BY-SA et hotlink attribué ; suspension des trois synchronisations automatiques TMDB.
