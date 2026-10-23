@@ -1099,7 +1099,12 @@ async function savePasswordReset(){
  }catch{if(feedback)feedback.textContent='Impossible de modifier le mot de passe. Demande un nouveau lien.'}
  finally{if(button?.isConnected){button.disabled=false;button.textContent='Enregistrer le mot de passe'}}
 }
-function closeModal(){detailRequestId++;openingCards=null;openingStep=0;openingMeta=null;const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
+function closeModal(){
+ // Restituer le focus au contenu après fermeture d'une fenêtre modale.
+ detailRequestId++;openingCards=null;openingStep=0;openingMeta=null;
+ const root=$('overlay');root.classList.add('hidden');root.replaceChildren();
+ $('page')?.focus({preventScroll:true});
+}
 function exportCollection(){
  if(!state.user||!state.cards.length){toast('Aucune carte à exporter.',true);return}
  const csv=collectionCSV(state.cards,state.wishes,state.marketActivity);
@@ -1707,6 +1712,19 @@ document.addEventListener('input',e=>{
  }
 });
 document.addEventListener('keydown',e=>{
+ // Conserver le parcours clavier dans la fenêtre affichée (dialogue ARIA).
+ if(e.key==='Tab'){
+  const modal=$('overlay');
+  if(modal&&!modal.classList.contains('hidden')){
+   const focusables=Array.from(modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+    .filter(el=>el.getClientRects().length>0);
+   if(!focusables.length){e.preventDefault();return}
+   const first=focusables[0],last=focusables[focusables.length-1],active=document.activeElement;
+   if(!modal.contains(active)){e.preventDefault();(e.shiftKey?last:first).focus();return}
+   if(e.shiftKey&&active===first){e.preventDefault();last.focus();return}
+   if(!e.shiftKey&&active===last){e.preventDefault();first.focus();return}
+  }
+ }
  if(e.key==='Escape'){
   if(document.body.classList.contains('drawer-open')){document.body.classList.remove('drawer-open');$('menuToggle')?.setAttribute('aria-expanded','false')}
   else closeModal();
