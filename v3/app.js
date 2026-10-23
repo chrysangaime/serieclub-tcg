@@ -1,5 +1,5 @@
-import{privacyPage,legalPage,supportPage,deletionDialog}from'../v1/privacy.js?v=1.0.0&build=13';
-import{rightsPage}from'../v1/rights.js?v=1.0.0';
+import{privacyPage,legalPage,supportPage,deletionDialog}from'../v1/privacy.js?v=1.0.0&build=14';
+import{rightsPage}from'../v1/rights.js?v=1.0.0&build=2';
 import{opportunityData}from'../v1/opportunities.js?v=1.0.0&build=7';
 import{candidates,recycleConfirm,LIMIT as RECYCLE_LIMIT}from'../v1/recycling.js?v=1.0.0&build=5';
 import{demoCards}from'../v1/onboarding.js?v=1.0.0&build=4';
