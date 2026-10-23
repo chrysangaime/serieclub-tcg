@@ -303,6 +303,8 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_account_requests.sql
       - name: Tester le recours et la confidentialité sans effacer de compte
         run: psql -v ON_ERROR_STOP=1 -f tests/v1_account_requests.sql
+      - name: Protéger les Saisons officielles héritées du socle V10
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_secure_official_seasons.sql
       - name: Réduire les privilèges directs de la Data API
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_least_privilege.sql
       - name: Tester les privilèges, l'isolation RLS et les soldes
