@@ -140,3 +140,28 @@ html[data-theme] .opening-dialog .sc7-pack-bonus{
 html[data-theme] .opening-dialog .sc7-pack-bonus>span{
  color:#576576!important;
 }
+
+
+/* V1 · Sections éditoriales toujours sombres (jour et nuit).
+   Les styles globaux encre sombre de la page claire ne doivent pas
+   dégrader les titres, paragraphes, crédits ni légendes des cartes. */
+html[data-theme] .season-shelf h2,
+html[data-theme] .stream-zone h2{
+ color:#f7f9ff!important;
+}
+html[data-theme] .season-shelf .shelf-head p,
+html[data-theme] .season-shelf .shelf-head .note,
+html[data-theme] .stream-zone .platform-header p,
+html[data-theme] .stream-zone .platform-header .note,
+html[data-theme] .stream-zone .platform-disclaimer{
+ color:#d3dcea!important;
+ opacity:1!important;
+}
+html[data-theme] .season-shelf .caps,
+html[data-theme] .stream-zone .caps{
+ color:#72e7ec!important;
+}
+html[data-theme] .season-shelf .shelf-item small{
+ color:#d0d8e7!important;
+ opacity:1!important;
+}
