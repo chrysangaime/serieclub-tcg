@@ -113,6 +113,33 @@ try {
       device.name + ": choix des paquets manquant");
     assert.ok(await page.locator("#page [data-pack]").count(),
       device.name + ": paquets classiques absents");
+
+    // Les panneaux Halloween / plateformes possèdent leur propre fond sombre.
+    // Contrôler la luminosité du texte au lieu de seulement vérifier l'absence
+    // de débordements : une encre de thème clair y était devenue illisible.
+    const editorialText = await page.evaluate(() => {
+      const selectors = [
+        ".season-shelf h2",
+        ".season-shelf .shelf-head p",
+        ".season-shelf .shelf-head .note",
+        ".stream-zone h2",
+        ".stream-zone .platform-header p",
+        ".stream-zone .platform-header .note",
+        ".stream-zone .platform-disclaimer"
+      ];
+      return selectors.flatMap(selector => {
+        const el = document.querySelector(selector);
+        if (!el) return [];
+        const values = (getComputedStyle(el).color.match(/[0-9.]+/g) || [])
+          .slice(0, 3).map(Number);
+        return [{ selector, brightness: values.reduce((a,b) => a+b,0)/3 }];
+      });
+    });
+    assert.ok(editorialText.some(x => x.selector === ".stream-zone h2"),
+      device.name + ": panneau SVOD manquant");
+    assert.deepEqual(editorialText.filter(x => x.brightness < 165), [],
+      device.name + ": textes sombres dans un panneau sombre " + JSON.stringify(editorialText));
+
     await page.screenshot({ path: "browser-artifacts/" + device.name + "-packs.png", fullPage: true });
 
     // Une démonstration ne touche jamais à la collection. Le catalogue externe
