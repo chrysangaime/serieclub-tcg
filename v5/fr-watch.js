@@ -1,5 +1,5 @@
 /**
- * SérieClub — disponibilité légale en France, au premier plan de la fiche.
+ * Epizora — disponibilité légale en France, au premier plan de la fiche.
  * Source : cache public TMDB / JustWatch ou relevé éditorial daté JustWatch FR.
  * Ne suppose jamais une offre sur la seule base de la diffusion historique.
  */
