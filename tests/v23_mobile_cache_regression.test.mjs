@@ -8,9 +8,9 @@ test('La page déployée charge réellement le composant V23 (sans cache de V18)
  assert.match(index,/v3\/app\.js\?v=1\.0\.0/);
  assert.match(index,/v23\/final-mobile\.css\?v=23\.0\.0/);
  assert.match(app,/\.\/views\.js\?v=1\.0\.0/);
- assert.match(views,/v12\/home\.js\?v=1\.0\.0&build=9/);
+ assert.match(views,/v12\/home\.js\?v=1\.0\.0&build=10/);
  assert.match(app,/v7\/booster\.js\?v=1\.0\.0&build=9/);
- assert.match(index,/v3\/views\.js\?v=1\.0\.0&build=9/);
+ assert.match(index,/v3\/views\.js\?v=1\.0\.0&build=10/);
  assert.doesNotMatch(views,/v12\/home\.js\?v=18\.0\.0/);
 });
 test('Les libellés ne recouvrent plus les pochettes',()=>{
