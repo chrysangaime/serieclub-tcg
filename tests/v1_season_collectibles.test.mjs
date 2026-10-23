@@ -46,11 +46,14 @@ test('La migration serveur maintient les achats, le tirage et le stock, sans DEL
  const migration=fs.readFileSync('supabase/v1_season_collectibles.sql','utf8');
  const pack=fs.readFileSync('supabase/v1_season_booster_rpc.sql','utf8');
  const backfill=fs.readFileSync('supabase/v1_season_card_backfill.sql','utf8');
+ const credit=fs.readFileSync('supabase/v1_season_credit_booster_rpc.sql','utf8');
  assert.match(migration,/REFERENCES public\.series_seasons\(series_id,season_number\)/);
  assert.match(migration,/ENABLE ROW LEVEL SECURITY/);
  assert.match(pack,/name:=selected\.show_name\|\|CASE WHEN variant_no IS NOT NULL/);
  assert.match(pack,/coalesce\(variant_image,selected\.show_image\)/);
  assert.match(backfill,/ss\.premiered<=CURRENT_DATE/);
- for(const source of [migration,pack,backfill])
+ assert.match(credit,/variant_no integer;variant_image text/);
+ assert.match(credit,/name:=show\.title\|\|CASE/);
+ for(const source of [migration,pack,backfill,credit])
   assert.doesNotMatch(source,/DELETE\s+FROM\s+public\.player_cards|DROP\s+TABLE/i);
 });
