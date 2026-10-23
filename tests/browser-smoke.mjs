@@ -123,6 +123,46 @@ try {
       await page.locator("#openingSkip").waitFor();
       await page.locator("#openingSkip").click();
       await page.locator("#openingDone").waitFor();
+
+      // Les noms et raretés doivent conserver un contraste WCAG AA dans le
+      // récapitulatif : une précédente régression héritait d'un texte bleu
+      // foncé sur des mini-cartes presque noires.
+      const contrast = await page.evaluate(() => {
+        const channels = color => [...String(color).matchAll(/[\\d.]+/g)].slice(0, 3)
+          .map(x => Number(x[0]));
+        const luminance = triplet => triplet.reduce((total, value, index) => {
+          const c = value / 255;
+          const linear = c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+          return total + linear * [0.2126, 0.7152, 0.0722][index];
+        }, 0);
+        const ratio = (foreground, background) => {
+          const a = luminance(channels(foreground));
+          const b = luminance(channels(background));
+          return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+        };
+        const bg = element => {
+          for (let item = element; item; item = item.parentElement) {
+            const style = getComputedStyle(item);
+            if (channels(style.backgroundColor).length !== 3) continue;
+            const alpha = style.backgroundColor.match(/rgba?\\([^)]*[,\\s]([01](?:\\.\\d+)?)\\)$/);
+            if (!alpha || Number(alpha[1]) > 0.99) return style.backgroundColor;
+          }
+          return "rgb(255, 255, 255)";
+        };
+        const labels = [...document.querySelectorAll("#overlay .sc7-opening-mini b, #overlay .sc7-opening-mini span")];
+        const values = labels.map(el => ratio(getComputedStyle(el).color, bg(el)));
+        const reward = document.querySelector("#overlay .sc7-pack-bonus");
+        return {
+          labelCount: labels.length,
+          smallestLabelRatio: Math.min(...values),
+          rewardRatio: reward ? ratio(getComputedStyle(reward).color, bg(reward)) : 0
+        };
+      });
+      assert.equal(contrast.labelCount, 10, device.name + ": cinq noms et cinq raretés attendus");
+      assert.ok(contrast.smallestLabelRatio >= 4.5,
+        device.name + ": contraste des séries insuffisant " + JSON.stringify(contrast));
+      assert.ok(contrast.rewardRatio >= 4.5,
+        device.name + ": contraste de la synthèse insuffisant " + JSON.stringify(contrast));
       await page.screenshot({ path: "browser-artifacts/" + device.name + "-demo.png" });
       await page.keyboard.press("Escape");
       await page.locator("#overlay").waitFor({ state: "hidden" });
