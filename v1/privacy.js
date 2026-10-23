@@ -31,7 +31,7 @@ export function supportPage(s={}){
  '<label>Décris le problème<textarea id="reportDetails" required minlength="15" maxlength="600" rows="4" placeholder="Explique les faits avec précision (15 à 600 caractères)."></textarea></label>'+
  '<button type="submit" class="btn primary" id="reportSubmitButton">Envoyer le signalement →</button>'+
  '<p class="note">Cinq signalements au maximum par 24 heures. N’inclus pas d’informations sensibles dans le texte.</p></form>':
- '<p>Connecte-toi pour signaler un contenu depuis ton compte. La messagerie privée n’est pas ouverte pendant l’accès anticipé.</p><button class="btn primary" data-auth type="button">Se connecter →</button>')+
+ '<p>Connecte-toi pour signaler un contenu depuis ton compte. Pour un litige portant sur une affiche, une œuvre ou une marque, consulte « Sources et droits » : une voie de signalement publique via GitHub est accessible sans compte du jeu.</p><button class="btn primary" data-auth type="button">Se connecter →</button><button class="btn subtle" data-route="rights" type="button">Sources et droits →</button>')+
  '</section><section class="panel"><h2>Besoin d’une aide concernant tes données ?</h2><p>Consulte les Paramètres pour exporter tes informations ou fermer ton compte. Le contact de l’éditeur sera rendu disponible lors de la publication des mentions légales définitives.</p><button type="button" class="btn subtle" data-route="settings">Paramètres et données →</button></section></div>';
 }
 export function deletionDialog(email=''){
