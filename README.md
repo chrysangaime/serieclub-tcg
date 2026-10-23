@@ -26,6 +26,10 @@ Abonnement Premium dans un parcours test/suspendu selon configuration Supabase/S
 
 Les nouveaux modules **recyclage sécurisé des doublons** et **codes joueurs du Signal** sont préparés dans GitHub mais ne peuvent pas être activés depuis un site GitHub Pages statique. Après les migrations historiques (notamment V4, V20), exécuter [INSTALLER_V1_PRELANCEMENT.sql](supabase/INSTALLER_V1_PRELANCEMENT.sql) dans le SQL Editor du projet Supabase. La démonstration sans compte fonctionne sans migration. Cette installation ne touche pas aux inventaires existants.
 
+## Installation mobile et déconnexion
+
+Le manifeste permet d'installer le site comme application web. Le service worker **ne met en cache que la page d'information hors connexion** et jamais les données des joueurs ni les appels Supabase. L'ouverture de paquets reste impossible hors connexion. La page Paramètres propose un bouton d'installation sur les navigateurs compatibles.
+
 ## Préparer un véritable lancement
 - [ ] Domaine personnalisé `seriesclub-tcg.fr` acquis, DNS/HTTPS, redirections et URL de retour auth/Stripe configurées.
 - [ ] Vérifier les droits des affiches, logos, marques et conditions d'utilisation des fournisseurs.
