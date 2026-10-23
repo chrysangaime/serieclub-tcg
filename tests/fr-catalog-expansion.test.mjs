@@ -46,9 +46,9 @@ test('une diffusion française à venir est présentée comme annoncée, pas dé
  const details={fr_verified:true,premiered:'2999-01-01',
   network:{name:'France 2',country:{code:'FR'}}};
  const future=renderFranceAvailability(null,details);
- assert.match(future,/Diffusion annoncée en France/);
+ assert.match(future,/Chaîne française annoncée/);
  assert.match(future,/France 2/);
  assert.doesNotMatch(future,/France · diffusion attestée/);
  const past=renderFranceAvailability(null,{...details,premiered:'2020-01-01'});
- assert.match(past,/Diffusion en France confirmée/);
+ assert.match(past,/Diffuseur d’origine en France/);
 });
