@@ -1,89 +1,53 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import {renderFranceAvailability,normalizeFranceOffers} from '../v5/fr-watch.js';
+import {renderFranceAvailability,normalizeFranceOffers,getFrenchOffersByShow} from '../v5/fr-watch.js';
 import {showDetailHTML} from '../v4/series.js';
 
-const availability=JSON.parse(fs.readFileSync('data/watch-fr.json','utf8')).titles['171'];
 const show={
  id:171,name:'How I Met Your Mother',premiered:'2005-09-19',
  genres:['Drama','Comedy','Romance'],
  rarity:'Unique',rarity_source:'editorial',fr_verified:true,
- fr_evidence_url:'https://www.disneyplus.com/fr-fr/browse/entity-bc68ac79-3ace-4427-9ec0-5ee6f314d194'
+ fr_verification_method:'editorial_fr_history'
 };
 
-test('How I Met Your Mother: Disney+ is subscription, Amazon Video/Apple purchase only',()=>{
- assert.equal(availability.country,'FR');
- assert.equal(availability.source,'justwatch_fr_editorial');
- assert.equal(availability.url,'https://www.justwatch.com/fr/serie/how-i-met-your-mother');
- assert.match(availability.checked_at,/^2026-10-17/);
- assert.deepEqual(
-  availability.offers.filter(x=>x.type==='flatrate').map(x=>x.name),['Disney+']
- );
- assert.deepEqual(
-  availability.offers.filter(x=>x.type==='buy').map(x=>x.name),
-  ['Apple TV Store','Amazon Video']
- );
- assert.ok(!availability.offers.some(x=>x.name==='Amazon Prime Video'));
- const html=renderFranceAvailability(availability,show);
- assert.match(html,/Disponible sur/);
- assert.match(html,/sc56-brand-disney/);
- assert.match(html,/sc56-secondary/);
- assert.match(html,/Achat :/);
- assert.match(html,/Apple TV Store/);
- assert.match(html,/Amazon Video/);
- assert.doesNotMatch(html,/Amazon Prime Video/);
- assert.match(html,/17\/10\/2026/);
- assert.match(html,/justwatch\.com\/fr\/serie\/how-i-met-your-mother/);
- assert.match(html,/disneyplus\.com\/fr-fr\/browse\/entity-bc68ac79/);
+test('Aucune liste de diffuseurs TMDB ou JustWatch n’est reproduite sur une fiche',async()=>{
+ const snapshot={country:'FR',checked_at:new Date().toISOString(),
+  url:'https://www.themoviedb.org/tv/1/watch?locale=FR',
+  offers:[{type:'flatrate',name:'Disney+'},{type:'buy',name:'Apple TV Store'}]};
+ const html=renderFranceAvailability(snapshot,show);
+ assert.match(html,/Où regarder en France/);
+ assert.match(html,/Offres de streaming non confirmées/);
+ assert.match(html,/https:\/\/www\.justwatch\.com\/fr/);
+ assert.doesNotMatch(html,/Disney\+|Apple TV Store|themoviedb\.org|Disponible sur/);
+ assert.equal(normalizeFranceOffers(snapshot),null);
+ assert.equal(await getFrenchOffersByShow(171),null);
 });
 
-test('Platforms are compact near title/rarity, not repeated in big footer banner',()=>{
+test('La présentation reste compacte près du titre et de la rareté',()=>{
  const html=showDetailHTML({},show,{source:'editorial',text:'Ted raconte ses rencontres.'});
- const index=html.indexOf('data-fr-watch');
- assert.ok(index>0);
- assert.ok(index<html.indexOf('En quelques mots'));
+ const at=html.indexOf('data-fr-watch');
+ assert.ok(at>0);
+ assert.ok(at<html.indexOf('En quelques mots'));
  assert.equal(html.split('data-fr-watch').length-1,1);
- assert.doesNotMatch(html,/sc54-fr-cert/);
- assert.doesNotMatch(html,/sc53-fr-watch/);
- assert.doesNotMatch(html,/Série diffusée en France/);
  assert.match(html,/Où regarder en France/);
  assert.match(html,/Source de diffusion française/);
 });
 
-test('Streaming-only vs purchase-only offers are not mixed or falsely asserted',()=>{
- const now=new Date().toISOString();
- const purchaseOnly={country:'FR',source:'justwatch_fr_editorial',checked_at:now,
-  url:availability.url,offers:[{type:'buy',name:'Amazon Video'}]};
- const html=renderFranceAvailability(purchaseOnly,show);
- assert.match(html,/Disponible à l’achat ou à la location sur/);
- assert.doesNotMatch(html,/sc56-brand-disney/);
- const empty=renderFranceAvailability(null,show);
- assert.match(empty,/Offres de streaming non confirmées/);
- assert.doesNotMatch(empty,/Disney\+/);
- assert.doesNotMatch(empty,/Aucune disponibilité française vérifiée/);
+test('Un diffuseur TVmaze français est identifié sans inventer un abonnement',()=>{
+ const network={network:{name:'France 2',country:{code:'FR'}},
+  fr_verification_method:'tvmaze_fr_origin'};
+ const html=renderFranceAvailability(null,network);
+ assert.match(html,/France 2/);
+ assert.match(html,/Diffuseur d’origine en France/);
+ assert.doesNotMatch(html,/Disponible sur|Netflix|Disney\+/);
+ const US=renderFranceAvailability(null,{network:{name:'CBS',country:{code:'US'}}});
+ assert.doesNotMatch(US,/CBS|France 2/);
 });
 
-test('Invalid provider links and HTML are not injected into new platform badges',()=>{
- const hostile={country:'FR',source:'justwatch_fr_editorial',
-  checked_at:new Date().toISOString(),url:'javascript:alert(1)',
-  offers:[{type:'flatrate',name:'<img onerror=alert(1)>',provider_url:'https://evil.example/'}]};
- const html=renderFranceAvailability(hostile,show);
- assert.doesNotMatch(html,/<img onerror=/);
- assert.doesNotMatch(html,/https:\/\/evil\.example/);
- assert.doesNotMatch(html,/javascript:/);
- assert.match(html,/&lt;img onerror=alert\(1\)&gt;/);
- assert.equal(normalizeFranceOffers({...hostile,country:'US'}),null);
-});
-
-test('TMDB cache slug URLs are accepted only on the official watch page',()=>{
- const now=new Date().toISOString();
- const rec={country:'FR',checked_at:now,
-  url:'https://www.themoviedb.org/tv/4087-the-x-files/watch?locale=FR',
-  offers:[{type:'flatrate',name:'Disney Plus'}]};
- const html=renderFranceAvailability(rec);
- assert.match(html,/https:\/\/www\.themoviedb\.org\/tv\/4087-the-x-files\/watch\?locale=FR/);
- assert.match(html,/Voir les offres en France/);
- const evil={...rec,url:'https://www.themoviedb.org/tv/4087-the-x-files/edit?locale=FR'};
- assert.doesNotMatch(renderFranceAvailability(evil),/4087-the-x-files\/edit/);
+test('Les anciennes offres, URL malveillantes et code HTML ne peuvent être injectés',()=>{
+ const attack={country:'FR',url:'javascript:alert(1)',
+  offers:[{name:'<script>alert(1)</script>',provider_url:'https://evil.example'}]};
+ const html=renderFranceAvailability(attack,{});
+ assert.doesNotMatch(html,/<script>|evil\.example|javascript:|themoviedb/);
+ assert.equal(normalizeFranceOffers(attack),null);
 });
