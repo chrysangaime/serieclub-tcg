@@ -14,12 +14,8 @@ on:
         description: "Page de départ facultative (sinon reprise automatique)"
         required: false
         default: ""
-  push:
-    paths:
-      - "scripts/expand-fr-catalog.mjs"
-      - ".github/workflows/expand-fr-catalog.yml"
-  schedule:
-    - cron: "10 2 * * *"
+  # Pause juridique V1 : pas d'appel automatique à TMDB.
+  # Déclenchement manuel uniquement pour essais non commerciaux documentés.
 permissions:
   contents: write
 concurrency:
