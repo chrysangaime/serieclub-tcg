@@ -86,24 +86,18 @@ jobs:
           assert.equal(frText.genreFR('Comedy'),'Comédie');
           assert.equal(frText.genreFR('Mystery'),'Mystère');
           assert.deepEqual(watchModule.getFrenchOriginChannel({network:{name:'CBS',country:{code:'US'}}}),[]);
-          assert.ok(fs.existsSync('data/watch-fr.json'));
-          const frOffers=JSON.parse(fs.readFileSync('data/watch-fr.json','utf8'));
-          assert.equal(frOffers.titles['430'].country,'FR');
-          assert.ok(/^https:\/\/(?:www\.justwatch\.com\/fr\/serie\/the-x-files|www\.themoviedb\.org\/tv\/\d+(?:-[a-z0-9-]+)?\/watch\?locale=FR)$/.test(frOffers.titles['430'].url),'Source France X-Files reconnue');
-          const himym=frOffers.titles['171'];
-          assert.equal(himym.url,'https://www.justwatch.com/fr/serie/how-i-met-your-mother');
-          assert.equal(himym.offers.find(o=>o.type==='flatrate')?.name,'Disney+');
-          assert.deepEqual(himym.offers.filter(o=>o.type==='buy').map(o=>o.name),
-            ['Apple TV Store','Amazon Video']);
+          // La V1 sans TMDB ne doit plus publier de snapshot tiers.
+          assert.ok(!fs.existsSync('data/watch-fr.json'));
+          assert.ok(!fs.existsSync('data/cast-fr.json'));
           const compactView=await import('./v5/fr-watch.js');
-          const panel=compactView.renderFranceAvailability(himym);
+          const panel=compactView.renderFranceAvailability({
+            country:'FR',offers:[{type:'flatrate',name:'Netflix'}]
+          });
           assert.match(panel,/Où regarder en France/);
           assert.match(panel,/Offres de streaming non confirmées/);
           assert.match(panel,/JustWatch France/);
-          assert.doesNotMatch(panel,/sc56-brand-disney|Disponible sur|themoviedb\\.org/);
+          assert.doesNotMatch(panel,/Netflix|Disponible sur|themoviedb\\.org/);
 
-          assert.ok(frOffers.titles['430'].offers.some(o=>/Disney(?:\+| Plus)/.test(o.name)));
-          assert.ok(frOffers.titles['430'].offers.some(o=>o.name==='Amazon Prime Video'));
           const franchise=await import('./v5/fr-collection.js');
           assert.equal(franchise.partitionFrenchInventory([
             {series:{fr_verified:true,rarity_source:'editorial'}},
