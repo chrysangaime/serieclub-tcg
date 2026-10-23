@@ -75,3 +75,45 @@ html[data-theme] .sc1-opportunities-note{font-size:10px!important;color:var(--tv
 html[data-theme] #sc1-trades,html[data-theme] #sc1-market-listings{scroll-margin-top:75px}
 @media(max-width:800px){html[data-theme] .sc1-opportunities{padding:14px;margin:14px 0 20px}html[data-theme] .sc1-opportunities-grid{grid-template-columns:1fr;gap:8px}html[data-theme] .sc1-opportunities-grid article{padding:13px}html[data-theme] .sc1-opportunities-head{align-items:flex-start}html[data-theme] .sc1-opportunities-count{font-size:10px}html[data-theme] .sc1-opportunities-grid .btn{width:100%}}
 @media(max-width:420px){html[data-theme] .sc1-opportunities-head{flex-direction:column;gap:6px}}
+
+
+/* Recette visuelle V1 — hero mobile lisible, contrôles carrousel compacts.
+   Les affiches décoratives ont été détectées par captures Chromium sur le texte.
+   On conserve l'illustration sur tablette/ordinateur uniquement. */
+@media(max-width:690px){
+ html[data-theme] .sc15-hero .sc15-hero-art{
+  display:none!important
+ }
+ html[data-theme] .sc15-hero .sc13-hero-head{
+  position:relative!important;align-items:flex-start!important;
+  min-height:34px!important;padding-right:128px!important;
+  gap:0!important
+ }
+ html[data-theme] .sc15-hero .sc13-hero-controls{
+  position:absolute!important;top:0!important;right:0!important;
+  display:flex!important;align-items:center!important;gap:5px!important;
+  z-index:5!important
+ }
+ html[data-theme] .sc15-hero .sc13-hero-controls>button{
+  flex:0 0 30px!important;width:30px!important;height:30px!important;
+  min-width:30px!important;min-height:30px!important;max-width:30px!important;
+  padding:0!important;border-radius:10px!important;font-size:19px!important
+ }
+ html[data-theme] .sc15-hero .sc13-hero-dots{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:4px!important;flex:0 0 auto!important
+ }
+ html[data-theme] .sc15-hero .sc13-hero-dots>button{
+  flex:0 0 7px!important;width:7px!important;height:7px!important;
+  min-width:7px!important;min-height:7px!important;max-width:7px!important;
+  max-height:7px!important;border:0!important;border-radius:99px!important;
+  padding:0!important;box-shadow:none!important;background:#8299b0!important
+ }
+ html[data-theme] .sc15-hero .sc13-hero-dots>button[aria-current="true"]{
+  flex-basis:17px!important;width:17px!important;max-width:17px!important;
+  border-radius:7px!important;background:#087e91!important
+ }
+ html[data-theme="night"] .sc15-hero .sc13-hero-dots>button[aria-current="true"]{
+  background:#69e7dc!important
+ }
+}
