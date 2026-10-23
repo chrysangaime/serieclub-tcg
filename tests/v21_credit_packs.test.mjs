@@ -24,7 +24,7 @@ test('Prix réel issu du serveur et refus de solde insuffisant',()=>{
  ],user:{id:'test'},wallet:{credits:225}});
  assert.match(html,/Crédits insuffisants/);
  assert.match(html,/data-credit-pack="prime"/);
- assert.match(html,/Offres France relevées le 22\/10\/2026/);
+ assert.match(html,/Sélection historique relevée le 22\/10\/2026/);
 });
 test('Un booster en crédits ne déclenche pas les bonus du booster gratuit',()=>{
  const cards=Array.from({length:5},(_,i)=>({name:'Série '+i,rarity:'Commune',image_url:'https://example.com/ok.jpg'}));
