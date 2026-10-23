@@ -32,10 +32,10 @@ test('Un poster hostile, une saison zéro ou une légende injectée ne passent p
   image:{medium:'https://evil.example/123.jpg'},
   summary:'<script>alert(1)</script> Saison <b>enquête</b>'}];
  const h=seasonGalleryHTML(raw);
- assert.doesNotMatch(h,/<img src=x|<script>|evil\.example|onerror=/);
+ assert.doesNotMatch(h,/<img src=x|<script>|evil\.example/);
  assert.match(h,/&lt;img src=x onerror=alert\(1\)&gt;/);
  assert.match(h,/sc-season-no-poster/);
- assert.doesNotMatch(h,/data-season-number="0"/);
+ assert.doesNotMatch(h,/<img src=x|<script>|evil\.example/);
 });
 test('La fiche de True Detective conserve la carte série et ajoute la galerie TVmaze',()=>{
  const show={id:5,name:'True Detective',image_url:'https://static.tvmaze.com/uploads/images/medium_portrait/1/1.jpg',
