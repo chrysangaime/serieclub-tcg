@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');
-test('Marque commerciale officielle SériesClubTCG sur les points de contact publics',()=>{
+test('La nouvelle marque Epizora TCG est visible sur tous les points de contact',()=>{
  for(const p of ['index.html','manifest.webmanifest','v3/app.js','v3/views.js','v12/home.js','v10/store.js','v7/booster.js','v3/icon.svg']){
-  assert.match(read(p),/SériesClubTCG|SÉRIESCLUBTCG|SÉRIES<strong>CLUB<\/strong><em>TCG<\/em>|SÉRIES<em>CLUB<\/em>TCG/,p);
-  assert.doesNotMatch(read(p),/SérieClub TCG|SÉRIECLUB TCG|SÉRIECLUB(?!TCG)/,p);
+  assert.match(read(p),/Epizora TCG|EPIZORA TCG|EPI<strong>ZORA<\\/strong><em>TCG<\\/em>|EPI<em>ZORA<\\/em>/,p);
+  assert.doesNotMatch(read(p),/SériesClubTCG|SÉRIESCLUBTCG|SÉRIES<strong>CLUB/,p);
  }
 });
