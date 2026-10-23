@@ -8,12 +8,12 @@
 - Sept raretés officielles, catalogue France, fiches de séries et diffusion française.
 - Saisons officielles de huit et vingt séries, souhaits, cartes protégées, saisons personnelles.
 - Jeux, fusions, profils, échanges et Comptoir selon modules serveur activés.
-- Boosters SVOD (Netflix, Prime Video, Disney+, télévision) contre crédits virtuels gagnés dans le jeu **si migration V21 activée**.
+- Boosters SVOD (Netflix, Prime Video, Disney+, télévision) contre crédits virtuels gagnés dans le jeu. Les quatre offres sont activées sur le Supabase de production.
 - Jour/nuit, interface mobile, navigation et page de transparence.
 - Démonstration de booster sans inscription (aucune attribution réelle).
 - Halloween : 2 séries classées Horror et une troisième horreur / thriller / mystère / surnaturel par paquet, avec les raretés officielles des séries. Migration `supabase/game_v1_halloween_theme.sql` et 80 scénarios de tirage non transactionnels en CI.
-- Recyclage groupé sécurisé de doublons contre crédits virtuels, **après activation de la migration SQL `game_v1_bulk_recycling.sql`**. Jusqu'à l'activation, les actions sont désactivées.
-- Codes joueurs du Signal : partage de pseudonymes et abonnements via code non secret de 10 caractères, **après activation de `game_v1_invite_codes.sql`**. Pas de messagerie privée.
+- Recyclage groupé sécurisé de doublons contre crédits virtuels, avec migration `game_v1_bulk_recycling.sql` appliquée en production.
+- Codes joueurs du Signal : partage de pseudonymes et abonnements via code non secret de 10 caractères, migration `game_v1_invite_codes.sql` appliquée en production. Pas de messagerie privée.
 - Centre d'opportunités du Comptoir : échanges reçus ou envoyés, dernières annonces correspondant aux souhaits, liens directs vers les sections concernées. Pas de notifications push ni de promesse de disponibilité en temps réel.
 
 ### À ne pas confondre avec une version publique
@@ -24,7 +24,7 @@ Abonnement Premium dans un parcours test/suspendu selon configuration Supabase/S
 
 ## Activation des nouveautés de l'accès anticipé
 
-Les nouveaux modules **recyclage sécurisé des doublons** et **codes joueurs du Signal** sont préparés dans GitHub mais ne peuvent pas être activés depuis un site GitHub Pages statique. Après les migrations historiques (notamment V4, V20), exécuter [INSTALLER_V1_PRELANCEMENT.sql](supabase/INSTALLER_V1_PRELANCEMENT.sql) dans le SQL Editor du projet Supabase. La démonstration sans compte fonctionne sans migration. Cette installation ne touche pas aux inventaires existants.
+Les modules **recyclage sécurisé des doublons**, **codes joueurs du Signal**, **boosters en crédits**, **Halloween corrigé** et **Top 20** sont présents dans le Supabase de production (contrôlé le 23 octobre 2026). Le fichier [INSTALLER_V1_PRELANCEMENT.sql](supabase/INSTALLER_V1_PRELANCEMENT.sql) est conservé pour les installations futures : **ne pas réexécuter les scripts anciens sans raison**. Les droits d'exécution des fonctions privilégiées sont verrouillés par `supabase/game_v1_security_hardening.sql` et les index de recherche sont présents.
 
 ## Installation mobile et déconnexion
 
@@ -35,7 +35,10 @@ Le manifeste permet d'installer le site comme application web. Le service worker
 - [ ] Vérifier les droits des affiches, logos, marques et conditions d'utilisation des fournisseurs.
 - [ ] Identifier l'éditeur, disposer de mentions légales, politique de confidentialité, CGU, CGV si paiement.
 - [ ] Contrôler RGPD : conservation, droits d'accès/suppression, contacts, sous-traitants, cookies.
-- [ ] Audit Supabase en production (RLS, fonctions `SECURITY DEFINER`, transactions, quotas, abus, modération).
+- [x] Premier audit Supabase en production : accès RPC anonymes restreints de 36 à 5, index et politiques RLS optimisés. Vérification continue en CI.
+- [ ] Revue de sécurité indépendante : contrôle des fonctions `SECURITY DEFINER` authentifiées, quotas, modération et abus.
+- [ ] Configurer la protection contre les mots de passe compromis dans Supabase Auth si disponible avec le plan.
+- [ ] Mettre en place un canal de contact et une procédure de suppression des comptes et de leurs données.
 - [ ] Tests sur vrais navigateurs et appareils Android/iOS/desktop : login, boosters, achats en crédits, badges, échanges, thèmes et déconnexion.
 - [ ] Tests de charge, accessibilité (clavier, lecteur d'écran), performances et reprise après incident.
 - [ ] Contrôler la disponibilité du catalogue France et les preuves de diffusion datées.
@@ -43,3 +46,5 @@ Le manifeste permet d'installer le site comme application web. Le service worker
 - [ ] Quand le lancement est autorisé : retirer `noindex,nofollow` et activer le référencement.
 
 **Important :** le succès des tests de CI ne prouve pas à lui seul la conformité juridique ni l'absence de problèmes en production. Ce document est le référentiel V1.0 avant lancement.
+
+Voir également [État et critères de lancement V1](ETAT_LANCEMENT_V1.md).
