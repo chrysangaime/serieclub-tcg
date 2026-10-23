@@ -1,0 +1,43 @@
+name: "Droits sur une image ou une œuvre"
+description: "Signaler une image, une marque ou une œuvre utilisée par SériesClubTCG (message public sur GitHub)."
+title: "[Droits] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ce formulaire concerne les droits d'auteur, les photographies et les marques.
+        **Attention : une issue GitHub est publique.** N'inscrivez pas d'adresse privée, de pièce d'identité, de justificatif confidentiel ni d'informations concernant des tiers.
+        Un compte GitHub est nécessaire, **mais aucun compte SériesClubTCG n'est requis**.
+        Un canal professionnel confidentiel reste à mettre en place avant le lancement officiel.
+  - type: input
+    id: series
+    attributes:
+      label: "Série / visuel concerné"
+      placeholder: "Titre et identifiant de la série, si possible"
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: "URL de la page ou de l'image"
+      placeholder: "https://..."
+    validations:
+      required: true
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: "Nature du signalement"
+      options:
+        - "Affiche / photographie"
+        - "Marque ou logo"
+        - "Contenu textuel"
+        - "Autre contenu protégé"
+    validations:
+      required: true
+  - type: textarea
+    id: explanation
+    attributes:
+      label: "Description publique du problème"
+      description: "Décrivez le contenu en cause et le type de droit invoqué, sans fournir de pièces confidentielles."
+    validations:
+      required: true
