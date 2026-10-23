@@ -19,6 +19,6 @@ export function creditThemeShelf(s={}){
   return '<article class="sc21-shop-item sc21-'+t.tone+'"><div class="sc21-shop-art"><span class="sc21-shop-logo">'+t.mark+'</span><small>SÉLECTION NON OFFICIELLE</small></div>'+
   '<div class="sc21-shop-info"><h3>'+html(t.name)+'</h3><p>'+html(t.note)+'</p><strong>5 séries <span>· 7 raretés</span></strong></div>'+
   '<div class="sc21-shop-actions"><b>'+(cost?cost+' ◇':'Bientôt')+'</b><button type="button" data-credit-pack="'+t.key+'"'+(allowed?'':' disabled')+'>'+html(action)+' →</button></div>'+
-  (date?'<small class="sc21-shop-proof">Offres France relevées le '+html(date)+'</small>':'')+'</article>';
- }).join('')+'</div><p class="sc21-shop-legal">Sélections thématiques non officielles, sans partenariat avec les plateformes. Source des offres : TMDB / JustWatch (France), relevés datés. Les crédits sont uniquement virtuels et ne sont pas vendus contre des euros.</p></section>';
+  (date?'<small class="sc21-shop-proof">Sélection historique relevée le '+html(date)+'</small>':'')+'</article>';
+ }).join('')+'</div><p class="sc21-shop-legal">Sélections thématiques historiques non officielles, sans partenariat avec les plateformes. Leurs preuves françaises sont en cours de revalidation indépendante : la présence d’une série ne garantit pas son offre actuelle. Les crédits sont uniquement virtuels et ne sont pas vendus contre des euros.</p></section>';
 }
