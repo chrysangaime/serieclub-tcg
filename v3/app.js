@@ -183,7 +183,7 @@ async function loadSession(){
   state.stock=status.data?.[0]||null;
   let [w,c,wi,tr]=await Promise.all([
    supa.from('player_wallets').select('*').eq('player_id',user.id).maybeSingle(),
-   supa.from('player_cards').select('id,owner_id,series_id,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
+   supa.from('player_cards').select('id,owner_id,series_id,season_number,rarity,locked,reserved_trade_id,obtained_at,series:series_id(id,name,image_url,genres,premiered,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url)').eq('owner_id',user.id).order('obtained_at',{ascending:false}).limit(3000),
    supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(500),
    supa.rpc('my_trade_offers')
   ]);
@@ -198,7 +198,24 @@ async function loadSession(){
   const allCards=c.error?[]:c.data||[];
   const allWishes=wi.error?[]:wi.data||[];
   const france=partitionFrenchInventory(allCards,allWishes);
-  state.cards=france.cards;
+  // Season art is an optional, independent query: a temporary lookup failure
+  // must never hide someone's entire card inventory.
+  const seasonMap=new Map();
+  const seasonCards=france.cards.filter(card=>Number.isInteger(card.season_number)&&card.season_number>0);
+  const seasonIds=[...new Set(seasonCards.map(card=>Number(card.series_id)))];
+  for(let offset=0;offset<seasonIds.length;offset+=70){
+   try{
+    const chunk=seasonIds.slice(offset,offset+70);
+    const {data,error}=await supa.from('series_seasons')
+      .select('series_id,season_number,season_name,image_url,premiered')
+      .in('series_id',chunk).limit(1000);
+    if(!error)for(const row of data||[])seasonMap.set(row.series_id+':'+row.season_number,row);
+   }catch{/* Affiche de la série disponible en dernier recours. */}
+  }
+  state.cards=france.cards.map(card=>({
+   ...card,season:card.season_number
+    ?seasonMap.get(card.series_id+':'+card.season_number)||null:null
+  }));
   state.wishes=france.wishes;
   state.excludedCardsCount=france.excludedCardsCount;
   state.excludedWishesCount=france.excludedWishesCount;
