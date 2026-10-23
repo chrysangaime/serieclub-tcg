@@ -34,8 +34,8 @@ Le manifeste permet d'installer le site comme application web. Le service worker
 
 ## Préparer un véritable lancement
 
-**Nom actuel conservé provisoirement : SériesClubTCG.** L'ancien nom est abandonné dans l'interface ; le nom du dépôt et les clés techniques restent inchangés par sécurité de migration. Validation INPI/EUIPO, domaine et documents éditeur obligatoires avant communication payante.
-- [ ] Domaine personnalisé du nouveau nom (candidat : `epizora.fr`) à vérifier auprès de l’AFNIC puis à réserver après contrôle INPI/EUIPO ; DNS/HTTPS et URL Auth/Stripe à adapter.
+**Nom commercial à choisir avec validation explicite de l'utilisateur.** Le changement de nom effectué sans accord a été annulé. « SériesClubTCG » reste uniquement un libellé de préproduction, non approuvé pour une exploitation commerciale en raison du risque de confusion avec la chaîne « SérieClub ». Les données joueurs et identifiants SQL sont conservés.
+- [ ] Aucun nom de domaine décidé ni acheté : attendre un nom approuvé par l'utilisateur, vérifier INPI/EUIPO et AFNIC, puis adapter DNS/HTTPS et URL Auth/Stripe.
 - [x] Première cartographie des licences et images réalisée : [audit juridique V1](AUDIT_JURIDIQUE_ET_LICENCES_V1.md) et [dossier CGU/RGPD à valider](DOSSIER_LEGAL_VALIDATION_V1.md). La base de production référence 81 862 affiches TVmaze, aucune affiche principale TMDB ; les logos de plateformes provenant de TMDB sont masqués en V1 et une page publique « Sources et droits » est accessible.
 - [x] Choix d'une [stratégie sans contact fournisseur](STRATEGIE_SANS_CONTACT_V1.md) : TVmaze sous licence publique CC BY-SA et hotlink attribué ; suspension des trois synchronisations automatiques TMDB.
 - [ ] Avant tout revenu, retirer les données et dérivés TMDB du service commercial, valider le traitement des affiches litigieuses et l'usage publicitaire des visuels.
