@@ -4,3 +4,6 @@ verify_jwt = false
 verify_jwt = false
 [functions.stripe-portal]
 verify_jwt = false
+
+[functions.account-delete]
+verify_jwt = true
