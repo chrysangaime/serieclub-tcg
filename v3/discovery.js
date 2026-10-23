@@ -55,7 +55,7 @@ export function seriesDetail(s){
  return '<div class="dialog series-detail" role="dialog" aria-modal="true" aria-label="Détails de la série">'+
  '<button class="close" data-close aria-label="Fermer">×</button>'+
  '<img src="'+photo(s?.image_url)+'" alt="Affiche de '+esc(title)+'">'+
- '<div><div class="caps">FICHE SÉRIE · EPIZORA TCG</div><h2>'+esc(title)+'</h2>'+
+ '<div><div class="caps">FICHE SÉRIE · SÉRIESCLUBTCG</div><h2>'+esc(title)+'</h2>'+
  '<p>'+(year?'Première diffusion : '+esc(year):'Série TV')+'</p>'+
  '<div class="detail-tags">'+genres.map(g=>'<span>'+esc(g)+'</span>').join('')+'</div>'+
  '<p>Tu connais la série ? Découvre les services de streaming et les éventuels coffrets. Les offres et leur disponibilité en France sont à vérifier directement auprès des marchands.</p>'+
