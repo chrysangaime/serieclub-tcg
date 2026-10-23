@@ -1,3 +1,4 @@
+import{creditThemeShelf}from'../v21/credit-packs.js?v=21.0.0';
 /**
  * SériesClubTCG V12 — véritable page d'accueil TV/SVOD.
  * Aucun mécanisme de jeu ni probabilité ne se trouve ici.
@@ -164,7 +165,7 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<button id="openPack" class="btn primary sc12-open-btn" type="button"'+(s.user&&!available?' disabled':'')+'>'+
   (s.user?esc(mainCTA):'Commencer à jouer<br><small>Créer un compte gratuit</small>')+' <span aria-hidden="true">→</span></button>'+
   '<button class="sc12-daily-btn" type="button" data-daily>✦ Récupérer mes 100 crédits quotidiens ↗</button>'+
-  '</div><p class="sc12-rules-note">Le paquet Halloween partage la même réserve et les mêmes probabilités que l’Original. Premium : aperçu uniquement, aucune vente active.</p></div>'+
+  '</div><p class="sc12-rules-note">Le paquet Halloween partage la même réserve et les mêmes probabilités que l’Original. Premium : aperçu uniquement, aucune vente active.</p>'+creditThemeShelf(s)+'</div>'+
   '<aside class="sc12-profile-column sc15-progress" aria-label="Ma progression"><div class="sc12-progress-card"><div class="sc12-aside-head"><h3>Mon avancement</h3><button data-route="profile" class="sc12-text-link" type="button">Mon profil →</button></div>'+
   progressItem('ϟ','Explorateur','Ouvrir dix paquets',opened,10,'cyan')+
   progressItem('▧','Collectionneur','Détenir cinquante cartes',cards.length,50,'violet')+

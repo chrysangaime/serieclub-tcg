@@ -8,7 +8,7 @@ export const rarityTier=r=>{
  return name.replace(/[^a-z]+/g,'-');
 };
 export const quality=r=>['mythique','unique','legendaire','epique'].includes(rarityTier(r));
-export function openingFrame(cards,step=0,reduced=false){
+export function openingFrame(cards,step=0,reduced=false,meta=null){
  const list=Array.isArray(cards)?cards.slice(0,5):[];
  const opened=Math.min(list.length,Math.max(0,step));
  const sealed=step===0,summary=step>list.length,now=opened>0?list[opened-1]:null;
@@ -33,7 +33,7 @@ export function openingFrame(cards,step=0,reduced=false){
     '<div class="sc7-opening-mini sc7-tier-'+rarityTier(c.rarity)+'">'+
     '<img src="'+esc(/^https:\/\//.test(c.image_url||'')?c.image_url:'')+'" alt="Affiche de '+esc(c.name)+'">'+
     '<b>'+esc(c.name)+'</b><span>'+esc(c.rarity)+'</span></div>').join('')+'</div>'+
-   '<div class="sc7-pack-bonus">✦ +25 crédits <span>·</span> +50 XP</div>'+actions+'</div>';
+   '<div class="sc7-pack-bonus">'+(meta?.kind==='credit'?'◇ '+esc(meta.price)+' crédits utilisés · '+esc(meta.label):'✦ +25 crédits <span>·</span> +50 XP')+'</div>'+actions+'</div>';
  }
  const thumb=now?.image_url&&/^https:\/\//.test(now.image_url)?esc(now.image_url):'';
  return '<div class="sc7-opening sc7-revealing '+(rare?'sc7-rare-event':'')+' sc7-tier-'+rarityTier(rank)+'" role="group" aria-label="Carte '+opened+' sur '+list.length+'">'+
