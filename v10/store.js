@@ -23,8 +23,9 @@ export function storePage(s={}){
  '<p class="sc16-terms">Abonnement renouvelable mensuellement, résiliable depuis Stripe.</p></article>'+
  '<section class="sc10-credit-shop"><h2>Crédits du club</h2>'+
  '<p>Les crédits restent obtenus gratuitement. Les achats sont suspendus dans l’attente d’une validation juridique.</p>'+
- '<div class="sc10-pack-list">'+offers.packs.map(p=>'<article><strong>✦ '+p.credits+' crédits</strong>'+
- '<span>'+p.eur.toFixed(2).replace('.',',')+' €</span><button class="btn subtle" disabled>Achat suspendu</button></article>').join('')+
- '</div><p class="sc16-terms">Les crédits servant à acheter des cartes échangeables, leur vente doit être vérifiée juridiquement.</p>'+
+ '<div class="sc10-shop-status" role="status">Achat suspendu · Les crédits ne sont pas vendus contre des euros.</div>'+
+ '<p>Tu peux déjà obtenir des crédits grâce aux ouvertures de paquets, aux récompenses quotidiennes et aux défis disponibles.</p>'+
+ '<button type="button" class="btn subtle" data-route="packs">Retourner aux paquets gratuits →</button>'+
+ '<p class="sc16-terms">Les modalités de toute future offre payante seront annoncées uniquement après vérifications juridiques et techniques.</p>'+
  '</section></div><p class="sc10-store-note">L’abonnement est validé uniquement après notification Stripe signée côté serveur.</p></div>';
 }

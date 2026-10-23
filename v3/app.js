@@ -88,11 +88,13 @@ function change(route){
  if(location.hash!==next)history.pushState(null,'',next);
  render();loadRouteData(nextRoute);
  window.scrollTo({top:0,behavior:'instant'});
+ $('page')?.focus({preventScroll:true});
  document.body.classList.remove('drawer-open');
  const button=$('menuToggle');if(button)button.setAttribute('aria-expanded','false');
 }
 function syncBrowserRoute(){
  state.route=safeRoute();render();loadRouteData(state.route);
+ $('page')?.focus({preventScroll:true});
 }
 window.addEventListener('popstate',syncBrowserRoute);
 window.addEventListener('hashchange',()=>{if(safeRoute()!==state.route)syncBrowserRoute()});
