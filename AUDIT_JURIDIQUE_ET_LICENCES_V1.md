@@ -1,4 +1,4 @@
-# Epizora TCG V1.0 — Audit juridique, images et autorisations
+# SériesClubTCG V1.0 — Audit juridique, images et autorisations
 
 **État au 23 octobre 2026 — pré-lancement, aucune licence commerciale présumée.**
 
@@ -13,7 +13,7 @@ Lecture Supabase sur `public.series`, 23/10/2026 :
 - Des portraits de personnes et des affiches associées aux fiches de distribution sont aussi chargés **à la demande depuis TVmaze** ; ces contenus peuvent présenter des droits additionnels.
 - Les plateformes dans le module « Où regarder » proviennent notamment de données de disponibilité **TMDB / JustWatch**. Avant ce correctif, ce module pouvait afficher leurs logos via le CDN TMDB.
 - Les logos de fournisseurs récupérés depuis le CDN TMDB sont **désactivés** en V1 (voir `v5/fr-watch.js`) ; les noms textuels et les liens sortants sont conservés.
-- Les visuels « booster Original/Halloween », le logo Epizora TCG et les graphismes d'habillage sont des éléments du dépôt à auditer comme créations propres ou sources tierces ; aucune preuve de cession ou d'originalité n'est déduite de leur seule présence.
+- Les visuels « booster Original/Halloween », le logo SériesClubTCG et les graphismes d'habillage sont des éléments du dépôt à auditer comme créations propres ou sources tierces ; aucune preuve de cession ou d'originalité n'est déduite de leur seule présence.
 
 ## 2. Matrice des sources et droits
 
@@ -26,7 +26,7 @@ Lecture Supabase sur `public.series`, 23/10/2026 :
 | Noms Netflix, Disney+, Prime Video, etc. | Identification textuelle des services, packs thématiques | Marques de tiers ; identification descriptive sans confusion à apprécier selon le contexte. Des packs vendus « Netflix » pourraient donner une impression de partenariat. | Conserver la mention « sélection thématique non officielle » ; demander une revue marques avant marketing, achats payants et usage des logos. |
 | JustWatch | Liens sortants et relevés éditoriaux datés | Les liens ne valent pas partenariat ni licence de données. Ne pas automatiser d'extraction non autorisée. | Conserver liens, attribution et dates de relevé. Vérifier toute exploitation des données à grande échelle. |
 | Hébergement GitHub Pages | Application HTML/JS publique en préproduction | GitHub Pages n'est pas autorisé comme hébergement gratuit d'un service principalement commercial ou de vente en ligne. | **Ne pas s'appuyer sur GitHub Pages pour la future version commerciale.** Préparer une migration vers un hébergeur dont les conditions autorisent l'activité (ex. évaluer Cloudflare Pages), puis tester Auth et déploiement. |
-| Nouveau nom **Epizora TCG** (provisoire), domaine candidat | Le précédent nom de travail était trop proche de la chaîne « SérieClub » (TF1/M6) dans un secteur analogue. Le nom public a été changé en Epizora TCG ; le dépôt historique et les identifiants SQL restent inchangés. | Recherche préliminaire web sans confusion évidente en divertissement ; **une marque EPIZORA a toutefois existé dans une classe pharmaceutique en Inde**, ce qui souligne qu'une recherche web n'est pas un certificat. Disponibilité INPI/EUIPO et du domaine non vérifiée officiellement. | Ne pas financer marque, campagne ni domaine sans recherche d'antériorité et vérification AFNIC. |
+| Nouveau nom **SériesClubTCG** (provisoire), domaine candidat | Le nom actuel est un libellé provisoire proche de la chaîne « SérieClub » (TF1/M6) et ne doit pas être utilisé commercialement sans vérification. La proposition de renommage non autorisée a été annulée ; le dépôt historique et les identifiants SQL restent inchangés. | Recherche préliminaire web sans confusion évidente en divertissement ; **une marque EPIZORA a toutefois existé dans une classe pharmaceutique en Inde**, ce qui souligne qu'une recherche web n'est pas un certificat. Disponibilité INPI/EUIPO et du domaine non vérifiée officiellement. | Ne pas financer marque, campagne ni domaine sans recherche d'antériorité et vérification AFNIC. |
 
 ### Sources primaires
 - TVmaze — API, images, licence et hotlink : https://www.tvmaze.com/api
@@ -72,11 +72,11 @@ Lecture Supabase sur `public.series`, 23/10/2026 :
 
 Préparer une adresse de contact professionnelle et un mécanisme utilisable par les titulaires de droits **sans devoir créer de compte**. Documenter l'URL, le titulaire de droits, la justification, la date du signalement, l'accusé de réception, la mesure prise et la date de clôture. Avant ouverture, ajouter un moyen d'**exclure une image** du catalogue et des collections même si TVmaze la laisse disponible, avec substitution par un graphisme original sans atteinte aux droits.
 
-Le formulaire de signalement interne nécessite une connexion au jeu. Une **voie publique transitoire** a été ajoutée : [signalement de droits via une issue GitHub](https://github.com/chrysangaime/serieclub-tcg/issues/new?template=signalement-droits.yml), sans compte Epizora TCG, **mais nécessitant un compte GitHub** et exposant publiquement le texte de la demande. Cette voie n'est **pas un canal confidentiel ni un mécanisme de retrait automatisé**. Avant lancement : créer et tester un contact direct professionnel accessible sans compte, et la mise en quarantaine effective des médias litigieux sur chaque support (collection, boosters, cache et communication).
+Le formulaire de signalement interne nécessite une connexion au jeu. Une **voie publique transitoire** a été ajoutée : [signalement de droits via une issue GitHub](https://github.com/chrysangaime/serieclub-tcg/issues/new?template=signalement-droits.yml), sans compte SériesClubTCG, **mais nécessitant un compte GitHub** et exposant publiquement le texte de la demande. Cette voie n'est **pas un canal confidentiel ni un mécanisme de retrait automatisé**. Avant lancement : créer et tester un contact direct professionnel accessible sans compte, et la mise en quarantaine effective des médias litigieux sur chaque support (collection, boosters, cache et communication).
 
 ## 6. Décision juridique et lancement
 
-**Feu orange pour poursuite des développements et tests** ; **feu rouge pour paiement en euros, Premium payant, publicité monétisée ou lancement public sans validation complémentaire**. **Le précédent nom du projet a été écarté à cause du risque de confusion avec la chaîne SérieClub de TF1/M6. Le nouveau nom de travail « Epizora TCG » demeure soumis à une recherche officielle INPI/EUIPO et à la vérification du domaine avant une campagne commerciale.**
+**Feu orange pour poursuite des développements et tests** ; **feu rouge pour paiement en euros, Premium payant, publicité monétisée ou lancement public sans validation complémentaire**. **Le précédent nom du projet a été écarté à cause du risque de confusion avec la chaîne SérieClub de TF1/M6. Le nouveau nom de travail « SériesClubTCG » demeure soumis à une recherche officielle INPI/EUIPO et à la vérification du domaine avant une campagne commerciale.**
 
 Les mesures de prudence déployées ne constituent pas une licence et n'éteignent pas les droits des ayants droit. En particulier les noms de plateformes sur des packs monétisés demandent une revue spécifique du risque de confusion.
 
@@ -84,13 +84,13 @@ Les mesures de prudence déployées ne constituent pas une licence et n'éteigne
 
 **Option TVmaze (aucun envoi nécessaire selon la stratégie retenue) —** https://www.tvmaze.com/api/plans (coordonnées et licence à confirmer au moment de l'envoi).
 
-Subject: Epizora TCG — confirmation of TVmaze poster and API use in a collectible TV game
+Subject: SériesClubTCG — confirmation of TVmaze poster and API use in a collectible TV game
 
-Hello, We develop Epizora TCG, a France-focused collectible card website for television series. The current prototype hotlinks show posters to TVmaze and credits TVmaze on show pages, using the CC BY-SA dataset. We are considering advertising and/or optional subscriptions and virtual credit packs. Could you confirm in writing whether direct hotlinking and displaying show posters and actor images within collectible cards, booster-opening animations, user collections and promotional screenshots is permitted for commercial use? Are there restrictions on marketing, caching, geographical coverage, credit placement, ShareAlike, removal requests or specific rightsholders? We would not reproduce logos without permission. We would appreciate any applicable licensing documentation. Thank you.
+Hello, We develop SériesClubTCG, a France-focused collectible card website for television series. The current prototype hotlinks show posters to TVmaze and credits TVmaze on show pages, using the CC BY-SA dataset. We are considering advertising and/or optional subscriptions and virtual credit packs. Could you confirm in writing whether direct hotlinking and displaying show posters and actor images within collectible cards, booster-opening animations, user collections and promotional screenshots is permitted for commercial use? Are there restrictions on marketing, caching, geographical coverage, credit placement, ShareAlike, removal requests or specific rightsholders? We would not reproduce logos without permission. We would appreciate any applicable licensing documentation. Thank you.
 
 **Option TMDB écartée pour le futur lancement payant (pas d'envoi) —** sales@themoviedb.org (adresse indiquée par la FAQ officielle).
 
-Subject: Commercial API licensing request — Epizora TCG (France)
+Subject: Commercial API licensing request — SériesClubTCG (France)
 
 Hello, We are preparing a French television-series collectible web game. We currently use TVmaze-hosted show posters, while the TMDB API supplies watch-provider availability information for France. We are considering optional paid subscriptions, virtual credits and advertising in the future. Please provide the commercial API/data licensing options and terms for this use case, including pricing, required attribution/logo, hosting, caching, redistribution, and restrictions around displaying streaming-provider metadata. The project is in pre-launch and paid features are disabled. Thank you.
 
