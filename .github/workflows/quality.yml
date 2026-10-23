@@ -271,3 +271,9 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v20_collection_automation.sql
       - name: Tester souhaits automatiques et protection des cartes
         run: psql -v ON_ERROR_STOP=1 -f tests/v20_collection_automation.sql
+      - name: Construire des données TV françaises pour le test des boosters
+        run: psql -v ON_ERROR_STOP=1 -f tests/v21_credit_pack_seed.sql
+      - name: Installer les quatre boosters à crédits sur PostgreSQL
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v21_credit_svod_packs.sql
+      - name: Contrôler les achats en crédits et le stock gratuit
+        run: psql -v ON_ERROR_STOP=1 -f tests/v21_credit_boosters.sql
