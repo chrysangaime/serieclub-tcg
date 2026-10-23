@@ -80,7 +80,7 @@ GRANT EXECUTE ON FUNCTION public.recycle_duplicate_cards(uuid[]) TO authenticate
 -- L'interface active la sélection uniquement après confirmation par le serveur.
 CREATE OR REPLACE FUNCTION public.my_recycling_status()
 RETURNS TABLE(cards_used integer,cards_remaining integer)
-LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public,pg_temp AS $
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public,pg_temp AS $$
  SELECT COALESCE((SELECT d.cards_used FROM public.player_recycle_daily d
    WHERE d.player_id=auth.uid()
     AND d.paris_day=(now() AT TIME ZONE 'Europe/Paris')::date),0)::integer,
