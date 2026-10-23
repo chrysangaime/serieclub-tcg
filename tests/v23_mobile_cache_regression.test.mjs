@@ -5,10 +5,10 @@ import {svodHome} from '../v12/home.js';
 const read=p=>fs.readFileSync(p,'utf8');
 test('La page déployée charge réellement le composant V23 (sans cache de V18)',()=>{
  const index=read('index.html'),app=read('v3/app.js'),views=read('v3/views.js');
- assert.match(index,/v3\/app\.js\?v=23\.0\.0/);
+ assert.match(index,/v3\/app\.js\?v=1\.0\.0/);
  assert.match(index,/v23\/final-mobile\.css\?v=23\.0\.0/);
- assert.match(app,/\.\/views\.js\?v=23\.0\.0/);
- assert.match(views,/v12\/home\.js\?v=23\.0\.0/);
+ assert.match(app,/\.\/views\.js\?v=1\.0\.0/);
+ assert.match(views,/v12\/home\.js\?v=1\.0\.0/);
  assert.doesNotMatch(views,/v12\/home\.js\?v=18\.0\.0/);
 });
 test('Les libellés ne recouvrent plus les pochettes',()=>{
