@@ -1,6 +1,6 @@
 # SériesClubTCG — stratégie « sans contact TVmaze/TMDB » (V1.0)
 
-**23 octobre 2026 · nom de travail SériesClubTCG · aucune offre payante activée.**
+**23 octobre 2026 · aucun nouveau nom approuvé · V1 non commerciale. Le précédent nom est restauré provisoirement dans l'interface, sans validation juridique.**
 
 ## Décisions
 
@@ -8,7 +8,7 @@
 2. **TMDB est maintenu uniquement comme source historique et outil de prototype sans revenu**, pas comme source commerciale. Les [conditions officielles](https://www.themoviedb.org/api-terms-of-use) exigent un accord écrit pour toute utilisation de son contenu contribuant à générer des revenus. Si l'on ne souhaite pas les contacter, **la seule voie prudente vers un jeu monétisé consiste à supprimer la dépendance TMDB, ses données dérivées et caches utilisés commercialement**. Une simple mention d'attribution n'y remédie pas.
 3. **Les trois actualisations automatiques TMDB sont suspendues** dans GitHub Actions : `sync-fr-streaming.yml`, `expand-fr-catalog.yml` et `sync-fr-cast.yml`. Le déclenchement manuel reste réservé aux essais non commerciaux. L'import TVmaze demeure distinct.
 4. **L'accès anticipé reste sans paiement**. Les boutiques et crédits virtuels historiques continuent de fonctionner mais **ne doivent pas être monétisés avant la migration de données décrite ci-dessous**.
-5. **Renommage de marque** en **SériesClubTCG** (nom de travail) pour distinguer le jeu de la chaîne SérieClub. Conserver les noms techniques et identifiants SQL de l'ancien dépôt afin de préserver l'historique et les comptes. Faire un contrôle INPI/EUIPO et du domaine avant publicité. La recherche sur le Web ne suffit pas à garantir la disponibilité juridique.
+5. **Nom commercial : décision en attente de l'utilisateur.** La proposition de changement de nom effectuée sans approbation a été annulée ; l'ancien libellé est restauré uniquement dans la V1 non publiée commercialement. Ne choisir ni déposer de nouveau nom sans validation de l'utilisateur puis recherche d'antériorités INPI/EUIPO. Conserver les identifiants techniques et les comptes.
 
 ## Plan de remplacement de TMDB sans demande de licence
 
@@ -28,7 +28,7 @@ Le fait qu'un autre jeu se lance ne prouve pas l'existence ou l'absence de ses a
 
 ## Statut actuel et honnêteté du constat
 
-- [x] Nouveau nom visible en V1 et absence de vente réelle maintenue.
+- [x] Nom imposé sans accord annulé ; ancien libellé maintenu uniquement pour la préproduction, et aucun paiement live autorisé.
 - [x] Import automatique TMDB interrompu (trois workflows).
 - [x] Attribution TVmaze présente, logos de prestataires TMDB déjà masqués.
 - [ ] Nettoyage des caches et preuves dérivées de TMDB, sans perte de progression.
@@ -38,3 +38,12 @@ Le fait qu'un autre jeu se lance ne prouve pas l'existence ou l'absence de ses a
 - [ ] CGU/CGV, RGPD, hébergement commercial et tests paiements avant monétisation.
 
 **Décision :** travailler sans écrire à TVmaze ni TMDB est réaliste pour la poursuite de la V1 gratuite ; pour les revenus, garder TVmaze sous sa licence publique et **renoncer à TMDB**, sauf changement de décision. Aucun accord individuel n'est présenté comme acquis.
+
+## Résultat de l'audit chiffré (production, 23/10/2026)
+
+- 81 862 séries TVmaze ; 2 640 validées pour le jeu France.
+- 1 650 preuves `tvmaze_fr_origin`, 984 preuves `tmdb_fr_offer`, 6 preuves `editorial_fr_history`.
+- 907 cartes enregistrées, dont 55 cartes sur 51 séries validées via TMDB. Les autres cartes ne sont pas à effacer ; certaines séries anciennes ne sont pas actuellement certifiées France.
+- **Aucune migration ne doit passer aveuglément les 984 séries à `fr_verified=false` sans prévoir d'abord un archivage d'éligibilité et l'affichage de la collection historique.**
+- La diffusion TVmaze en France ne constitue pas automatiquement une preuve de disponibilité actuelle sur un abonnement. Les droits de JustWatch pour l'API de disponibilités nécessitent aussi un accord de partenaire ; **un lien de navigation vers son site est différent de la reprise de ses données**.
+- Alternative à explorer : propriétés structurées Wikidata sous CC0 et pages officielles de diffuseurs, avec vérification du titre, identifiant TVmaze, pays, période, preuve et statut France.
