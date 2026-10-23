@@ -794,6 +794,14 @@ async function openSeriesDetail(id){
    const existing=$('overlay').querySelector('[data-cast-section]');
    const template=document.createElement('div');
    template.innerHTML=showDetailHTML(details,base,{source:'loading'},backup);
+   // Les métadonnées TVmaze peuvent arriver après l'ouverture du dialogue.
+   // Injecter les vraies affiches de saison sans redessiner le dialogue ni
+   // toucher au casting et à l'inventaire existants.
+   const seasonGallery=template.querySelector('.sc-season-gallery');
+   if(seasonGallery&&!$('overlay').querySelector('.sc-season-gallery')){
+    const castSection=$('overlay').querySelector('[data-cast-section]');
+    if(castSection)castSection.before(seasonGallery);
+   }
    const improved=template.querySelector('[data-cast-section]');
    if(existing&&improved&&!improved.hidden&&details._embedded?.cast?.length)
     existing.replaceWith(improved);
