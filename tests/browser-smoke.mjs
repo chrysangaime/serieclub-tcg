@@ -17,7 +17,8 @@ const routes = [
   { slug: "premium", title: "PREMIUM" },
   { slug: "jeux", title: "JEUX" },
   { slug: "parametres", title: "PARAMÈTRES" },
-  { slug: "paquets", title: "PAQUETS" }
+  { slug: "paquets", title: "PAQUETS" },
+  { slug: "droits", title: "SOURCES ET DROITS" }
 ];
 
 await mkdir("browser-artifacts", { recursive: true });
@@ -68,7 +69,8 @@ try {
     for (const [route, heading] of [
       ["privacy", /Comprendre et contrôler tes données/i],
       ["legal", /Mentions légales en préparation/i],
-      ["support", /Signaler un problème/i]
+      ["support", /Signaler un problème/i],
+      ["rights", /Sources, affiches et marques/i]
     ]) {
       await page.locator('footer [data-route="' + route + '"]').click();
       await page.getByRole("heading", { name: heading }).waitFor();
@@ -202,7 +204,7 @@ try {
     );
     await context.close();
   }
-  console.log("PASS V1 : 3 tailles, 2 thèmes, 7 parcours, navigation clavier et démo non connectée");
+  console.log("PASS V1 : 3 tailles, 2 thèmes, 8 parcours, crédits des sources, navigation clavier et démo non connectée");
 } finally {
   await browser.close();
 }
