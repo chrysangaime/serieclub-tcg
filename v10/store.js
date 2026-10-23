@@ -14,10 +14,10 @@ export function storePage(s={}){
     (mode==='test'?'Tester le paiement sans débit':'S’abonner pour 1,99 € / mois')+'</button>':
     '<button type="button" class="btn primary" disabled>Abonnement bientôt disponible</button>';
  return '<div class="page-content sc10-shop sc16-shop">'+
- '<div class="sc10-shop-hero"><span class="caps">SÉRIESCLUBTCG · PREMIUM</span><h1>Le club, à ton image.</h1>'+
+ '<div class="sc10-shop-hero"><span class="caps">EPIZORA TCG · PREMIUM</span><h1>Le club, à ton image.</h1>'+
  '<p>Le jeu, les cartes, les boosters et leurs raretés restent accessibles gratuitement.</p></div>'+
  '<div class="sc10-shop-grid"><article class="sc10-premium-card"><span class="caps">PRIVILÈGES COSMÉTIQUES</span>'+
- '<h2>✦ SériesClubTCG Premium</h2><strong class="sc10-price">1,99 € <small>/ mois</small></strong>'+
+ '<h2>✦ Epizora TCG Premium</h2><strong class="sc10-price">1,99 € <small>/ mois</small></strong>'+
  '<p>Statut Premium distinctif sur le profil. Aucun avantage sur les tirages, les cartes ou les chances de rareté.</p>'+
  '<div class="sc10-shop-status" role="status">'+notice+'</div>'+action+
  '<p class="sc16-terms">Abonnement renouvelable mensuellement, résiliable depuis Stripe.</p></article>'+
