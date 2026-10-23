@@ -38,6 +38,25 @@ try {
     await page.locator("#topbar [data-theme-toggle]").waitFor();
     await page.locator("#page h1").waitFor();
 
+    // Recette visuelle du bandeau : les affiches décoratives ne doivent pas
+    // recouvrir le descriptif sur téléphone ; les points sont de vrais mini-points.
+    if (device.isMobile) {
+      const hero = await page.evaluate(() => {
+        const art = document.querySelector(".sc15-hero .sc15-hero-art");
+        const dots = [...document.querySelectorAll(".sc15-hero .sc13-hero-dots>button")];
+        const flag = document.querySelector(".sc15-hero .sc13-hero-flag")?.getBoundingClientRect();
+        const controls = document.querySelector(".sc15-hero .sc13-hero-controls")?.getBoundingClientRect();
+        return {
+          decorativeArtHidden: art ? getComputedStyle(art).display === "none" : false,
+          dotsAreCompact: dots.length >= 2 && dots.every(x => x.getBoundingClientRect().height <= 12),
+          controlsDoNotCoverLabel: !!flag && !!controls && flag.right <= controls.left + 3
+        };
+      });
+      assert.ok(hero.decorativeArtHidden, device.name + ": affiche du bandeau sur le texte");
+      assert.ok(hero.dotsAreCompact, device.name + ": indicateurs du carrousel trop grands");
+      assert.ok(hero.controlsDoNotCoverLabel, device.name + ": contrôles sur le libellé");
+    }
+
     // Le mode nuit est le défaut, et le basculement vers le jour fonctionne.
     const initial = await page.evaluate(() => document.documentElement.dataset.theme);
     assert.ok(["day", "night"].includes(initial));
