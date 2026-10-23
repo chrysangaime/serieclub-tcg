@@ -131,6 +131,7 @@ function groupCard(g){
  return '<article class="sc52-group-card sc53-rarity-'+raritySlug(g.rarity)+'">'+
   '<button class="sc52-group-poster" data-series="'+esc(g.seriesId)+'" aria-label="Découvrir '+esc(g.name)+'">'+
   (photo(g.image)?'<img src="'+photo(g.image)+'" loading="lazy" alt="Affiche de '+esc(g.name)+'">':'<span class="sc52-poster-absent">✧</span>')+
+  (g.seasonNumber?'<span class="sc-season-card-badge">S'+g.seasonNumber+'</span>':'')+
   '<span class="sc52-copy-count">× '+g.count+'</span></button>'+
   '<div class="sc52-group-body"><h3>'+esc(g.name)+'</h3>'+pill(g.rarity)+
   (g.frVerified?'':'<small class="sc54-collection-pending">🇫🇷 Diffusion à vérifier · ancienne carte</small>')+
