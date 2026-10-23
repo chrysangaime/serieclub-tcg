@@ -1,20 +1,20 @@
 {
   "next_page": 21,
-  "updated_at": "2026-10-22T07:29:51.784Z",
+  "updated_at": "2026-10-23T07:24:36.612Z",
   "last_run": {
     "mode": "archive",
     "pages": 20,
-    "examined": 372,
-    "confirmed": 284,
-    "no_match": 88,
+    "examined": 388,
+    "confirmed": 310,
+    "no_match": 78,
     "no_fr_offer": 0,
     "errors": 0,
     "partial": false
   },
-  "discovery_runs": 2,
+  "discovery_runs": 3,
   "archive_cursor": {
-    "period": 2,
-    "page": 6
+    "period": 3,
+    "page": 5
   },
   "popular_page": 21
 }
