@@ -6,8 +6,7 @@ on:
         description: "Séries à synchroniser (1 à 400, 120 par défaut)"
         required: false
         default: "120"
-  schedule:
-    - cron: "30 4 * * *"
+  # Pause juridique V1 : le cache France conserve son dernier relevé.
 permissions:
   contents: write
 concurrency:
