@@ -68,7 +68,7 @@ test('real streaming offers always come only from the FR region',()=>{
  assert.match(view,/TMDB/);
  assert.match(view,/locale=FR/);
  assert.doesNotMatch(view,/>ABC</);
- assert.ok(view.includes('image.tmdb.org'));
+ assert.doesNotMatch(view,/image\.tmdb\.org/);
 });
 
 test('unverified, foreign and expired offers cannot be presented as France availability',()=>{
