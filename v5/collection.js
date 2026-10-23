@@ -1,6 +1,6 @@
 import{recyclePanel}from'../v1/recycling.js?v=1.0.0&build=5';
 /**
- * Epizora V5.2 — Le Studio de collection
+ * SérieClub V5.2 — Le Studio de collection
  * 100 % dérivé de l'inventaire Supabase existant (aucune modification SQL).
  * Les doublons sont des exemplaires au-delà de la première copie d'une même
  * série. Une copie engagée ne peut pas être conseillée pour la vente.
