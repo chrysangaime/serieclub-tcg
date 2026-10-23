@@ -37,11 +37,12 @@ export function raritySlug(rank){
  return known.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'-');
 }
 export function card(c,action=''){
- const s=c.series||c,title=s.name||'Série inconnue';
+ const s=c.series||c,season=Number.isInteger(c.season_number)&&c.season_number>0?c.season_number:null;
+ const title=(s.name||'Série inconnue')+(season?' · Saison '+season:'');
  const rank=officialRarity(c),slug=raritySlug(rank);
- const locked=Boolean(c.locked),year=String(s.premiered||'').slice(0,4);
+ const locked=Boolean(c.locked),year=String(c.season?.premiered||s.premiered||'').slice(0,4);
  return '<article class="collect-card sc53-card sc53-rarity-'+slug+'">'+
-  '<div class="sc53-poster-wrap"><img loading="lazy" src="'+photo(s.image_url||s.image?.medium)+'" alt="Affiche de '+esc(title)+'">'+
+  '<div class="sc53-poster-wrap"><img loading="lazy" src="'+photo(c.season?.image_url||s.image_url||s.image?.medium)+'" alt="Affiche de '+esc(title)+'">'+
   '<span class="sc53-rank-label">'+(locked?'🔒 ':'')+esc(rank)+'</span>'+
   (s.fr_verified===false?'<span class="sc54-fr-pending">🇫🇷 À vérifier</span>':'')+
   '</div>'+
