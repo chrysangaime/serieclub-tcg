@@ -45,8 +45,7 @@ BEGIN
   credits=player_wallets.credits+25,experience=player_wallets.experience+50,
   boosters_opened=player_wallets.boosters_opened+1 WHERE player_id=uid;
  INSERT INTO public.game_transactions(player_id,kind,amount) VALUES(uid,'booster',25);
-END $function$
-
+END $function$;
 
 CREATE OR REPLACE FUNCTION public.open_halloween_booster()
  RETURNS TABLE(card_id uuid, series_id bigint, name text, image_url text, rarity text, credits bigint, experience bigint, next_booster_at timestamp with time zone)
@@ -95,5 +94,4 @@ BEGIN
   credits=player_wallets.credits+25,experience=player_wallets.experience+50,
   boosters_opened=player_wallets.boosters_opened+1 WHERE player_id=uid;
  INSERT INTO public.game_transactions(player_id,kind,amount) VALUES(uid,'halloween',25);
-END $function$
-
+END $function$;
