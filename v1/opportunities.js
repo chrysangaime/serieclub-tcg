@@ -1,4 +1,4 @@
-/** Epizora TCG V1.0 — centre d'opportunités calculé à partir des données reçues. */
+/** SériesClubTCG V1.0 — centre d'opportunités calculé à partir des données reçues. */
 import {esc,money} from '../v3/views.js?v=5.6.1';
 export function opportunityData(state={}){
  const userId=state.user?.id;
