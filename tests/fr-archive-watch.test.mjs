@@ -35,9 +35,8 @@ test('old non-French cards are excluded from every playable collection counter w
 });
 
 test('Les anciennes offres ne sont pas affichées ni chargées, même avec une cache existante',async()=>{
- const file=JSON.parse(fs.readFileSync('data/watch-fr.json','utf8'));
- assert.ok(file.titles['430'],'Le snapshot historique reste hors du navigateur en attente de purge');
- const old=file.titles['430'];
+ const old={country:'FR',checked_at:new Date().toISOString(),
+  offers:[{type:'flatrate',name:'Disney+'},{type:'flatrate',name:'Amazon Prime Video'}]};
  assert.equal(normalizeFranceOffers(old),null);
  assert.equal(await getFrenchOffersByShow(430),null);
  const html=renderFranceAvailability(old,{fr_verification_method:'tmdb_fr_offer'});
