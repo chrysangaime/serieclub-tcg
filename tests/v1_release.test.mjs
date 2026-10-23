@@ -11,7 +11,7 @@ test('L’identité publique demeure V1.0 avant tout lancement',()=>{
  assert.match(html,/<title>SériesClubTCG V1\.0/);
  assert.match(html,/name="robots" content="noindex,nofollow"/);
  assert.match(html,/v1\/finish\.css\?v=1\.0\.0/);
- assert.match(html,/v3\/app\.js\?v=1\.0\.0&amp;build=2|v3\/app\.js\?v=1\.0\.0&build=2/);
+ assert.match(html,/v3\/app\.js\?v=1\.0\.0&build=3/);
 });
 test('Navigation à propos et liens de pied de page réellement routés',()=>{
  const app=file('v3/app.js');
@@ -22,6 +22,8 @@ test('Navigation à propos et liens de pied de page réellement routés',()=>{
  assert.match(app,/about:'apropos'/);
  assert.match(app,/footerHTML\(\)/);
  assert.match(app,/data-route/);
+ assert.match(app,/function publicError\(error\)/);
+ assert.doesNotMatch(app,/Active la migration SQL V\d/);
  assert.match(footerHTML(),/data-route="rules"/);
  assert.match(footerHTML(),/data-route="about"/);
  assert.match(settings({theme:'night'}),/data-route="about"/);
