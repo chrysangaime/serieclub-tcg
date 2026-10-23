@@ -1,0 +1,152 @@
+/* SériesClubTCG V22 : boosters redessinés et vraie expérience mobile. */
+/* Pochette métallisée, logo TV original et hiérarchie de lecture soignée. */
+html[data-theme] .sc15-pack-options .sc22-booster{
+ --metal:#d6f9fa;--edge:#7de3e9;
+ width:168px!important;height:211px!important;min-width:0;flex:none;
+ padding:0 12px!important;display:flex!important;align-items:center!important;
+ flex-direction:column!important;justify-content:space-between!important;
+ gap:0!important;overflow:hidden!important;isolation:isolate;
+ border-radius:7px 7px 11px 11px!important;border:1px solid var(--edge)!important;
+ color:var(--metal)!important;
+ background:linear-gradient(112deg,#0d2d42,#287187 28%,#142b47 63%,#081727)!important;
+ box-shadow:inset -8px 0 16px #0008,inset 5px 0 12px #fff3,0 13px 27px #0009!important;
+}
+html[data-theme] .sc15-pack-options .sc22-booster--halloween{
+ --metal:#ffe2f6;--edge:#ff9bdc;
+ background:linear-gradient(112deg,#291339,#86518a 29%,#502557 64%,#1a102d)!important
+}
+html[data-theme] .sc15-pack-options .sc22-booster--premium{
+ --metal:#ffefc5;--edge:#eecb8c;
+ background:linear-gradient(112deg,#352317,#7d5942 29%,#412d38 62%,#241824)!important
+}
+html[data-theme] .sc15-pack-options .sc22-booster:before{
+ content:"";position:absolute;inset:5px;z-index:-1;border-left:1px solid #fff5;border-right:1px solid #0008;
+ background:linear-gradient(108deg,transparent 18%,#ffffff26 33%,transparent 43%,transparent 72%,#ffffff0e 81%)!important
+}
+html[data-theme] .sc15-pack-options .sc22-booster .sc15-foil-stripe{
+ z-index:5;height:7px!important;opacity:.9;
+ background:repeating-linear-gradient(90deg,var(--edge) 0 2px,#ffffff2b 2px 4px,transparent 4px 7px)!important
+}
+.sc22-booster-brand{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-width:0;margin-top:25px;z-index:2}
+.sc22-booster-brand>svg{width:24px;height:24px;flex:0 0 24px;color:var(--metal)}
+html[data-theme] .sc22-booster .sc18-foil-brand{display:flex!important;align-items:start!important;flex-direction:column!important;gap:1px!important;width:auto!important}
+html[data-theme] .sc22-booster .sc18-foil-brand>span{font-weight:950!important;font-size:14px!important;letter-spacing:-.055em!important;line-height:1!important}
+html[data-theme] .sc22-booster .sc18-foil-brand>small{font-size:7px!important;letter-spacing:.20em!important;margin:0!important;line-height:1.2!important}
+html[data-theme] .sc22-booster .sc18-foil-brand em{color:var(--edge)!important}
+.sc22-booster-center{z-index:2;display:flex;flex-direction:column;gap:7px;align-items:center;justify-content:center}
+.sc22-booster-center svg{width:58px;height:58px;filter:drop-shadow(0 0 12px #ffffff2c)}
+.sc22-booster-center small{font-size:7px;font-weight:800;letter-spacing:.16em;white-space:nowrap}
+.sc22-booster-footer{display:flex;flex-direction:column;align-items:center;gap:7px;z-index:2;margin-bottom:22px}
+html[data-theme] .sc22-booster-footer b{font-size:15px!important;letter-spacing:.12em!important;line-height:1!important;color:var(--metal)}
+html[data-theme] .sc22-booster-footer small{font-size:7px!important;white-space:nowrap;letter-spacing:.05em}
+html[data-theme] .sc15-pack-options .sc22-booster--original{transform:rotate(-4deg)!important}
+html[data-theme] .sc15-pack-options .sc22-booster--halloween{transform:rotate(4deg)!important}
+html[data-theme] .sc15-pack-options .sc22-booster--premium{transform:rotate(-3deg)!important}
+/* Bouton Jour/Nuit : un unique pictogramme SVG, plus de glyphe débordant. */
+html[data-theme] #topbar .sc10-theme-toggle{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;white-space:nowrap!important;overflow:hidden!important;font-size:12px!important;line-height:1!important;padding:0 9px!important}
+html[data-theme] #topbar .sc10-theme-toggle:before{display:none!important;content:none!important}
+html[data-theme] #topbar .sc22-theme-icon{display:grid!important;place-items:center!important;width:21px;height:21px;flex:0 0 21px}
+html[data-theme] #topbar .sc22-theme-icon svg{width:21px;height:21px;display:block}
+html[data-theme] #topbar .sc22-theme-label{font-size:12px;line-height:1;font-weight:800;white-space:nowrap}
+/* Compactage bureau/tablette en complément du véritable responsive mobile. */
+html[data-theme] .sc15-pack-options{gap:12px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium){min-height:360px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc15-pack-art{height:210px!important;flex-basis:210px!important;min-height:210px!important;padding:15px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc15-pack-copy{padding:16px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium{min-height:149px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-art{flex-basis:23%!important;width:23%!important;min-height:149px!important;padding:9px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster{width:100px!important;height:123px!important;padding:0 5px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-brand{margin-top:14px!important;gap:3px}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-brand>svg{width:16px;height:16px;flex-basis:16px}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster .sc18-foil-brand>span{font-size:9px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster .sc18-foil-brand>small{font-size:5px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-center{gap:2px}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-center svg{width:30px;height:30px}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-center small{font-size:4px}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-footer{gap:3px;margin-bottom:12px}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-footer b{font-size:9px!important}
+html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-footer small{font-size:4px!important}
+html[data-theme] .sc15-pack-options .sc15-pack-copy h3{font-size:23px!important;margin-bottom:5px!important}
+html[data-theme] .sc15-pack-options .sc15-pack-copy p{font-size:12px!important;line-height:1.4!important;margin-bottom:10px!important}
+html[data-theme] .sc15-pack-options .sc12-pack-action{min-height:41px!important;font-size:12px!important}
+@media(max-width:690px){
+ html[data-theme] .sc12-home .pack-section{padding:10px 12px 40px!important}
+ html[data-theme] .sc12-banner.sc15-hero{min-height:264px!important;border-radius:16px!important;box-shadow:0 8px 24px #0003!important}
+ html[data-theme] .sc15-hero .sc12-banner-content{width:100%!important;max-width:100%!important;padding:16px!important}
+ html[data-theme] .sc15-hero .sc13-hero-flag{font-size:9px!important;padding:6px 9px!important}
+ html[data-theme] .sc15-hero h1{font-size:clamp(31px,8.6vw,42px)!important;margin:11px 0 7px!important;line-height:1.02!important}
+ html[data-theme] .sc15-hero .sc12-banner-content>strong{font-size:12px!important}
+ html[data-theme] .sc15-hero .sc12-banner-content>p{font-size:11px!important;line-height:1.45!important;margin:8px 0 10px!important;max-width:31ch!important}
+ html[data-theme] .sc15-hero .sc12-hero-cta{min-height:38px!important;padding:8px 12px!important;font-size:11px!important}
+ html[data-theme] .sc15-hero-posters{left:64%!important;opacity:.36!important}
+ html[data-theme] .sc15-strip{margin:10px 0 16px!important;gap:9px!important;font-size:9px!important;flex-wrap:wrap!important}
+ html[data-theme] .sc12-home .sc12-main-head{margin:10px 0 13px!important}
+ html[data-theme] .sc12-home .sc12-main-head h2{font-size:clamp(24px,6.8vw,31px)!important;margin:4px 0!important}
+ html[data-theme] .sc12-home .sc12-main-head p{font-size:11px!important;margin:4px 0!important}
+ html[data-theme] .sc15-pack-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium){min-height:275px!important;display:flex!important;flex-direction:column!important;border-radius:15px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc15-pack-art{flex:0 0 153px!important;height:153px!important;min-height:153px!important;width:100%!important;padding:20px 7px 7px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster{width:104px!important;height:133px!important;padding:0 6px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster-brand{margin-top:17px!important;gap:4px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster-brand>svg{width:17px;height:17px;flex-basis:17px}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster .sc18-foil-brand>span{font-size:9px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster .sc18-foil-brand>small{font-size:5px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster-center{gap:2px}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster-center svg{width:37px;height:37px}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster-center small{font-size:5px}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster-footer{gap:4px;margin-bottom:15px}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster-footer b{font-size:11px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc22-booster-footer small{font-size:5px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc15-pack-copy{padding:11px!important;flex:1;min-height:0!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc15-pack-copy h3{font-size:18px!important;margin:0 0 4px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc15-pack-copy p{font-size:10px!important;line-height:1.3!important;margin:0 0 7px!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc12-pack-action{min-width:0!important;width:100%!important;min-height:38px!important;padding:7px 3px!important;font-size:10px!important;gap:3px}
+ html[data-theme] .sc15-pack-options .sc12-pack-badge{top:8px!important;left:8px!important;padding:4px 6px!important;font-size:7px!important;letter-spacing:0!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium{display:flex!important;grid-column:1/-1!important;min-height:122px!important;height:auto!important;flex-direction:row!important;border-radius:15px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-art{flex:0 0 115px!important;width:115px!important;height:auto!important;min-height:122px!important;padding:6px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster{width:76px!important;height:98px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-brand{margin-top:11px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-brand>svg{width:12px;height:12px;flex-basis:12px}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster .sc18-foil-brand>span{font-size:7px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-center svg{width:25px;height:25px}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-footer{margin-bottom:10px}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc22-booster-footer b{font-size:8px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-copy{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;min-width:0!important;padding:11px!important;gap:4px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-copy h3{font-size:18px!important;margin:0!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc15-pack-copy p{font-size:10px!important;line-height:1.3!important;margin:0!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc18-premium-perks{display:flex!important;flex-wrap:wrap!important;gap:3px 7px!important;font-size:9px!important;grid-column:auto!important;grid-row:auto!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-premium .sc12-pack-action{grid-column:auto!important;grid-row:auto!important;min-width:0!important;width:100%!important;max-width:none!important;min-height:34px!important;padding:6px!important;font-size:10px!important;align-self:stretch!important;justify-self:stretch!important;margin:2px 0 0!important}
+ html[data-theme] .sc15-open{grid-template-columns:1fr auto!important;gap:9px!important;padding:12px!important;border-radius:14px!important}
+ html[data-theme] .sc15-open .sc12-stock{grid-column:1!important}
+ html[data-theme] .sc15-open .sc12-daily-btn{grid-column:2!important;font-size:10px!important;max-width:139px;line-height:1.35!important;text-align:right!important}
+ html[data-theme] .sc15-open .sc12-open-btn{grid-column:1/-1!important;min-height:43px!important;font-size:13px!important}
+ html[data-theme] .sc12-rules-note{font-size:10px!important;line-height:1.4!important;margin:8px 0 0!important}
+ html[data-theme] .sc12-shelf-head{margin-top:18px!important;margin-bottom:9px!important}
+ html[data-theme] .sc12-shelf-head h2{font-size:25px!important;line-height:1.15!important}
+ html[data-theme] .sc12-genre-card{height:101px!important;flex-basis:137px!important}
+ html[data-theme] .sc12-show-poster{flex:0 0 min(43vw,162px)!important;border-radius:12px!important}
+ html[data-theme] .sc13-rail-wrap>.sc13-rail-controls button{min-width:30px!important;min-height:34px!important;padding:0 6px!important}
+ html[data-theme] .sc15-progress{gap:9px!important}
+ html[data-theme] .sc15-progress .sc12-progress-card,html[data-theme] .sc15-progress .sc12-credit-card,html[data-theme] .sc15-progress .sc12-quick-card{min-height:0!important;padding:14px!important;border-radius:14px!important}
+ html[data-theme] #topbar{height:58px!important;gap:5px!important;padding-inline:9px!important}
+ :root{--top:58px}
+ html[data-theme] #topbar .top-actions{gap:5px!important;min-width:0}
+ html[data-theme] #topbar .sc10-theme-toggle{display:grid!important;place-items:center!important;flex:0 0 38px!important;width:38px!important;min-width:38px!important;max-width:38px!important;height:38px!important;min-height:38px!important;padding:0!important;font-size:0!important;line-height:1!important}
+ html[data-theme] #topbar .sc22-theme-icon{width:20px!important;height:20px!important;flex-basis:20px!important}
+ html[data-theme] #topbar .sc22-theme-label{display:none!important}
+ html[data-theme] #topbar .sc10-theme-toggle:before{display:none!important}
+ html[data-theme] #topbar .top-btn{min-height:38px!important}
+ html[data-theme] #topbar .credit-pill{padding:6px 8px!important;min-height:38px!important}
+ html[data-theme] #topbar .sc12-account{min-width:39px!important;width:39px!important;height:38px!important;padding:0!important}
+ html[data-theme] #topbar .sc12-mobile-search{min-width:38px!important;width:38px!important}
+}
+@media(max-width:390px){
+ html[data-theme] .sc12-home .pack-section{padding-inline:9px!important}
+ html[data-theme] .sc15-pack-options{gap:7px!important}
+ html[data-theme] .sc15-pack-options>.sc12-pack-tile:not(.sc12-pack-premium) .sc15-pack-copy{padding:9px!important}
+ html[data-theme] .sc15-pack-options .sc12-pack-badge{font-size:6px!important;padding:4px!important}
+ html[data-theme] #topbar .top-actions{gap:3px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-theme] .sc15-pack-options .sc12-pack-tile{transition:none!important}
+}
