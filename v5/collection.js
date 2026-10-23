@@ -10,13 +10,16 @@ import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 
 export const COLLECTION_PAGE_SIZE=48;
 const rankOrder=new Map(ranks.map((name,i)=>[name,i]));
+/** Deux saisons d'une série sont deux objets de collection distincts. */
+export const collectibleKey=c=>String(c?.series_id)+
+ (Number.isInteger(c?.season_number)&&c.season_number>0?':s'+c.season_number:'');
 
 export function deriveCollection(cards=[],wishes=[],activity=[]){
- const copies=new Map(),selling=new Set((activity||[])
+ const copies=new Map(),ownedSeries=new Set((cards||[]).map(c=>String(c.series_id))),selling=new Set((activity||[])
    .filter(a=>a.status==='active').map(a=>a.card_id));
  for(const c of cards||[]){
   if(c?.id==null||c.series_id==null)continue;
-  const k=String(c.series_id);
+  const k=collectibleKey(c);
   if(!copies.has(k))copies.set(k,[]);
   copies.get(k).push(c);
  }
@@ -26,8 +29,10 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
   const blockedCount=items.filter(c=>c.reserved_trade_id||selling.has(c.id)).length;
   const free=items.filter(c=>!c.locked&&!c.reserved_trade_id&&!selling.has(c.id)&&(!c.series?.rarity||c.rarity===c.series.rarity)&&c.series?.fr_verified===true);
   return {
-   id,name:first.series?.name||'Série inconnue',
-   image:first.series?.image_url||'',premiered:first.series?.premiered||'',
+   id,seriesId:first.series_id,seasonNumber:first.season_number||null,
+   name:(first.series?.name||'Série inconnue')+(first.season_number?' · Saison '+first.season_number:''),
+   image:first.season?.image_url||first.series?.image_url||'',
+   premiered:first.season?.premiered||first.series?.premiered||'',
    rarity:rank,genre:first.series?.genres||[],
    frVerified:first.series?.fr_verified===true,
    eligible:Boolean(first.series?.image_url)&&first.series?.rarity_source!=='pending'&&first.series?.fr_verified===true,
@@ -41,7 +46,7 @@ export function deriveCollection(cards=[],wishes=[],activity=[]){
   const matching=groups.filter(g=>g.rarity===rank);
   return {rank,series:matching.length,cards:matching.reduce((n,g)=>n+g.count,0)};
  });
- const missing=(wishes||[]).filter(w=>w.series_id!=null&&!copies.has(String(w.series_id)));
+ const missing=(wishes||[]).filter(w=>w.series_id!=null&&!ownedSeries.has(String(w.series_id)));
  const duplicateGroups=groups.filter(g=>g.count>1);
  return {
   groups,rankStats,missing,
@@ -101,14 +106,14 @@ export function selectCollection(view){
  }else if(mode==='all'){
   const orderByRank=(a,b)=>(rankOrder.get(b.series?.rarity||b.rarity)??-1)-
    (rankOrder.get(a.series?.rarity||a.rarity)??-1);
-  const filtered=(view.cards||[]).filter(c=>validGroup(groupIndex.get(String(c.series_id))||{
+  const filtered=(view.cards||[]).filter(c=>validGroup(groupIndex.get(collectibleKey(c))||{
    name:c.series?.name||'',rarity:c.series?.rarity||c.rarity,genre:c.series?.genres||[]
   }));
   entries=[...filtered];
   if(view.collectionSort==='name')entries.sort((a,b)=>(a.series?.name||'').localeCompare(b.series?.name||'','fr'));
   else if(view.collectionSort==='copies'){
    const counts=new Map(groups.map(g=>[g.id,g.count]));
-   entries.sort((a,b)=>(counts.get(String(b.series_id))||0)-(counts.get(String(a.series_id))||0));
+   entries.sort((a,b)=>(counts.get(collectibleKey(b))||0)-(counts.get(collectibleKey(a))||0));
   }else if(view.collectionSort==='recent')entries.sort((a,b)=>(Date.parse(b.obtained_at)||0)-(Date.parse(a.obtained_at)||0));
   else entries.sort(orderByRank);
  }else if(mode==='unique')entries=groups;
@@ -124,7 +129,7 @@ function pill(value){return '<span class="sc52-rarity">'+esc(value)+'</span>'}
 function groupCard(g){
  const selling=g.sellableCopy;
  return '<article class="sc52-group-card sc53-rarity-'+raritySlug(g.rarity)+'">'+
-  '<button class="sc52-group-poster" data-series="'+esc(g.id)+'" aria-label="Découvrir '+esc(g.name)+'">'+
+  '<button class="sc52-group-poster" data-series="'+esc(g.seriesId)+'" aria-label="Découvrir '+esc(g.name)+'">'+
   (photo(g.image)?'<img src="'+photo(g.image)+'" loading="lazy" alt="Affiche de '+esc(g.name)+'">':'<span class="sc52-poster-absent">✧</span>')+
   '<span class="sc52-copy-count">× '+g.count+'</span></button>'+
   '<div class="sc52-group-body"><h3>'+esc(g.name)+'</h3>'+pill(g.rarity)+
@@ -135,7 +140,7 @@ function groupCard(g){
    (g.protectedCount?'<span>🔒 '+g.protectedCount+' protégé'+(g.protectedCount>1?'s':'')+'</span>':'')+
    (g.blockedCount?'<span>⇆ '+g.blockedCount+' engagé'+(g.blockedCount>1?'s':'')+'</span>':'')+
   '</div><div class="sc52-group-actions">'+
-  '<button class="btn subtle small" data-series="'+esc(g.id)+'">Fiche série</button>'+
+  '<button class="btn subtle small" data-series="'+esc(g.seriesId)+'">Fiche série</button>'+
   (selling?'<button class="btn primary small" data-sell-copy="'+esc(selling.id)+'">Vendre un doublon ↗</button>':
     g.duplicates?'<span class="sc52-unavailable">Doublons protégés ou engagés</span>':'')+
   '</div></div></article>';
@@ -152,7 +157,7 @@ function missingCard(item){
 }
 function statsPanel(view,data){
  const total=Number(view.collectionEligibleTotal)||0;
- const eligibleOwned=data.groups.filter(g=>g.eligible).length;
+ const eligibleOwned=new Set(data.groups.filter(g=>g.eligible).map(g=>g.seriesId)).size;
  const percentage=total>0?Math.min(100,Math.round(100*eligibleOwned/total)):null;
  return '<div class="sc52-stats">'+
   '<div><strong>'+money(data.totalCards)+'</strong><span>Cartes possédées</span></div>'+
@@ -167,7 +172,7 @@ export function collectionStudio(state){
  const v=selectCollection(state),d=v.data;
  const modes=[
   ['all','Toutes mes cartes',d.totalCards],
-  ['unique','Mes séries',d.unique],
+  ['unique','Mes saisons',d.unique],
   ['duplicates','Doublons',d.duplicateGroups],
   ['protected','Protégées',d.groups.filter(g=>g.protectedCount>0).length],
   ['missing','À rechercher',d.missing.length]
