@@ -43,6 +43,7 @@ export function card(c,action=''){
  const locked=Boolean(c.locked),year=String(c.season?.premiered||s.premiered||'').slice(0,4);
  return '<article class="collect-card sc53-card sc53-rarity-'+slug+'">'+
   '<div class="sc53-poster-wrap"><img loading="lazy" src="'+photo(c.season?.image_url||s.image_url||s.image?.medium)+'" alt="Affiche de '+esc(title)+'">'+
+  (season?'<span class="sc-season-card-badge">S'+season+'</span>':'')+
   '<span class="sc53-rank-label">'+(locked?'🔒 ':'')+esc(rank)+'</span>'+
   (s.fr_verified===false?'<span class="sc54-fr-pending">🇫🇷 À vérifier</span>':'')+
   '</div>'+
