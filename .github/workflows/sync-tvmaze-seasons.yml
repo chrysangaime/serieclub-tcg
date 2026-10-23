@@ -1,0 +1,43 @@
+name: Construire le catalogue des saisons TVmaze
+on:
+  push:
+    paths:
+      - scripts/sync-tvmaze-seasons.mjs
+      - .github/workflows/sync-tvmaze-seasons.yml
+  workflow_dispatch:
+    inputs:
+      start_at:
+        description: "Index de départ (ex. 0, 450, 900...)"
+        required: false
+        default: "0"
+      max_series:
+        description: "Séries à synchroniser (1-600)"
+        required: false
+        default: "450"
+permissions:
+  contents: read
+concurrency:
+  group: tvmaze-season-library
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        offset: [0,450,900,1350,1800,2250]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Synchroniser les saisons TVmaze vers la table source
+        env:
+          SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          START_AT: ${{ github.event_name == 'workflow_dispatch' && inputs.start_at || matrix.offset }}
+          MAX_SERIES: ${{ github.event_name == 'workflow_dispatch' && inputs.max_series || '450' }}
+        run: node scripts/sync-tvmaze-seasons.mjs
