@@ -51,7 +51,7 @@ test('La fiche de True Detective conserve la carte série et ajoute la galerie T
  assert.equal(card.id,5,'La carte mère ne change pas');
 });
 test('La V1 intègre effectivement les styles de saison et le chargement TVmaze tardif',()=>{
- assert.match(fs.readFileSync('index.html','utf8'),/season-detail\.css\?v=1\.0\.0/);
+ assert.match(fs.readFileSync('index.html','utf8'),/season-detail\.css\?v=1\.0\.1/);
  const app=fs.readFileSync('v3/app.js','utf8');
  assert.match(app,/seasonGallery=template\.querySelector/);
  assert.match(fs.readFileSync('v4/series.js','utf8'),/seasonGalleryHTML\(show\._embedded\?\.seasons,\{showId:show\.id,cast\}\)/);
