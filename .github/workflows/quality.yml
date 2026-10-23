@@ -1,4 +1,4 @@
-name: Vérification qualité Epizora TCG
+name: Vérification qualité TCG TV V1
 on:
   push:
     branches: [main]
