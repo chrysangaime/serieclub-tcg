@@ -190,7 +190,7 @@ export function showDetailHTML(source={},base={},french={source:'loading'},fallb
   (more.length?'<details class="sc5-meta-more"><summary>Informations complémentaires</summary><div class="sc5-facts">'+more.map(([label,val])=>'<div><small>'+escapeHTML(label)+'</small><strong>'+escapeHTML(val)+'</strong></div>').join('')+'</div></details>':'')+
   '<section class="sc5-cast-section" data-cast-section '+(availableCast?'':'hidden')+'><div class="sc5-section-head"><div><h3>Acteurs et personnages</h3></div></div>'+
   '<div class="sc5-cast-list" data-cast-body>'+availableCast+'</div></section>'+
-  '<div class="sc5-compact-footer">'+externalLinks(name)+
+  '<div class="sc5-compact-footer">'+externalLinks(name)+(Number.isSafeInteger(Number(base.id))?'<button type="button" class="sc1-report-link" data-report-series="'+Number(base.id)+'">Signaler une erreur ou un visuel</button>':'')+
   '<div class="sc5-bottom"><a href="'+tvmazeLink(show.url)+'" target="_blank" rel="noopener noreferrer">Source TVmaze ↗</a>'+
   (imdb?'<a href="'+imdb+'" target="_blank" rel="noopener noreferrer">IMDb ↗</a>':'')+'</div></div></div>';
 }

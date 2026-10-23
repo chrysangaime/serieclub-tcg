@@ -1457,6 +1457,16 @@ function globalClick(e){
  if(e.target.closest('[data-install-app]')){installClubApp();return}
  if(e.target.closest('[data-delete-account-start]')){openDeleteAccount();return}
  if(e.target.closest('[data-delete-account-confirm]')){confirmDeleteAccount();return}
+ const reportTarget=e.target.closest('[data-report-player],[data-report-listing],[data-report-series]');
+ if(reportTarget){
+  const type=reportTarget.hasAttribute('data-report-player')?'player':
+   reportTarget.hasAttribute('data-report-listing')?'listing':'series';
+  const id=reportTarget.getAttribute('data-report-'+type);
+  closeModal();change('support');
+  if($('reportTargetType'))$('reportTargetType').value=type;
+  if($('reportTargetRef')){$('reportTargetRef').value=id;$('reportTargetRef').focus({preventScroll:true})}
+  return;
+ }
  if(e.target.closest('[data-theme-toggle]')){chooseTheme(state.theme==='day'?'night':'day');return}
  const themeChoice=e.target.closest('[data-theme-choice]');if(themeChoice){chooseTheme(themeChoice.dataset.themeChoice);return}
  const route=e.target.closest('[data-route]');if(route){e.preventDefault();change(route.dataset.route);return}
