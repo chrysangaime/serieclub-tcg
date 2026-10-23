@@ -69,3 +69,11 @@ html[data-theme] .sc1-report-form .btn{min-height:44px}
 html[data-theme] .sc1-report-form .note{font-size:11px;color:var(--tv-sub)}
 html[data-theme] .sc1-delete-dialog input:focus-visible,html[data-theme] .sc1-report-form :is(input,textarea,select):focus-visible{outline:2px solid var(--tv-highlight);outline-offset:2px}
 @media(max-width:650px){html[data-theme] .sc1-rights-actions .btn,html[data-theme] .sc1-delete-actions .btn{width:100%;flex:1 1 100%}html[data-theme] .sc1-delete-dialog{padding:16px!important}}
+
+/* Boutons de signalement contextuel sur fiches, profils et annonces. */
+html[data-theme] .sc1-report-link{background:transparent;border:0;cursor:pointer;color:var(--tv-sub);font-size:11px;text-decoration:underline;text-underline-offset:3px;padding:8px 3px;line-height:1.4;max-width:100%}
+html[data-theme] .sc1-report-link:hover,html[data-theme] .sc1-report-link:focus-visible{color:var(--tv-highlight);outline-offset:3px}
+html[data-theme] .sc4-person>.sc1-report-link{align-self:center;margin-left:4px}
+html[data-theme] .sc4-listing .sc1-report-link{display:block;margin-top:4px}
+html[data-theme] .sc5-compact-footer>.sc1-report-link{margin:7px auto}
+@media(max-width:650px){html[data-theme] .sc4-person>.sc1-report-link{align-self:stretch;margin-left:0}}

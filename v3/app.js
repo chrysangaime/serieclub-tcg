@@ -14,12 +14,12 @@ import{gameModes}from'../v7/arena.js?v=10.1.0';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=8.0.0';
 import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.0.0&build=12';
-import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0';
+import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0&build=13';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6.1.0';
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=6.1.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
-import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=7';
+import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=13';
 import{personalAlbumsPage,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.0.0';
 import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.0.0';
 import{collectionStudio,collectionCSV,deriveCollection}from'../v5/collection.js?v=1.0.0&build=5';
@@ -1054,7 +1054,7 @@ async function doFusion(){
 }
 function openAuth(){
  const root=$('overlay');root.classList.remove('hidden');
- root.innerHTML='<div class="dialog" role="dialog" aria-modal="true" aria-label="Compte joueur"><button class="close" data-close aria-label="Fermer">×</button><div class="caps">BIENVENUE DANS LE CLUB</div><h2>MON COMPTE</h2>'+(state.user?'<p>Connecté : '+esc(state.user.email)+'</p><button class="btn primary wide" data-route="profile" data-close>Gérer mon profil</button><button class="btn subtle wide" id="authSignout" style="margin-top:10px">Me déconnecter</button>':'<p>Connecte-toi ou crée un compte gratuit pour sauvegarder tes cartes.</p><input class="input" id="authEmail" type="email" autocomplete="email" placeholder="E-mail"><input class="input" id="authPassword" type="password" autocomplete="current-password" placeholder="Mot de passe (6 caractères minimum)"><input class="input" id="authUsername" maxlength="24" autocomplete="nickname" placeholder="Pseudonyme pour l’inscription"><div class="row"><button class="btn primary" id="authLogin">Connexion</button><button class="btn subtle" id="authRegister">Créer un compte</button></div><button type="button" class="btn subtle wide" id="authForgotPassword">Mot de passe oublié ?</button>')+'<p class="feedback" id="authFeedback" role="status"></p></div>';
+ root.innerHTML='<div class="dialog" role="dialog" aria-modal="true" aria-label="Compte joueur"><button class="close" data-close aria-label="Fermer">×</button><div class="caps">BIENVENUE DANS LE CLUB</div><h2>MON COMPTE</h2>'+(state.user?'<p>Connecté : '+esc(state.user.email)+'</p><button class="btn primary wide" data-route="profile" data-close>Gérer mon profil</button><button class="btn subtle wide" id="authSignout" style="margin-top:10px">Me déconnecter</button>':'<p>Connecte-toi ou crée un compte gratuit pour sauvegarder tes cartes.</p><input class="input" id="authEmail" type="email" autocomplete="email" placeholder="E-mail"><input class="input" id="authPassword" type="password" autocomplete="current-password" placeholder="Mot de passe (12 caractères à l’inscription)"><input class="input" id="authUsername" maxlength="24" autocomplete="nickname" placeholder="Pseudonyme pour l’inscription"><div class="row"><button class="btn primary" id="authLogin">Connexion</button><button class="btn subtle" id="authRegister">Créer un compte</button></div><button type="button" class="btn subtle wide" id="authForgotPassword">Mot de passe oublié ?</button>')+'<p class="feedback" id="authFeedback" role="status"></p></div>';
  $('authEmail')?.focus();
 }
 async function authenticate(register){
