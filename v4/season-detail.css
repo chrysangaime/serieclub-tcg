@@ -22,3 +22,12 @@
 .sc-season-credit a{color:inherit;text-decoration:underline}
 @media(max-width:690px){.sc-season-gallery{margin:14px 0}.sc-season-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.sc-season-item summary>img,.sc-season-no-poster{height:131px}.sc-season-caption{padding:6px}.sc-season-caption strong{font-size:.76rem}.sc-season-caption small{font-size:.64rem}.sc-season-gallery-head h3{font-size:1rem}}
 @media(max-width:370px){.sc-season-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sc-season-item summary>img,.sc-season-no-poster{height:152px}}
+
+.sc-season-cast{margin-top:11px;padding-top:11px;border-top:1px solid rgba(128,165,202,.22)}
+.sc-season-cast>strong{display:block;font-size:.79rem;margin-bottom:8px}
+.sc-season-cast-list{display:grid;grid-template-columns:1fr;gap:6px}
+.sc-season-cast-actor{display:flex;align-items:center;gap:8px;background:rgba(119,150,195,.10);border:1px solid rgba(128,165,202,.17);border-radius:9px;color:inherit;text-align:left;padding:5px 6px;font:inherit;font-size:.75rem;min-width:0}
+button.sc-season-cast-actor{cursor:pointer}
+.sc-season-cast-actor img{width:34px;height:42px;object-fit:cover;border-radius:6px;flex:none}
+.sc-season-cast-actor span{min-width:0;overflow-wrap:anywhere}
+.sc-season-cast-actor small{display:block;font-size:.65rem;color:var(--muted,#a9b6c7);margin-top:2px}
