@@ -1,5 +1,5 @@
 /**
- * SérieClub — rendu des parties récompensées.
+ * Epizora — rendu des parties récompensées.
  * Les bonnes réponses ne sont jamais déduites du navigateur :
  * ce composant ne révèle que les résultats déjà validés par Supabase.
  */
