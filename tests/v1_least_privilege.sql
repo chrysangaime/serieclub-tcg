@@ -1,6 +1,6 @@
 -- V1 : contrôle des privilèges Data API et des politiques RLS en base de test isolée.
 -- Ce script refuse toute réouverture accidentelle des opérations sensibles.
-DO $
+DO $$
 DECLARE unsafe_tables text;
 BEGIN
  -- Toutes les tables de l'API publique conservent leurs politiques RLS.
