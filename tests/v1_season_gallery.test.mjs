@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {normalizeSeasonList,seasonGalleryHTML} from '../v4/season-detail.js';
+import {normalizeSeasonList,seasonGalleryHTML,creditedSeasonCast} from '../v4/season-detail.js';
 import {showDetailHTML} from '../v4/series.js';
 
 const saisons=[
@@ -54,5 +54,22 @@ test('La V1 intègre effectivement les styles de saison et le chargement TVmaze 
  assert.match(fs.readFileSync('index.html','utf8'),/season-detail\.css\?v=1\.0\.0/);
  const app=fs.readFileSync('v3/app.js','utf8');
  assert.match(app,/seasonGallery=template\.querySelector/);
- assert.match(fs.readFileSync('v4/series.js','utf8'),/seasonGalleryHTML\(show\._embedded\?\.seasons\)/);
+ assert.match(fs.readFileSync('v4/series.js','utf8'),/seasonGalleryHTML\(show\._embedded\?\.seasons,\{showId:show\.id,cast\}\)/);
+});
+
+test('True Detective distingue les castings HBO des saisons 1, 2, 3 et 4',()=>{
+ const s1=creditedSeasonCast(5,1,[{person:{id:19,name:'Matthew McConaughey',image:{medium:'https://static.tvmaze.com/uploads/images/medium_portrait/1/11.jpg'}},character:{name:'Rust Cohle'}}]);
+ const s2=creditedSeasonCast(5,2);
+ const s3=creditedSeasonCast(5,3);
+ const s4=creditedSeasonCast(5,4);
+ assert.ok(s1.some(x=>x.name==='Matthew McConaughey'&&x.character==='Rust Cohle'));
+ assert.ok(s2.some(x=>x.name==='Rachel McAdams')&&!s2.some(x=>x.name==='Matthew McConaughey'));
+ assert.ok(s3.some(x=>x.name==='Mahershala Ali'));
+ assert.ok(s4.some(x=>x.name==='Jodie Foster'));
+ assert.deepEqual(creditedSeasonCast(1000,1),[]);
+ const html=seasonGalleryHTML(saisons,{showId:5,cast:[]});
+ assert.match(html,/Distribution principale · Saison 1/);
+ assert.match(html,/Matthew McConaughey/);
+ assert.match(html,/Rachel McAdams/);
+ assert.doesNotMatch(html,/image\.tmdb\.org/);
 });
