@@ -1,8 +1,5 @@
 name: SVOD France - Movie of the Night (import sous quota)
 on:
-  push:
-    paths:
-      - '.github/workflows/sync-streaming-availability.yml'
   workflow_dispatch:
     inputs:
       max_titles:
@@ -33,6 +30,6 @@ jobs:
           SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           STREAMING_AVAILABILITY_API_KEY: ${{ secrets.STREAMING_AVAILABILITY_API_KEY }}
-          MAX_TITLES: ${{ inputs.max_titles || '18' }}
-          START_AT: ${{ inputs.start_at || '12' }}
+          MAX_TITLES: ${{ inputs.max_titles || '30' }}
+          START_AT: ${{ inputs.start_at || '0' }}
         run: node scripts/sync-streaming-availability.mjs
