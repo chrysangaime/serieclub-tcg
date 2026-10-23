@@ -97,9 +97,10 @@ jobs:
             ['Apple TV Store','Amazon Video']);
           const compactView=await import('./v5/fr-watch.js');
           const panel=compactView.renderFranceAvailability(himym);
-          assert.match(panel,/Disponible sur/);
-          assert.match(panel,/sc56-brand-disney/);
-          assert.match(panel,/sc56-secondary/);
+          assert.match(panel,/Où regarder en France/);
+          assert.match(panel,/Offres de streaming non confirmées/);
+          assert.match(panel,/JustWatch France/);
+          assert.doesNotMatch(panel,/sc56-brand-disney|Disponible sur|themoviedb\\.org/);
 
           assert.ok(frOffers.titles['430'].offers.some(o=>/Disney(?:\+| Plus)/.test(o.name)));
           assert.ok(frOffers.titles['430'].offers.some(o=>o.name==='Amazon Prime Video'));
