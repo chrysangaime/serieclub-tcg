@@ -1,29 +1,29 @@
-import{privacyPage,legalPage,supportPage,deletionDialog}from'../v1/privacy.js?v=1.0.0&build=16';
-import{rightsPage}from'../v1/rights.js?v=1.0.0&build=4';
-import{opportunityData}from'../v1/opportunities.js?v=1.0.0&build=8';
+import{privacyPage,legalPage,supportPage,deletionDialog}from'../v1/privacy.js?v=1.0.0&build=14';
+import{rightsPage}from'../v1/rights.js?v=1.0.0&build=2';
+import{opportunityData}from'../v1/opportunities.js?v=1.0.0&build=7';
 import{candidates,recycleConfirm,LIMIT as RECYCLE_LIMIT}from'../v1/recycling.js?v=1.0.0&build=5';
 import{demoCards}from'../v1/onboarding.js?v=1.0.0&build=4';
-import{PRODUCT,footerHTML,aboutPage}from'../v1/product.js?v=1.0.0&build=15';
+import{PRODUCT,footerHTML,aboutPage}from'../v1/product.js?v=1.0.0&build=13';
 import{creditThemeName}from'../v21/credit-packs.js?v=21.0.0';
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2.118.0';
-import{storePage}from'../v10/store.js?v=16.0.0&build=3';
+import{storePage}from'../v10/store.js?v=16.0.0&build=2';
 import{navigationIcon}from'../v11/icons.js?v=11.0.0';
 import{updatePixelClues}from'../v10/pixel-canvas.js?v=10.2.0';
 import{quizQuestion,newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=10.0.0';
-import{openingFrame}from'../v7/booster.js?v=1.0.0&build=10';
+import{openingFrame}from'../v7/booster.js?v=1.0.0&build=9';
 import{gameModes}from'../v7/arena.js?v=10.1.0';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=8.0.0';
-import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.0.0&build=13';
-import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0&build=15';
+import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.0.0&build=12';
+import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0&build=14';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6.1.1';
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=6.1.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
-import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=14';
-import{personalAlbumsPage,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.0.0&build=2';
-import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.0.0&build=2';
-import{collectionStudio,collectionCSV,deriveCollection}from'../v5/collection.js?v=1.0.0&build=6';
+import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=13';
+import{personalAlbumsPage,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.0.0';
+import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.0.0';
+import{collectionStudio,collectionCSV,deriveCollection}from'../v5/collection.js?v=1.0.0&build=5';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 function readQuizRecords(){
  try{
@@ -35,7 +35,7 @@ function readQuizRecords(){
 const $=id=>document.getElementById(id);
 let deferredInstallPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e});
-window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;toast('Epizora TCG est installé sur cet appareil.')});
+window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;toast('SériesClubTCG est installé sur cet appareil.')});
 async function installClubApp(){
  if(window.matchMedia('(display-mode: standalone)').matches||navigator.standalone){toast('Le jeu est déjà installé sur cet appareil.');return}
  if(deferredInstallPrompt){
@@ -129,11 +129,11 @@ function renderChrome(){
  const pending=state.tradeOffers.filter(o=>o.status==='pending'&&o.seller_id===state.user?.id).length;
  const sections={packs:'DÉCOUVRIR',collection:'COLLECTIONNER',market:'LA COMMUNAUTÉ',games:'JOUER',profile:'MON ESPACE'};
  const nav=navItems.map(([key,icon,title])=>(sections[key]?'<div class="side-group-label" role="presentation">'+sections[key]+'</div>':'')+'<button class="side-link '+(state.route===key?'active ':'')+(key==='premiere'?'featured':'')+'" data-route="'+key+'" aria-current="'+(state.route===key?'page':'false')+'"><span class="ico" aria-hidden="true">'+navigationIcon(key,esc(icon))+'</span><span>'+esc(title)+'</span>'+(key==='collection'&&state.cards.length?'<span class="count">'+money(state.cards.length)+'</span>':key==='wishlist'&&state.wishes.length?'<span class="count">'+state.wishes.length+'</span>':key==='market'&&pending?'<span class="count">'+pending+'</span>':'')+'</button>').join('');
- $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark" aria-hidden="true">E</span><span class="sc12-logo-word">EPI<strong>ZORA</strong><em>TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav>'+(monthHalloween()?'<div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div>':'')+'<div class="side-account" data-route="profile"><div class="avatar sc10-directory-avatar"'+
+ $('sidebar').innerHTML='<a class="logo" href="#/paquets" data-route="packs"><span class="logo-mark" aria-hidden="true">S</span><span class="sc12-logo-word">SÉRIES<strong>CLUB</strong><em>TCG</em></span></a><nav class="side-links" aria-label="Menu principal">'+nav+'</nav>'+(monthHalloween()?'<div class="side-note"><b>✦ NUITS D’OCTOBRE</b>Édition Halloween disponible en octobre, chaque année.</div>':'')+'<div class="side-account" data-route="profile"><div class="avatar sc10-directory-avatar"'+
  (state.avatarSeriesId&&state.cards.some(c=>String(c.series_id)===String(state.avatarSeriesId))?
   ' style="background-image:url(&quot;'+photo(state.cards.find(c=>String(c.series_id)===String(state.avatarSeriesId)).series.image_url)+'&quot;)"':'')+'>'+
  (state.avatarSeriesId&&state.cards.some(c=>String(c.series_id)===String(state.avatarSeriesId))?'':esc((state.username||'S').slice(0,1).toUpperCase()))+'</div><div><b>'+esc(state.username||'Mon compte')+'</b><small>'+money(state.cards.length)+' cartes dans ma collection</small></div></div>';
- $('topbar').innerHTML='<div class="row"><button class="top-btn mobile-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><span class="crumb">'+esc(navName(state.route)).toUpperCase()+'</span></div><div class="top-actions"><button id="mobileTopSearch" class="top-btn sc12-mobile-search" data-route="catalog" aria-label="Rechercher une série">'+navigationIcon('catalog')+'</button><form id="globalSearchForm" class="sc12-global-search" role="search" aria-label="Rechercher une série"><span class="sc12-search-icon" aria-hidden="true">'+navigationIcon('catalog')+'</span><input id="globalSearchInput" type="search" autocomplete="off" maxlength="90" placeholder="Rechercher une série, un acteur, un univers…" aria-label="Rechercher dans Epizora TCG"><button id="topSearch" type="submit" aria-label="Lancer la recherche">→</button></form><button class="sc10-theme-toggle" data-theme-toggle title="Changer le thème" aria-label="Basculer entre jour et nuit"><span class="sc22-theme-icon" aria-hidden="true">'+(state.theme==='day'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.4 16.1A8.5 8.5 0 0 1 7.9 3.5 8.5 8.5 0 1 0 20.4 16.1Z"/></svg>')+'</span><span class="sc22-theme-label">'+(state.theme==='day'?'Jour':'Nuit')+'</span></button><button class="top-btn sc4-bell" data-opportunities-open aria-label="Voir mes opportunités du club">✧'+(opportunityData(state).count?'<span class="sc4-bell-number">'+Math.min(opportunityData(state).count,99)+'</span>':'')+'</button><button class="top-btn hide-mobile" data-route="rules">Règles du jeu</button><div class="sc12-balance"><span class="credit-pill">◇ &nbsp;'+money(state.wallet?.credits)+' <span>crédits</span></span><button type="button" class="sc12-add-credit" data-scroll-credit-packs aria-label="Utiliser mes crédits pour des boosters par plateforme">+</button></div><button class="top-btn sc12-account" data-auth><span class="sc12-account-face" aria-hidden="true">'+esc((state.username||'S').slice(0,1).toUpperCase())+'</span><span>'+(state.premiumActive?'✦ Premium':state.user?'Mon compte':'Connexion')+'</span></button><button class="top-btn hide-mobile" id="motionToggle" title="Animations">◐</button><span class="top-btn" aria-label="Langue : français">🇫🇷 FR</span></div>';
+ $('topbar').innerHTML='<div class="row"><button class="top-btn mobile-menu" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><span class="crumb">'+esc(navName(state.route)).toUpperCase()+'</span></div><div class="top-actions"><button id="mobileTopSearch" class="top-btn sc12-mobile-search" data-route="catalog" aria-label="Rechercher une série">'+navigationIcon('catalog')+'</button><form id="globalSearchForm" class="sc12-global-search" role="search" aria-label="Rechercher une série"><span class="sc12-search-icon" aria-hidden="true">'+navigationIcon('catalog')+'</span><input id="globalSearchInput" type="search" autocomplete="off" maxlength="90" placeholder="Rechercher une série, un acteur, un univers…" aria-label="Rechercher dans SériesClubTCG"><button id="topSearch" type="submit" aria-label="Lancer la recherche">→</button></form><button class="sc10-theme-toggle" data-theme-toggle title="Changer le thème" aria-label="Basculer entre jour et nuit"><span class="sc22-theme-icon" aria-hidden="true">'+(state.theme==='day'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.4 16.1A8.5 8.5 0 0 1 7.9 3.5 8.5 8.5 0 1 0 20.4 16.1Z"/></svg>')+'</span><span class="sc22-theme-label">'+(state.theme==='day'?'Jour':'Nuit')+'</span></button><button class="top-btn sc4-bell" data-opportunities-open aria-label="Voir mes opportunités du club">✧'+(opportunityData(state).count?'<span class="sc4-bell-number">'+Math.min(opportunityData(state).count,99)+'</span>':'')+'</button><button class="top-btn hide-mobile" data-route="rules">Règles du jeu</button><div class="sc12-balance"><span class="credit-pill">◇ &nbsp;'+money(state.wallet?.credits)+' <span>crédits</span></span><button type="button" class="sc12-add-credit" data-scroll-credit-packs aria-label="Utiliser mes crédits pour des boosters par plateforme">+</button></div><button class="top-btn sc12-account" data-auth><span class="sc12-account-face" aria-hidden="true">'+esc((state.username||'S').slice(0,1).toUpperCase())+'</span><span>'+(state.premiumActive?'✦ Premium':state.user?'Mon compte':'Connexion')+'</span></button><button class="top-btn hide-mobile" id="motionToggle" title="Animations">◐</button><span class="top-btn" aria-label="Langue : français">🇫🇷 FR</span></div>';
  if(monthHalloween()){
   $('topbar').querySelector('.crumb')?.insertAdjacentHTML('afterend','<span class="top-season-tag hide-mobile">☾ LES NUITS D’OCTOBRE</span>');
  }
@@ -1112,7 +1112,7 @@ function exportCollection(){
  const csv=collectionCSV(state.cards,state.wishes,state.marketActivity);
  const blob=new Blob(['\uFEFF',csv],{type:'text/csv;charset=utf-8'});
  const url=URL.createObjectURL(blob),link=document.createElement('a');
- link.href=url;link.download='epizora-collection-'+new Date().toISOString().slice(0,10)+'.csv';
+ link.href=url;link.download='serieclub-collection-'+new Date().toISOString().slice(0,10)+'.csv';
  document.body.append(link);link.click();link.remove();
  setTimeout(()=>URL.revokeObjectURL(url),3000);
  toast('Ta collection a été exportée au format CSV.');
@@ -1125,10 +1125,10 @@ async function exportData(){
   const {data,error}=await supa.rpc('export_my_account_data');
   if(error)throw error;
   if(!data||data.account_id!==state.user.id)throw Error('Données du compte indisponibles');
-  const payload={...data,email:state.user.email||null,export_format:'Epizora TCG V1.0'};
+  const payload={...data,email:state.user.email||null,export_format:'SériesClubTCG V1.0'};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
   const url=URL.createObjectURL(blob),link=document.createElement('a');
-  link.href=url;link.download='epizora-mes-donnees-'+new Date().toISOString().slice(0,10)+'.json';
+  link.href=url;link.download='seriesclub-mes-donnees-'+new Date().toISOString().slice(0,10)+'.json';
   document.body.append(link);link.click();link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),5000);
   toast('Export des données du jeu téléchargé.');
