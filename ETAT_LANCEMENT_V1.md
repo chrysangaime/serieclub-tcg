@@ -14,6 +14,9 @@ Dernière vérification technique : **23 octobre 2026**. Ceci est un constat d'i
 - [x] Bibliothèque Supabase JS figée sur une version stable ; aucun secret service_role dans le navigateur.
 - [x] Manifeste d'installation mobile, raccourcis et page hors connexion. Les données joueurs et crédits ne sont jamais mis en cache par le service worker.
 - [x] Tests automatisés JavaScript et PostgreSQL dans GitHub Actions.
+- [x] Matrice des privilèges SQL rationalisée en production le 23/10/2026 : catalogue et vues en lecture seule, cartes et portefeuille en lecture personnelle, souhaits modifiables uniquement par le propriétaire selon RLS ; migration `game_v1_least_privilege.sql` et requête de vérification effectuées.
+- [x] Navigation clavier des fenêtres modales renforcée (Tab / Maj+Tab / Échap, restitution du focus).
+- [x] Recette Chromium étendue à trois écrans (360 px, 390 px, 1366 px), sept parcours, jours/nuits, débordements et démonstration lorsqu'elle est disponible. Déclenchement CI sur changements applicatifs et pull requests ; **résultat de ce nouveau workflow encore à confirmer**.
 
 ## Pas encore certifié — critères BLOQUANTS avant lancement commercial
 - [ ] **Recette vraie vie** Android, iOS et ordinateur avec comptes de test : inscription, login, rafraîchissement, attribution de cartes, doublons, échanges, profils, mode jour et nuit, installation de l'application.
