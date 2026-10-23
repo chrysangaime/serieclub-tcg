@@ -1,6 +1,6 @@
-# Epizora TCG — stratégie « sans contact TVmaze/TMDB » (V1.0)
+# SériesClubTCG — stratégie « sans contact TVmaze/TMDB » (V1.0)
 
-**23 octobre 2026 · nom de travail Epizora TCG · aucune offre payante activée.**
+**23 octobre 2026 · nom de travail SériesClubTCG · aucune offre payante activée.**
 
 ## Décisions
 
@@ -8,7 +8,7 @@
 2. **TMDB est maintenu uniquement comme source historique et outil de prototype sans revenu**, pas comme source commerciale. Les [conditions officielles](https://www.themoviedb.org/api-terms-of-use) exigent un accord écrit pour toute utilisation de son contenu contribuant à générer des revenus. Si l'on ne souhaite pas les contacter, **la seule voie prudente vers un jeu monétisé consiste à supprimer la dépendance TMDB, ses données dérivées et caches utilisés commercialement**. Une simple mention d'attribution n'y remédie pas.
 3. **Les trois actualisations automatiques TMDB sont suspendues** dans GitHub Actions : `sync-fr-streaming.yml`, `expand-fr-catalog.yml` et `sync-fr-cast.yml`. Le déclenchement manuel reste réservé aux essais non commerciaux. L'import TVmaze demeure distinct.
 4. **L'accès anticipé reste sans paiement**. Les boutiques et crédits virtuels historiques continuent de fonctionner mais **ne doivent pas être monétisés avant la migration de données décrite ci-dessous**.
-5. **Renommage de marque** en **Epizora TCG** (nom de travail) pour distinguer le jeu de la chaîne SérieClub. Conserver les noms techniques et identifiants SQL de l'ancien dépôt afin de préserver l'historique et les comptes. Faire un contrôle INPI/EUIPO et du domaine avant publicité. La recherche sur le Web ne suffit pas à garantir la disponibilité juridique.
+5. **Renommage de marque** en **SériesClubTCG** (nom de travail) pour distinguer le jeu de la chaîne SérieClub. Conserver les noms techniques et identifiants SQL de l'ancien dépôt afin de préserver l'historique et les comptes. Faire un contrôle INPI/EUIPO et du domaine avant publicité. La recherche sur le Web ne suffit pas à garantir la disponibilité juridique.
 
 ## Plan de remplacement de TMDB sans demande de licence
 
