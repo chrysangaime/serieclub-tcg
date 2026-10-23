@@ -7,7 +7,7 @@ const demo={isOctober:true,user:{id:'test'},pack:'classic',cards:[],homeShows:[]
 test('Pochettes branding lisibles, un nom sur deux lignes, trois variantes',()=>{
  const html=svodHome(demo,{timecode:()=>''});
  assert.match(html,/sc18-foil-brand/);
- assert.match(html,/SÉRIES<em>CLUB<\/em>/);
+ assert.match(html,/EPI<em>ZORA<\/em>/);
  assert.match(html,/<small>TCG<\/small>/);
  assert.match(html,/sc15-foil--original/);
  assert.match(html,/sc15-foil--halloween/);
