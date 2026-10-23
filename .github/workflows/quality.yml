@@ -281,3 +281,7 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_bulk_recycling.sql
       - name: Tester quota, cartes protégées et sauvegarde des derniers exemplaires
         run: psql -v ON_ERROR_STOP=1 -f tests/v1_recycling_postgres.sql
+      - name: Installer les codes joueurs du Signal
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_invite_codes.sql
+      - name: Vérifier invitation et suivi par code
+        run: psql -v ON_ERROR_STOP=1 -f tests/v1_invite_codes.sql
