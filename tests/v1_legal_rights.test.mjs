@@ -24,6 +24,8 @@ test('La V1 dispose des crédits officiels et n’annonce pas de licence acquise
  assert.match(legalPage(),/data-route="rights"/);
  assert.match(footerHTML(),/data-route="rights"/);
  assert.equal(PRODUCT.launched,false);
+ assert.match(read('v3/app.js'),/paymentsMode:'disabled'/,
+  'Aucun paiement live tant que les droits et CGV ne sont pas autorisés');
 });
 
 test('La présence d’une URL de logo TMDB ne suffit pas à autoriser une image de marque',()=>{
