@@ -1,4 +1,4 @@
-/** Epizora TCG V1.0 — pages d'information, assistance et droits des joueurs. */
+/** SériesClubTCG V1.0 — pages d'information, assistance et droits des joueurs. */
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const head=(k,t,desc)=>'<header class="sc1-rights-head"><span class="caps">'+k+'</span><h1>'+t+'</h1><p>'+desc+'</p></header>';
 export function privacyPage(s={}){
@@ -14,7 +14,7 @@ export function privacyPage(s={}){
 }
 export function legalPage(){
  return '<div class="page-content sc1-rights">'+head('TRANSPARENCE · V1.0','Mentions légales en préparation.','Le service est accessible en test. Les informations de l’éditeur doivent être vérifiées et publiées avant tout lancement officiel.')+
- '<section class="panel"><h2>Le service</h2><p>Epizora TCG est un jeu indépendant de collection consacré aux séries télévisées disponibles en France. Aucune affiliation ou autorisation de marque des plateformes citées n’est revendiquée.</p>'+
+ '<section class="panel"><h2>Le service</h2><p>SériesClubTCG est un jeu indépendant de collection consacré aux séries télévisées disponibles en France. Aucune affiliation ou autorisation de marque des plateformes citées n’est revendiquée.</p>'+
  '<h2>Éditeur et contact</h2><p><strong>Informations non encore publiées :</strong> identité/statut juridique de l’éditeur, coordonnées professionnelles et adresse de contact pour les demandes RGPD et les réclamations. Ces informations sont à renseigner et à valider avant une ouverture commerciale.</p>'+
  '<h2>Hébergement</h2><p>Interface statique : GitHub Pages (GitHub). Gestion des comptes et base de données : Supabase. Les prestations de données et d’images peuvent impliquer TVmaze, TMDB ou des fournisseurs de liens de diffusion.</p>'+
  '<h2>Conditions et droits des images</h2><p>Les crédits du jeu ne sont pas une monnaie réelle. Aucun paiement d’abonnement en production ni achat de crédits en euros ne doit être activé avant validation des CGU/CGV, des droits des œuvres et des obligations réglementaires. Les affiches proviennent de liens directs TVmaze ; les licences et permissions des ayants droit font l’objet d’un audit avant lancement.</p>'+
