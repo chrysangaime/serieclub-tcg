@@ -1,15 +1,15 @@
-/** SériesClubTCG — identité publique stable pendant la préparation du lancement. */
-export const PRODUCT=Object.freeze({name:'SériesClubTCG',version:'V1.0',stage:'En préparation',launched:false});
+/** Epizora TCG — identité publique stable pendant la préparation du lancement. */
+export const PRODUCT=Object.freeze({name:'Epizora TCG',version:'V1.0',stage:'En préparation',launched:false});
 export function footerHTML(){
- return '<footer class="app-footer sc1-footer" aria-label="Informations sur SériesClubTCG">'+
- '<div class="sc1-footer-brand"><strong>SériesClubTCG</strong><span class="sc1-version">'+PRODUCT.version+' · '+PRODUCT.stage+'</span></div>'+
+ return '<footer class="app-footer sc1-footer" aria-label="Informations sur Epizora TCG">'+
+ '<div class="sc1-footer-brand"><strong>Epizora TCG</strong><span class="sc1-version">'+PRODUCT.version+' · '+PRODUCT.stage+'</span></div>'+
  '<nav aria-label="Informations pratiques"><button type="button" data-route="rules">Comment jouer</button>'+
  '<button type="button" data-route="settings">Paramètres</button><button type="button" data-route="privacy">Confidentialité</button><button type="button" data-route="rights">Sources et droits</button><button type="button" data-route="legal">Mentions légales</button><button type="button" data-route="support">Assistance</button><button type="button" data-route="about">À propos</button></nav>'+
  '<p>Jeu indépendant consacré aux séries diffusées en France. Marques et visuels : droits réservés à leurs propriétaires respectifs. Aucune affiliation avec les plateformes de diffusion mentionnées.</p></footer>';
 }
 export function aboutPage(){
  return '<div class="page-content sc1-about">'+
- '<div class="sc1-about-head"><span class="caps">SÉRIESCLUBTCG · V1.0</span><h1>Le club des séries à collectionner.</h1>'+
+ '<div class="sc1-about-head"><span class="caps">EPIZORA TCG · V1.0</span><h1>Le club des séries à collectionner.</h1>'+
  '<p>Découvre des séries, ouvre des paquets, organise ta collection et progresse à travers les Saisons.</p>'+
  '<span class="sc1-about-phase">● En préparation · Accès anticipé</span></div>'+
  '<section class="sc1-about-grid" aria-label="Découvrir le jeu">'+
