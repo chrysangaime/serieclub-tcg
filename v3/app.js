@@ -1727,8 +1727,9 @@ document.addEventListener('keydown',e=>{
   }
  }
  if(e.key==='Escape'){
-  if(document.body.classList.contains('drawer-open')){document.body.classList.remove('drawer-open');$('menuToggle')?.setAttribute('aria-expanded','false')}
-  else closeModal();
+  // La fenêtre modale est prioritaire sur le tiroir de navigation mobile.
+  if(!$('overlay').classList.contains('hidden')){e.preventDefault();closeModal()}
+  else if(document.body.classList.contains('drawer-open')){document.body.classList.remove('drawer-open');$('menuToggle')?.setAttribute('aria-expanded','false')}
  }
  if(e.key==='Enter'&&e.target.id==='catalogQuery'){clearTimeout(searchTimer);loadCatalog(true)}
  if(e.key==='Enter'&&e.target.id==='actorSearchQuery')searchCatalogueActors();
