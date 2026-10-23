@@ -3,15 +3,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 const read=p=>fs.readFileSync(p,"utf8");
 
-test("Epizora remplace le nom problématique sur les principaux écrans sans changer les identifiants de persistance",()=>{
+test("Le dernier renommage non approuvé est annulé, sans toucher à la persistance",()=>{
  const publicFiles=["index.html","manifest.webmanifest","offline.html","v3/app.js","v3/views.js","v10/store.js","v12/home.js","v1/product.js","v4/club.js","v4/albums.js","v7/booster.js","v3/icon.svg"];
- for(const p of publicFiles){
-  const src=read(p);
-  assert.doesNotMatch(src,/SériesClubTCG|SÉRIESCLUBTCG|SÉRIES<strong>CLUB|SÉRIECLUB ·/,p);
- }
- assert.match(read("v1/product.js"),/name:'Epizora TCG'/);
- assert.match(read("index.html"),/Epizora TCG V1\.0/);
- assert.match(read("manifest.webmanifest"),/"short_name": "Epizora TCG"/);
+ for(const p of publicFiles) assert.doesNotMatch(read(p),/Epizora/i,p);
+ assert.match(read("v1/product.js"),/name:'SériesClubTCG'/);
+ assert.match(read("index.html"),/SériesClubTCG V1\.0/);
+ assert.match(read("manifest.webmanifest"),/"short_name": "SériesClubTCG"/);
  assert.match(read("v3/app.js"),/createClient\(/);
  assert.match(read("index.html"),/name="robots" content="noindex,nofollow"/);
 });
