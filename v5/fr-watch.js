@@ -1,174 +1,42 @@
 /**
- * SérieClub — disponibilité légale en France, au premier plan de la fiche.
- * Source : cache public TMDB / JustWatch ou relevé éditorial daté JustWatch FR.
- * Ne suppose jamais une offre sur la seule base de la diffusion historique.
+ * V1 · Consultation libre des disponibilités françaises (sans API TMDB
+ * ni copie d'offres JustWatch). Le catalogue TVmaze reste la source des séries.
+ *
+ * Un lien général vers JustWatch est une navigation externe, et non une
+ * intégration partenaire ni une promesse d'offres effectivement disponibles.
  */
 const ROOT='https://www.justwatch.com/fr';
-/** V1.0 pré-lancement : les logos de distributeurs distribués via TMDB
- * ne sont pas réutilisés tant que les autorisations sont absentes.
- * Les dénominations textuelles et les liens vers les offres restent actifs.
- * Voir AUDIT_JURIDIQUE_ET_LICENCES_V1.md.
- */
 export const platformLogoUsageApproved=false;
-
-const cache={promise:null};
-const ESC={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>ESC[c]);
-const asId=v=>Number.isSafeInteger(Number(v))&&Number(v)>0?String(v):null;
-const ALLOWED=new Set(['flatrate','free','ads','rent','buy']);
-/** Repli minimal daté, contrôlé dans le cache TMDB France du 21/10/2026. */
-const spotlightOffers={
- '2993':{
-  country:'FR',tmdb_id:66732,checked_at:'2026-10-21T11:25:36.326Z',
-  url:'https://www.themoviedb.org/tv/66732/watch?locale=FR',
-  offers:[
-   {type:'flatrate',provider_id:8,name:'Netflix',logo_path:'/rK1KljqmbvO9HQa1PBFLILWah72.png'},
-   {type:'flatrate',provider_id:1796,name:'Netflix Standard with Ads',logo_path:'/eGUwOOIxcazwEBxqJpSN5sWEu6V.png'}
-  ]
- }
-};
-
-
+const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'
+}[c]));
 export function getFrenchOriginChannel(show={}){
  const channels=[show.network,show.webChannel];
- const matching=channels.filter(ch=>ch?.country?.code==='FR'&&typeof ch?.name==='string');
- return [...new Set(matching.map(ch=>ch.name.trim()).filter(Boolean))];
+ return [...new Set(channels.filter(c=>c?.country?.code==='FR'&&typeof c.name==='string')
+  .map(c=>c.name.trim()).filter(Boolean))];
 }
-function safeTMDBLogo(path){
- return typeof path==='string'&&/^\/[A-Za-z0-9_-]+\.(?:png|jpg|webp)$/i.test(path)
-  ?'https://image.tmdb.org/t/p/w92'+path:null;
-}
-function safeWatchLink(value){
- try{
-  const url=new URL(String(value||''));
-  if(url.protocol!=='https:')return null;
-  if(['www.themoviedb.org','themoviedb.org'].includes(url.hostname)
-   && /^\/tv\/\d+(?:-[a-z0-9-]+)?\/watch\/?$/.test(url.pathname))return url.href;
-  if(url.hostname==='www.justwatch.com'&&
-   /^\/fr\/serie\/[a-z0-9-]+(?:\/saison-\d+)?\/?$/.test(url.pathname))return url.href;
- }catch{/* Drop unexpected links. */}
- return null;
-}
-function safeProviderLink(raw,name){
- try{
-  const u=new URL(String(raw||''));
-  if(u.protocol!=='https:')return null;
-  if(name==='Disney+'&&u.hostname==='www.disneyplus.com'
-      &&/^\/fr-fr\/browse\/entity-[a-f0-9-]{30,50}\/?$/.test(u.pathname))return u.href;
-  if(name==='Netflix'&&['www.netflix.com','netflix.com'].includes(u.hostname)
-      &&/^\/fr\/title\/\d+\/?$/.test(u.pathname))return u.href;
-  if(name==='Amazon Prime Video'&&u.hostname==='www.primevideo.com'
-      &&/^\/-\/fr\/detail\/[a-zA-Z0-9]+\/?$/.test(u.pathname))return u.href;
- }catch{/* Whitelisted providers only. */}
- return null;
-}
-function slug(name){
- const n=String(name||'').toLowerCase();
- if(n.includes('disney'))return 'disney';
- if(n.includes('netflix'))return 'netflix';
- if(n.includes('prime'))return 'prime';
- if(n.includes('apple'))return 'apple';
- if(n.includes('amazon'))return 'amazon';
- if(n.includes('max'))return 'max';
- if(n.includes('canal'))return 'canal';
- if(n.includes('m6'))return 'm6';
- return 'other';
-}
-export function normalizeFranceOffers(record){
- if(!record||record.country!=='FR'||!Array.isArray(record.offers))return null;
- const timestamp=Date.parse(record.checked_at);
- if(!Number.isFinite(timestamp)||timestamp>Date.now()+86400000)return null;
- const age=Math.max(0,Date.now()-timestamp);
- const editorial=record.source==='justwatch_fr_editorial';
- // Historic offers remain credited to JustWatch, but MUST carry an age warning.
- if(age>45*86400000&&!editorial)return null;
- const offers=record.offers.filter(o=>ALLOWED.has(o.type)&&
-    typeof o.name==='string'&&o.name.length>0&&o.name.length<=65)
-  .slice(0,30).map(o=>({
-    type:o.type,name:o.name,logo:platformLogoUsageApproved?safeTMDBLogo(o.logo_path):null,
-    id:Number(o.provider_id)||0,url:safeProviderLink(o.provider_url,o.name)
-  }));
- return {
-  offers,checked_at:record.checked_at,stale:age>14*86400000,
-  historical:age>45*86400000,source:editorial?'justwatch_fr_editorial':'tmdb',
-  url:safeWatchLink(record.url),tmdb_id:Number(record.tmdb_id)||null
- };
-}
-function offersList(offers,link,modifier=''){
- return '<span class="sc56-providers">'+offers.map(p=>{
-  const target=p.url||link||ROOT;
-  const extra=modifier==='mode'?(p.type==='ads'?' · avec publicité':p.type==='free'?' · gratuit':''):'';
-  const title=p.url?'Ouvrir '+p.name+' directement':'Vérifier '+p.name+' sur JustWatch France';
-  return '<a class="sc56-provider sc56-brand-'+slug(p.name)+'" href="'+esc(target)+'" '+
-   'target="_blank" rel="noopener noreferrer" title="'+esc(title)+'">'+
-   (p.logo?'<img src="'+esc(p.logo)+'" loading="lazy" alt="">':'')+
-   '<span>'+esc(p.name)+extra+'</span><span class="sc56-provider-arrow" aria-hidden="true">↗</span></a>';
- }).join('')+'</span>';
-}
-/** Compact, fully sourced service badges, suitable directly under the rarity. */
-export function renderFranceAvailability(record=null,show={}){
- const data=normalizeFranceOffers(record);
+/** Aucun ancien relevé TMDB / JustWatch ne doit être présenté comme une offre. */
+export function normalizeFranceOffers(_historicalRecord){return null;}
+/** Le jeu n'envoie plus de requêtes vers les caches de plateformes. */
+export async function getFrenchOffersByShow(_tvmazeId){return null;}
+export function renderFranceAvailability(_historicalRecord=null,show={}){
  const origin=getFrenchOriginChannel(show);
- const link=data?.url||ROOT;
- const subscription=data?.offers.filter(o=>['flatrate','free','ads'].includes(o.type))||[];
- const buying=data?.offers.filter(o=>o.type==='buy')||[];
- const renting=data?.offers.filter(o=>o.type==='rent')||[];
- const date=data?new Date(data.checked_at).toLocaleDateString('fr-FR'):'';
- const proof=show?.fr_verified===true;
- const announced=proof&&origin.length>0&&/^\d{4}-\d{2}-\d{2}$/.test(show?.premiered||'')&&Date.parse(show.premiered+'T00:00:00Z')>Date.now();
- let intro,content;
- if(subscription.length){
-  intro='Disponible sur';
-  content=offersList(subscription,link,'mode');
- }else if(buying.length||renting.length){
-  intro='Disponible à l’achat ou à la location sur';
-  content=offersList([...buying,...renting],link);
- }else{
-  intro=announced?'Diffusion annoncée en France':'Où regarder en France ?';
-  content='<span class="sc56-no-offers">'+
-   (announced?'Plateformes à venir':'Offres de streaming non confirmées')+'</span>';
- }
- const secondary=subscription.length&&(
-   buying.length||renting.length)
-  ?'<div class="sc56-secondary">'+
-    (buying.length?'<span>Achat :</span>'+offersList(buying,link):'')+
-    (renting.length?'<span>Location :</span>'+offersList(renting,link):'')+
-    '</div>':'';
- const editorial=data?.source==='justwatch_fr_editorial';
- const warning=data?.historical?' · relevé ancien : offres pas confirmées aujourd’hui, à vérifier avant de souscrire':
-  data?.stale?' · offres à revérifier':'';
- const source=data?'France · '+(editorial?'JustWatch':'TMDB / JustWatch')+
-   ' · '+date+warning:
-   (proof?(announced?'Sortie française annoncée':'Diffusion en France confirmée'):'Offres en France à confirmer');
- const direct=data?.url&&editorial?'Ouvrir la fiche JustWatch France ↗':
-  data?.url?'Voir les offres en France ↗':'Voir sur JustWatch France ↗';
- const note=origin.length?'<span class="sc56-origin">'+(announced?'Chaîne prévue en France : ':'Diffusion en France : ')+origin.map(esc).join(', ')+'</span>':'';
- const evidenceUrl=safeWatchLink(show.fr_evidence_url)||
-  safeProviderLink(show.fr_evidence_url,'Disney+')||
-  safeProviderLink(show.fr_evidence_url,'Netflix');
- const evidence=!data?.offers.length&&proof&&evidenceUrl
-  ?'<a href="'+esc(evidenceUrl)+
-    '" target="_blank" rel="noopener noreferrer">Source de diffusion française ↗</a>':'';
- return '<section class="sc56-where" aria-label="Disponibilité en streaming en France">'+
-  '<div class="sc56-main"><strong class="sc56-label">'+intro+'</strong>'+content+'</div>'+
-  secondary+
-  '<div class="sc56-foot"><span>'+esc(source)+'</span>'+
-   '<a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">'+direct+'</a>'+
-   evidence+note+'</div>'+
-  '</section>';
+ const tvmazeVerified=show.fr_verification_method==='tvmaze_fr_origin'||origin.length>0;
+ const announcement=tvmazeVerified&&origin.length>0&&
+  /^\d{4}-\d{2}-\d{2}$/.test(show.premiered||'')&&
+  Date.parse(show.premiered+'T00:00:00Z')>Date.now();
+ const detail=announcement?'Chaîne française annoncée : ': 'Diffuseur d’origine en France : ';
+ const note=origin.length
+  ?'<span class="sc56-origin">'+detail+origin.map(esc).join(', ')+'</span>'
+  :'';
+ const source=tvmazeVerified
+  ?'Origine française documentée par TVmaze · offres actuelles non vérifiées'
+  :'Les offres actuelles ne sont pas renseignées par le jeu';
+ return '<section class="sc56-where" aria-label="Consulter les offres en France">'+
+   '<div class="sc56-main"><strong class="sc56-label">Où regarder en France ?</strong>'+
+   '<span class="sc56-no-offers">Offres de streaming non confirmées</span></div>'+
+   '<div class="sc56-foot"><span>'+esc(source)+'</span>'+
+   '<a href="'+ROOT+'" target="_blank" rel="noopener noreferrer">'+
+   'Vérifier sur JustWatch France ↗</a>'+note+'</div></section>';
 }
-export async function getFrenchOffersByShow(id){
- const key=asId(id);
- if(!key)return null;
- if(!cache.promise){
-  const url=new URL('../data/watch-fr.json',import.meta.url);
-  // Réactualiser les offres après chaque heure sans requête vers TMDB côté client.
-  url.searchParams.set('hour',new Date().toISOString().slice(0,13));
-  cache.promise=fetch(url,{headers:{Accept:'application/json'}})
-   .then(async r=>{if(!r.ok)throw Error('Offres FR indisponibles');return r.json()})
-   .catch(()=>({titles:{}}));
- }
- const data=await cache.promise;
- return data?.titles?.[key]||spotlightOffers[key]||null;
-}
-export function justwatchFranceUrl(){return ROOT}
+export function justwatchFranceUrl(){return ROOT;}
