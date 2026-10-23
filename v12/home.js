@@ -85,9 +85,8 @@ function packCard(s,type,foil){
  const shots=[source[start%Math.max(source.length,1)],source[(start+1)%Math.max(source.length,1)]].filter(Boolean);
  const background=shots.map((show,i)=>'<img class="sc12-pack-backdrop sc12-pack-backdrop-'+i+'" src="'+photo(show.image_url)+'" alt="" loading="lazy">').join('');
  return '<article class="sc12-pack-tile sc12-pack-'+type+(type==='classic'?' sc12-pack-original':'')+(selected?' is-active':'')+(disabled?' is-disabled':'')+'">'+
-  '<span class="sc12-pack-badge">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span>'+
   '<div class="sc12-pack-art sc15-pack-art" aria-hidden="true">'+background+'<span class="sc12-pack-glow"></span>'+emblem+'</div>'+
-  '<div class="sc12-pack-copy sc15-pack-copy"><h3>'+title+'</h3><p>'+text+'</p>'+ (premium?'<div class="sc18-premium-perks"><span>✦ 1,99 € / mois</span><span>✓ Badge de membre</span><span>✓ Aucun avantage de rareté</span></div>':'') +action+'</div></article>';
+  '<div class="sc12-pack-copy sc15-pack-copy"><span class="sc12-pack-badge sc23-pack-label">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span><h3>'+title+'</h3><p>'+text+'</p>'+ (premium?'<div class="sc18-premium-perks"><span>✦ 1,99 € / mois</span><span>✓ Badge de membre</span><span>✓ Aucun avantage de rareté</span></div>':'') +action+'</div></article>';
 }
 function posterShelf(shows){
  const display=shows.slice(0,12);
