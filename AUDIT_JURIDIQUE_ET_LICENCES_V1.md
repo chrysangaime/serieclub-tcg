@@ -26,7 +26,7 @@ Lecture Supabase sur `public.series`, 23/10/2026 :
 | Noms Netflix, Disney+, Prime Video, etc. | Identification textuelle des services, packs thématiques | Marques de tiers ; identification descriptive sans confusion à apprécier selon le contexte. Des packs vendus « Netflix » pourraient donner une impression de partenariat. | Conserver la mention « sélection thématique non officielle » ; demander une revue marques avant marketing, achats payants et usage des logos. |
 | JustWatch | Liens sortants et relevés éditoriaux datés | Les liens ne valent pas partenariat ni licence de données. Ne pas automatiser d'extraction non autorisée. | Conserver liens, attribution et dates de relevé. Vérifier toute exploitation des données à grande échelle. |
 | Hébergement GitHub Pages | Application HTML/JS publique en préproduction | GitHub Pages n'est pas autorisé comme hébergement gratuit d'un service principalement commercial ou de vente en ligne. | **Ne pas s'appuyer sur GitHub Pages pour la future version commerciale.** Préparer une migration vers un hébergeur dont les conditions autorisent l'activité (ex. évaluer Cloudflare Pages), puis tester Auth et déploiement. |
-| Nom SériesClubTCG et domaine | Identité de projet | Recherche antériorités INPI / EUIPO, variantes proches et classes pertinente non encore documentée. | Vérification formelle avant marque, publicité et paiement. |
+| Nom SériesClubTCG et domaine | Identité de projet | Recherche de similitude INPI / EUIPO et classes pertinentes non encore réalisée. **Conflit concret constaté** : SérieClub est le nom commercial actuellement utilisé d'une chaîne française de séries codétenue par les groupes TF1 et M6, dans un domaine de divertissement très proche (sources éditeurs ci-dessous). Il n'est pas possible de conclure à l'existence, à la validité ou à la portée d'un dépôt de marque précis sans vérification officielle. Néanmoins le risque de confusion est élevé et prioritaire. | Vérification formelle avant marque, publicité et paiement. |
 
 ### Sources primaires
 - TVmaze — API, images, licence et hotlink : https://www.tvmaze.com/api
@@ -38,6 +38,9 @@ Lecture Supabase sur `public.series`, 23/10/2026 :
 - GitHub Pages — conditions d'usage et exclusions commerciales : https://docs.github.com/fr/pages/getting-started-with-github-pages/github-pages-limits
 - Droit d'auteur en France — accès public ne signifie pas libre réutilisation : https://www.economie.gouv.fr/apie/utiliser-un-contenu-vrai-faux
 - INPI — base de marques et recherche de similitudes : https://www.inpi.fr/ressources/propriete-intellectuelle/rechercher-une-marque-base-marques
+- Groupe TF1 — chaîne « Série Club » codétenue avec M6 : https://groupe-tf1.fr/fr/content/antennes-tv-0
+- M6 Publicité — « SérieClub », dénomination commerciale : https://m6pub.fr/marque/serieclub/
+- INPI — conditions de disponibilité et risque de confusion : https://www.inpi.fr/realiser-demarches/propriete-intellectuelle/conditions-de-validite-dune-marque
 - CNIL — éléments requis dans une politique de confidentialité : https://www.cnil.fr/fr/passer-laction/rgpd-les-premieres-etapes
 - Entreprendre.Service-Public — mentions légales et commerce en ligne : https://entreprendre.service-public.gouv.fr/vosdroits/F23455
 
@@ -73,7 +76,7 @@ Le formulaire de signalement interne nécessite une connexion au jeu. Une **voie
 
 ## 6. Décision juridique et lancement
 
-**Feu orange pour poursuite des développements et tests** ; **feu rouge pour paiement en euros, Premium payant, publicité monétisée ou lancement public sans validation complémentaire**.
+**Feu orange pour poursuite des développements et tests** ; **feu rouge pour paiement en euros, Premium payant, publicité monétisée ou lancement public sans validation complémentaire**. **Le nom commercial SériesClubTCG constitue désormais un risque de confusion documenté avec la chaîne SérieClub de TF1/M6 ; ne pas financer ni lancer de promotion de cette dénomination sans examen professionnel des antériorités ou choix d'un autre nom contrôlé.**
 
 Les mesures de prudence déployées ne constituent pas une licence et n'éteignent pas les droits des ayants droit. En particulier les noms de plateformes sur des packs monétisés demandent une revue spécifique du risque de confusion.
 
