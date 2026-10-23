@@ -88,7 +88,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public,pg_temp AS $
    WHERE d.player_id=auth.uid()
     AND d.paris_day=(now() AT TIME ZONE 'Europe/Paris')::date),0))::integer
  WHERE auth.uid() IS NOT NULL;
-$;
+$$;
 REVOKE ALL ON FUNCTION public.my_recycling_status() FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.my_recycling_status() TO authenticated;
 COMMIT;
