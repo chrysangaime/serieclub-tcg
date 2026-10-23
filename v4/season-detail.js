@@ -39,7 +39,41 @@ export function normalizeSeasonList(raw){
    ?String(s.network.name).trim().slice(0,80):''
  }));
 }
-export function seasonGalleryHTML(seasons){
+// Une saison d'anthologie a un casting propre : ce registre est éditorial,
+// vérifié auprès de HBO/TVmaze. Ne pas attribuer automatiquement le casting
+// général TVmaze à chaque saison.
+const castBySeason=Object.freeze({
+ 5:Object.freeze({
+  1:['Matthew McConaughey','Woody Harrelson','Michelle Monaghan'],
+  2:['Colin Farrell','Rachel McAdams','Taylor Kitsch','Vince Vaughn','Kelly Reilly'],
+  3:['Mahershala Ali','Stephen Dorff','Carmen Ejogo','Scoot McNairy'],
+  4:['Jodie Foster','Kali Reis','Fiona Shaw','John Hawkes']
+ })
+});
+export function creditedSeasonCast(showId,number,showCast=[]){
+ const names=castBySeason[Number(showId)]?.[Number(number)]||[];
+ const known=Array.isArray(showCast)?showCast:[];
+ return names.map(name=>{
+  const record=known.find(row=>row?.person?.name===name);
+  return {name,personId:positive(record?.person?.id),
+   character:String(record?.character?.name||'').slice(0,100),
+   portrait:image(record?.person?.image?.medium)||image(record?.person?.image?.original)};
+ });
+}
+function castSeasonHTML(showId,season,cast){
+ const rows=creditedSeasonCast(showId,season,cast);
+ if(!rows.length)return '';
+ return '<div class="sc-season-cast"><strong>Distribution principale · Saison '+season+'</strong>'+
+  '<div class="sc-season-cast-list">'+rows.map(row=>
+  (row.personId?'<button data-person="'+row.personId+'" type="button" class="sc-season-cast-actor">':
+   '<span class="sc-season-cast-actor">')+
+  (row.portrait?'<img loading="lazy" src="'+html(row.portrait)+'" alt="">':'')+
+  '<span>'+html(row.name)+(row.character?'<small>'+html(row.character)+'</small>':'')+'</span>'+
+  (row.personId?'</button>':'</span>')).join('')+'</div>'+
+  '<small>Répartition vérifiée : HBO et TVmaze. Portraits fournis par TVmaze lorsqu’ils existent.</small></div>';
+}
+
+export function seasonGalleryHTML(seasons,options={}){
  const rows=normalizeSeasonList(seasons);
  if(!rows.length)return '';
  return '<section class="sc-season-gallery" aria-label="Explorer les saisons">'+
@@ -60,8 +94,9 @@ export function seasonGalleryHTML(seasons){
     '<p>Synopsis propre à cette saison non renseigné sur TVmaze.</p>')+
    (s.episodes?'<small>'+s.episodes+' épisodes annoncés ou répertoriés</small>':'')+
    (s.network?'<small>Diffusion d’origine : '+html(s.network)+'</small>':'')+
+   castSeasonHTML(options.showId,s.number,options.cast)+
    '</div></details>'
   ).join('')+'</div>'+
-  '<p class="sc-season-credit">Affiches et renseignements des saisons : <a href="https://www.tvmaze.com/api" target="_blank" rel="noopener noreferrer">TVmaze (CC BY-SA) ↗</a>. La distribution générale de la série ne vaut pas casting vérifié pour chaque saison.</p>'+
+  '<p class="sc-season-credit">Affiches et renseignements des saisons : <a href="https://www.tvmaze.com/api" target="_blank" rel="noopener noreferrer">TVmaze (CC BY-SA) ↗</a>. Distribution par saison vérifiée seulement lorsqu’une source éditoriale est indiquée. <a href="https://www.hbomaxlapress.com/programming/series/204" target="_blank" rel="noopener noreferrer">HBO · True Detective ↗</a></p>'+
   '</section>';
 }
