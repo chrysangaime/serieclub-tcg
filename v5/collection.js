@@ -1,3 +1,4 @@
+import{recyclePanel}from'../v1/recycling.js?v=1.0.0&build=5';
 /**
  * SérieClub V5.2 — Le Studio de collection
  * 100 % dérivé de l'inventaire Supabase existant (aucune modification SQL).
@@ -204,7 +205,7 @@ export function collectionStudio(state){
   '<div class="sc52-tabs" role="group" aria-label="Mode de consultation">'+
   modes.map(([mode,label,n])=>'<button data-collection-mode="'+mode+'" class="'+(v.mode===mode?'active':'')+'" aria-pressed="'+(v.mode===mode)+'">'+esc(label)+' <span>'+money(n)+'</span></button>').join('')+'</div>'+
   (state.genre?'<div class="notice">Genre sélectionné : '+esc(state.genre)+' <button class="btn small subtle" data-clear-genre>Afficher tous les genres</button></div>':'')+
-  filters+'<div class="sc52-results-head"><b>'+money(v.total)+' résultat'+(v.total>1?'s':'')+'</b>'+
+  (v.mode==='duplicates'?recyclePanel({...d,recycleReady:state.recycleReady,recycleRemaining:state.recycleRemaining},state.recycleSelection||[]):'')+filters+'<div class="sc52-results-head"><b>'+money(v.total)+' résultat'+(v.total>1?'s':'')+'</b>'+
   '<span>'+ (v.mode==='duplicates'?'Un doublon est une copie supplémentaire d’une série déjà détenue. Les exemplaires protégés ou engagés ne sont pas proposés à la vente.':
     v.mode==='missing'?'Ce sont tes souhaits non encore obtenus, et non toutes les séries absentes du catalogue.':
     v.mode==='unique'?'Chaque série est affichée une seule fois, même avec plusieurs exemplaires.':'Rareté officielle commune à tous les exemplaires d’une série.')+
