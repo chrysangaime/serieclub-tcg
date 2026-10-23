@@ -4,7 +4,7 @@ export function footerHTML(){
  return '<footer class="app-footer sc1-footer" aria-label="Informations sur SériesClubTCG">'+
  '<div class="sc1-footer-brand"><strong>SériesClubTCG</strong><span class="sc1-version">'+PRODUCT.version+' · '+PRODUCT.stage+'</span></div>'+
  '<nav aria-label="Informations pratiques"><button type="button" data-route="rules">Comment jouer</button>'+
- '<button type="button" data-route="settings">Paramètres</button><button type="button" data-route="about">À propos</button></nav>'+
+ '<button type="button" data-route="settings">Paramètres</button><button type="button" data-route="privacy">Confidentialité</button><button type="button" data-route="legal">Mentions légales</button><button type="button" data-route="support">Assistance</button><button type="button" data-route="about">À propos</button></nav>'+
  '<p>Jeu indépendant consacré aux séries diffusées en France. Marques et visuels : droits réservés à leurs propriétaires respectifs. Aucune affiliation avec les plateformes de diffusion mentionnées.</p></footer>';
 }
 export function aboutPage(){

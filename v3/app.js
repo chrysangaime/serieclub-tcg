@@ -1,7 +1,8 @@
+import{privacyPage,legalPage,supportPage,deletionDialog}from'../v1/privacy.js?v=1.0.0&build=12';
 import{opportunityData}from'../v1/opportunities.js?v=1.0.0&build=7';
 import{candidates,recycleConfirm,LIMIT as RECYCLE_LIMIT}from'../v1/recycling.js?v=1.0.0&build=5';
 import{demoCards}from'../v1/onboarding.js?v=1.0.0&build=4';
-import{PRODUCT,footerHTML,aboutPage}from'../v1/product.js?v=1.0.0';
+import{PRODUCT,footerHTML,aboutPage}from'../v1/product.js?v=1.0.0&build=12';
 import{creditThemeName}from'../v21/credit-packs.js?v=21.0.0';
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2.118.0';
 import{storePage}from'../v10/store.js?v=16.0.0&build=2';
@@ -12,7 +13,7 @@ import{openingFrame}from'../v7/booster.js?v=1.0.0&build=9';
 import{gameModes}from'../v7/arena.js?v=10.1.0';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=8.0.0';
-import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.0.0&build=10';
+import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.0.0&build=12';
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6.1.0';
@@ -73,10 +74,10 @@ function readTrainingStarts(){
 }
 function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus(readTrainingStarts())}}
 
-const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',apropos:'about',about:'about',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
-const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',about:'apropos',referral:'parrainage',quests:'missions',store:'premium'};
+const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',apropos:'about',about:'about',premiere:'premiere',parrainage:'referral',referral:'referral',confidentialite:'privacy',privacy:'privacy',mentions:'legal',legal:'legal',aide:'support',support:'support',missions:'quests',quetes:'quests',quests:'quests'};
+const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',about:'apropos',referral:'parrainage',quests:'missions',store:'premium',privacy:'confidentialite',legal:'mentions',support:'aide'};
 const state={route:'packs',creditPacks:null,creditPacksError:'',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',marketWishOnly:false,jumpToOpportunities:false,players:[],peopleFilter:'',peopleError:'',inviteCode:null,dailyError:'',paymentsMode:'disabled',premiumActive:false,paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,trackedSeasons:[],officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',recycleSelection:[],recycleReady:false,recycleRemaining:0,collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
-const navName=key=>key==='about'?'À propos':navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
+const navName=key=>({about:'À propos',privacy:'Confidentialité',legal:'Mentions légales',support:'Assistance'}[key]||navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu');
 let openingCards=null,openingStep=0,openingMeta=null;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 /** Réponses publiques : ne jamais afficher d'erreurs techniques SQL au joueur. */
@@ -148,7 +149,7 @@ function render(){
  document.body.classList.toggle('reduce-motion',state.reduceMotion);
  document.body.classList.toggle('season-halloween',monthHalloween());
  renderChrome();
- const view={about:aboutPage,store:storePage,packs,collection:collectionStudio,catalog:catalogue,wishlist,albums:personalAlbumsPage,rankings,fusion:fusions,profile,games,rules,settings,market:marketPage,community:communityPage,quests:questsPage}[state.route];
+ const view={about:aboutPage,privacy:privacyPage,legal:legalPage,support:supportPage,store:storePage,packs,collection:collectionStudio,catalog:catalogue,wishlist,albums:personalAlbumsPage,rankings,fusion:fusions,profile,games,rules,settings,market:marketPage,community:communityPage,quests:questsPage}[state.route];
  $('page').innerHTML=(view?view(state):placeholder(state.route))+footerHTML();
  updatePixelClues($('page'));
  document.title=navName(state.route)+' — '+PRODUCT.name+' '+PRODUCT.version;
@@ -1077,9 +1078,88 @@ function exportCollection(){
  toast('Ta collection a été exportée au format CSV.');
 }
 async function exportData(){
- const payload={exported_at:new Date().toISOString(),username:state.username,wallet:state.wallet,cards:state.cards,wishlist:state.wishes};
- const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
- const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='serieclub-mes-donnees.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ state.busy=true;
+ try{
+  const {data,error}=await supa.rpc('export_my_account_data');
+  if(error)throw error;
+  if(!data||data.account_id!==state.user.id)throw Error('Données du compte indisponibles');
+  const payload={...data,email:state.user.email||null,export_format:'SériesClubTCG V1.0'};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+  const url=URL.createObjectURL(blob),link=document.createElement('a');
+  link.href=url;link.download='seriesclub-mes-donnees-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  toast('Export des données du jeu téléchargé.');
+ }catch(e){toast('Export indisponible. Réessaie plus tard.',true)}
+ finally{state.busy=false}
+}
+function openDeleteAccount(){
+ if(!state.user){openAuth();return}
+ const root=$('overlay');root.classList.remove('hidden');
+ root.innerHTML=deletionDialog(state.user.email||'');
+ root.querySelector('#deleteAccountPhrase')?.focus({preventScroll:true});
+}
+async function confirmDeleteAccount(){
+ if(state.busy||!state.user)return;
+ const email=$('deleteAccountEmail')?.value?.trim()||'';
+ const pass=$('deleteAccountPassword')?.value||'';
+ const phrase=$('deleteAccountPhrase')?.value?.trim()||'';
+ const feedback=$('deleteAccountFeedback');
+ if(email.toLowerCase()!==String(state.user.email||'').toLowerCase()||pass.length<1||phrase!=='SUPPRIMER'){
+  if(feedback)feedback.textContent='Vérifie ton e-mail, ton mot de passe actuel et le mot SUPPRIMER.';
+  return;
+ }
+ state.busy=true;
+ const button=document.querySelector('[data-delete-account-confirm]');
+ if(button){button.disabled=true;button.textContent='Vérification du compte…'}
+ try{
+  const login=await supa.auth.signInWithPassword({email,password:pass});
+  if(login.error||login.data?.user?.id!==state.user.id){
+   if(feedback)feedback.textContent='Mot de passe incorrect : suppression annulée.';
+   return;
+  }
+  if(button)button.textContent='Fermeture du compte…';
+  const {data,error}=await supa.functions.invoke('account-delete',{
+   body:{email,confirmation:'SUPPRIMER'}
+  });
+  if(error||data?.deleted!==true)throw Error('Fermeture non confirmée');
+  try{await supa.auth.signOut({scope:'local'})}catch{/* compte déjà effacé */}
+  for(const key of ['sc-quiz-records-v6','sc8-quiz-cooldowns','sc8.1-pixel-visibility-restored']){
+   try{localStorage.removeItem(key)}catch{/* données facultatives */}
+  }
+  closeModal();await loadSession();change('packs');
+  toast('Ton compte et ta collection ont été supprimés.');
+ }catch{
+  if(feedback)feedback.textContent='Suppression non confirmée. Ton compte ne doit pas être considéré comme fermé.';
+ }finally{
+  state.busy=false;
+  if(button?.isConnected){button.disabled=false;button.textContent='Supprimer mon compte'}
+ }
+}
+async function submitReport(){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ const targetType=$('reportTargetType')?.value;
+ const targetRef=$('reportTargetRef')?.value?.trim()||'';
+ const reason=$('reportReason')?.value;
+ const details=$('reportDetails')?.value?.trim()||'';
+ if(!['player','listing','series'].includes(targetType)||!['abuse','fraud','offensive','copyright','other'].includes(reason)
+ ||targetRef.length<1||targetRef.length>48||details.length<15||details.length>600){
+  toast('Vérifie le type, l’identifiant et le descriptif (15 à 600 caractères).',true);return;
+ }
+ state.busy=true;
+ const btn=$('reportSubmitButton');if(btn){btn.disabled=true;btn.textContent='Envoi sécurisé…'}
+ try{
+  const {error}=await supa.rpc('submit_player_report',{
+   p_target_type:targetType,p_target_ref:targetRef,p_reason:reason,p_details:details
+  });
+  if(error)throw error;
+  if($('reportDetails'))$('reportDetails').value='';
+  toast('Signalement enregistré pour examen.');
+ }catch{toast('Signalement non transmis. Vérifie l’identifiant ou le quota de 5 par jour.',true)}
+ finally{state.busy=false;if(btn){btn.disabled=false;btn.textContent='Envoyer le signalement →'}}
 }
 async function loadRewardStatus(){
  if(!state.user){state.rewardStatus=offlineChallengeStatus();if(state.route==='games')render();return}
@@ -1375,6 +1455,8 @@ function globalClick(e){
 
  if(e.target.closest('#topSearch')){e.preventDefault();submitGlobalSearch();return}
  if(e.target.closest('[data-install-app]')){installClubApp();return}
+ if(e.target.closest('[data-delete-account-start]')){openDeleteAccount();return}
+ if(e.target.closest('[data-delete-account-confirm]')){confirmDeleteAccount();return}
  if(e.target.closest('[data-theme-toggle]')){chooseTheme(state.theme==='day'?'night':'day');return}
  const themeChoice=e.target.closest('[data-theme-choice]');if(themeChoice){chooseTheme(themeChoice.dataset.themeChoice);return}
  const route=e.target.closest('[data-route]');if(route){e.preventDefault();change(route.dataset.route);return}
@@ -1528,6 +1610,7 @@ function globalChange(e){
  if(e.target.id==='reduceMotion'){state.reduceMotion=e.target.checked;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render()}
 }
 document.addEventListener('submit',event=>{
+ if(event.target?.id==='clubReportForm'){event.preventDefault();submitReport();return}
  if(event.target?.id==='globalSearchForm'){
   event.preventDefault();submitGlobalSearch();
  }
