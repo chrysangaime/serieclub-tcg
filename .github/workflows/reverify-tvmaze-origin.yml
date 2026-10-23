@@ -1,0 +1,52 @@
+name: Revalider preuves France par TVmaze (sans TMDB)
+on:
+  workflow_dispatch:
+    inputs:
+      start_at:
+        description: "Index du lot (0, 150, 300...)"
+        required: false
+        default: "0"
+      max_series:
+        description: "Séries à analyser (1 à 250)"
+        required: false
+        default: "150"
+      dry_run:
+        description: "Simulation sans mise à jour de la preuve"
+        required: false
+        type: boolean
+        default: false
+  push:
+    paths:
+      - "scripts/reverify-tvmaze-origin.mjs"
+      - ".github/workflows/reverify-tvmaze-origin.yml"
+permissions:
+  contents: read
+concurrency:
+  group: independent-tvmaze-fr-evidence
+  cancel-in-progress: false
+jobs:
+  review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Vérifier les preuves FR TVmaze, sans toucher aux cartes ni comptes
+        env:
+          SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MAX_SERIES: ${{ inputs.max_series || '150' }}
+          START_AT: ${{ inputs.start_at || '0' }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: node scripts/reverify-tvmaze-origin.mjs
+      - name: Archiver le rapport sans donnée utilisateur
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: revalidation-tvmaze-fr
+          path: review-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
