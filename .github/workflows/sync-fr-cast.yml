@@ -6,12 +6,7 @@ on:
         description: "Séries à enrichir (90 par défaut)"
         required: false
         default: "90"
-  push:
-    paths:
-      - "scripts/sync-fr-cast.mjs"
-      - ".github/workflows/sync-fr-cast.yml"
-  schedule:
-    - cron: "15 5 * * *"
+  # Pause juridique V1 : les enrichissements TMDB ne sont plus automatisés.
 permissions:
   contents: write
 concurrency:
