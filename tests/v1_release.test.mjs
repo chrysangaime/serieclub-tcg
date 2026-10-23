@@ -16,8 +16,8 @@ test('L’identité publique demeure V1.0 avant tout lancement',()=>{
 test('Navigation à propos et liens de pied de page réellement routés',()=>{
  const app=file('v3/app.js');
  assert.match(app,/about:aboutPage/);
- assert.match(app,/views\.js\?v=1\.0\.0&build=2/);
- assert.match(file('index.html'),/views\.js\?v=1\.0\.0&build=2/);
+ assert.match(app,/views\.js\?v=1\.0\.0&build=8/);
+ assert.match(file('index.html'),/views\.js\?v=1\.0\.0&build=8/);
  assert.match(app,/apropos:'about'/);
  assert.match(app,/about:'apropos'/);
  assert.match(app,/footerHTML\(\)/);
