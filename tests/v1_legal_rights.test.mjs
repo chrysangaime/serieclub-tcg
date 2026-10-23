@@ -28,22 +28,15 @@ test('La V1 dispose des crédits officiels et n’annonce pas de licence acquise
   'Aucun paiement live tant que les droits et CGV ne sont pas autorisés');
 });
 
-test('La présence d’une URL de logo TMDB ne suffit pas à autoriser une image de marque',()=>{
+test('Aucune ancienne offre ni logo TMDB ne s’affiche dans les fiches',()=>{
  assert.equal(platformLogoUsageApproved,false);
- const data=normalizeFranceOffers({
-   country:'FR',checked_at:new Date().toISOString(),
-   offers:[{type:'flatrate',name:'Netflix',provider_id:8,logo_path:'/logo.png'}]
- });
- assert.equal(data.offers.length,1);
- assert.equal(data.offers[0].logo,null);
- const rendered=renderFranceAvailability({
-   country:'FR',checked_at:new Date().toISOString(),
-   offers:[{type:'flatrate',name:'Netflix',provider_id:8,logo_path:'/logo.png'}]
- });
- assert.match(rendered,/Disponible sur/);
- assert.match(rendered,/Netflix/);
- assert.doesNotMatch(rendered,/image\.tmdb\.org/);
- assert.doesNotMatch(rendered,/<img\b/);
+ const old={country:'FR',checked_at:new Date().toISOString(),
+  offers:[{type:'flatrate',name:'Netflix',provider_id:8,logo_path:'/logo.png'}]};
+ assert.equal(normalizeFranceOffers(old),null);
+ const rendered=renderFranceAvailability(old,{fr_verification_method:'tmdb_fr_offer'});
+ assert.match(rendered,/Offres de streaming non confirmées/);
+ assert.match(rendered,/JustWatch France/);
+ assert.doesNotMatch(rendered,/Netflix|image\.tmdb\.org|themoviedb\.org|<img\\b/);
 });
 
 test('La fiche de série renvoie vers le contenu TVmaze identifiable',()=>{
