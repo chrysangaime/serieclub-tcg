@@ -170,7 +170,7 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   progressItem('ϟ','Explorateur','Ouvrir dix paquets',opened,10,'cyan')+
   progressItem('▧','Collectionneur','Détenir cinquante cartes',cards.length,50,'violet')+
   progressItem('✦','Sérievore','Découvrir dix séries différentes',uniq,10,'blue')+
-  '</div><div class="sc12-credit-card"><div><small>✦ Mes crédits</small><strong>'+nfmt(s.wallet?.credits)+'</strong></div><button type="button" data-route="store">Premium & crédits ↗</button></div>'+
+  '</div><div class="sc12-credit-card"><div><small>✦ Mes crédits</small><strong>'+nfmt(s.wallet?.credits)+'</strong></div><button type="button" data-scroll-credit-packs>Utiliser mes crédits →</button></div>'+
   '<div class="sc12-quick-card"><strong>Ton prochain épisode</strong><p>Découvre des séries, complète tes Saisons officielles et débloque des badges.</p>'+
   '<button type="button" data-route="albums">Voir mes Saisons →</button></div></aside></div>'+
   '<div class="sc12-shelf-head"><div><span class="sc12-eyebrow">TON PROGRAMME</span><h2>À découvrir ce soir</h2><p>Une sélection par univers, comme sur une plateforme de streaming.</p></div><button type="button" class="sc12-text-link" data-route="catalog">Voir le catalogue →</button></div>'+
