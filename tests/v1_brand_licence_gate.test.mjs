@@ -19,8 +19,8 @@ test("Aucun import TMDB ni cache public tiers n'est encore déployé",()=>{
   ".github/workflows/sync-fr-cast.yml",
   "data/watch-fr.json","data/cast-fr.json"
  ]) assert.equal(fs.existsSync(p),false,p);
- assert.doesNotMatch(read("v5/fr-watch.js"),/fetch\\(|watch-fr\\.json/);
- assert.doesNotMatch(read("v5/cast-fr.js"),/fetch\\(|cast-fr\\.json/);
+ assert.ok(!read("v5/fr-watch.js").includes("fetch(") && !read("v5/fr-watch.js").includes("watch-fr.json"));
+ assert.ok(!read("v5/cast-fr.js").includes("fetch(") && !read("v5/cast-fr.js").includes("cast-fr.json"));
 });
 test("Le mode commercial reste interdit tant que les caches TMDB ne sont pas éliminés",()=>{
  assert.match(read("v3/app.js"),/paymentsMode:'disabled'/);
