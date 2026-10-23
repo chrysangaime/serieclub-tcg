@@ -56,7 +56,9 @@ export async function getFrenchOffersByShow(tvmazeId){
  if(!cache.has(id)){
   const u=new URL(GATEWAY);
   u.searchParams.set('series_id',String(id));
-  const p=fetch(u,{headers:{Accept:'application/json'}})
+  const signal=typeof AbortSignal!=='undefined'&&typeof AbortSignal.timeout==='function'
+   ?AbortSignal.timeout(3500):undefined;
+  const p=fetch(u,{headers:{Accept:'application/json'},signal})
    .then(async r=>r.ok?await r.json():null)
    .then(r=>normalizeFranceOffers(r)?r:null)
    .catch(()=>null);
