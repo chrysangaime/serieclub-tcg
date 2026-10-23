@@ -173,7 +173,7 @@ export function collectionStudio(state){
  const v=selectCollection(state),d=v.data;
  const modes=[
   ['all','Toutes mes cartes',d.totalCards],
-  ['unique','Mes saisons',d.unique],
+  ['unique','Éditions distinctes',d.unique],
   ['duplicates','Doublons',d.duplicateGroups],
   ['protected','Protégées',d.groups.filter(g=>g.protectedCount>0).length],
   ['missing','À rechercher',d.missing.length]
