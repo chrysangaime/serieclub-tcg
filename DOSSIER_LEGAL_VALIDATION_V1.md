@@ -1,4 +1,4 @@
-# SériesClubTCG — Dossier juridique à compléter avant ouverture publique
+# Epizora TCG — Dossier juridique à compléter avant ouverture publique
 
 **Projet V1.0 · 23 octobre 2026 · VERSION DE TRAVAIL NON PUBLIABLE COMME DOCUMENT DÉFINITIF**
 
@@ -17,7 +17,7 @@ Le site expose aujourd'hui des pages « Confidentialité » et « Mentions léga
 
 ## Projet de CGU — clauses fonctionnelles (à faire valider)
 
-1. **Objet.** SériesClubTCG est un service indépendant de découverte et de collection virtuelle de séries télévisées. Son catalogue vise les œuvres diffusées en France. Les données de diffusion sont indicatives, datées et susceptibles d'évoluer.
+1. **Objet.** Epizora TCG est un service indépendant de découverte et de collection virtuelle de séries télévisées. Son catalogue vise les œuvres diffusées en France. Les données de diffusion sont indicatives, datées et susceptibles d'évoluer.
 2. **Accès.** La création d'un compte permet de sauvegarder les cartes, crédits virtuels, échanges et préférences. Les identifiants doivent être protégés. Les conditions applicables aux mineurs et les modalités de consentement parental restent à définir avant ouverture.
 3. **Crédits et cartes.** Les cartes et crédits appartiennent au fonctionnement du service, ne sont ni titres de propriété sur les œuvres ni actifs financiers et n'ont aucune valeur de rachat garantie. Les tirages sont calculés côté serveur et soumis aux règles publiées. Les crédits gratuits ne peuvent être convertis en euros.
 4. **Contenus et propriété intellectuelle.** L'apparition d'un titre, d'une affiche ou d'une marque n'implique aucune affiliation, parrainage ou autorisation générale des ayants droit. Les œuvres, photographies et signes de tiers conservent leurs droits. L'utilisateur n'acquiert aucun droit de reproduction ou de vente de ces images.
@@ -50,7 +50,7 @@ Cette liste doit être rapprochée de l'inventaire effectif Supabase, des param�
 - Si l'utilisation des offres TMDB devient commerciale, obtenir une licence écrite ou substituer une source dont les droits commerciaux sont établis.
 - Toute demande de retrait d'une photo, d'une affiche ou d'une marque doit pouvoir être reçue sans compte ; conserver une trace, masquer la ressource litigieuse, rechercher les copies mises en cache et vérifier sa disparition sur toutes les pages.
 - Ne pas utiliser d'affiches ou logos pour la publicité, les réseaux sociaux ou les supports imprimés avant validation des usages promotionnels.
-- Chercher les antériorités de « SériesClubTCG », « SériesClub » et formes proches (INPI, EUIPO, recherche de similarités), puis documenter le résultat avant communication payante.
+- Chercher les antériorités de « Epizora TCG », « SériesClub » et formes proches (INPI, EUIPO, recherche de similarités), puis documenter le résultat avant communication payante.
 
 ## Feu vert à délivrer avant le lancement
 
