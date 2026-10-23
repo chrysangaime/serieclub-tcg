@@ -1,5 +1,5 @@
 /**
- * SérieClub — Fiches enrichies et recherche par distribution.
+ * Epizora — Fiches enrichies et recherche par distribution.
  *
  * TVmaze : https://www.tvmaze.com/api
  * Aucun secret / aucune clé dans le navigateur. Les fiches d'acteurs,
@@ -204,7 +204,7 @@ export function actorDetailHTML(person,shows=[],catalogueIds=new Set(),fromShow=
   photo(show.image?.medium||show.image?.original,show.name,'sc5-credit-thumb')+'<b>'+escapeHTML(show.name)+'</b>'+
   (formatYear(show.premiered)?'<small>'+escapeHTML(formatYear(show.premiered))+'</small>':'')+
   (show.role?'<small class="sc5-credit-role">'+escapeHTML(show.role)+'</small>':'')+
-  (catalogueIds.has(show.id)?'<em>Dans SérieClub</em>':'')+
+  (catalogueIds.has(show.id)?'<em>Dans Epizora</em>':'')+
   '<span class="sc5-row-arrow" aria-hidden="true">↗</span></button>').join('');
  return '<div class="dialog sc5-dialog sc5-actor-dialog sc5-compact-dialog" role="dialog" aria-modal="true" aria-label="Acteur '+escapeHTML(name)+'">'+
   '<button class="close" data-close aria-label="Fermer">×</button><button class="sc5-back" data-person-back>← '+(fromShow?'Retour à la série':'Fermer')+'</button>'+
@@ -238,12 +238,12 @@ export function actorCatalogueView(state) {
       '<button class="sc5-person-result" data-select-actor="'+person.id+'">'+photo(person.image?.medium||person.image?.original,person.name,'sc5-search-thumb')+'<span><b>'+escapeHTML(person.name)+'</b>'+
       (person.country?.name?'<small>'+escapeHTML(person.country.name)+'</small>':'')+'</span>'+
       '<span class="sc5-person-arrow">Voir ses séries →</span></button>').join('')+'</div>':'')+
-    (chosen?'<div class="sc5-filmography-top"><div><span class="caps">FILTRÉ PAR ARTISTE</span><h2>'+escapeHTML(chosen.name)+'</h2><p>'+shows.length+' série'+(shows.length>1?'s':'')+' trouvée'+(shows.length>1?'s':'')+' sur TVmaze. Les mentions « Dans SérieClub » concernent le catalogue jouable.</p></div>'+
-      '<div class="sc5-actor-controls"><label><input type="checkbox" id="actorOnlyClub" '+(onlyClub?'checked':'')+'> Dans SérieClub uniquement</label><button class="btn subtle" data-person="'+chosen.id+'">Fiche acteur ↗</button></div></div>'+
+    (chosen?'<div class="sc5-filmography-top"><div><span class="caps">FILTRÉ PAR ARTISTE</span><h2>'+escapeHTML(chosen.name)+'</h2><p>'+shows.length+' série'+(shows.length>1?'s':'')+' trouvée'+(shows.length>1?'s':'')+' sur TVmaze. Les mentions « Dans Epizora » concernent le catalogue jouable.</p></div>'+
+      '<div class="sc5-actor-controls"><label><input type="checkbox" id="actorOnlyClub" '+(onlyClub?'checked':'')+'> Dans Epizora uniquement</label><button class="btn subtle" data-person="'+chosen.id+'">Fiche acteur ↗</button></div></div>'+
       (visibleShows.length?'<div class="sc5-filmography-grid">'+visibleShows.map(show=>
         '<button class="sc5-filmography-item" data-series="'+show.id+'">'+photo(show.image?.medium||show.image?.original,show.name,'sc5-list-thumb')+'<b>'+escapeHTML(show.name)+'</b><small>'+escapeHTML(formatYear(show.premiered))+'</small>'+
-        (inCatalogue.has(show.id)?'<span class="sc5-available">Dans SérieClub</span>':'')+
-        '<span class="sc5-row-arrow" aria-hidden="true">↗</span></button>').join('')+'</div>':'<div class="sc5-empty">'+(onlyClub?'Aucune série présente dans le catalogue SérieClub. Désactive le filtre pour voir sa filmographie TVmaze.':'Aucune série référencée pour cet acteur.')+'</div>')+
+        (inCatalogue.has(show.id)?'<span class="sc5-available">Dans Epizora</span>':'')+
+        '<span class="sc5-row-arrow" aria-hidden="true">↗</span></button>').join('')+'</div>':'<div class="sc5-empty">'+(onlyClub?'Aucune série présente dans le catalogue Epizora. Désactive le filtre pour voir sa filmographie TVmaze.':'Aucune série référencée pour cet acteur.')+'</div>')+
       '</div>':'')+
     (!chosen&&!state.actorLoading&&!people.length?'<div class="sc5-search-invitation"><span>✧</span><h2>Toutes les séries, un visage à la fois.</h2><p>Saisis un nom pour retrouver les artistes et accéder à leur filmographie.</p></div>':'')+
     '<p class="sc5-api-credit">Les biographies, distributions et filmographies sont fournies par <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVmaze ↗</a>. Les crédits peuvent être incomplets.</p></div>';
