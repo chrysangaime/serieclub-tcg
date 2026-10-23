@@ -8,7 +8,7 @@ test('L’identité publique demeure V1.0 avant tout lancement',()=>{
  const pkg=JSON.parse(file('package.json')),html=file('index.html');
  assert.equal(pkg.version,'1.0.0');assert.equal(PRODUCT.version,'V1.0');
  assert.equal(PRODUCT.launched,false);
- assert.match(html,/<title>SériesClubTCG V1\.0/);
+ assert.match(html,/<title>Epizora TCG V1\.0/);
  assert.match(html,/name="robots" content="noindex,nofollow"/);
  assert.match(html,/v1\/finish\.css\?v=1\.0\.0/);
  assert.match(html,/v3\/app\.js\?v=1\.0\.0&build=15/);
