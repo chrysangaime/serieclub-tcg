@@ -1,0 +1,24 @@
+/* V1 — galerie TVmaze par saison ; ne change ni l'inventaire ni la rareté. */
+.sc-season-gallery{margin:16px 0 18px;min-width:0}
+.sc-season-gallery-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:5px 14px;margin:0 0 11px}
+.sc-season-gallery-head h3{margin:0;font-size:1.08rem;color:var(--text,#f2f6ff)}
+.sc-season-gallery-head p{margin:0;color:var(--muted,#a9b6c7);font-size:.79rem;max-width:390px;line-height:1.45}
+.sc-season-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:9px}
+.sc-season-item{min-width:0;border:1px solid rgba(128,165,202,.28);background:rgba(64,96,143,.09);border-radius:13px;overflow:hidden}
+.sc-season-item[open]{border-color:rgba(90,209,232,.75);background:rgba(64,96,143,.17)}
+.sc-season-item summary{display:block;cursor:pointer;list-style:none;outline-offset:-3px}
+.sc-season-item summary::-webkit-details-marker{display:none}
+.sc-season-item summary>img,.sc-season-no-poster{width:100%;height:157px;display:block;object-fit:cover;object-position:center top;background:linear-gradient(155deg,#101e33,#24657d)}
+.sc-season-no-poster{display:flex;flex-direction:column;gap:3px;justify-content:center;align-items:center;color:#f3faff}
+.sc-season-no-poster b{font-weight:850;font-size:2.2rem;line-height:1}.sc-season-no-poster small{font-size:.58rem;letter-spacing:.2em}
+.sc-season-caption{display:flex;flex-direction:column;padding:8px 9px;gap:2px;line-height:1.25}
+.sc-season-caption strong{font-size:.84rem;color:var(--text,#f2f6ff)}
+.sc-season-caption small{font-size:.69rem;color:var(--muted,#a9b6c7);overflow-wrap:anywhere}
+.sc-season-body{padding:9px 10px;border-top:1px solid rgba(128,165,202,.19);overflow-wrap:anywhere}
+.sc-season-body strong{display:block;font-size:.79rem}
+.sc-season-body p{font-size:.77rem;line-height:1.45;color:var(--text,#e7edf6);margin:6px 0}
+.sc-season-body small{display:block;color:var(--muted,#a9b6c7);margin-top:5px;font-size:.67rem}
+.sc-season-credit{font-size:.68rem;line-height:1.4;margin:9px 0 0;color:var(--muted,#a9b6c7)}
+.sc-season-credit a{color:inherit;text-decoration:underline}
+@media(max-width:690px){.sc-season-gallery{margin:14px 0}.sc-season-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.sc-season-item summary>img,.sc-season-no-poster{height:131px}.sc-season-caption{padding:6px}.sc-season-caption strong{font-size:.76rem}.sc-season-caption small{font-size:.64rem}.sc-season-gallery-head h3{font-size:1rem}}
+@media(max-width:370px){.sc-season-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sc-season-item summary>img,.sc-season-no-poster{height:152px}}
