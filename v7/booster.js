@@ -23,8 +23,8 @@ export function openingFrame(cards,step=0,reduced=false,meta=null){
    :'<button class="btn primary" id="openingDone">'+(meta?.kind==='demo'?'Créer un compte pour conserver mes cartes →':'Voir ma collection →')+'</button>')+'</div>';
  if(sealed){
   return '<div class="sc7-opening sc7-sealed" role="group" aria-label="Ouverture de paquet">'+
-   '<p class="sc7-opening-kicker">'+(halloween?'☾ HALLOWEEN · 5 CARTES':'SÉRIESCLUBTCG · 5 CARTES')+'</p><h2>'+(halloween?'Les nuits d’octobre.':'Le moment de vérité.')+'</h2>'+
-   '<div class="sc7-sealed-pack" aria-hidden="true"><span>SC</span><strong>SÉRIESCLUBTCG</strong><small>5 CARTES À DÉCOUVRIR</small></div>'+
+   '<p class="sc7-opening-kicker">'+(halloween?'☾ HALLOWEEN · 5 CARTES':'EPIZORA TCG · 5 CARTES')+'</p><h2>'+(halloween?'Les nuits d’octobre.':'Le moment de vérité.')+'</h2>'+
+   '<div class="sc7-sealed-pack" aria-hidden="true"><span>EZ</span><strong>EPIZORA TCG</strong><small>5 CARTES À DÉCOUVRIR</small></div>'+
    '<p class="sc7-pack-sub">'+(meta?.kind==='demo'?'Démonstration uniquement : aucune carte ni aucun crédit attribué.':'Les cinq cartes ont été ajoutées à ta collection.')+'</p>'+actions+'</div>';
  }
  if(summary){
