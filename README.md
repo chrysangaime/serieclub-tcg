@@ -38,6 +38,8 @@ Le manifeste permet d'installer le site comme application web. Le service worker
 - [ ] Aucun nom de domaine décidé ni acheté : attendre un nom approuvé par l'utilisateur, vérifier INPI/EUIPO et AFNIC, puis adapter DNS/HTTPS et URL Auth/Stripe.
 - [x] Première cartographie des licences et images réalisée : [audit juridique V1](AUDIT_JURIDIQUE_ET_LICENCES_V1.md) et [dossier CGU/RGPD à valider](DOSSIER_LEGAL_VALIDATION_V1.md). La base de production référence 81 862 affiches TVmaze, aucune affiche principale TMDB ; les logos de plateformes provenant de TMDB sont masqués en V1 et une page publique « Sources et droits » est accessible.
 - [x] Choix d'une [stratégie sans contact fournisseur](STRATEGIE_SANS_CONTACT_V1.md) : TVmaze sous licence publique CC BY-SA et hotlink attribué ; suspension des trois synchronisations automatiques TMDB.
+- [x] **Connecteur Streaming Availability API par Movie of the Night préparé** : [guide d'activation et de conformité](GUIDE_STREAMING_SANS_TMDB_V1.md). Passerelle Supabase privée en lecture seule par série, synchronisation GitHub Actions plafonnée à 6 appels/jour et 180/mois, lien « Disponible sur » uniquement après contrôle France et source datée ; **aucune requête fournisseur tant que la clé gratuite n'est pas configurée**. Les cartes sont conservées.
+
 - [ ] Avant tout revenu, retirer les données et dérivés TMDB du service commercial, valider le traitement des affiches litigieuses et l'usage publicitaire des visuels.
 - [ ] Vérifier la marque, les logos et noms de packs, le domaine et la compatibilité de l'hébergeur commercial (GitHub Pages est inadapté pour la monétisation principale).
 - [ ] Identifier l'éditeur, disposer de mentions légales, politique de confidentialité, CGU, CGV si paiement.
