@@ -1165,11 +1165,21 @@ async function confirmDeleteAccount(){
   closeModal();await loadSession();change('packs');
   toast('Ton compte et ta collection ont été supprimés.');
  }catch{
-  if(feedback)feedback.textContent='Suppression non confirmée. Ton compte ne doit pas être considéré comme fermé.';
+  if(feedback){feedback.textContent='Suppression non confirmée. Tu peux demander un examen manuel sans supprimer immédiatement ton compte.';feedback.insertAdjacentHTML('beforeend',' <button class="btn subtle" type="button" data-delete-review>Demander un examen manuel →</button>')}
  }finally{
   state.busy=false;
   if(button?.isConnected){button.disabled=false;button.textContent='Supprimer mon compte'}
  }
+}
+async function requestDeletionReview(){
+ if(!state.user||state.busy){return}
+ const feedback=$('deleteAccountFeedback');state.busy=true;
+ try{
+  const {error}=await supa.rpc('request_account_deletion');
+  if(error)throw error;
+  if(feedback)feedback.textContent='Demande enregistrée pour examen. Ton compte reste actif jusqu’au traitement confirmé.';
+ }catch{if(feedback)feedback.textContent='Impossible d’enregistrer la demande. Réessaie plus tard.'}
+ finally{state.busy=false}
 }
 async function submitReport(){
  if(!state.user){openAuth();return}
@@ -1490,6 +1500,7 @@ function globalClick(e){
  if(e.target.closest('[data-install-app]')){installClubApp();return}
  if(e.target.closest('[data-delete-account-start]')){openDeleteAccount();return}
  if(e.target.closest('[data-delete-account-confirm]')){confirmDeleteAccount();return}
+ if(e.target.closest('[data-delete-review]')){requestDeletionReview();return}
  const reportTarget=e.target.closest('[data-report-player],[data-report-listing],[data-report-series]');
  if(reportTarget){
   const type=reportTarget.hasAttribute('data-report-player')?'player':
