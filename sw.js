@@ -1,4 +1,4 @@
-/* Epizora TCG V1.0 — secours hors connexion sans cache de données joueurs. */
+/* V1.0 du jeu de séries (nom définitif à valider) — secours hors connexion sans cache de données joueurs. */
 const VERSION='sc1-offline-shell-2';
 const OFFLINE='./offline.html';
 self.addEventListener('install',event=>{
