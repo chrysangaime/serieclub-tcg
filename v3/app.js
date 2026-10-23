@@ -17,7 +17,7 @@ import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6.1.0';
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=6.1.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
-import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=5.6.1';
+import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=6';
 import{personalAlbumsPage,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.0.0';
 import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.0.0';
 import{collectionStudio,collectionCSV,deriveCollection}from'../v5/collection.js?v=1.0.0&build=5';
@@ -62,7 +62,7 @@ function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus
 
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',apropos:'about',about:'about',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',about:'apropos',referral:'parrainage',quests:'missions',store:'premium'};
-const state={route:'packs',creditPacks:null,creditPacksError:'',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',marketWishOnly:false,players:[],peopleFilter:'',peopleError:'',dailyError:'',paymentsMode:'disabled',premiumActive:false,paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,trackedSeasons:[],officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',recycleSelection:[],recycleReady:false,recycleRemaining:0,collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',creditPacks:null,creditPacksError:'',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',marketWishOnly:false,players:[],peopleFilter:'',peopleError:'',inviteCode:null,dailyError:'',paymentsMode:'disabled',premiumActive:false,paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,trackedSeasons:[],officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',recycleSelection:[],recycleReady:false,recycleRemaining:0,collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>key==='about'?'À propos':navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
 let openingCards=null,openingStep=0,openingMeta=null;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
@@ -85,7 +85,7 @@ function loadRouteData(route){
  if(route==='rankings')loadRankings();
  if(route==='collection'){loadCollectionGoal();loadRecyclingStatus();if(state.user)loadMySales()}
  if(route==='market'&&state.user)loadMarket();
- if(route==='community'&&state.user)loadPeople();
+ if(route==='community'&&state.user){loadPeople();loadInviteCode()}
  if(route==='quests'&&state.user)loadDaily();
  if(route==='albums'&&state.user)loadAlbums();
  if(route==='profile'&&state.user)loadOfficialSeasons();
@@ -161,7 +161,7 @@ async function loadSession(){
   const {data:{user},error}=await supa.auth.getUser();
   if(error&&!/session missing/i.test(error.message))console.warn('Auth:',error.message);
   state.user=user||null;
-  if(!user){state.recycleSelection=[];state.recycleReady=false;state.recycleRemaining=0;state.rewardStatus={enabled:false};state.rewardQuiz=null;state.rewardFeedback=null;state.username='';state.bio='';state.favoriteGenre='';state.avatarSeriesId=null;state.bannerSeriesId=null;state.officialSeasons=null;state.trackedSeasons=[];state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;state.premiumActive=false;render();return}
+  if(!user){state.recycleSelection=[];state.recycleReady=false;state.recycleRemaining=0;state.rewardStatus={enabled:false};state.rewardQuiz=null;state.rewardFeedback=null;state.username='';state.bio='';state.favoriteGenre='';state.avatarSeriesId=null;state.bannerSeriesId=null;state.officialSeasons=null;state.trackedSeasons=[];state.cards=[];state.excludedCardsCount=0;state.excludedWishesCount=0;state.frMigrationError='';state.wallet=null;state.wishes=[];state.stock=null;state.marketListings=[];state.marketActivity=[];state.tradeOffers=[];state.players=[];state.inviteCode=null;state.personalAlbums=[];state.publicAlbums=[];state.collectionEligibleTotal=null;state.saleSelectionCard=null;state.daily=null;state.premiumActive=false;render();return}
   await ensureProfile(user);
   const status=await supa.rpc('get_booster_status');
   if(status.error)console.warn('Réserve:',status.error.message);
@@ -196,7 +196,7 @@ async function loadSession(){
   if(state.route==='games')loadRewardStatus();
   if(state.route==='market')loadMarket();
   if(state.route==='collection'){loadCollectionGoal();loadMySales();loadRecyclingStatus()}
-  if(state.route==='community')loadPeople();
+  if(state.route==='community'){loadPeople();loadInviteCode()}
   if(state.route==='albums')loadAlbums();
  if(state.route==='profile')loadOfficialSeasons();
  }catch(e){console.error('Session:',e);toast('Connexion au serveur momentanément indisponible.',true)}
@@ -481,6 +481,31 @@ async function loadMarket(){
  state.marketActivity=activity.data||[];
  state.tradeOffers=offers.data||[];
  if(state.route==='market')render();
+}
+/** Chaque code de club n'autorise qu'un abonnement, jamais l'authentification. */
+async function loadInviteCode(){
+ if(!state.user){state.inviteCode=null;return}
+ const {data,error}=await supa.rpc('my_club_invite_code');
+ state.inviteCode=!error&&/^[A-F0-9]{10}$/.test(String(data||''))?data:null;
+ if(state.route==='community')render();
+}
+async function followClubCode(){
+ if(!state.user){openAuth();return}
+ if(!state.inviteCode){toast('Les codes joueurs ne sont pas encore actifs.',true);return}
+ const code=String($('friendCodeInput')?.value||'').trim().toUpperCase();
+ if(!/^[A-F0-9]{10}$/.test(code)){toast('Le code doit contenir 10 caractères hexadécimaux.',true);return}
+ const {data,error}=await supa.rpc('follow_player_by_code',{p_code:code});
+ if(error){toast('Code introuvable ou suivi impossible.',true);return}
+ const result=Array.isArray(data)?data[0]:null;
+ toast(result?.added?'Tu suis désormais '+result.username+'.':'Tu suis déjà ce joueur.');
+ await loadPeople();
+}
+async function copyClubCode(){
+ if(!state.inviteCode)return;
+ const field=$('myClubCode');field?.focus();field?.select();
+ try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(state.inviteCode);toast('Code joueur copié.');}
+ else toast('Code sélectionné, tu peux le copier.')}
+ catch{toast('Code sélectionné, copie-le manuellement.')}
 }
 async function loadPeople(){
  if(!state.user){state.players=[];if(state.route==='community')render();return}
@@ -1370,6 +1395,8 @@ function globalClick(e){
  const offer=e.target.closest('[data-offer]');if(offer){openTradeDialog(offer.dataset.offer);return}
  const submit=e.target.closest('#submitOffer');if(submit){submitTradeOffer(submit.dataset.listing);return}
  const answer=e.target.closest('[data-respond-trade]');if(answer){respondTradeOffer(answer.dataset.respondTrade,answer.dataset.accept==='true');return}
+ if(e.target.closest('[data-copy-club-code]')){copyClubCode();return}
+ if(e.target.closest('[data-follow-club-code]')){followClubCode();return}
  const follow=e.target.closest('[data-follow]');if(follow){toggleFollow(follow.dataset.follow);return}
  const claim=e.target.closest('[data-claim-quest]');if(claim){claimQuest(claim.dataset.claimQuest);return}
  if(e.target.closest('[data-scroll-credit-packs]')){if(state.route!=='packs')change('packs');document.getElementById('svod-credit-packs')?.scrollIntoView({block:'start',behavior:'smooth'});return}
