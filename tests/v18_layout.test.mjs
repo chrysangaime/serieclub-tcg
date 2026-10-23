@@ -31,5 +31,5 @@ test('Desktop et mobile ont une disposition propre sans nouveau fichier CSS empi
  assert.match(css,/text-shadow:none!important/);
  assert.match(idx,/v15\/cinema\.css\?v=18\.0\.0/);
  assert.doesNotMatch(idx,/v14\/rebuild\.css/);
- assert.match(idx,/v3\/app\.js\?v=21\.0\.0/);
+ assert.match(idx,/v3\/app\.js\?v=22\.0\.0/);
 });

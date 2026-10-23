@@ -19,9 +19,9 @@ test('les trois visuels restent des paquets de vitrine, sans paiement Premium',(
    wallet:{credits:100},stock:{stock:10,maximum:10},
    homeShows:[],seasonShows:[]
  },{foil:()=>'<div class="foil">ANCIEN</div>',timecode:()=>''});
- assert.match(html,/sc14-pack-visual--original/);
- assert.match(html,/sc14-pack-visual--halloween/);
- assert.match(html,/sc14-pack-visual--premium/);
+ assert.match(html,/sc22-booster--original/);
+ assert.match(html,/sc22-booster--halloween/);
+ assert.match(html,/sc22-booster--premium/);
  assert.match(html,/sc12-pack-original/);
  assert.match(html,/5 SÉRIES · 7 RARETÉS/);
  assert.match(html,/data-pack="classic"/);
