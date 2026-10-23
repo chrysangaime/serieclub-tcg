@@ -4,7 +4,7 @@ export function footerHTML(){
  return '<footer class="app-footer sc1-footer" aria-label="Informations sur SériesClubTCG">'+
  '<div class="sc1-footer-brand"><strong>SériesClubTCG</strong><span class="sc1-version">'+PRODUCT.version+' · '+PRODUCT.stage+'</span></div>'+
  '<nav aria-label="Informations pratiques"><button type="button" data-route="rules">Comment jouer</button>'+
- '<button type="button" data-route="settings">Paramètres</button><button type="button" data-route="privacy">Confidentialité</button><button type="button" data-route="legal">Mentions légales</button><button type="button" data-route="support">Assistance</button><button type="button" data-route="about">À propos</button></nav>'+
+ '<button type="button" data-route="settings">Paramètres</button><button type="button" data-route="privacy">Confidentialité</button><button type="button" data-route="rights">Sources et droits</button><button type="button" data-route="legal">Mentions légales</button><button type="button" data-route="support">Assistance</button><button type="button" data-route="about">À propos</button></nav>'+
  '<p>Jeu indépendant consacré aux séries diffusées en France. Marques et visuels : droits réservés à leurs propriétaires respectifs. Aucune affiliation avec les plateformes de diffusion mentionnées.</p></footer>';
 }
 export function aboutPage(){
@@ -20,7 +20,7 @@ export function aboutPage(){
  '<div><h3>État du projet</h3><p>La V1.0 est en préparation et n’a pas fait l’objet d’un lancement public. Certaines fonctions peuvent évoluer ou rester momentanément indisponibles.</p></div>'+
  '<div><h3>Crédits et paiement</h3><p>Les crédits du jeu sont virtuels. Les boosters thématiques peuvent être ouverts avec les crédits gagnés, lorsque leur catalogue est disponible. La vente de crédits en euros est suspendue. L’abonnement Premium est encore soumis à son activation.</p></div>'+
  '<div><h3>Compte et confidentialité</h3><p>L’authentification et les cartes sont synchronisées via Supabase. Certaines préférences sont stockées dans le navigateur. Le pseudonyme et des résultats de jeu peuvent être visibles par les autres joueurs.</p></div>'+
- '<div><h3>Données et marques</h3><p>Les informations sur les séries peuvent provenir de TVmaze, TMDB et JustWatch. Les plateformes de streaming citées n’éditent pas, ne sponsorisent pas et ne cautionnent pas ce jeu. Les disponibilités peuvent changer.</p></div>'+
+ '<div><h3>Données, sources et marques</h3><p>Les fiches de séries et leurs affiches sont principalement liées à TVmaze. Certains relevés de diffusion France proviennent de TMDB et JustWatch. Les plateformes de streaming citées n’éditent pas, ne sponsorisent pas et ne cautionnent pas ce jeu. Les disponibilités peuvent changer.</p><p lang="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p><button type="button" data-route="rights">Crédits, licences et droits des affiches →</button></div>'+
  '</section><p class="sc1-about-legal">Les mentions légales définitives, les conditions du service et la vérification des droits des visuels restent à finaliser avant tout lancement commercial.</p>'+
  '<div class="sc1-about-bottom"><button class="btn primary" data-route="rules" type="button">Lire les règles →</button><button class="btn subtle" data-route="settings" type="button">Paramètres</button></div></div>';
 }
