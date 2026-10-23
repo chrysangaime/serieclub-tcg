@@ -22,7 +22,7 @@ export function profileArtPanel(s){
  const options=selected=>'<option value="">Aucune affiche</option>'+cards.map(c=>
   '<option value="'+esc(c.id)+'"'+(String(selected)===c.id?' selected':'')+'>'+esc(c.name)+'</option>').join('');
  return '<div class="sc10-profile-hero">'+
-  '<div class="sc10-profile-banner"'+bannerStyle+' role="img" aria-label="Bannière de la série '+esc(banner?.name||'SériesClubTCG')+'"></div>'+
+  '<div class="sc10-profile-banner"'+bannerStyle+' role="img" aria-label="Bannière de la série '+esc(banner?.name||'Epizora TCG')+'"></div>'+
   '<div class="sc10-profile-row"><div class="sc10-profile-avatar"'+avatarStyle+' aria-label="Avatar du profil">'+(avatar?'':initial)+'</div>'+
   '<div><h2>'+esc(s.username||'Mon profil')+'</h2><p>Personnalise ton identité avec tes affiches débloquées.</p>'+
    (badges.length?'<div class="sc10-badge-strip">'+badges.map(x=>'<span title="'+esc(x.title)+'">'+esc(x.badge)+'</span>').join('')+'</div>':'')+
