@@ -48,3 +48,10 @@ Le manifeste permet d'installer le site comme application web. Le service worker
 **Important :** le succès des tests de CI ne prouve pas à lui seul la conformité juridique ni l'absence de problèmes en production. Ce document est le référentiel V1.0 avant lancement.
 
 Voir également [État et critères de lancement V1](ETAT_LANCEMENT_V1.md).
+
+## Données et signalements (accès anticipé)
+- Export du compte authentifié via RPC `export_my_account_data`, sans accès aux données privées d'autres comptes.
+- Fermeture volontaire du compte via Edge Function `account-delete` (JWT obligatoire, confirmation e-mail et saisie SUPPRIMER, mot de passe revérifié dans l'interface). La suppression efface les données du joueur liées en cascade. L'historique d'une annonce d'un autre vendeur perd l'identifiant acheteur.
+- Les signalements authentifiés sont enregistrés dans `player_reports` et accessibles uniquement à l'administration, dans la limite de 5 par 24 h. **Un examen humain et des coordonnées de contact restent indispensables**.
+- Les pages Confidentialité et Mentions légales restent identifiées comme **provisoires**, sans identité d'éditeur inventée.
+- Le service de suppression est déployé mais **non testé avec une suppression réelle en production** : ne jamais utiliser un compte personnel pour un test destructif.
