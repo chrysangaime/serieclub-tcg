@@ -2,9 +2,22 @@ name: Recette navigateur SériesClubTCG V1
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
-      - ".github/workflows/browser-smoke.yml"
+      - "index.html"
+      - "v*/**"
+      - "manifest.webmanifest"
+      - "sw.js"
       - "tests/browser-smoke.mjs"
+      - ".github/workflows/browser-smoke.yml"
+  pull_request:
+    paths:
+      - "index.html"
+      - "v*/**"
+      - "manifest.webmanifest"
+      - "sw.js"
+      - "tests/browser-smoke.mjs"
+      - ".github/workflows/browser-smoke.yml"
 jobs:
   smoke:
     runs-on: ubuntu-24.04
@@ -23,7 +36,7 @@ jobs:
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/seriesclub-browser.log 2>&1 &
           for i in $(seq 1 25); do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
-      - name: Tester le rendu réel sur deux écrans
+      - name: Tester les parcours sur mobile et ordinateur
         run: node tests/browser-smoke.mjs
       - name: Captures de contrôle
         if: always()
