@@ -195,7 +195,7 @@ async function loadSession(){
   loadDaily();
   if(state.route==='games')loadRewardStatus();
   if(state.route==='market')loadMarket();
-  if(state.route==='collection'){loadCollectionGoal();loadMySales()}
+  if(state.route==='collection'){loadCollectionGoal();loadMySales();loadRecyclingStatus()}
   if(state.route==='community')loadPeople();
   if(state.route==='albums')loadAlbums();
  if(state.route==='profile')loadOfficialSeasons();

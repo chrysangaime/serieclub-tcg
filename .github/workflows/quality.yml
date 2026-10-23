@@ -277,3 +277,7 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v21_credit_svod_packs.sql
       - name: Contrôler les achats en crédits et le stock gratuit
         run: psql -v ON_ERROR_STOP=1 -f tests/v21_credit_boosters.sql
+      - name: Installer le recyclage sécurisé V1
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_bulk_recycling.sql
+      - name: Tester quota, cartes protégées et sauvegarde des derniers exemplaires
+        run: psql -v ON_ERROR_STOP=1 -f tests/v1_recycling_postgres.sql

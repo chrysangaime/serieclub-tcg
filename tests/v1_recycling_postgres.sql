@@ -71,7 +71,7 @@ BEGIN
   WHERE player_id=auth.uid() AND kind='duplicate_recycle' AND amount=gained)
  THEN RAISE EXCEPTION 'Écriture comptable absente';END IF;
  -- Refuser suppression de la dernière copie (même si déverrouillée).
- UPDATE public.player_cards SET locked=false WHERE id=locked_id;
+ PERFORM public.set_card_locked(locked_id,false);
  refused:=false;
  BEGIN PERFORM * FROM public.recycle_duplicate_cards(ARRAY[locked_id]);
  EXCEPTION WHEN OTHERS THEN refused:=true;END;

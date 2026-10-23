@@ -10,6 +10,8 @@
 - Jeux, fusions, profils, échanges et Comptoir selon modules serveur activés.
 - Boosters SVOD (Netflix, Prime Video, Disney+, télévision) contre crédits virtuels gagnés dans le jeu **si migration V21 activée**.
 - Jour/nuit, interface mobile, navigation et page de transparence.
+- Démonstration de booster sans inscription (aucune attribution réelle).
+- Recyclage groupé sécurisé de doublons contre crédits virtuels, **après activation de la migration SQL `game_v1_bulk_recycling.sql`**. Jusqu'à l'activation, les actions sont désactivées.
 
 ### À ne pas confondre avec une version publique
 Les répertoires `v3/`, `v12/`, `v23/` et les migrations SQL `game_v21_...` sont **historiques et techniques**. Leur renumérotation casserait les imports, migrations et données. Les joueurs voient uniquement **SériesClubTCG V1.0**.
