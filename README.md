@@ -11,6 +11,7 @@
 - Boosters SVOD (Netflix, Prime Video, Disney+, télévision) contre crédits virtuels gagnés dans le jeu **si migration V21 activée**.
 - Jour/nuit, interface mobile, navigation et page de transparence.
 - Démonstration de booster sans inscription (aucune attribution réelle).
+- Halloween : 2 séries classées Horror et une troisième horreur / thriller / mystère / surnaturel par paquet, avec les raretés officielles des séries. Migration `supabase/game_v1_halloween_theme.sql` et 80 scénarios de tirage non transactionnels en CI.
 - Recyclage groupé sécurisé de doublons contre crédits virtuels, **après activation de la migration SQL `game_v1_bulk_recycling.sql`**. Jusqu'à l'activation, les actions sont désactivées.
 - Codes joueurs du Signal : partage de pseudonymes et abonnements via code non secret de 10 caractères, **après activation de `game_v1_invite_codes.sql`**. Pas de messagerie privée.
 - Centre d'opportunités du Comptoir : échanges reçus ou envoyés, dernières annonces correspondant aux souhaits, liens directs vers les sections concernées. Pas de notifications push ni de promesse de disponibilité en temps réel.

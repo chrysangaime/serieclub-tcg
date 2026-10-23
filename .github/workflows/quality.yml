@@ -285,3 +285,7 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_invite_codes.sql
       - name: Vérifier invitation et suivi par code
         run: psql -v ON_ERROR_STOP=1 -f tests/v1_invite_codes.sql
+      - name: Corriger la sélection Halloween
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_halloween_theme.sql
+      - name: Tester 80 boosters Halloween sans dépense de crédits
+        run: psql -v ON_ERROR_STOP=1 -f tests/v1_halloween_theme.sql
