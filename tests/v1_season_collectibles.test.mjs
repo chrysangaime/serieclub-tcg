@@ -31,6 +31,8 @@ test('La carte saison 2 affiche son poster propre, sa rareté inchangée, et le 
  const c=owned('s2',2,'https://static.tvmaze.com/uploads/images/medium_portrait/5/102.jpg');
  const html=card(c);
  assert.match(html,/Saison 2/);
+ assert.match(html,/sc-season-card-badge/);
+ assert.match(html,/>S2<\/span>/);
  assert.match(html,/Unique/);
  assert.match(html,/medium_portrait\/5\/102\.jpg/);
  assert.doesNotMatch(html,/medium_portrait\/1\/123\.jpg/);
