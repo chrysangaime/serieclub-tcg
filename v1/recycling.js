@@ -6,6 +6,7 @@ export const candidates=data=>(data?.groups||[]).filter(g=>g.eligible&&g.sellabl
  .map(g=>({id:g.sellableCopy.id,name:g.name,rarity:g.rarity,credits:VALUES[g.rarity]}));
 export function recyclePanel(data,selected=[]){
  const choices=candidates(data),marked=new Set(selected),valid=choices.filter(x=>marked.has(x.id));
+ const active=data?.recycleReady===true,remaining=Math.max(0,Number(data?.recycleRemaining)||0);
  const amount=valid.reduce((sum,x)=>sum+x.credits,0);
  return '<section class="sc1-recycle" aria-label="Recycler des doublons"><div class="sc1-recycle-header"><div><span class="caps">MES DOUBLONS</span><h2>Faire de la place, gagner des crédits.</h2><p>Seuls les exemplaires supplémentaires disponibles sont éligibles. Les dernières copies et les cartes engagées restent protégées.</p></div>'+
  '<div class="sc1-recycle-count"><strong>'+valid.length+' / '+LIMIT+'</strong><small>Sélection</small><strong>◇ '+amount+'</strong><small>Estimation</small></div></div>'+
@@ -13,9 +14,9 @@ export function recyclePanel(data,selected=[]){
  '<label class="sc1-recycle-option"><input type="checkbox" data-recycle-item="'+esc(x.id)+'"'+(marked.has(x.id)?' checked':'')+
  ((!marked.has(x.id)&&valid.length>=LIMIT)?' disabled':'')+'><span><b>'+esc(x.name)+'</b><small>'+esc(x.rarity)+'</small></span><strong>+'+x.credits+' ◇</strong></label>').join('')+'</div>':
  '<p class="sc1-recycle-empty">Aucun doublon supplémentaire disponible pour le recyclage.</p>')+
- '<div class="sc1-recycle-actions"><small>Limite : 20 cartes par opération, 60 par jour. Toute suppression est définitive.</small>'+
- '<button type="button" class="btn subtle" data-recycle-all '+(!choices.length?'disabled':'')+'>Sélectionner automatiquement</button>'+
- '<button type="button" class="btn primary" data-recycle-preview '+(!valid.length?'disabled':'')+'>Vérifier le recyclage →</button></div></section>';
+ '<div class="sc1-recycle-actions"><small>'+(active?'Quota restant aujourd’hui : '+remaining+' carte(s). Suppression définitive.':'Recyclage en préparation : activation serveur nécessaire.')+'</small>'+ 
+ '<button type="button" class="btn subtle" data-recycle-all '+(!choices.length||!active||remaining===0?'disabled':'')+'>Sélectionner automatiquement</button>'+
+ '<button type="button" class="btn primary" data-recycle-preview '+(!valid.length||!active||valid.length>remaining?'disabled':'')+'>Vérifier le recyclage →</button></div></section>';
 }
 export function recycleConfirm(items){
  const amount=items.reduce((n,x)=>n+x.credits,0);
