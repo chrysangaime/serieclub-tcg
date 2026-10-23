@@ -66,3 +66,17 @@ Voir également [État et critères de lancement V1](ETAT_LANCEMENT_V1.md).
 - Les signalements authentifiés sont enregistrés dans `player_reports` et accessibles uniquement à l'administration, dans la limite de 5 par 24 h. **Un examen humain et des coordonnées de contact restent indispensables**.
 - Les pages Confidentialité et Mentions légales restent identifiées comme **provisoires**, sans identité d'éditeur inventée.
 - Le service de suppression est déployé mais **non testé avec une suppression réelle en production** : ne jamais utiliser un compte personnel pour un test destructif.
+
+
+## Catalogue et cartes par saison (V1)
+
+Depuis le 23 octobre 2026, les **saisons TV** sont des variantes collectionnables distinctes d'une même série ; elles ne remplacent pas les albums thématiques déjà appelés « Saisons ». Le catalogue a été enrichi à partir de TVmaze (9 236 saisons sur 2 618 séries FR dont 3 357 avec un poster TVmaze spécifique lors de la première synchronisation). Les saisons futures non diffusées ne sont jamais tirées dans les boosters.
+
+- Les boosters Original, Halloween et à crédits attribuent côté Supabase un numéro de saison diffusée lorsqu'il existe, **sans altérer la rareté officielle de la série**, ni les prix et soldes.
+- La carte, la collection, la fiche et le récapitulatif du booster affichent ce numéro ; le poster de saison est utilisé si TVmaze en possède un, sinon l'illustration TVmaze de la série est conservée avec le repère de saison.
+- Les doublons sont calculés par couple (série, saison) ; l'avancement par séries reste un compteur distinct. Le moteur officiel d'albums « Saisons » est conservé.
+- La répartition de la distribution de *True Detective* par saison est éditorialement vérifiée (HBO/TVmaze). Le casting global TVmaze n'est pas attribué artificiellement à chaque saison d'autres séries.
+- Migration sans perte : 962 cartes au moment du contrôle, 603 rattachées à des saisons diffusées, 359 laissées comme anciennes éditions faute d'une saison certaine. Aucune carte ni aucun portefeuille supprimé.
+- SQL : `supabase/v1_season_collectibles.sql`, `supabase/v1_season_card_backfill.sql`, `supabase/v1_season_booster_rpc.sql` et `supabase/v1_season_credit_booster_rpc.sql`. Source d'import : `scripts/sync-tvmaze-seasons.mjs`. Ces migrations sont appliquées en production.
+
+Cette progression améliore la finition du jeu mais **ne lève pas les obstacles au lancement monétisé** : preuves France anciennement obtenues via TMDB, droits de certaines affiches et marques, nom définitif approuvé, mentions et hébergement adapté. Les 30 premiers résultats SVOD synchronisés avec Movie of the Night ne suffisent pas pour les 2 640 séries ; ne pas promettre une disponibilité confirmée quand les offres du fournisseur n'ont pas été reçues.
