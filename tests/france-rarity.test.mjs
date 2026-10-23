@@ -38,7 +38,7 @@ test('only France country-code broadcaster is displayed, not American networks',
   source:'editorial',text:'Une série américaine.'
  });
  assert.doesNotMatch(html,/>CBS</);
- assert.match(html,/Diffusion en France/);
+ assert.match(html,/Diffuseur d’origine en France/);
  assert.match(html,/Paramount France/);
  assert.match(html,/rareté officielle/);
  assert.match(html,/sc53-tier-rare/);
