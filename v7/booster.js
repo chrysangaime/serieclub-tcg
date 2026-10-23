@@ -35,7 +35,7 @@ export function openingFrame(cards,step=0,reduced=false,meta=null){
     '<img src="'+esc(/^https:\/\//.test(c.image_url||'')?c.image_url:'')+'" alt="Affiche de '+esc(c.name)+'">'+
     '<b>'+esc(c.name)+'</b><span>'+esc(c.rarity)+'</span></div>').join('')+'</div>'+
    (halloween?'<p class="sc7-halloween-promise">☾ 2 séries d’horreur et une troisième dans l’univers des frissons.</p>':'')+
-   '<div class="sc7-pack-bonus">'+(meta?.kind='demo'?'Démonstration sans récompense réelle':meta?.kind==='credit'?'◇ '+esc(meta.price)+' crédits utilisés · '+esc(meta.label):'✦ +25 crédits <span>·</span> +50 XP')+'</div>'+actions+'</div>';
+   '<div class="sc7-pack-bonus">'+(meta?.kind==='demo'?'Démonstration sans récompense réelle':meta?.kind==='credit'?'◇ '+esc(meta.price)+' crédits utilisés · '+esc(meta.label):'✦ +25 crédits <span>·</span> +50 XP')+'</div>'+actions+'</div>';
  }
  const thumb=now?.image_url&&/^https:\/\//.test(now.image_url)?esc(now.image_url):'';
  return '<div class="sc7-opening sc7-revealing '+(rare?'sc7-rare-event':'')+' sc7-tier-'+rarityTier(rank)+'" role="group" aria-label="Carte '+opened+' sur '+list.length+'">'+
