@@ -18,6 +18,6 @@ test('Hors connexion: aucune transaction locale et aucune API personnelle stockÃ
 });
 test('Ressources PWA et lien de la V1.0 se trouvent sur la page',()=>{
  const html=read('index.html');
- for(const x of ['manifest.webmanifest?v=1.0.0&build=10','src="./v3/app.js?v=1.0.0&build=21"'])
+ for(const x of ['manifest.webmanifest?v=1.0.0&build=10','src="./v3/app.js?v=1.0.0&build=22"'])
  assert.ok(html.includes(x),x);
 });
