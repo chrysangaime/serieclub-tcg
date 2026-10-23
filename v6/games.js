@@ -1,5 +1,5 @@
 /**
- * SérieClub — mini-jeux locaux : zéro gain de crédits/XP.
+ * Epizora — mini-jeux locaux : zéro gain de crédits/XP.
  * Uniquement des séries certifiées pour la France (vérification serveur au chargement).
  */
 const esc=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
