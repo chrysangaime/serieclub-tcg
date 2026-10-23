@@ -21,5 +21,5 @@ test('le navigateur ne charge plus de cache de diffuseurs TMDB ni de token',()=>
  assert.doesNotMatch(src,/watch-fr\.json|movieofthenight\.com\/v4/);
  assert.match(src,/functions\/v1\/fr-streaming/);
  assert.doesNotMatch(src,/TMDB_READ_ACCESS_TOKEN/);
- assert.match(fs.readFileSync('index.html','utf8'),/v5\/fr-watch\.js\?v=7\.1\.0/);
+ assert.match(fs.readFileSync('index.html','utf8'),/v5\/fr-watch\.js\?v=7\.1\.1/);
 });
