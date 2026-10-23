@@ -33,9 +33,12 @@ La migration **`supabase/game_v1_least_privilege.sql`** a également été appli
 Le manifeste permet d'installer le site comme application web. Le service worker **ne met en cache que la page d'information hors connexion** et jamais les données des joueurs ni les appels Supabase. L'ouverture de paquets reste impossible hors connexion. La page Paramètres propose un bouton d'installation sur les navigateurs compatibles.
 
 ## Préparer un véritable lancement
-- [ ] Domaine personnalisé `seriesclub-tcg.fr` acquis, DNS/HTTPS, redirections et URL de retour auth/Stripe configurées.
+
+**Nouveau nom public provisoire : Epizora TCG.** L'ancien nom est abandonné dans l'interface ; le nom du dépôt et les clés techniques restent inchangés par sécurité de migration. Validation INPI/EUIPO, domaine et documents éditeur obligatoires avant communication payante.
+- [ ] Domaine personnalisé du nouveau nom (candidat : `epizora.fr`) à vérifier auprès de l’AFNIC puis à réserver après contrôle INPI/EUIPO ; DNS/HTTPS et URL Auth/Stripe à adapter.
 - [x] Première cartographie des licences et images réalisée : [audit juridique V1](AUDIT_JURIDIQUE_ET_LICENCES_V1.md) et [dossier CGU/RGPD à valider](DOSSIER_LEGAL_VALIDATION_V1.md). La base de production référence 81 862 affiches TVmaze, aucune affiche principale TMDB ; les logos de plateformes provenant de TMDB sont masqués en V1 et une page publique « Sources et droits » est accessible.
-- [ ] Obtenir une confirmation écrite TVmaze concernant affiches, photos d'acteurs et usage commercial des cartes ; obtenir une licence TMDB commerciale ou changer de source. Aucun accord implicite n'est revendiqué.
+- [x] Choix d'une [stratégie sans contact fournisseur](STRATEGIE_SANS_CONTACT_V1.md) : TVmaze sous licence publique CC BY-SA et hotlink attribué ; suspension des trois synchronisations automatiques TMDB.
+- [ ] Avant tout revenu, retirer les données et dérivés TMDB du service commercial, valider le traitement des affiches litigieuses et l'usage publicitaire des visuels.
 - [ ] Vérifier la marque, les logos et noms de packs, le domaine et la compatibilité de l'hébergeur commercial (GitHub Pages est inadapté pour la monétisation principale).
 - [ ] Identifier l'éditeur, disposer de mentions légales, politique de confidentialité, CGU, CGV si paiement.
 - [ ] Contrôler RGPD : conservation, droits d'accès/suppression, contacts, sous-traitants, cookies.
