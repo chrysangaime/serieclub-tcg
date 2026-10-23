@@ -9,6 +9,7 @@ import {whereToWatchLink,amazonSearchLink,amazonIsAffiliate} from '../v3/discove
 import {renderFranceAvailability,getFrenchOriginChannel} from '../v5/fr-watch.js?v=7.1.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 import {castFallbackHTML} from '../v5/cast-fr.js?v=7.0.0';
+import {seasonGalleryHTML} from './season-detail.js?v=1.0.0';
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -188,7 +189,8 @@ export function showDetailHTML(source={},base={},french={source:'loading'},fallb
   '<h3>En quelques mots</h3><div class="sc5-synopsis" data-synopsis>'+frenchSynopsisHTML(french,summary)+'</div>'+
   '</div></div>'+
   (more.length?'<details class="sc5-meta-more"><summary>Informations complémentaires</summary><div class="sc5-facts">'+more.map(([label,val])=>'<div><small>'+escapeHTML(label)+'</small><strong>'+escapeHTML(val)+'</strong></div>').join('')+'</div></details>':'')+
-  '<section class="sc5-cast-section" data-cast-section '+(availableCast?'':'hidden')+'><div class="sc5-section-head"><div><h3>Acteurs et personnages</h3></div></div>'+
+  seasonGalleryHTML(show._embedded?.seasons)+
+  '<section class="sc5-cast-section" data-cast-section '+(availableCast?'':'hidden')+'><div class="sc5-section-head"><div><h3>Acteurs et personnages</h3>'+(seasons>1?'<small class="sc5-cast-source">Distribution générale : acteurs non attribués automatiquement à une saison.</small>':'')+'</div></div>'+
   '<div class="sc5-cast-list" data-cast-body>'+availableCast+'</div></section>'+
   '<div class="sc5-compact-footer">'+externalLinks(name)+(Number.isSafeInteger(Number(base.id))?'<button type="button" class="sc1-report-link" data-report-series="'+Number(base.id)+'">Signaler une erreur ou un visuel</button>':'')+
   '<div class="sc5-bottom"><a href="'+tvmazeLink(show.url||(
