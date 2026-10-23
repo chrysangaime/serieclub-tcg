@@ -34,44 +34,26 @@ test('old non-French cards are excluded from every playable collection counter w
  assert.equal(frenchPlayable(existing[0]),true);
 });
 
-test('The X-Files offers use the latest cached French provider proof, not a frozen 2026-09-10 snapshot',()=>{
+test('Les anciennes offres ne sont pas affichées ni chargées, même avec une cache existante',async()=>{
  const file=JSON.parse(fs.readFileSync('data/watch-fr.json','utf8'));
- const record=file.titles['430'];
- assert.equal(record.country,'FR');
- assert.match(record.checked_at,/^\d{4}-\d{2}-\d{2}T/);
- assert.ok(/^https:\/\/(?:www\.justwatch\.com\/fr\/serie\/|www\.themoviedb\.org\/tv\/)/.test(record.url));
- assert.ok(record.offers.some(o=>/Disney(?:\+| Plus)/i.test(o.name)));
- assert.ok(record.offers.some(o=>/Amazon Prime Video/i.test(o.name)));
- const normalized=normalizeFranceOffers(record);
- assert.ok(normalized,'Un relevé français trop vieux doit être vérifié ou remplacé');
- assert.equal(normalized.source,record.source==='justwatch_fr_editorial'?'justwatch_fr_editorial':'tmdb');
- assert.equal(normalized.url,record.source==='justwatch_fr_editorial'?record.url:normalized.url);
- const html=renderFranceAvailability(record,{});
- assert.match(html,/Disney(?:\+| Plus)/i);
- assert.match(html,/Amazon Prime Video/);
- assert.match(html,/Disponible sur/);
- assert.match(html,/Voir les offres en France|Ouvrir la fiche JustWatch France/);
- assert.doesNotMatch(html,/google\.com/);
+ assert.ok(file.titles['430'],'Le snapshot historique reste hors du navigateur en attente de purge');
+ const old=file.titles['430'];
+ assert.equal(normalizeFranceOffers(old),null);
+ assert.equal(await getFrenchOffersByShow(430),null);
+ const html=renderFranceAvailability(old,{fr_verification_method:'tmdb_fr_offer'});
+ assert.match(html,/Offres de streaming non confirmées/);
+ assert.match(html,/JustWatch France/);
+ assert.doesNotMatch(html,/Amazon Prime Video|Disney\+|themoviedb\.org|Disponible sur/);
 });
 
-test('old JustWatch observation remains visible as HISTORIC, never advertised as up-to-date availability',()=>{
- const old={
-  country:'FR',source:'justwatch_fr_editorial',
-  checked_at:'2025-01-01T10:00:00Z',
-  url:'https://www.justwatch.com/fr/serie/the-x-files',
-  offers:[{type:'flatrate',name:'Disney+'}]
- };
- assert.equal(normalizeFranceOffers(old)?.historical,true);
+test('Le lien de consultation reste sûr pour des relevés anciens et malveillants',()=>{
+ const old={country:'FR',source:'justwatch_fr_editorial',
+  checked_at:'2025-01-01T10:00:00Z',url:'https://evil.example',
+  offers:[{type:'flatrate',name:'<script>alert(1)</script>'}]};
+ assert.equal(normalizeFranceOffers(old),null);
  const html=renderFranceAvailability(old);
- assert.match(html,/relevé ancien/);
- assert.match(html,/pas confirmées aujourd’hui/);
- assert.match(html,/avant de souscrire/);
- const sameWithoutSource={...old,source:'tmdb'};
- assert.equal(normalizeFranceOffers(sameWithoutSource),null);
- const malicious={...old,url:'https://evil.example',offers:[{type:'flatrate',name:'<script>evil</script>'}]};
- const safe=renderFranceAvailability(malicious);
- assert.doesNotMatch(safe,/<script>/);
- assert.doesNotMatch(safe,/evil\.example/);
+ assert.match(html,/https:\/\/www\.justwatch\.com\/fr/);
+ assert.doesNotMatch(html,/<script>|evil\.example|themoviedb/);
 });
 
 test('French proof and archive logic is enforced by frontend and SQL and is reversible',()=>{
