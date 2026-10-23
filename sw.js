@@ -1,4 +1,4 @@
-/* SériesClubTCG V1.0 — secours hors connexion sans cache de données joueurs. */
+/* Epizora TCG V1.0 — secours hors connexion sans cache de données joueurs. */
 const VERSION='sc1-offline-shell-1';
 const OFFLINE='./offline.html';
 self.addEventListener('install',event=>{
