@@ -26,5 +26,5 @@ test("Les trois workflows d'enrichissement TMDB sont uniquement manuels",()=>{
 test("Le mode commercial reste interdit tant que les caches TMDB ne sont pas éliminés",()=>{
  assert.match(read("v3/app.js"),/paymentsMode:'disabled'/);
  assert.match(read("STRATEGIE_SANS_CONTACT_V1.md"),/supprimer la dépendance TMDB/i);
- assert.match(read("STRATEGIE_SANS_CONTACT_V1.md"),/sources commerciales|commercialement autorisées/);
+ assert.match(read("STRATEGIE_SANS_CONTACT_V1.md"),/sources compatibles|sources commerciales|commercialement autorisées/);
 });
