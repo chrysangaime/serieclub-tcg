@@ -30,7 +30,7 @@ test('La présentation reste compacte près du titre et de la rareté',()=>{
  assert.ok(at<html.indexOf('En quelques mots'));
  assert.equal(html.split('data-fr-watch').length-1,1);
  assert.match(html,/Où regarder en France/);
- assert.match(html,/Source de diffusion française/);
+ assert.match(html,/JustWatch France/);
 });
 
 test('Un diffuseur TVmaze français est identifié sans inventer un abonnement',()=>{
