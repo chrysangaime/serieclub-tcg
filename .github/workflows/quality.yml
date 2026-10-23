@@ -289,3 +289,9 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_halloween_theme.sql
       - name: Tester 80 boosters Halloween sans dépense de crédits
         run: psql -v ON_ERROR_STOP=1 -f tests/v1_halloween_theme.sql
+      - name: Installer les index et accélérer les contrôles RLS
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_database_performance.sql
+      - name: Verrouiller les accès RPC Supabase
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_security_hardening.sql
+      - name: Tester les permissions publiques et les achats connectés
+        run: psql -v ON_ERROR_STOP=1 -f tests/v1_security_permissions.sql
