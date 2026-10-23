@@ -2,6 +2,23 @@
 -- Ce script refuse toute réouverture accidentelle des opérations sensibles.
 DO $$
 BEGIN
+ -- Toutes les tables de l'API publique conservent leurs politiques RLS.
+ IF EXISTS(
+  SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+  WHERE n.nspname='public' AND c.relkind IN ('r','p') AND NOT c.relrowsecurity
+ ) THEN RAISE EXCEPTION 'Une table exposée a perdu son Row Level Security';END IF;
+
+ -- Les fonctions à privilèges élevés ont un chemin de recherche fixé :
+ -- évite le détournement de résolution des objets SQL.
+ IF EXISTS(
+  SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+  WHERE n.nspname='public' AND p.prosecdef
+  AND NOT EXISTS(
+   SELECT 1 FROM unnest(coalesce(p.proconfig,ARRAY[]::text[])) AS cfg
+   WHERE cfg LIKE 'search_path=%'
+  )
+ ) THEN RAISE EXCEPTION 'Fonction SECURITY DEFINER sans search_path verrouillé';END IF;
+
  -- Visiteurs anonymes : seuls les contenus publics restent consultables.
  IF has_table_privilege('anon','public.player_cards','SELECT')
  OR has_table_privilege('anon','public.player_wallets','SELECT')
