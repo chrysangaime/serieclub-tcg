@@ -26,7 +26,7 @@ Abonnement Premium dans un parcours test/suspendu selon configuration Supabase/S
 
 Les modules **recyclage sécurisé des doublons**, **codes joueurs du Signal**, **boosters en crédits**, **Halloween corrigé** et **Top 20** sont présents dans le Supabase de production (contrôlé le 23 octobre 2026).
 
-La migration **`supabase/game_v1_least_privilege.sql`** a également été appliquée le 23 octobre 2026. Elle limite les droits directs des visiteurs et des comptes connectés sans modifier les politiques RLS ou les soldes. Vérifications effectuées : lectures publiques des quatre boosters SVOD opérationnelles, refus implicite d'accès aux cartes et portefeuilles sans identité authentifiée. Les futurs scripts SQL doivent déclarer explicitement leurs privilèges, notamment après le changement de comportement Supabase du 30 octobre 2026. Le fichier [INSTALLER_V1_PRELANCEMENT.sql](supabase/INSTALLER_V1_PRELANCEMENT.sql) est conservé pour les installations futures : **ne pas réexécuter les scripts anciens sans raison**. Les droits d'exécution des fonctions privilégiées sont verrouillés par `supabase/game_v1_security_hardening.sql` et les index de recherche sont présents.
+La migration **`supabase/game_v1_least_privilege.sql`** a également été appliquée le 23 octobre 2026. Elle limite les droits directs des visiteurs et des comptes connectés sans modifier les politiques RLS ou les soldes. Vérifications effectuées : lectures publiques des quatre boosters SVOD opérationnelles, refus implicite d'accès aux cartes et portefeuilles sans identité authentifiée. Les futurs scripts SQL doivent déclarer explicitement leurs privilèges, et les tests de non-régression doivent confirmer ces droits à chaque mise à jour. Le fichier [INSTALLER_V1_PRELANCEMENT.sql](supabase/INSTALLER_V1_PRELANCEMENT.sql) est conservé pour les installations futures : **ne pas réexécuter les scripts anciens sans raison**. Les droits d'exécution des fonctions privilégiées sont verrouillés par `supabase/game_v1_security_hardening.sql` et les index de recherche sont présents.
 
 ## Installation mobile et déconnexion
 
@@ -34,12 +34,14 @@ Le manifeste permet d'installer le site comme application web. Le service worker
 
 ## Préparer un véritable lancement
 - [ ] Domaine personnalisé `seriesclub-tcg.fr` acquis, DNS/HTTPS, redirections et URL de retour auth/Stripe configurées.
-- [ ] Vérifier les droits des affiches, logos, marques et conditions d'utilisation des fournisseurs.
+- [x] Première cartographie des licences et images réalisée : [audit juridique V1](AUDIT_JURIDIQUE_ET_LICENCES_V1.md) et [dossier CGU/RGPD à valider](DOSSIER_LEGAL_VALIDATION_V1.md). La base de production référence 81 862 affiches TVmaze, aucune affiche principale TMDB ; les logos de plateformes provenant de TMDB sont masqués en V1 et une page publique « Sources et droits » est accessible.
+- [ ] Obtenir une confirmation écrite TVmaze concernant affiches, photos d'acteurs et usage commercial des cartes ; obtenir une licence TMDB commerciale ou changer de source. Aucun accord implicite n'est revendiqué.
+- [ ] Vérifier la marque, les logos et noms de packs, le domaine et la compatibilité de l'hébergeur commercial (GitHub Pages est inadapté pour la monétisation principale).
 - [ ] Identifier l'éditeur, disposer de mentions légales, politique de confidentialité, CGU, CGV si paiement.
 - [ ] Contrôler RGPD : conservation, droits d'accès/suppression, contacts, sous-traitants, cookies.
 - [x] Premier audit Supabase en production : accès RPC anonymes restreints de 36 à 5, index et politiques RLS optimisés. Vérification continue en CI.
 - [x] Vérification des droits Data API : tables sensibles passées au principe de privilège minimal, avec une migration versionnée.
-- [x] Tests navigateur Chromium enrichis (360/390/1366 px, navigation au clavier, routes publiques et démonstration conditionnelle), déclenchés sur modifications de l'application. Résultat du nouveau workflow à confirmer.
+- [x] Tests navigateur Chromium enrichis (360/390/1366 px, navigation au clavier, routes publiques dont « Sources et droits » et démonstration conditionnelle), déclenchés sur modifications de l'application. Les dernières exécutions sont à retrouver dans GitHub Actions ; ne pas confondre tests Chromium simulés et appareils physiques.
 - [ ] Revue de sécurité indépendante : contrôle des fonctions `SECURITY DEFINER` authentifiées, quotas, modération et abus.
 - [ ] Configurer la protection contre les mots de passe compromis dans Supabase Auth si disponible avec le plan.
 - [ ] Mettre en place un canal de contact et une procédure de suppression des comptes et de leurs données.
