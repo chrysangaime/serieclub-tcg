@@ -117,3 +117,26 @@ html[data-theme] #sc1-trades,html[data-theme] #sc1-market-listings{scroll-margin
   background:#69e7dc!important
  }
 }
+
+
+/* Recette V1 — lisibilité de la synthèse des boosters sur thème clair ET sombre.
+   Les mini-cartes utilisent un fond fixe #292530 : leur texte ne doit jamais
+   hériter de la couleur d'encre sombre de la boîte de dialogue claire. */
+html[data-theme] .opening-dialog .sc7-opening-mini{
+ background:#292530!important;
+}
+html[data-theme] .opening-dialog .sc7-opening-mini b{
+ color:#f5f7ff!important;
+ font-weight:800;
+ text-shadow:none!important;
+}
+html[data-theme] .opening-dialog .sc7-opening-mini span{
+ color:#ffe1a7!important;
+}
+html[data-theme] .opening-dialog .sc7-pack-bonus{
+ color:#755016!important;
+ text-shadow:none!important;
+}
+html[data-theme] .opening-dialog .sc7-pack-bonus>span{
+ color:#576576!important;
+}
