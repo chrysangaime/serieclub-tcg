@@ -20,6 +20,10 @@ Les répertoires `v3/`, `v12/`, `v23/` et les migrations SQL `game_v21_...` sont
 ### Statut des paiements
 Abonnement Premium dans un parcours test/suspendu selon configuration Supabase/Stripe. Vente de crédits contre euros désactivée. L'activation live exige examens réglementaires et juridiques, tests de paiements et de résiliation, conditions contractuelles et identification de l'éditeur.
 
+## Activation des nouveautés de l'accès anticipé
+
+Les nouveaux modules **recyclage sécurisé des doublons** et **codes joueurs du Signal** sont préparés dans GitHub mais ne peuvent pas être activés depuis un site GitHub Pages statique. Après les migrations historiques (notamment V4, V20), exécuter [INSTALLER_V1_PRELANCEMENT.sql](supabase/INSTALLER_V1_PRELANCEMENT.sql) dans le SQL Editor du projet Supabase. La démonstration sans compte fonctionne sans migration. Cette installation ne touche pas aux inventaires existants.
+
 ## Préparer un véritable lancement
 - [ ] Domaine personnalisé `seriesclub-tcg.fr` acquis, DNS/HTTPS, redirections et URL de retour auth/Stripe configurées.
 - [ ] Vérifier les droits des affiches, logos, marques et conditions d'utilisation des fournisseurs.
