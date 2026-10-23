@@ -1,5 +1,5 @@
 /**
- * SériesClubTCG · Saisons officielles et Top 20 du Club 2026.
+ * Epizora TCG · Saisons officielles et Top 20 du Club 2026.
  * Les six défis historiques sont conservés (8 séries).
  * Les six nouveaux Top 20 ont des listes FIXÉES côté PostgreSQL.
  * Jamais de récompense décidée par les données du navigateur.
