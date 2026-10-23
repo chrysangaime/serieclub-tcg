@@ -1,0 +1,35 @@
+name: SVOD France - Movie of the Night (import sous quota)
+on:
+  workflow_dispatch:
+    inputs:
+      max_titles:
+        description: "Nombre de séries pour le lot (1-200, défaut 30)"
+        required: false
+        default: "30"
+      start_at:
+        description: "Décalage dans le catalogue France"
+        required: false
+        default: "0"
+permissions:
+  contents: read
+concurrency:
+  group: streaming-availability-fr-import
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Alimenter le cache privé (TVmaze IMDb → offres FR)
+        env:
+          SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          STREAMING_AVAILABILITY_API_KEY: ${{ secrets.STREAMING_AVAILABILITY_API_KEY }}
+          MAX_TITLES: ${{ inputs.max_titles }}
+          START_AT: ${{ inputs.start_at }}
+        run: node scripts/sync-streaming-availability.mjs
