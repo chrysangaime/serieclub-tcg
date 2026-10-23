@@ -1,4 +1,4 @@
-# SériesClubTCG — V1.0, préparation du lancement
+# Epizora TCG — V1.0, préparation du lancement
 
 ## État du produit
 **Version publique unique : V1.0**. Le projet est actuellement accessible en accès anticipé, **pas officiellement lancé**.
@@ -17,7 +17,7 @@
 - Centre d'opportunités du Comptoir : échanges reçus ou envoyés, dernières annonces correspondant aux souhaits, liens directs vers les sections concernées. Pas de notifications push ni de promesse de disponibilité en temps réel.
 
 ### À ne pas confondre avec une version publique
-Les répertoires `v3/`, `v12/`, `v23/` et les migrations SQL `game_v21_...` sont **historiques et techniques**. Leur renumérotation casserait les imports, migrations et données. Les joueurs voient uniquement **SériesClubTCG V1.0**.
+Les répertoires `v3/`, `v12/`, `v23/` et les migrations SQL `game_v21_...` sont **historiques et techniques**. Leur renumérotation casserait les imports, migrations et données. Les joueurs voient uniquement **Epizora TCG V1.0**.
 
 ### Statut des paiements
 Abonnement Premium dans un parcours test/suspendu selon configuration Supabase/Stripe. Vente de crédits contre euros désactivée. L'activation live exige examens réglementaires et juridiques, tests de paiements et de résiliation, conditions contractuelles et identification de l'éditeur.
