@@ -1,9 +1,10 @@
+import{creditThemeName}from'../v21/credit-packs.js?v=21.0.0';
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 import{storePage}from'../v10/store.js?v=16.0.0';
 import{navigationIcon}from'../v11/icons.js?v=11.0.0';
 import{updatePixelClues}from'../v10/pixel-canvas.js?v=10.2.0';
 import{quizQuestion,newQuiz,answerQuiz,nextQuiz}from'../v6/games.js?v=10.0.0';
-import{openingFrame}from'../v7/booster.js?v=7.0.0';
+import{openingFrame}from'../v7/booster.js?v=21.0.0';
 import{gameModes}from'../v7/arena.js?v=10.1.0';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=8.0.0';
@@ -58,14 +59,15 @@ function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus
 
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',premiere:'premiere',parrainage:'referral',referral:'referral',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',referral:'parrainage',quests:'missions',store:'premium'};
-const state={route:'packs',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',marketWishOnly:false,players:[],peopleFilter:'',peopleError:'',dailyError:'',paymentsMode:'disabled',premiumActive:false,paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,trackedSeasons:[],officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',creditPacks:null,creditPacksError:'',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',marketWishOnly:false,players:[],peopleFilter:'',peopleError:'',dailyError:'',paymentsMode:'disabled',premiumActive:false,paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,trackedSeasons:[],officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu';
-let openingCards=null,openingStep=0;
+let openingCards=null,openingStep=0,openingMeta=null;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
 function toast(msg,error=false){const el=$('toast');el.textContent=msg;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),5200)}
 function safeRoute(){return routes[decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0])||'paquets']||'packs'}
 function loadRouteData(route){
  if(route==='packs'&&!state.homeShows.length)loadHomeShows();
+ if(route==='packs'&&state.creditPacks===null)loadCreditPacks();
  if(route==='catalog'&&state.catalogMode==='series'&&!state.catalog.length)loadCatalog(true);
  if(route==='rankings')loadRankings();
  if(route==='collection'){loadCollectionGoal();if(state.user)loadMySales()}
@@ -804,8 +806,8 @@ async function claimDaily(){
  try{const {data,error}=await supa.rpc('claim_daily_reward');if(error)throw error;toast('Récompense quotidienne : +100 crédits !');await loadSession()}
  catch(e){toast('Récompense : '+e.message,true)}finally{state.busy=false}
 }
-function showOpening(data){
- openingCards=data;openingStep=0;
+function showOpening(data,meta=null){
+ openingCards=data;openingStep=0;openingMeta=meta;
  const overlay=$('overlay');overlay.classList.remove('hidden');
  updateOpening();
 }
@@ -815,7 +817,7 @@ function updateOpening(){
  const overlay=$('overlay');
  overlay.innerHTML='<div class="dialog opening-dialog" role="dialog" aria-modal="true" aria-label="Cartes du paquet">'+
   '<button class="close" data-close aria-label="Fermer">×</button>'+
-  openingFrame(openingCards,openingStep,reduced)+'</div>';
+  openingFrame(openingCards,openingStep,reduced,openingMeta)+'</div>';
  overlay.querySelector('#openingNext,#openingDone')?.focus({preventScroll:true});
 }
 function advanceOpening(skip=false){
@@ -823,6 +825,58 @@ function advanceOpening(skip=false){
  openingStep=skip?openingCards.length+1:Math.min(openingCards.length+1,openingStep+1);
  updateOpening();
 }
+/**
+ * Le serveur seul fournit le prix et autorise la dépense de crédits.
+ * Sans migration Supabase, les quatre boutons restent inactifs.
+ */
+async function loadCreditPacks(){
+ if(state.creditPacks!==null)return;
+ state.creditPacks=[];
+ try{
+  const {data,error}=await supa.rpc('list_credit_boosters');
+  if(error)throw error;
+  state.creditPacks=Array.isArray(data)?data:[];
+  state.creditPacksError='';
+ }catch{
+  state.creditPacks=[];state.creditPacksError='Les boosters par plateforme attendent leur activation.';
+ }
+ if(state.route==='packs')render();
+}
+function confirmCreditPack(key){
+ if(!state.user){openAuth();return}
+ const offer=state.creditPacks?.find(x=>x.pack_key===key&&x.available===true);
+ const cost=Number(offer?.price_credits);
+ if(!offer||!Number.isInteger(cost)||cost<=0){toast('Ce booster est indisponible.',true);return}
+ if(Number(state.wallet?.credits||0)<cost){toast('Crédits insuffisants.',true);return}
+ const after=Number(state.wallet?.credits||0)-cost;
+ const modal=$('overlay');modal.classList.remove('hidden');
+ modal.innerHTML='<div class="dialog sc21-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="creditTitle">'+
+ '<button class="close" type="button" data-close aria-label="Fermer">×</button>'+
+ '<span class="caps">BOOSTER TV/SVOD · FRANCE</span><h2 id="creditTitle">'+esc(creditThemeName(key))+'</h2>'+
+ '<p>Ouvrir cinq cartes de séries de cette plateforme ? La rareté officielle reste inchangée et la réserve de paquets gratuits n’est pas consommée.</p>'+
+ '<p><strong>Prix : '+cost+' crédits</strong> · Nouveau solde estimé : '+after+' crédits.</p>'+
+ '<p>Achat définitif en monnaie du jeu, sans paiement bancaire.</p>'+
+ '<div class="sc21-confirm-actions"><button class="btn subtle" type="button" data-close>Annuler</button>'+
+ '<button class="btn primary" type="button" data-confirm-credit-pack="'+key+'">Confirmer l’ouverture →</button></div></div>';
+}
+async function buyCreditPack(key){
+ if(!state.user){openAuth();return}
+ if(state.busy)return;
+ const offer=state.creditPacks?.find(x=>x.pack_key===key&&x.available===true);
+ if(!offer){toast('Booster non disponible.',true);return}
+ state.busy=true;
+ const btn=document.querySelector('[data-confirm-credit-pack]');
+ if(btn){btn.disabled=true;btn.textContent='Attribution des cartes…'}
+ try{
+  const {data,error}=await supa.rpc('buy_credit_booster',{p_pack_key:key});
+  if(error)throw error;
+  if(!Array.isArray(data)||data.length!==5)throw Error('Le serveur n’a pas retourné cinq cartes.');
+  showOpening(data,{kind:'credit',price:Number(offer.price_credits),label:creditThemeName(key)});
+  await loadSession();
+ }catch(e){toast('Achat non effectué : '+e.message,true);closeModal();render()}
+ finally{state.busy=false}
+}
+
 async function openPack(){
  if(!state.user){openAuth();return}
  if(state.busy)return;
@@ -907,7 +961,7 @@ async function authenticate(register){
  if(register&&!result.data.session){$('authFeedback').textContent='Inscription enregistrée. Vérifie ton e-mail pour confirmer le compte.';return}
  $('overlay').classList.add('hidden');await loadSession();toast('Bienvenue dans le club !')
 }
-function closeModal(){detailRequestId++;openingCards=null;openingStep=0;const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
+function closeModal(){detailRequestId++;openingCards=null;openingStep=0;openingMeta=null;const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
 function exportCollection(){
  if(!state.user||!state.cards.length){toast('Aucune carte à exporter.',true);return}
  const csv=collectionCSV(state.cards,state.wishes,state.marketActivity);
@@ -1259,6 +1313,8 @@ function globalClick(e){
  const follow=e.target.closest('[data-follow]');if(follow){toggleFollow(follow.dataset.follow);return}
  const claim=e.target.closest('[data-claim-quest]');if(claim){claimQuest(claim.dataset.claimQuest);return}
  const pack=e.target.closest('[data-pack]');if(pack){if(pack.disabled)return;state.pack=pack.dataset.pack;render();document.getElementById('svod-packs')?.scrollIntoView({block:'start',behavior:'auto'});return}
+ const themePack=e.target.closest('[data-credit-pack]');if(themePack){if(!themePack.disabled)confirmCreditPack(themePack.dataset.creditPack);return}
+ const purchase=e.target.closest('[data-confirm-credit-pack]');if(purchase){buyCreditPack(purchase.dataset.confirmCreditPack);return}
  if(e.target.closest('#openPack')){openPack();return}
  if(e.target.closest('[data-daily]')){claimDaily();return}
  if(e.target.closest('#openingNext')){advanceOpening();return}
@@ -1419,6 +1475,6 @@ $('overlay').addEventListener('click',e=>{
  if(e.target===$('overlay'))closeModal();
 });
 supa.auth.onAuthStateChange(()=>setTimeout(loadSession,75));
-state.route=safeRoute();render();loadSession();if(state.route==='catalog')loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();if(state.route==='packs')loadHomeShows();
+state.route=safeRoute();render();loadCreditPacks();loadSession();if(state.route==='catalog')loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();if(state.route==='packs')loadHomeShows();
 clockTimer=setInterval(()=>{if(state.stock&&state.stock.stock<10){if(state.stock.recharge_seconds>0)state.stock.recharge_seconds-=1;else{state.stock.stock=Math.min(10,state.stock.stock+1);state.stock.recharge_seconds=state.stock.stock===10?0:600}
  const t=$('packTimer');if(t)t.textContent=state.stock.stock===10?'Réserve pleine':'Prochain paquet dans '+timecode(state.stock.recharge_seconds)}},1000);
