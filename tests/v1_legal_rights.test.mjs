@@ -17,7 +17,8 @@ test('La V1 dispose des crédits officiels et n’annonce pas de licence acquise
  assert.match(html,/This product uses the TMDB API but is not endorsed or certified by TMDB\./);
  assert.match(html,/www\.themoviedb\.org/);
  assert.match(html,/sans transfert de leur propriété/);
- assert.match(html,/un contact direct professionnel.*reste à publier/);
+ assert.match(html,/contact direct professionnel et confidentiel reste à publier/);
+ assert.match(html,/issues\/new\?template=signalement-droits\.yml/);
  assert.match(html,/ne constitue ni une autorisation/);
  assert.match(aboutPage(),/This product uses the TMDB API/);
  assert.match(legalPage(),/data-route="rights"/);
