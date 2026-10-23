@@ -31,3 +31,8 @@ button.sc-season-cast-actor{cursor:pointer}
 .sc-season-cast-actor img{width:34px;height:42px;object-fit:cover;border-radius:6px;flex:none}
 .sc-season-cast-actor span{min-width:0;overflow-wrap:anywhere}
 .sc-season-cast-actor small{display:block;font-size:.65rem;color:var(--muted,#a9b6c7);margin-top:2px}
+
+/* La saison reste identifiable même quand TVmaze n'a qu'une affiche de série. */
+.sc53-poster-wrap,.sc52-group-poster{position:relative}
+.sc-season-card-badge{position:absolute;top:7px;right:7px;z-index:3;display:inline-flex;align-items:center;justify-content:center;min-width:29px;max-width:65%;padding:4px 6px;border:1px solid rgba(255,255,255,.42);border-radius:7px;background:rgba(7,28,48,.9);box-shadow:0 3px 12px rgba(0,0,0,.25);color:#f1fdff;font-size:.69rem;font-weight:850;letter-spacing:.02em;line-height:1.1}
+@media(max-width:690px){.sc-season-card-badge{top:5px;right:5px;min-width:24px;padding:3px 5px;font-size:.63rem}}
