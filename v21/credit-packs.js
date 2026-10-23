@@ -20,5 +20,5 @@ export function creditThemeShelf(s={}){
   '<div class="sc21-shop-info"><h3>'+html(t.name)+'</h3><p>'+html(t.note)+'</p><strong>5 séries <span>· 7 raretés</span></strong></div>'+
   '<div class="sc21-shop-actions"><b>'+(cost?cost+' ◇':'Bientôt')+'</b><button type="button" data-credit-pack="'+t.key+'"'+(allowed?'':' disabled')+'>'+html(action)+' →</button></div>'+
   (date?'<small class="sc21-shop-proof">Offres France relevées le '+html(date)+'</small>':'')+'</article>';
- }).join('')+'</div><p class="sc21-shop-legal">Sélections indépendantes, sans partenariat avec les plateformes. Les crédits ne sont pas vendus contre des euros.</p></section>';
+ }).join('')+'</div><p class="sc21-shop-legal">Sélections indépendantes, sans partenariat avec les plateformes. Source des offres : TMDB / JustWatch (France). Les crédits ne sont pas vendus contre des euros.</p></section>';
 }
