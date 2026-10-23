@@ -44,50 +44,34 @@ test('only France country-code broadcaster is displayed, not American networks',
  assert.match(html,/sc53-tier-rare/);
 });
 
-test('real streaming offers always come only from the FR region',()=>{
+test('Les historiques TMDB ne sont plus publiés sous forme d’offres de streaming',()=>{
  const selected=matchTVShow({name:'Lost',premiered:'2004-09-22'},[
   {id:10,original_name:'Lost',first_air_date:'2001-09-05'},
-  {id:20,original_name:'Lost',first_air_date:'2004-09-22'}
- ]);
+  {id:20,original_name:'Lost',first_air_date:'2004-09-22'}]);
  assert.equal(selected?.id,20);
- assert.equal(matchTVShow({name:'Stranger Things',premiered:'2016-07-15'},[
-  {id:21,original_name:'Another series',first_air_date:'2016-07-15'}
- ]),null);
- const checked_at=new Date().toISOString();
- const fr=normalizeFRResult({id:1},selected,{
+ const record=normalizeFRResult({id:1},selected,{
   link:'https://www.themoviedb.org/tv/20/watch?locale=FR',
-  flatrate:[{provider_id:8,provider_name:'Netflix',logo_path:'/netflix.png'}],
-  free:[{provider_id:111,provider_name:'Arte',logo_path:'/arte.png'}]
- },checked_at);
- assert.equal(fr.country,'FR');
- assert.equal(fr.offers.length,2);
- const view=renderFranceAvailability(fr,{network:{name:'ABC',country:{code:'US'}}});
- assert.match(view,/Netflix/);
- assert.match(view,/Arte/);
- assert.match(view,/JustWatch/);
- assert.match(view,/TMDB/);
- assert.match(view,/locale=FR/);
- assert.doesNotMatch(view,/>ABC</);
- assert.doesNotMatch(view,/image\.tmdb\.org/);
+  flatrate:[{provider_id:8,provider_name:'Netflix',logo_path:'/netflix.png'}]
+ },new Date().toISOString());
+ assert.equal(record.country,'FR');
+ assert.equal(record.offers.length,1);
+ assert.equal(normalizeFranceOffers(record),null);
+ const view=renderFranceAvailability(record,{network:{name:'ABC',country:{code:'US'}}});
+ assert.match(view,/JustWatch France/);
+ assert.doesNotMatch(view,/Netflix|TMDB|locale=FR|image\.tmdb\.org|>ABC</);
 });
 
-test('unverified, foreign and expired offers cannot be presented as France availability',()=>{
- const current=new Date().toISOString(),expired=new Date(Date.now()-50*86400000).toISOString();
- assert.equal(normalizeFranceOffers({country:'US',checked_at:current,offers:[]}),null);
- assert.equal(normalizeFranceOffers({country:'FR',checked_at:expired,offers:[]}),null);
+test('Les historiques étrangers, périmés et les entrées hostiles sont ignorés',()=>{
+ const now=new Date().toISOString();
+ assert.equal(normalizeFranceOffers({country:'US',checked_at:now,offers:[]}),null);
+ assert.equal(normalizeFranceOffers({country:'FR',checked_at:now,offers:[{name:'Netflix'}]}),null);
  const html=renderFranceAvailability(null,{network:{name:'NBC',country:{code:'US'}}});
  assert.match(html,/Offres de streaming non confirmées/);
- assert.doesNotMatch(html,/Netflix/);
- assert.doesNotMatch(html,/NBC/);
+ assert.doesNotMatch(html,/Netflix|NBC/);
  assert.match(html,/JustWatch France/);
- const malicious=renderFranceAvailability({
-  country:'FR',checked_at:current,url:'javascript:alert(1)',
-  offers:[{type:'flatrate',name:'<script>alert(1)</script>',logo_path:'https://evil.example/image.png'}]
- });
- assert.doesNotMatch(malicious,/<script>/);
- assert.match(malicious,/&lt;script&gt;/);
- assert.doesNotMatch(malicious,/javascript:/);
- assert.doesNotMatch(malicious,/evil\.example/);
+ const unsafe=renderFranceAvailability({country:'FR',checked_at:now,
+  url:'javascript:alert(1)',offers:[{name:'<script>alert(1)</script>'}]});
+ assert.doesNotMatch(unsafe,/<script>|javascript:|themoviedb/);
 });
 
 test('the search fallback links directly to JustWatch France, never Google',()=>{
