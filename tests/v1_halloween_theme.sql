@@ -7,7 +7,7 @@ INSERT INTO public.series(
  fr_verification_method,fr_evidence_url,fr_verified_at,
  popularity_weight,rating_average
 )
-SELECT 980000+g, 'Horreur du Club '+g,
+SELECT 980000+g, 'Horreur du Club '||g,
  DATE '2020-10-01',
  CASE WHEN g<=8 THEN ARRAY['Horror','Mystery']::text[]
       ELSE ARRAY['Supernatural','Thriller']::text[] END,
