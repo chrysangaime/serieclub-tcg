@@ -299,3 +299,11 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_privacy_and_reports.sql
       - name: Tester droit à l'export, suppression possible et confidentialité des signalements
         run: psql -v ON_ERROR_STOP=1 -f tests/v1_privacy_reports.sql
+      - name: Installer le recours traçable de fermeture de compte
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_account_requests.sql
+      - name: Tester le recours et la confidentialité sans effacer de compte
+        run: psql -v ON_ERROR_STOP=1 -f tests/v1_account_requests.sql
+      - name: Réduire les privilèges directs de la Data API
+        run: psql -v ON_ERROR_STOP=1 -f supabase/game_v1_least_privilege.sql
+      - name: Tester les privilèges, l'isolation RLS et les soldes
+        run: psql -v ON_ERROR_STOP=1 -f tests/v1_least_privilege.sql
