@@ -16,14 +16,15 @@ Dernière vérification technique : **23 octobre 2026**. Ceci est un constat d'i
 - [x] Tests automatisés JavaScript et PostgreSQL dans GitHub Actions.
 - [x] Matrice des privilèges SQL rationalisée en production le 23/10/2026 : catalogue et vues en lecture seule, cartes et portefeuille en lecture personnelle, souhaits modifiables uniquement par le propriétaire selon RLS ; migration `game_v1_least_privilege.sql` et requête de vérification effectuées.
 - [x] Navigation clavier des fenêtres modales renforcée (Tab / Maj+Tab / Échap, restitution du focus).
-- [x] Recette Chromium étendue à trois écrans (360 px, 390 px, 1366 px), sept parcours, jours/nuits, débordements et démonstration lorsqu'elle est disponible. Déclenchement CI sur changements applicatifs et pull requests ; **résultat de ce nouveau workflow encore à confirmer**.
+- [x] Recette Chromium étendue à trois écrans (360 px, 390 px, 1366 px), thèmes, navigation, huit parcours dont « Sources et droits », et contrôles de contraste. Déclenchement CI sur modifications de l'application et pull requests. Résultats par commit consultables dans GitHub Actions.
 
 ## Pas encore certifié — critères BLOQUANTS avant lancement commercial
 - [ ] **Recette vraie vie** Android, iOS et ordinateur avec comptes de test : inscription, login, rafraîchissement, attribution de cartes, doublons, échanges, profils, mode jour et nuit, installation de l'application.
-- [ ] **Droits des œuvres et de la marque :** conditions de réutilisation des affiches et images ; statut de la marque SériesClubTCG et confusion éventuelle avec « Série Club ».
+- [x] **Audit juridique initial et inventaire des médias :** 81 862 liens d'affiches TVmaze, 0 affiche principale TMDB ; crédits TVmaze/CC BY-SA et avis TMDB ajoutés ; logos SVOD issus du CDN TMDB masqués ; nouvelle page « Sources et droits » et formulaire de signalement via GitHub (public, nécessite compte GitHub, pas de compte joueur). Voir [audit juridique](AUDIT_JURIDIQUE_ET_LICENCES_V1.md) et [projet CGU/RGPD](DOSSIER_LEGAL_VALIDATION_V1.md).
+- [ ] **Autorisations et marque :** confirmation écrite TVmaze couvrant les affiches dans un jeu monétisé et ses promotions ; licence commerciale TMDB ou substitution, logo TMDB officiellement approuvé si conservé ; antériorités SériesClubTCG et confusion possible avec « Série Club » ; droits des acteurs et des fournisseurs.
 - [ ] **Mentions légales et RGPD :** identité et contact de l'éditeur, politique de confidentialité, conservation, export, procédure effective de suppression des comptes et gestion des signalements.
 - [ ] **Sécurité :** revue manuelle des RPC accessibles aux comptes authentifiés ; suivi des abus et activation de la protection contre les mots de passe compromis selon le plan Supabase.
-- [ ] **Domaine personnalisé :** propriété du domaine, DNS, HTTPS, liens d'authentification et retours d'URL correctement configurés.
+- [ ] **Hébergement commercial et domaine :** GitHub Pages n'autorise pas l'hébergement principal d'un commerce en ligne ; choisir et valider un hébergeur commercial adapté. Domaine personnalisé : propriété du domaine, DNS, HTTPS, liens d'authentification et retours d'URL correctement configurés.
 - [ ] **Paiements :** validation juridique du jeu aléatoire avec cartes échangeables, prix/cadre fiscal, CGV, remboursement/résiliation, webhook Stripe, tests en mode sandbox puis revue avant activation réelle.
 - [ ] **Accessibilité et performance :** tests lecteurs d'écran/clavier, très petits écrans, lenteur réseau, performances des images et du catalogue.
 - [ ] **Politique de modération** avant messagerie, enchères ou notifications externes.
