@@ -16,9 +16,9 @@ test('un filtre de recherche affiche son propre nombre de résultats plutôt que
  assert.match(html,/12 séries éligibles en France/);
  assert.match(html,/value="archives"/);
 });
-test('le navigateur récupère le dernier cache des diffuseurs France sans exposer de token TMDB',()=>{
+test('le navigateur ne charge plus de cache de diffuseurs TMDB ni de token',()=>{
  const src=fs.readFileSync('v5/fr-watch.js','utf8');
- assert.match(src,/searchParams\.set\('hour'/);
+ assert.doesNotMatch(src,/watch-fr\.json|fetch\(/);
  assert.doesNotMatch(src,/TMDB_READ_ACCESS_TOKEN/);
- assert.match(fs.readFileSync('index.html','utf8'),/v5\/fr-watch\.js\?v=6\.1\.1/);
+ assert.match(fs.readFileSync('index.html','utf8'),/v5\/fr-watch\.js\?v=7\.0\.0/);
 });
