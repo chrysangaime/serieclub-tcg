@@ -1,0 +1,28 @@
+name: Disponibilités France sans TMDB (quota plafonné)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '12 5 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: licensed-french-streaming-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Synchroniser les offres sous licence commerciale publique (si clé configurée)
+        env:
+          SUPABASE_URL: https://anjfidksqbqlaggttdop.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          STREAMING_AVAILABILITY_API_KEY: ${{ secrets.STREAMING_AVAILABILITY_API_KEY }}
+          DAILY_LIMIT: '6'
+          MONTHLY_LIMIT: '180'
+        run: node scripts/sync-independent-streaming.mjs
