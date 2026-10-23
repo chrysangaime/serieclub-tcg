@@ -4,6 +4,13 @@
  * Ne suppose jamais une offre sur la seule base de la diffusion historique.
  */
 const ROOT='https://www.justwatch.com/fr';
+/** V1.0 pré-lancement : les logos de distributeurs distribués via TMDB
+ * ne sont pas réutilisés tant que les autorisations sont absentes.
+ * Les dénominations textuelles et les liens vers les offres restent actifs.
+ * Voir AUDIT_JURIDIQUE_ET_LICENCES_V1.md.
+ */
+export const platformLogoUsageApproved=false;
+
 const cache={promise:null};
 const ESC={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>ESC[c]);
@@ -78,7 +85,7 @@ export function normalizeFranceOffers(record){
  const offers=record.offers.filter(o=>ALLOWED.has(o.type)&&
     typeof o.name==='string'&&o.name.length>0&&o.name.length<=65)
   .slice(0,30).map(o=>({
-    type:o.type,name:o.name,logo:safeTMDBLogo(o.logo_path),
+    type:o.type,name:o.name,logo:platformLogoUsageApproved?safeTMDBLogo(o.logo_path):null,
     id:Number(o.provider_id)||0,url:safeProviderLink(o.provider_url,o.name)
   }));
  return {
