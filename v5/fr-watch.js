@@ -53,19 +53,22 @@ export function normalizeFranceOffers(record){
 export async function getFrenchOffersByShow(tvmazeId){
  const id=Number(tvmazeId);
  if(!Number.isSafeInteger(id)||id<1||id>99999999)return null;
- if(!cache.has(id)){
+ const memo=cache.get(id);
+ if(!memo||memo.expires<=Date.now()){
   const u=new URL(GATEWAY);
   u.searchParams.set('series_id',String(id));
   const signal=typeof AbortSignal!=='undefined'&&typeof AbortSignal.timeout==='function'
-   ?AbortSignal.timeout(3500):undefined;
+   ?AbortSignal.timeout(7000):undefined;
   const p=fetch(u,{headers:{Accept:'application/json'},signal})
    .then(async r=>r.ok?await r.json():null)
    .then(r=>normalizeFranceOffers(r)?r:null)
    .catch(()=>null);
-  cache.set(id,p);
+  const entry={promise:p,expires:Date.now()+60000};
+  cache.set(id,entry);
+  p.then(data=>{if(cache.get(id)===entry)entry.expires=Date.now()+(data?300000:60000)});
   if(cache.size>120)cache.delete(cache.keys().next().value);
  }
- return await cache.get(id);
+ return await cache.get(id).promise;
 }
 const serviceLink=o=>
  '<a class="sc56-provider sc56-brand-'+esc(o.id)+'" href="'+esc(o.url)+'"'+
@@ -100,7 +103,7 @@ export function renderFranceAvailability(record=null,show={}){
  return '<section class="sc56-where" aria-label="Consulter les offres en France">'+
   '<div class="sc56-main"><strong class="sc56-label">'+label+'</strong>'+main+'</div>'+
   secondaries+'<div class="sc56-foot"><span>'+esc(proof)+'</span>'+
-  '<a href="'+ROOT+'" target="_blank" rel="noopener noreferrer">Vérifier sur JustWatch France ↗</a>'+
+  (data?'':'<a href="'+ROOT+'" target="_blank" rel="noopener noreferrer">Vérifier sur JustWatch France ↗</a>')+
   originNote+'</div></section>';
 }
 export function justwatchFranceUrl(){return ROOT;}
