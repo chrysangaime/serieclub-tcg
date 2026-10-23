@@ -6,7 +6,7 @@ test('Les trois boosters ont un vrai logo TV original, pas des carrés génériq
  const h=svodHome({pack:'classic',homeShows:[],seasonShows:[],wallet:{credits:1000},stock:{stock:10,maximum:10}}, {timecode:x=>x});
  for(const cls of ['sc22-booster-brand','sc22-booster-center','sc22-booster-footer','sc22-booster--original','sc22-booster--halloween','sc22-booster--premium'])
   assert.ok(h.includes(cls),cls);
- assert.match(h,/EPI<em>ZORA<\/em>/);
+ assert.match(h,/SÉRIES<em>CLUB<\/em>/);
  assert.match(h,/data-pack="classic"/);
  assert.match(h,/data-pack="halloween"/);
 });
