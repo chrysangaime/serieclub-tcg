@@ -10,7 +10,7 @@ test('La page déployée charge réellement le composant V23 (sans cache de V18)
  assert.match(app,/\.\/views\.js\?v=1\.0\.0/);
  assert.match(views,/v12\/home\.js\?v=1\.0\.0&build=10/);
  assert.match(app,/v7\/booster\.js\?v=1\.0\.0&build=9/);
- assert.match(index,/v3\/views\.js\?v=1\.0\.0&build=14/);
+ assert.match(index,/v3\/views\.js\?v=1\.0\.0&build=15/);
  assert.doesNotMatch(views,/v12\/home\.js\?v=18\.0\.0/);
 });
 test('Les libellés ne recouvrent plus les pochettes',()=>{
