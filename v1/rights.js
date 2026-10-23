@@ -1,4 +1,4 @@
-/** Epizora TCG V1.0 — crédits vérifiables et limites des droits avant lancement.
+/** SériesClubTCG V1.0 — crédits vérifiables et limites des droits avant lancement.
  * Ne transforme jamais une attribution en licence de reproduction.
  */
 export function rightsPage(){
@@ -7,7 +7,7 @@ export function rightsPage(){
  '<h1>Sources, affiches et marques.</h1>'+
  '<p>Informations sur les ressources extérieures présentées dans ce jeu indépendant en cours de préparation.</p></header>'+
  '<section class="panel"><h2>Affiches de séries et données TVmaze</h2>'+
- '<p>Les informations de base des séries et les affiches associées proviennent principalement de <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVmaze</a>. Les images sont affichées par lien vers son CDN, sans transfert de leur propriété à Epizora TCG.</p>'+
+ '<p>Les informations de base des séries et les affiches associées proviennent principalement de <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVmaze</a>. Les images sont affichées par lien vers son CDN, sans transfert de leur propriété à SériesClubTCG.</p>'+
  '<p>TVmaze distribue les données de son API sous licence <a href="https://www.tvmaze.com/api" target="_blank" rel="noopener noreferrer">CC BY-SA, avec attribution et partage dans les mêmes conditions lorsque celles-ci sont applicables</a>. Les fiches détaillées permettent de rejoindre la source TVmaze de chaque série. Les œuvres représentées sur les affiches et les photographies conservent les droits de leurs titulaires ; la licence des données ne doit pas être interprétée comme une licence universelle sur les visuels.</p>'+
  '<h2>TMDB et informations de diffusion</h2>'+
  '<p>Une partie des informations de disponibilité en France peut être enrichie à partir de <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">TMDB (The Movie Database)</a>, notamment des données de fournisseurs de diffusion. Les offres ne sont pas garanties en temps réel et portent leur date de vérification.</p>'+
@@ -18,7 +18,7 @@ export function rightsPage(){
  '<p>Les logos de fournisseurs présents dans certaines réponses TMDB ne sont pas affichés dans cette V1 de préparation. Les noms et les liens des plateformes restent consultables en texte.</p>'+
  '<h2>Droits et signalements</h2>'+
  '<p>Les graphismes originaux du jeu sont distincts des photographies et affiches de séries. Une capture, une attribution, un lien direct vers le CDN ou une mention de source ne remplacent pas l’accord éventuellement requis des ayants droit.</p>'+
- '<p>Si vous représentez un titulaire de droits, identifiez la série, le visuel ou l’URL concernée. Les joueurs connectés peuvent utiliser « Signaler une erreur ou un visuel » dans les fiches. Sans compte Epizora TCG, un formulaire GitHub public est également proposé : sa publication nécessite un compte GitHub et son contenu est visible de tous. N’y inscrivez aucune donnée personnelle ou pièce confidentielle. Un contact direct professionnel et confidentiel reste à publier avant l’ouverture officielle.</p>'+
+ '<p>Si vous représentez un titulaire de droits, identifiez la série, le visuel ou l’URL concernée. Les joueurs connectés peuvent utiliser « Signaler une erreur ou un visuel » dans les fiches. Sans compte SériesClubTCG, un formulaire GitHub public est également proposé : sa publication nécessite un compte GitHub et son contenu est visible de tous. N’y inscrivez aucune donnée personnelle ou pièce confidentielle. Un contact direct professionnel et confidentiel reste à publier avant l’ouverture officielle.</p>'+
  '<p><a href="https://github.com/chrysangaime/serieclub-tcg/issues/new?template=signalement-droits.yml" rel="noopener noreferrer" target="_blank">Signaler publiquement des droits sur une image ou marque via GitHub ↗</a></p>'+
  '<div class="sc1-rights-actions"><button class="btn primary" type="button" data-route="support">Assistance et signalements →</button><button class="btn subtle" type="button" data-route="legal">Mentions légales →</button></div></section>'+
  '<p class="sc1-rights-note">V1.0 en préparation. Cette page répertorie les sources et les limites connues ; elle ne constitue ni une autorisation des ayants droit ni une attestation de conformité pour une exploitation commerciale.</p></div>';
