@@ -13,6 +13,7 @@
 - Démonstration de booster sans inscription (aucune attribution réelle).
 - Recyclage groupé sécurisé de doublons contre crédits virtuels, **après activation de la migration SQL `game_v1_bulk_recycling.sql`**. Jusqu'à l'activation, les actions sont désactivées.
 - Codes joueurs du Signal : partage de pseudonymes et abonnements via code non secret de 10 caractères, **après activation de `game_v1_invite_codes.sql`**. Pas de messagerie privée.
+- Centre d'opportunités du Comptoir : échanges reçus ou envoyés, dernières annonces correspondant aux souhaits, liens directs vers les sections concernées. Pas de notifications push ni de promesse de disponibilité en temps réel.
 
 ### À ne pas confondre avec une version publique
 Les répertoires `v3/`, `v12/`, `v23/` et les migrations SQL `game_v21_...` sont **historiques et techniques**. Leur renumérotation casserait les imports, migrations et données. Les joueurs voient uniquement **SériesClubTCG V1.0**.
