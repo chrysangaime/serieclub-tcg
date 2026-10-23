@@ -1,0 +1,33 @@
+/* V21 : galerie de boosters compacts, défilement horizontal mobile. */
+html[data-theme] .sc21-shop{margin:28px 0 3px;padding:25px 0 15px;border-top:1px solid var(--tv-line)}
+html[data-theme] .sc21-shop-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:17px}
+html[data-theme] .sc21-shop-head h2{font:900 clamp(25px,3vw,37px)/1.15 'DM Sans',sans-serif!important;letter-spacing:-.055em;color:var(--tv-text)!important;margin:6px 0}
+html[data-theme] .sc21-shop-head p{font-size:12px!important;color:var(--tv-sub)}
+html[data-theme] .sc21-shop-head>span{font-size:12px;font-weight:900;white-space:nowrap;color:var(--tv-highlight)}
+html[data-theme] .sc21-shop-rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+html[data-theme] .sc21-shop-item{--accent:#61aebc;position:relative;display:flex;flex-direction:column;gap:9px;min-width:0;min-height:216px;padding:16px;overflow:hidden;border-radius:17px;background:var(--tv-surface);border:1px solid var(--tv-line)}
+html[data-theme] .sc21-red{--accent:#da4258}.sc21-blue{--accent:#329ddb}.sc21-violet{--accent:#a09af5}.sc21-teal{--accent:#57cabc}
+html[data-theme] .sc21-shop-item:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--accent)}
+html[data-theme] .sc21-shop-art{display:flex;justify-content:space-between;align-items:center;gap:5px}
+html[data-theme] .sc21-shop-logo{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;font-size:19px;font-weight:950;background:var(--tv-elevated);color:var(--accent)}
+html[data-theme] .sc21-shop-art small{font-size:9px;letter-spacing:.10em;font-weight:850;color:var(--tv-sub)}
+html[data-theme] .sc21-shop-info{flex:1}
+html[data-theme] .sc21-shop-info h3{font-size:21px!important;color:var(--tv-text)!important;line-height:1.2;margin:8px 0 4px}
+html[data-theme] .sc21-shop-info p{font-size:11px!important;color:var(--tv-sub)!important;margin:0 0 9px}
+html[data-theme] .sc21-shop-info strong{font-size:11px;color:var(--tv-text)}
+html[data-theme] .sc21-shop-info strong span{font-weight:450;color:var(--tv-sub)}
+html[data-theme] .sc21-shop-actions{display:grid;gap:8px}
+html[data-theme] .sc21-shop-actions b{font-size:18px;color:var(--tv-highlight)}
+html[data-theme] .sc21-shop-actions button{min-height:40px;border-radius:10px;border:1px solid var(--accent);background:var(--tv-elevated);color:var(--tv-text);font-weight:800;font-size:11px;cursor:pointer}
+html[data-theme] .sc21-shop-actions button:disabled{cursor:not-allowed;opacity:.6;border-color:var(--tv-line)}
+html[data-theme] .sc21-shop-proof,.sc21-shop-legal{font-size:10px!important;line-height:1.55;color:var(--tv-sub)!important}
+html[data-theme] .sc21-shop-legal{margin-top:12px!important}
+html[data-theme] .sc21-confirm-dialog{background:var(--tv-surface)!important;border-color:var(--tv-line)!important;max-width:440px;width:min(94vw,440px)}
+html[data-theme] .sc21-confirm-dialog h2{font-size:28px;color:var(--tv-text)!important}
+html[data-theme] .sc21-confirm-dialog p{color:var(--tv-sub);line-height:1.6}
+html[data-theme] .sc21-confirm-actions{display:flex;justify-content:end;gap:12px}
+@media(max-width:860px){html[data-theme] .sc21-shop-rail{grid-auto-flow:column;grid-auto-columns:minmax(180px,55%);grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding:2px 12px 13px 2px;scrollbar-width:thin}html[data-theme] .sc21-shop-item{scroll-snap-align:start;min-height:205px;padding:14px}}
+@media(max-width:520px){html[data-theme] .sc21-shop-head{align-items:flex-start;flex-direction:column}html[data-theme] .sc21-shop-rail{grid-auto-columns:minmax(175px,73%)}html[data-theme] .sc21-confirm-actions{flex-direction:column}html[data-theme] .sc21-confirm-actions button{width:100%}
+html[data-theme] #topbar .sc10-theme-toggle{box-sizing:border-box!important;min-width:44px!important;max-width:44px!important;width:44px!important;height:44px!important;padding:0!important;display:grid!important;place-items:center!important;white-space:nowrap!important;font-size:0!important;line-height:1!important;overflow:hidden!important}
+html[data-theme] #topbar .sc10-theme-toggle:before{content:"☾";font-size:22px;line-height:1}
+html[data-theme="day"] #topbar .sc10-theme-toggle:before{content:"☀"}}
