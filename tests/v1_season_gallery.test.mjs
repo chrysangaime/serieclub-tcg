@@ -23,7 +23,7 @@ test('Saisons distinctes : deux affiches et intrigues différentes, saison 1 ava
  assert.match(html,/La première enquête/);
  assert.match(html,/Une autre enquête/);
  assert.ok(html.indexOf('Saison 1')<html.indexOf('Saison 2'));
- assert.match(html,/Distribution générale/);
+ assert.match(html,/distribution générale/i);
  assert.doesNotMatch(html,/themoviedb|image\.tmdb/);
 });
 test('Un poster hostile, une saison zéro ou une légende injectée ne passent pas',()=>{
