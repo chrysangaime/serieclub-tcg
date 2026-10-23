@@ -1,7 +1,7 @@
 {
   "name": "SériesClubTCG — Le club des séries",
   "short_name": "SériesClubTCG",
-  "description": "Le TCG gratuit des séries : collection, boosters, événements saisonniers et défis.",
+  "description": "SériesClubTCG V1.0 : cartes, Saisons et défis. Projet en préparation avant lancement.",
   "start_url": "./index.html#/paquets",
   "scope": "./",
   "display": "standalone",
