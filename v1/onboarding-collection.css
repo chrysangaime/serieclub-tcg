@@ -50,3 +50,28 @@ html[data-theme] .sc1-code-controls button{font-size:11px;min-height:42px;white-
 html[data-theme] .sc1-invites>small{grid-column:1/-1;color:var(--tv-sub);font-size:10px;line-height:1.5}
 @media(max-width:800px){html[data-theme] .sc1-invites{grid-template-columns:1fr;padding:14px}html[data-theme] .sc1-invites>div:first-child,html[data-theme] .sc1-invites>small{grid-column:1}}
 @media(max-width:420px){html[data-theme] .sc1-code-controls{flex-wrap:wrap}html[data-theme] .sc1-code-controls button{width:100%}}
+
+/* Centre d'opportunités du Comptoir : lisible et non intrusif. */
+html[data-theme] .sc1-opportunities{border:1px solid var(--tv-line);border-radius:17px;background:var(--tv-elevated);padding:20px;margin:18px 0 24px;scroll-margin-top:75px}
+html[data-theme] .sc1-opportunities-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}
+html[data-theme] .sc1-opportunities-head h2{font-size:24px!important;line-height:1.18!important;color:var(--tv-text)!important;letter-spacing:-.035em!important;margin:6px 0!important}
+html[data-theme] .sc1-opportunities-head p{color:var(--tv-sub)!important;font-size:12px!important;line-height:1.5!important;margin:4px 0!important;max-width:66ch}
+html[data-theme] .sc1-opportunities-count{flex-shrink:0;border:1px solid var(--tv-line);border-radius:99px;padding:7px 11px;font-size:11px;font-weight:850;color:var(--tv-text)}
+html[data-theme] .sc1-opportunities-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+html[data-theme] .sc1-opportunities-grid article{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;background:var(--tv-surface);border:1px solid var(--tv-line);border-radius:13px;padding:15px}
+html[data-theme] .sc1-opportunities-stat{display:flex;align-items:center;gap:10px;color:var(--tv-highlight)}
+html[data-theme] .sc1-opportunities-stat span{display:grid;place-items:center;width:31px;height:31px;border-radius:9px;background:var(--tv-elevated);font-size:18px}
+html[data-theme] .sc1-opportunities-stat strong{font-size:23px}
+html[data-theme] .sc1-opportunities-grid h3{font-size:14px!important;color:var(--tv-text)!important;margin:2px 0 0!important}
+html[data-theme] .sc1-opportunities-grid p{font-size:11px!important;line-height:1.55!important;color:var(--tv-sub)!important;flex:1;margin:0 0 6px!important}
+html[data-theme] .sc1-opportunities-grid .btn{font-size:11px;min-height:37px;padding:8px 9px}
+html[data-theme] .sc1-opportunities-grid .btn:disabled{opacity:.5}
+html[data-theme] .sc1-opportunity-matches{border-top:1px solid var(--tv-line);padding-top:13px;margin-top:14px}
+html[data-theme] .sc1-opportunity-matches>strong{display:block;margin-bottom:8px;color:var(--tv-text);font-size:12px}
+html[data-theme] .sc1-opportunity-matches>div{display:flex;gap:7px;flex-wrap:wrap}
+html[data-theme] .sc1-opportunity-match{display:flex;flex-direction:column;gap:3px;max-width:100%;min-width:110px;border-radius:9px;background:var(--tv-surface);padding:9px;font-weight:800;font-size:11px;color:var(--tv-text)}
+html[data-theme] .sc1-opportunity-match small{font-size:10px;color:var(--tv-highlight);font-weight:800}
+html[data-theme] .sc1-opportunities-note{font-size:10px!important;color:var(--tv-sub)!important;line-height:1.55!important;margin:13px 0 0!important}
+html[data-theme] #sc1-trades,html[data-theme] #sc1-market-listings{scroll-margin-top:75px}
+@media(max-width:800px){html[data-theme] .sc1-opportunities{padding:14px;margin:14px 0 20px}html[data-theme] .sc1-opportunities-grid{grid-template-columns:1fr;gap:8px}html[data-theme] .sc1-opportunities-grid article{padding:13px}html[data-theme] .sc1-opportunities-head{align-items:flex-start}html[data-theme] .sc1-opportunities-count{font-size:10px}html[data-theme] .sc1-opportunities-grid .btn{width:100%}}
+@media(max-width:420px){html[data-theme] .sc1-opportunities-head{flex-direction:column;gap:6px}}
