@@ -11,13 +11,13 @@ test('L’identité publique demeure V1.0 avant tout lancement',()=>{
  assert.match(html,/<title>SériesClubTCG V1\.0/);
  assert.match(html,/name="robots" content="noindex,nofollow"/);
  assert.match(html,/v1\/finish\.css\?v=1\.0\.0/);
- assert.match(html,/v3\/app\.js\?v=1\.0\.0&build=19/);
+ assert.match(html,/v3\/app\.js\?v=1\.0\.0&build=20/);
 });
 test('Navigation à propos et liens de pied de page réellement routés',()=>{
  const app=file('v3/app.js');
  assert.match(app,/about:aboutPage/);
- assert.match(app,/views\.js\?v=1\.0\.0&build=13/);
- assert.match(file('index.html'),/views\.js\?v=1\.0\.0&build=13/);
+ assert.match(app,/views\.js\?v=1\.0\.0&build=14/);
+ assert.match(file('index.html'),/views\.js\?v=1\.0\.0&build=14/);
  assert.match(app,/apropos:'about'/);
  assert.match(app,/about:'apropos'/);
  assert.match(app,/footerHTML\(\)/);
