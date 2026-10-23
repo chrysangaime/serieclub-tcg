@@ -1054,17 +1054,50 @@ async function doFusion(){
 }
 function openAuth(){
  const root=$('overlay');root.classList.remove('hidden');
- root.innerHTML='<div class="dialog" role="dialog" aria-modal="true" aria-label="Compte joueur"><button class="close" data-close aria-label="Fermer">×</button><div class="caps">BIENVENUE DANS LE CLUB</div><h2>MON COMPTE</h2>'+(state.user?'<p>Connecté : '+esc(state.user.email)+'</p><button class="btn primary wide" data-route="profile" data-close>Gérer mon profil</button><button class="btn subtle wide" id="authSignout" style="margin-top:10px">Me déconnecter</button>':'<p>Connecte-toi ou crée un compte gratuit pour sauvegarder tes cartes.</p><input class="input" id="authEmail" type="email" autocomplete="email" placeholder="E-mail"><input class="input" id="authPassword" type="password" autocomplete="current-password" placeholder="Mot de passe (6 caractères minimum)"><input class="input" id="authUsername" maxlength="24" autocomplete="nickname" placeholder="Pseudonyme pour l’inscription"><div class="row"><button class="btn primary" id="authLogin">Connexion</button><button class="btn subtle" id="authRegister">Créer un compte</button></div>')+'<p class="feedback" id="authFeedback" role="status"></p></div>';
+ root.innerHTML='<div class="dialog" role="dialog" aria-modal="true" aria-label="Compte joueur"><button class="close" data-close aria-label="Fermer">×</button><div class="caps">BIENVENUE DANS LE CLUB</div><h2>MON COMPTE</h2>'+(state.user?'<p>Connecté : '+esc(state.user.email)+'</p><button class="btn primary wide" data-route="profile" data-close>Gérer mon profil</button><button class="btn subtle wide" id="authSignout" style="margin-top:10px">Me déconnecter</button>':'<p>Connecte-toi ou crée un compte gratuit pour sauvegarder tes cartes.</p><input class="input" id="authEmail" type="email" autocomplete="email" placeholder="E-mail"><input class="input" id="authPassword" type="password" autocomplete="current-password" placeholder="Mot de passe (6 caractères minimum)"><input class="input" id="authUsername" maxlength="24" autocomplete="nickname" placeholder="Pseudonyme pour l’inscription"><div class="row"><button class="btn primary" id="authLogin">Connexion</button><button class="btn subtle" id="authRegister">Créer un compte</button></div><button type="button" class="btn subtle wide" id="authForgotPassword">Mot de passe oublié ?</button>')+'<p class="feedback" id="authFeedback" role="status"></p></div>';
  $('authEmail')?.focus();
 }
 async function authenticate(register){
  const email=$('authEmail')?.value.trim(),password=$('authPassword')?.value,username=$('authUsername')?.value.trim();
- if(!email||!password||password.length<6||(register&&(username.length<3||username.length>24))){$('authFeedback').textContent='Renseigne un e-mail, un mot de passe de 6 caractères minimum et un pseudonyme de 3 à 24 caractères pour l’inscription.';return}
+ if(!email||!password||(register&&(password.length<12||username.length<3||username.length>24))){$('authFeedback').textContent=register?'Pour créer un compte : e-mail, mot de passe d’au moins 12 caractères et pseudonyme de 3 à 24 caractères.':'Renseigne ton e-mail et ton mot de passe.';return}
  $('authFeedback').textContent='Connexion au club…';
  const result=register?await supa.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname,data:{username}}}):await supa.auth.signInWithPassword({email,password});
  if(result.error){$('authFeedback').textContent=result.error.message;return}
  if(register&&!result.data.session){$('authFeedback').textContent='Inscription enregistrée. Vérifie ton e-mail pour confirmer le compte.';return}
  $('overlay').classList.add('hidden');await loadSession();toast('Bienvenue dans le club !')
+}
+async function requestPasswordReset(){
+ const email=($('authEmail')?.value||'').trim();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){if($('authFeedback'))$('authFeedback').textContent='Saisis ton e-mail pour recevoir un lien de réinitialisation.';return}
+ const feedback=$('authFeedback');if(feedback)feedback.textContent='Envoi du lien de réinitialisation…';
+ const {error}=await supa.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+ if(feedback)feedback.textContent=error?'Envoi indisponible. Réessaie plus tard.':'Si cette adresse possède un compte, un lien de réinitialisation vient d’être envoyé.';
+}
+function openPasswordReset(){
+ const overlay=$('overlay');overlay.classList.remove('hidden');
+ overlay.innerHTML='<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="passwordResetTitle">'+
+  '<button class="close" data-close aria-label="Fermer">×</button><span class="caps">SÉCURITÉ DU COMPTE</span>'+
+  '<h2 id="passwordResetTitle">Choisir un nouveau mot de passe</h2>'+
+  '<p>Utilise au moins 12 caractères différents de tes anciens mots de passe.</p>'+
+  '<input class="input" id="resetNewPassword" type="password" autocomplete="new-password" placeholder="Nouveau mot de passe" minlength="12">'+
+  '<input class="input" id="resetConfirmPassword" type="password" autocomplete="new-password" placeholder="Confirmer le mot de passe" minlength="12">'+
+  '<button class="btn primary wide" type="button" id="authPasswordResetSave">Enregistrer le mot de passe</button>'+
+  '<p class="feedback" id="resetPasswordFeedback" role="status"></p></div>';
+ $('resetNewPassword')?.focus({preventScroll:true});
+}
+async function savePasswordReset(){
+ const password=$('resetNewPassword')?.value||'';
+ const confirmPassword=$('resetConfirmPassword')?.value||'';
+ const feedback=$('resetPasswordFeedback');
+ if(password.length<12||password!==confirmPassword){if(feedback)feedback.textContent='Entre au moins 12 caractères et une confirmation identique.';return}
+ const button=$('authPasswordResetSave');if(button){button.disabled=true;button.textContent='Enregistrement…'}
+ try{
+  const {error}=await supa.auth.updateUser({password});
+  if(error)throw error;
+  closeModal();toast('Mot de passe mis à jour. Ton compte est sécurisé.');
+  await loadSession();
+ }catch{if(feedback)feedback.textContent='Impossible de modifier le mot de passe. Demande un nouveau lien.'}
+ finally{if(button?.isConnected){button.disabled=false;button.textContent='Enregistrer le mot de passe'}}
 }
 function closeModal(){detailRequestId++;openingCards=null;openingStep=0;openingMeta=null;const root=$('overlay');root.classList.add('hidden');root.replaceChildren()}
 function exportCollection(){
@@ -1477,6 +1510,8 @@ function globalClick(e){
  if(e.target.closest('[data-auth]')){openAuth();return}
  if(e.target.closest('#authLogin')){authenticate(false);return}
  if(e.target.closest('#authRegister')){authenticate(true);return}
+ if(e.target.closest('#authForgotPassword')){requestPasswordReset();return}
+ if(e.target.closest('#authPasswordResetSave')){savePasswordReset();return}
  if(e.target.closest('#authSignout')){supa.auth.signOut().then(()=>{closeModal();loadSession();toast('Compte déconnecté.')});return}
  if(e.target.closest('#motionToggle')){state.reduceMotion=!state.reduceMotion;localStorage.setItem('sc-reduced-motion',state.reduceMotion?'yes':'no');render();return}
 
@@ -1684,7 +1719,7 @@ $('overlay').addEventListener('click',e=>{
  if(e.target===$('overlay'))closeModal();
 });
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('Installation hors ligne indisponible:',e)))}
-supa.auth.onAuthStateChange(()=>setTimeout(loadSession,75));
+supa.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY')setTimeout(openPasswordReset,120);setTimeout(loadSession,75)});
 state.route=safeRoute();render();loadCreditPacks();loadSession();if(state.route==='catalog')loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();if(state.route==='packs')loadHomeShows();
 clockTimer=setInterval(()=>{if(state.stock&&state.stock.stock<10){if(state.stock.recharge_seconds>0)state.stock.recharge_seconds-=1;else{state.stock.stock=Math.min(10,state.stock.stock+1);state.stock.recharge_seconds=state.stock.stock===10?0:600}
  const t=$('packTimer');if(t)t.textContent=state.stock.stock===10?'Réserve pleine':'Prochain paquet dans '+timecode(state.stock.recharge_seconds)}},1000);
