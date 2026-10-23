@@ -1102,8 +1102,9 @@ async function savePasswordReset(){
 function closeModal(){
  // Restituer le focus au contenu après fermeture d'une fenêtre modale.
  detailRequestId++;openingCards=null;openingStep=0;openingMeta=null;
- const root=$('overlay');root.classList.add('hidden');root.replaceChildren();
- $('page')?.focus({preventScroll:true});
+ const root=$('overlay');const wasOpen=!root.classList.contains('hidden');
+ root.classList.add('hidden');root.replaceChildren();
+ if(wasOpen)$('page')?.focus({preventScroll:true});
 }
 function exportCollection(){
  if(!state.user||!state.cards.length){toast('Aucune carte à exporter.',true);return}
