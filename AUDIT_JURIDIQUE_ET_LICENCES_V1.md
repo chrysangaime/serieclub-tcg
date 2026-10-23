@@ -69,7 +69,7 @@ Lecture Supabase sur `public.series`, 23/10/2026 :
 
 Préparer une adresse de contact professionnelle et un mécanisme utilisable par les titulaires de droits **sans devoir créer de compte**. Documenter l'URL, le titulaire de droits, la justification, la date du signalement, l'accusé de réception, la mesure prise et la date de clôture. Avant ouverture, ajouter un moyen d'**exclure une image** du catalogue et des collections même si TVmaze la laisse disponible, avec substitution par un graphisme original sans atteinte aux droits.
 
-Un formulaire de signalement interne existe déjà, mais nécessite actuellement une connexion. **La procédure publique de retrait est à créer et tester.**
+Le formulaire de signalement interne nécessite une connexion au jeu. Une **voie publique transitoire** a été ajoutée : [signalement de droits via une issue GitHub](https://github.com/chrysangaime/serieclub-tcg/issues/new?template=signalement-droits.yml), sans compte SériesClubTCG, **mais nécessitant un compte GitHub** et exposant publiquement le texte de la demande. Cette voie n'est **pas un canal confidentiel ni un mécanisme de retrait automatisé**. Avant lancement : créer et tester un contact direct professionnel accessible sans compte, et la mise en quarantaine effective des médias litigieux sur chaque support (collection, boosters, cache et communication).
 
 ## 6. Décision juridique et lancement
 
