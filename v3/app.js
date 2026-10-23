@@ -1,3 +1,4 @@
+import{demoCards}from'../v1/onboarding.js?v=1.0.0&build=4';
 import{PRODUCT,footerHTML,aboutPage}from'../v1/product.js?v=1.0.0';
 import{creditThemeName}from'../v21/credit-packs.js?v=21.0.0';
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
@@ -890,6 +891,12 @@ async function buyCreditPack(key){
  finally{state.busy=false}
 }
 
+function openDemoPack(){
+ if(state.user){toast('Ton compte possède déjà l’accès aux paquets réels.');return}
+ const cards=demoCards(state.homeShows);
+ if(cards.length!==5){toast('La démonstration est temporairement indisponible.',true);return}
+ showOpening(cards,{kind:'demo'});
+}
 async function openPack(){
  if(!state.user){openAuth();return}
  if(state.busy)return;
@@ -1329,11 +1336,12 @@ function globalClick(e){
  const pack=e.target.closest('[data-pack]');if(pack){if(pack.disabled)return;state.pack=pack.dataset.pack;render();document.getElementById('svod-packs')?.scrollIntoView({block:'start',behavior:'auto'});return}
  const themePack=e.target.closest('[data-credit-pack]');if(themePack){if(!themePack.disabled)confirmCreditPack(themePack.dataset.creditPack);return}
  const purchase=e.target.closest('[data-confirm-credit-pack]');if(purchase){buyCreditPack(purchase.dataset.confirmCreditPack);return}
+ if(e.target.closest('[data-demo-pack]')){openDemoPack();return}
  if(e.target.closest('#openPack')){openPack();return}
  if(e.target.closest('[data-daily]')){claimDaily();return}
  if(e.target.closest('#openingNext')){advanceOpening();return}
  if(e.target.closest('#openingSkip')){advanceOpening(true);return}
- if(e.target.closest('#openingDone')){closeModal();change('collection');return}
+ if(e.target.closest('#openingDone')){const demo=openingMeta?.kind==='demo';closeModal();if(demo)openAuth();else change('collection');return}
  if(e.target.closest('[data-export-collection]')){exportCollection();return}
  const switchMode=e.target.closest('[data-collection-mode]');
  if(switchMode){state.collectionMode=switchMode.dataset.collectionMode;state.collectionPage=0;render();return}

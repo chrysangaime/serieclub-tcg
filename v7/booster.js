@@ -19,12 +19,12 @@ export function openingFrame(cards,step=0,reduced=false,meta=null){
  const actions='<div class="sc7-pack-actions">'+(!summary?
    '<button class="btn primary sc7-pack-next" id="openingNext">'+(sealed?'Ouvrir le paquet':opened===list.length-1?'Révéler la dernière carte':'Révéler une carte →')+'</button>'+
    '<button class="btn subtle" id="openingSkip">Tout révéler</button>'
-   :'<button class="btn primary" id="openingDone">Voir ma collection →</button>')+'</div>';
+   :'<button class="btn primary" id="openingDone">'+(meta?.kind==='demo'?'Créer un compte pour conserver mes cartes →':'Voir ma collection →')+'</button>')+'</div>';
  if(sealed){
   return '<div class="sc7-opening sc7-sealed" role="group" aria-label="Ouverture de paquet">'+
    '<p class="sc7-opening-kicker">SÉRIESCLUBTCG · 5 CARTES</p><h2>Le moment de vérité.</h2>'+
    '<div class="sc7-sealed-pack" aria-hidden="true"><span>SC</span><strong>SÉRIESCLUBTCG</strong><small>5 CARTES À DÉCOUVRIR</small></div>'+
-   '<p class="sc7-pack-sub">Les cinq cartes ont été ajoutées à ta collection.</p>'+actions+'</div>';
+   '<p class="sc7-pack-sub">'+(meta?.kind==='demo'?'Démonstration uniquement : aucune carte ni aucun crédit attribué.':'Les cinq cartes ont été ajoutées à ta collection.')+'</p>'+actions+'</div>';
  }
  if(summary){
   return '<div class="sc7-opening sc7-summary" role="group" aria-label="Résultat du paquet">'+
@@ -33,7 +33,7 @@ export function openingFrame(cards,step=0,reduced=false,meta=null){
     '<div class="sc7-opening-mini sc7-tier-'+rarityTier(c.rarity)+'">'+
     '<img src="'+esc(/^https:\/\//.test(c.image_url||'')?c.image_url:'')+'" alt="Affiche de '+esc(c.name)+'">'+
     '<b>'+esc(c.name)+'</b><span>'+esc(c.rarity)+'</span></div>').join('')+'</div>'+
-   '<div class="sc7-pack-bonus">'+(meta?.kind==='credit'?'◇ '+esc(meta.price)+' crédits utilisés · '+esc(meta.label):'✦ +25 crédits <span>·</span> +50 XP')+'</div>'+actions+'</div>';
+   '<div class="sc7-pack-bonus">'+(meta?.kind==='demo'?'Démonstration sans récompense réelle':meta?.kind==='credit'?'◇ '+esc(meta.price)+' crédits utilisés · '+esc(meta.label):'✦ +25 crédits <span>·</span> +50 XP')+'</div>'+actions+'</div>';
  }
  const thumb=now?.image_url&&/^https:\/\//.test(now.image_url)?esc(now.image_url):'';
  return '<div class="sc7-opening sc7-revealing '+(rare?'sc7-rare-event':'')+' sc7-tier-'+rarityTier(rank)+'" role="group" aria-label="Carte '+opened+' sur '+list.length+'">'+
