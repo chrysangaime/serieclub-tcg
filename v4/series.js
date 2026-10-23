@@ -209,7 +209,7 @@ export function actorDetailHTML(person,shows=[],catalogueIds=new Set(),fromShow=
  return '<div class="dialog sc5-dialog sc5-actor-dialog sc5-compact-dialog" role="dialog" aria-modal="true" aria-label="Acteur '+escapeHTML(name)+'">'+
   '<button class="close" data-close aria-label="Fermer">×</button><button class="sc5-back" data-person-back>← '+(fromShow?'Retour à la série':'Fermer')+'</button>'+
   '<div class="sc5-actor-head">'+photo(person.image?.medium||person.image?.original,name,'sc5-actor-portrait')+
-  '<div><span class="caps">SÉRIECLUB · ACTEUR</span><h2>'+escapeHTML(name)+'</h2>'+
+  '<div><span class="caps">EPIZORA · ACTEUR</span><h2>'+escapeHTML(name)+'</h2>'+
   ([birth,person?.country?.name].filter(Boolean).length?'<p>'+[birth,person?.country?.name].filter(Boolean).map(escapeHTML).join(' · ')+'</p>':'')+
   '<p class="sc5-muted">'+shows.length+' série'+(shows.length>1?'s':'')+' sur TVmaze</p>'+
   '<button class="sc5-text-btn" data-filter-actor="'+validId(person.id)+'">Filtrer le catalogue par cet acteur →</button></div></div>'+
@@ -226,7 +226,7 @@ export function actorCatalogueView(state) {
   const inCatalogue=new Set(state.actorCatalogueIds||[]);
   const onlyClub=Boolean(state.actorOnlyClub);
   const visibleShows=onlyClub?shows.filter(show=>inCatalogue.has(show.id)):shows;
-  return '<div class="page-content sc5-catalog"><div class="page-title"><span class="caps">SÉRIECLUB · LA DISTRIBUTION</span><h1>Recherche par acteur</h1><p>Retrouve les séries dans lesquelles joue un acteur ou une actrice, même si elles ne figurent pas encore dans les boosters.</p></div>'+
+  return '<div class="page-content sc5-catalog"><div class="page-title"><span class="caps">EPIZORA · LA DISTRIBUTION</span><h1>Recherche par acteur</h1><p>Retrouve les séries dans lesquelles joue un acteur ou une actrice, même si elles ne figurent pas encore dans les boosters.</p></div>'+
     '<div class="sc5-mode"><button class="btn subtle" data-catalog-mode="series">▦ Par série</button>'+
     '<button class="btn primary" data-catalog-mode="actors">♙ Par acteur</button></div>'+
     '<div class="sc5-actor-search"><input class="input" id="actorSearchQuery" type="search" maxlength="75" placeholder="Nom de l’acteur ou actrice…" value="'+escapeHTML(q)+'">'+
