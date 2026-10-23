@@ -1,5 +1,5 @@
 /**
- * Synopsis français SérieClub.
+ * Synopsis français Epizora.
  * Sans compte, clé API, secret ni service payant.
  * Sources par priorité : textes originaux du club → Wikipédia FR vérifiée
  * → traduction du résumé public TVmaze → message d'indisponibilité.
