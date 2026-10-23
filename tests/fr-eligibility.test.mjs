@@ -46,12 +46,12 @@ test('known verified French broadcasts show the official source in the series sh
  const html=showDetailHTML({},verified,{
   source:'editorial',text:'Une série située dans les années 80.'
  });
- assert.match(html,/Diffusion en France confirmée/);
- assert.match(html,/https:\/\/www\.netflix\.com\/fr\/title\/80057281/);
+ assert.match(html,/Où regarder en France/);
+ assert.doesNotMatch(html,/https:\/\/www\.netflix\.com\/fr\/title\/80057281/);
  assert.match(html,/Légendaire/);
- assert.doesNotMatch(html,/Offres en France à confirmer/);
+ assert.match(html,/Offres de streaming non confirmées/);
  const other=showDetailHTML({},pending,{source:'unavailable'});
- assert.match(other,/Offres en France à confirmer/);
+ assert.match(other,/Où regarder en France/);
  assert.match(other,/Offres de streaming non confirmées/);
 });
 test('no historic series is deleted by server eligibility migration',()=>{
