@@ -41,7 +41,7 @@ test('le vrai jeu n’offre que classic et halloween : premium est une vitrine, 
  assert.match(html,/data-route="store"/);
  assert.match(html,/EN PRÉPARATION/);
  assert.doesNotMatch(html,/data-pack="premium"/);
- assert.match(html,/mêmes probabilités/);
+ assert.match(html,/2 séries classées Horreur/);
 });
 test('boutons gratuits et réserve: nouveaux et joueurs restent correctement traités',()=>{
  const guest=renderer({...demo,user:null,stock:null,pack:'classic'});
