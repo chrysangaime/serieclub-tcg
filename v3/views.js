@@ -1,5 +1,5 @@
 import {platformStrip,seasonShelf} from './discovery.js?v=6.1.0';
-import {actorCatalogueView} from '../v4/series.js?v=6.1.0';
+import {actorCatalogueView} from '../v4/series.js?v=6.1.0&build=15';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 import {fusionPlan,fusionRanks,nextFusionRank} from '../v6/fusion.js?v=8.0.0';
 import {quizHTML} from '../v6/games.js?v=8.1.0';
