@@ -34,7 +34,7 @@ test('shows filmography with catalogued cards and direct series navigation',()=>
  assert.match(people,/sc5-actor-portrait/,'actor detail retains only a small portrait');
  const actorList=people.split('class="sc5-credits"')[1].split('</section>')[0];
  assert.match(actorList,/sc5-credit-thumb/,'compact actor filmography should include poster thumbnails');
- assert.match(people,/Dans SérieClub/);
+ assert.match(people,/Dans Epizora/);
  assert.match(people,/Retour à la série/);
  const catalog=actorCatalogueView({
   catalogMode:'actors',actorQuery:'X',
@@ -46,7 +46,7 @@ test('shows filmography with catalogued cards and direct series navigation',()=>
  assert.match(catalog,/data-series="99"/);
  const catalogueList=catalog.split('class="sc5-filmography-grid"')[1].split('</div>')[0];
  assert.match(catalogueList,/sc5-list-thumb/,'actor filters should include small series artwork');
- assert.match(catalog,/Dans SérieClub/);
+ assert.match(catalog,/Dans Epizora/);
  assert.match(catalog,/Par acteur/);
  const onlyClub=actorCatalogueView({
   catalogMode:'actors',actorQuery:'X',actorMatches:[],
