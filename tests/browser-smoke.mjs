@@ -69,7 +69,7 @@ try {
     assert.ok(await close.evaluate(el => document.activeElement === el),
       device.name + ": Tab doit revenir au bouton Fermer");
     await page.keyboard.press("Escape");
-    await page.locator("#overlay.hidden").waitFor();
+    await page.locator("#overlay").waitFor({ state: "hidden" });
     assert.equal(await page.evaluate(() => document.activeElement?.id), "page",
       device.name + ": retour du focus dans la page");
 
@@ -106,7 +106,7 @@ try {
       await page.locator("#openingDone").waitFor();
       await page.screenshot({ path: "browser-artifacts/" + device.name + "-demo.png" });
       await page.keyboard.press("Escape");
-      await page.locator("#overlay.hidden").waitFor();
+      await page.locator("#overlay").waitFor({ state: "hidden" });
     }
 
     assert.deepEqual(
