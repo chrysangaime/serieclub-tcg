@@ -1,4 +1,4 @@
-name: Vérification qualité SérieClub
+name: Vérification qualité Epizora TCG
 on:
   push:
     branches: [main]
