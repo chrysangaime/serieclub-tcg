@@ -1,4 +1,4 @@
-name: Recette navigateur SériesClubTCG V1
+name: Recette navigateur Epizora TCG V1
 on:
   workflow_dispatch:
   push:
