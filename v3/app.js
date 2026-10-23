@@ -12,7 +12,7 @@ import{openingFrame}from'../v7/booster.js?v=1.0.0&build=9';
 import{gameModes}from'../v7/arena.js?v=10.1.0';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=8.0.0';
-import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.0.0&build=9';
+import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.0.0&build=10';
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=6.1.0';
@@ -31,6 +31,18 @@ function readQuizRecords(){
  }catch{return {poster:0,pixel:0,timeline:0,year:0}}
 }
 const $=id=>document.getElementById(id);
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e});
+window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;toast('SériesClubTCG est installé sur cet appareil.')});
+async function installClubApp(){
+ if(window.matchMedia('(display-mode: standalone)').matches||navigator.standalone){toast('Le jeu est déjà installé sur cet appareil.');return}
+ if(deferredInstallPrompt){
+  const prompt=deferredInstallPrompt;deferredInstallPrompt=null;
+  try{await prompt.prompt();await prompt.userChoice}catch{toast('Installation indisponible dans ce navigateur.',true)}
+  return;
+ }
+ toast('Utilise le menu de ton navigateur, puis « Installer » ou « Sur l’écran d’accueil ».');
+}
 function savedTheme(){try{return localStorage.getItem('sc10-theme')==='day'?'day':'night'}catch{return 'night'}}
 function chooseTheme(next){
  state.theme=next==='day'?'day':'night';
@@ -1362,6 +1374,7 @@ function globalClick(e){
  }
 
  if(e.target.closest('#topSearch')){e.preventDefault();submitGlobalSearch();return}
+ if(e.target.closest('[data-install-app]')){installClubApp();return}
  if(e.target.closest('[data-theme-toggle]')){chooseTheme(state.theme==='day'?'night':'day');return}
  const themeChoice=e.target.closest('[data-theme-choice]');if(themeChoice){chooseTheme(themeChoice.dataset.themeChoice);return}
  const route=e.target.closest('[data-route]');if(route){e.preventDefault();change(route.dataset.route);return}
@@ -1577,6 +1590,7 @@ $('overlay').addEventListener('click',e=>{
  }
  if(e.target===$('overlay'))closeModal();
 });
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('Installation hors ligne indisponible:',e)))}
 supa.auth.onAuthStateChange(()=>setTimeout(loadSession,75));
 state.route=safeRoute();render();loadCreditPacks();loadSession();if(state.route==='catalog')loadCatalog(true);if(state.route==='rankings')loadRankings();loadSeasonShows();if(state.route==='packs')loadHomeShows();
 clockTimer=setInterval(()=>{if(state.stock&&state.stock.stock<10){if(state.stock.recharge_seconds>0)state.stock.recharge_seconds-=1;else{state.stock.stock=Math.min(10,state.stock.stock+1);state.stock.recharge_seconds=state.stock.stock===10?0:600}

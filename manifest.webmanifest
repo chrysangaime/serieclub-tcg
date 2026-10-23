@@ -15,5 +15,36 @@
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }
+  ],
+  "id": "./",
+  "categories": [
+    "games",
+    "entertainment"
+  ],
+  "shortcuts": [
+    {
+      "name": "Mes cartes",
+      "short_name": "Collection",
+      "url": "./index.html#/collection",
+      "icons": [
+        {
+          "src": "./v3/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Catalogue France",
+      "short_name": "Catalogue",
+      "url": "./index.html#/catalogue",
+      "icons": [
+        {
+          "src": "./v3/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
   ]
 }
