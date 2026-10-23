@@ -1,7 +1,7 @@
 {
-  "name": "SériesClubTCG — Le club des séries",
-  "short_name": "SériesClubTCG",
-  "description": "SériesClubTCG V1.0 : cartes, Saisons et défis. Projet en préparation avant lancement.",
+  "name": "Epizora TCG — Le club des séries",
+  "short_name": "Epizora TCG",
+  "description": "Epizora TCG V1.0 : cartes, Saisons et défis. Projet en préparation avant lancement.",
   "start_url": "./index.html#/paquets",
   "scope": "./",
   "display": "standalone",
