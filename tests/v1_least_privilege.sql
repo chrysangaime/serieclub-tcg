@@ -6,6 +6,10 @@ BEGIN
  IF EXISTS(
   SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
   WHERE n.nspname='public' AND c.relkind IN ('r','p') AND NOT c.relrowsecurity
+   AND (
+    has_table_privilege('anon',c.oid,'SELECT,INSERT,UPDATE,DELETE')
+    OR has_table_privilege('authenticated',c.oid,'SELECT,INSERT,UPDATE,DELETE')
+   )
  ) THEN RAISE EXCEPTION 'Une table exposée a perdu son Row Level Security';END IF;
 
  -- Les fonctions à privilèges élevés ont un chemin de recherche fixé :
