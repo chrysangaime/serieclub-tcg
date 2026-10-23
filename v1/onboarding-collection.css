@@ -1,0 +1,39 @@
+/* SériesClubTCG V1.0 — découverte simple et gestion des doublons. */
+html[data-theme] .sc1-demo-intro{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:15px 0 3px;padding:15px 17px;border:1px solid var(--tv-line);border-radius:14px;background:var(--tv-elevated)}
+html[data-theme] .sc1-demo-intro>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+html[data-theme] .sc1-demo-intro strong{font-size:13px;color:var(--tv-text)}
+html[data-theme] .sc1-demo-intro p{font-size:11px;color:var(--tv-sub);line-height:1.5;margin:0}
+html[data-theme] .sc1-demo-intro button{flex-shrink:0;border:1px solid var(--tv-highlight);background:var(--tv-surface);color:var(--tv-text);border-radius:10px;font-size:12px;font-weight:800;min-height:40px;padding:7px 12px;cursor:pointer}
+html[data-theme] .sc1-demo-intro button:disabled{opacity:.5;cursor:default}
+html[data-theme] .sc1-recycle{margin:20px 0 18px;padding:18px;border:1px solid var(--tv-line);border-radius:17px;background:var(--tv-elevated)}
+html[data-theme] .sc1-recycle-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+html[data-theme] .sc1-recycle h2{font-size:21px!important;color:var(--tv-text)!important;margin:6px 0!important}
+html[data-theme] .sc1-recycle p{color:var(--tv-sub)!important;font-size:12px!important;line-height:1.55!important;margin:6px 0!important;max-width:67ch}
+html[data-theme] .sc1-recycle-count{display:grid;grid-template-columns:repeat(2,auto);column-gap:15px;row-gap:1px;white-space:nowrap;text-align:center;padding:8px;background:var(--tv-surface);border-radius:10px}
+html[data-theme] .sc1-recycle-count strong{font-size:14px;color:var(--tv-highlight)}
+html[data-theme] .sc1-recycle-count small{font-size:10px;color:var(--tv-sub)}
+html[data-theme] .sc1-recycle-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:250px;overflow:auto;margin:14px 0}
+html[data-theme] .sc1-recycle-option{display:flex;align-items:center;gap:10px;min-width:0;border:1px solid var(--tv-line);border-radius:10px;padding:9px;cursor:pointer;background:var(--tv-surface)}
+html[data-theme] .sc1-recycle-option:has(input:checked){border-color:var(--tv-highlight)}
+html[data-theme] .sc1-recycle-option input{width:17px;height:17px;flex-shrink:0;accent-color:var(--tv-highlight)}
+html[data-theme] .sc1-recycle-option span{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+html[data-theme] .sc1-recycle-option b{overflow:hidden;text-overflow:ellipsis;font-size:12px;color:var(--tv-text)}
+html[data-theme] .sc1-recycle-option small{font-size:10px;color:var(--tv-sub)}
+html[data-theme] .sc1-recycle-option>strong{white-space:nowrap;color:var(--tv-highlight);font-size:12px}
+html[data-theme] .sc1-recycle-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+html[data-theme] .sc1-recycle-actions>small{flex:1;min-width:130px;color:var(--tv-sub);font-size:10px}
+html[data-theme] .sc1-recycle-actions .btn{font-size:11px;min-height:39px}
+html[data-theme] .sc1-recycle-empty{padding:12px 0}
+html[data-theme] .sc1-recycle-confirm{max-width:490px!important;width:min(96vw,490px);background:var(--tv-surface)!important}
+html[data-theme] .sc1-recycle-confirm h2{font-size:24px;color:var(--tv-text)}
+html[data-theme] .sc1-recycle-confirm>p{font-size:12px;line-height:1.6;color:var(--tv-sub)}
+html[data-theme] .sc1-recycle-review{max-height:265px;overflow-y:auto;border:1px solid var(--tv-line);border-radius:11px;padding:8px}
+html[data-theme] .sc1-recycle-review>div{display:flex;justify-content:space-between;gap:10px;padding:7px;border-bottom:1px solid var(--tv-line);font-size:12px;color:var(--tv-text)}
+html[data-theme] .sc1-recycle-review>div:last-child{border-bottom:0}
+html[data-theme] .sc1-recycle-review small{color:var(--tv-sub)}
+html[data-theme] .sc1-recycle-review b,.sc1-recycle-total strong{white-space:nowrap;color:var(--tv-highlight)}
+html[data-theme] .sc1-recycle-total{padding:11px;background:var(--tv-elevated);border-radius:10px}
+html[data-theme] .sc1-recycle-confirm .sc1-recycle-actions{margin-top:14px}
+@media(max-width:690px){html[data-theme] .sc1-demo-intro{flex-direction:column;align-items:stretch;padding:13px}html[data-theme] .sc1-demo-intro button{width:100%}
+html[data-theme] .sc1-recycle{padding:13px}html[data-theme] .sc1-recycle-header{flex-direction:column}html[data-theme] .sc1-recycle-count{align-self:stretch;display:flex;justify-content:space-around;align-items:center}
+html[data-theme] .sc1-recycle-choices{grid-template-columns:1fr;max-height:295px}html[data-theme] .sc1-recycle-actions .btn{flex:1 1 100%}}
