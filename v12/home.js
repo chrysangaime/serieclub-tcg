@@ -1,7 +1,7 @@
 import{demoHTML}from'../v1/onboarding.js?v=1.0.0&build=4';
 import{creditThemeShelf}from'../v21/credit-packs.js?v=21.0.0';
 /**
- * SériesClubTCG V12 — véritable page d'accueil TV/SVOD.
+ * Epizora TCG V12 — véritable page d'accueil TV/SVOD.
  * Aucun mécanisme de jeu ni probabilité ne se trouve ici.
  * Les 2 paquets réels restent classic/halloween ; Premium est un aperçu,
  * pas un booster inventé ou une vente.
@@ -44,7 +44,7 @@ function progressItem(icon,label,description,value,max,tone){
   '<small>'+esc(description)+'</small><div class="sc12-bar" role="progressbar" aria-label="'+esc(label)+'" aria-valuenow="'+shown+'" aria-valuemin="0" aria-valuemax="'+cap+'"><i style="width:'+Math.round(shown/cap*100)+'%"></i></div></div></div>';
 }
 function packVisual(type){
- // Pochette de booster propre à SériesClubTCG : logo TV et marquage collector.
+ // Pochette de booster propre à Epizora TCG : logo TV et marquage collector.
  const key=type==='premium'?'premium':type==='halloween'?'halloween':'original';
  const label=key==='premium'?'PREMIUM':key==='halloween'?'HALLOWEEN':'ORIGINAL';
  const symbol=key==='halloween'
@@ -56,7 +56,7 @@ function packVisual(type){
  return '<span class="sc15-foil sc22-booster sc15-foil--'+key+' sc22-booster--'+key+'">'+
  '<span class="sc15-foil-stripe" aria-hidden="true"></span>'+
  '<span class="sc22-booster-brand">'+tv+
- '<strong class="sc18-foil-brand"><span>SÉRIES<em>CLUB</em></span><small>TCG</small></strong></span>'+
+ '<strong class="sc18-foil-brand"><span>EPI<em>ZORA</em></span><small>TCG</small></strong></span>'+
  '<span class="sc22-booster-center">'+symbol+'<small>TRADING CARD GAME</small></span>'+
  '<span class="sc22-booster-footer"><b>'+label+'</b><small>'+(key==='premium'?'STATUT COLLECTOR':'5 SÉRIES · 7 RARETÉS')+'</small></span>'+
  '<span class="sc15-foil-stripe sc15-foil-stripe-bottom" aria-hidden="true"></span></span>';
@@ -64,7 +64,7 @@ function packVisual(type){
 function heroPosters(shows){
  // Source : séries déjà vérifiées et disponibles dans le catalogue France.
  const pictures=shows.filter(x=>photo(x.image_url)).slice(0,3);
- if(!pictures.length)return '<span class="sc15-tv-fallback">▶ <strong>SÉRIESCLUBTCG</strong></span>';
+ if(!pictures.length)return '<span class="sc15-tv-fallback">▶ <strong>EPIZORA TCG</strong></span>';
  return '<div class="sc15-hero-posters">'+pictures.map((x,i)=>
  '<span class="sc15-hero-poster sc15-hero-poster-'+i+'"><img alt="" loading="'+(i?'lazy':'eager')+'" src="'+photo(x.image_url)+'"></span>'
  ).join('')+'<span class="sc15-onair">● À L’AFFICHE</span></div>';
