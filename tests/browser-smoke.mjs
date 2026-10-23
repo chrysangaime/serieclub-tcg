@@ -110,6 +110,13 @@ try {
         device.name + "/" + route.slug + ": débordement horizontal " + JSON.stringify(metrics));
     }
 
+    // Revenir explicitement à l'accueil après le parcours "Sources et droits".
+    // Le test doit vérifier les paquets sur leur page, indépendamment de l'ordre des routes.
+    await page.evaluate(() => { window.location.hash = "#/paquets"; });
+    await page.waitForFunction(() =>
+      document.querySelector("#topbar .crumb")?.textContent?.includes("PAQUETS"));
+    await page.locator("#svod-packs").waitFor();
+
     // Le premier écran contient une proposition de paquet et un accès catalogue.
     assert.ok(await page.locator("#svod-packs").count(),
       device.name + ": choix des paquets manquant");
