@@ -85,11 +85,11 @@ export function seasonGalleryHTML(seasons,options={}){
    (s.poster?'<img src="'+html(s.poster)+'" alt="Affiche de la saison '+s.number+'" loading="lazy">':
     '<span class="sc-season-no-poster" aria-hidden="true"><b>'+s.number+'</b><small>SAISON</small></span>')+
    '<span class="sc-season-caption"><strong>Saison '+s.number+'</strong>'+
-    (s.name&&!/^season\s*\d+$/i.test(s.name)?'<small>'+html(s.name)+'</small>':'')+
+    (s.name&&!/^(?:season|saison)\s*\d+$/i.test(s.name)?'<small>'+html(s.name)+'</small>':'')+
     (s.year?'<small>'+s.year+'</small>':'')+'</span>'+
    '</summary>'+
    '<div class="sc-season-body">'+
-   (s.name&&!/^season\s*\d+$/i.test(s.name)?'<strong>'+html(s.name)+'</strong>':'')+
+   (s.name&&!/^(?:season|saison)\s*\d+$/i.test(s.name)?'<strong>'+html(s.name)+'</strong>':'')+
    (s.summary?'<p>'+html(s.summary)+'</p>':
     '<p>Synopsis propre à cette saison non renseigné sur TVmaze.</p>')+
    (s.episodes?'<small>'+s.episodes+' épisodes annoncés ou répertoriés</small>':'')+
