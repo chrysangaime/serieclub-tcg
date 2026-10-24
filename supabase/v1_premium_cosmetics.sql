@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS premium_title text NOT NULL DEFAULT 'collectionneur' CHECK (premium_title IN ('collectionneur','archiviste','legende','curateur')); ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS premium_frame text NOT NULL DEFAULT 'classic' CHECK (premium_frame IN ('classic','gold','neon','cinema'));
