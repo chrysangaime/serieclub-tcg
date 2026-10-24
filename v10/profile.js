@@ -32,10 +32,12 @@ export function profileArtPanel(s){
  const frame=premium&&['gold','neon','cinema'].includes(s.premiumFrame)?s.premiumFrame:'classic';
  const titles={collectionneur:'Collectionneur',archiviste:'Archiviste des séries',legende:'Légende du Club',curateur:'Curateur de saisons'};
  const title=premium?(titles[s.premiumTitle]||titles.collectionneur):titles.collectionneur;
+ const marks={star:'✦',crown:'♛',diamond:'◆',spotlight:'✺'};
+ const premiumMark=premium?(marks[s.premiumBadge]||marks.star):'';
  return '<div class="sc10-profile-hero sc-premium-frame-'+frame+'">'+
   '<div class="sc10-profile-banner"'+bannerStyle+' role="img" aria-label="Bannière de la série '+esc(banner?.name||'SériesClubTCG')+'"></div>'+
   '<div class="sc10-profile-row"><div class="sc10-profile-avatar"'+avatarStyle+' aria-label="Avatar du profil">'+(avatar?'':initial)+'</div>'+
-  '<div><h2>'+esc(s.username||'Mon profil')+'</h2><p>'+esc(title)+(premium?' · ✦ Premium':'')+'</p>'+
+  '<div><h2>'+esc(s.username||'Mon profil')+'</h2><p>'+esc(title)+(premium?' · '+premiumMark+' Premium':'')+'</p>'+
    (badges.length?'<div class="sc10-badge-strip">'+badges.map(x=>'<span title="'+esc(x.title)+'">'+esc(x.badge)+'</span>').join('')+'</div>':'')+
   '</div></div></div>'+
   (s.user?'<div class="panel sc-v1-series-badges"><h2>Albums de séries · Mes succès</h2>'+
@@ -54,6 +56,9 @@ export function profileArtPanel(s){
     '</select></label><label>Cadre du profil<select id="premiumFrame" class="input">'+
     [['classic','Classique'],['gold','Doré'],['neon','Néon'],['cinema','Cinéma']].map(([v,l])=>
     '<option value="'+v+'"'+(s.premiumFrame===v?' selected':'')+'>'+esc(l)+'</option>').join('')+
+    '</select></label><label>Insigne Premium<select id="premiumBadge" class="input">'+
+    [['star','✦ Étoile'],['crown','♛ Couronne'],['diamond','◆ Diamant'],['spotlight','✺ Projecteur']].map(([v,l])=>
+    '<option value="'+v+'"'+(s.premiumBadge===v?' selected':'')+'>'+esc(l)+'</option>').join('')+
     '</select></label></div><small>Enregistre tes choix avec le bouton « Enregistrer mon profil » plus bas.</small>':
     '<button type="button" class="btn subtle" data-route="store">Découvrir Premium · 3,99 € / mois</button>')+
    '</div>':'')+
