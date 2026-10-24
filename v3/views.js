@@ -46,6 +46,7 @@ export function card(c,action=''){
   (season?'<span class="sc-season-card-badge">S'+season+'</span>':'')+
   '<span class="sc53-rank-label">'+(locked?'🔒 ':'')+esc(rank)+'</span>'+
   (s.fr_verified===false?'<span class="sc54-fr-pending">🇫🇷 À vérifier</span>':'')+
+  (c.seasons_pending?'<span class="sc-season-card-badge">Saisons à compléter</span>':'')+
   '</div>'+
   '<div class="card-title">'+esc(title)+'</div>'+
   '<div class="card-meta"><span class="rarity rarity--'+rank.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\W/g,'')+'">'+esc(rank)+'</span>'+
