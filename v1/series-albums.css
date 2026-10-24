@@ -27,3 +27,15 @@
 .sc-v1-badges{display:flex;flex-wrap:wrap;gap:8px}
 .sc-v1-series-badge{border:1px solid rgba(230,193,103,.45);background:rgba(224,180,60,.1);padding:7px 10px;border-radius:999px;font-size:.83rem}
 @media(max-width:540px){.sc-v1-series-library-grid{grid-template-columns:1fr 1fr;gap:8px}.sc-v1-series-album{padding:12px;min-height:150px}.sc-v1-series-emblem{display:none}.sc-v1-series-slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Audit UX global : états de focus, lecture et adaptation aux écrans réduits. */
+.sc-v1-series-album, .sc-v1-series-slot, .sc-v1-series-dialog {box-sizing:border-box}
+.sc-v1-series-album{min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.08)}
+.sc-v1-series-album:focus-visible, .sc-v1-series-dialog button:focus-visible,
+.sc4-page button:focus-visible{outline:3px solid var(--sc1-accent,#62d6dc);outline-offset:3px}
+.sc-v1-series-library .section-head>strong{flex:none;font-size:.86rem;border:1px solid var(--tv-line,rgba(138,170,209,.33));border-radius:999px;padding:7px 11px}
+.sc-v1-series-slot.is-owned{border-color:rgba(98,214,220,.65)}
+.sc-v1-series-slot.is-missing{border-style:dashed}
+.sc-v1-series-dialog h2{overflow-wrap:anywhere;line-height:1.2}
+@media(max-width:390px){.sc-v1-series-library-grid{grid-template-columns:1fr}.sc-v1-series-emblem{display:grid}}
+@media(prefers-reduced-motion:reduce){.sc-v1-series-album{transition:none}.sc-v1-series-album:hover{transform:none}}
