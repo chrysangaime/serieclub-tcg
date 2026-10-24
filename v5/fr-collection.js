@@ -4,7 +4,7 @@
  * Pas de suppression ni de modification de propriété.
  */
 export function frenchPlayable(entry){
- return entry?.series?.fr_verified===true&&entry?.series?.rarity_source!=='pending'&&
+ return entry?.series?.fr_verified===true&&entry?.series?.rarity_source!=='pending'&&entry?.series?.content_status==='series'&&
  ['tvmaze_fr_origin','streaming_availability_fr'].includes(entry?.series?.fr_verification_method);
 }
 export function partitionFrenchInventory(cards=[],wishes=[]){
