@@ -89,11 +89,9 @@ export function seasonGalleryHTML(seasons,options={}){
     (s.year?'<small>'+s.year+'</small>':'')+'</span>'+
    '</summary>'+
    '<div class="sc-season-body">'+
-   (s.name&&!/^(?:season|saison)\s*\d+$/i.test(s.name)?'<strong>'+html(s.name)+'</strong>':'')+
-   (s.summary?'<p>'+html(s.summary)+'</p>':
-    '<p>Synopsis propre à cette saison non renseigné sur TVmaze.</p>')+
-   (s.episodes?'<small>'+s.episodes+' épisodes annoncés ou répertoriés</small>':'')+
-   (s.network?'<small>Diffusion d’origine : '+html(s.network)+'</small>':'')+
+   (s.episodes?'<span class="sc-season-episodes">'+s.episodes+' épisodes</span>':'')+
+   (s.network?'<small>Chaîne française : '+html(s.network)+'</small>':'')+
+   (s.summary?'<p class="sc-season-french-note">Le synopsis original de TVmaze n’est pas affiché car aucune traduction française vérifiée n’est disponible.</p>':'<p class="sc-season-french-note">Résumé français non disponible.</p>')+
    castSeasonHTML(options.showId,s.number,options.cast)+
    '</div></details>'
   ).join('')+'</div>'+
