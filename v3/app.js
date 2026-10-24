@@ -77,7 +77,7 @@ function offlineChallengeStatus(){return {enabled:false,modes:trainingModeStatus
 
 const routes={paquets:'packs',packs:'packs',collection:'collection',catalogue:'catalog',catalog:'catalog',albums:'albums',classement:'rankings',rankings:'rankings',fusions:'fusion',fusion:'fusion',jeux:'games',games:'games',souhaits:'wishlist',wishlist:'wishlist',communaute:'community',community:'community',marche:'market',market:'market',profil:'profile',profile:'profile',parametres:'settings',settings:'settings',premium:'store',boutique:'store',store:'store',regles:'rules',rules:'rules',apropos:'about',about:'about',droits:'rights',rights:'rights',sources:'rights',premiere:'premiere',parrainage:'referral',referral:'referral',confidentialite:'privacy',privacy:'privacy',mentions:'legal',legal:'legal',aide:'support',support:'support',missions:'quests',quetes:'quests',quests:'quests'};
 const slug={packs:'paquets',catalog:'catalogue',rankings:'classement',games:'jeux',fusion:'fusions',wishlist:'souhaits',community:'communaute',market:'marche',profile:'profil',settings:'parametres',rules:'regles',about:'apropos',rights:'droits',referral:'parrainage',quests:'missions',store:'premium',privacy:'confidentialite',legal:'mentions',support:'aide'};
-const state={route:'packs',creditPacks:null,creditPacksError:'',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',marketWishOnly:false,jumpToOpportunities:false,players:[],peopleFilter:'',peopleError:'',inviteCode:null,dailyError:'',paymentsMode:'disabled',premiumActive:false,premiumTitle:'collectionneur',premiumFrame:'classic',paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,seriesCompletion:[],permanentSeriesBadges:[],trackedSeasons:[],officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',recycleSelection:[],recycleReady:false,recycleRemaining:0,collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
+const state={route:'packs',creditPacks:null,creditPacksError:'',heroSlide:0,user:null,username:'',cards:[],excludedCardsCount:0,excludedWishesCount:0,frMigrationError:'',wallet:null,stock:null,wishes:[],seasonShows:[],homeShows:[],homeLoading:false,marketListings:[],marketActivity:[],tradeOffers:[],marketError:'',marketQuery:'',marketRarity:'',marketWishOnly:false,jumpToOpportunities:false,players:[],peopleFilter:'',peopleError:'',inviteCode:null,dailyError:'',paymentsMode:'disabled',premiumActive:false,premiumTitle:'collectionneur',premiumFrame:'classic',premiumBadge:'star',paymentBusy:false,personalAlbums:[],publicAlbums:[],albumError:'',officialSeasons:null,seriesCompletion:[],permanentSeriesBadges:[],trackedSeasons:[],officialSeasonError:'',bio:'',favoriteGenre:'',avatarSeriesId:null,bannerSeriesId:null,theme:savedTheme(),daily:null,catalog:[],catalogMode:'series',actorQuery:'',actorMatches:[],actorSelected:null,actorShows:[],actorCatalogueIds:[],actorOnlyClub:false,actorLoading:false,actorError:'',catalogQuery:'',catalogRarity:'',catalogGenre:'',catalogDecade:'',catalogSort:'name',catalogPage:0,catalogTotal:null,catalogMore:true,catalogLoading:false,catalogError:'',rankings:[],collectionMode:'all',recycleSelection:[],recycleReady:false,recycleRemaining:0,collectionSort:'rarity',collectionPage:0,collectionEligibleTotal:null,saleSelectionCard:null,pack:monthHalloween()?'halloween':'classic',filter:'',rank:'',genre:'',fusionRank:'Commune',fusionSelected:[],fusionProtectLast:true,fusionPage:0,quiz:null,pixelPreview:null,quizLoading:false,quizError:'',rewardStatus:null,rewardQuiz:null,rewardFeedback:null,rewardBusy:false,rewardError:'',quizRecords:readQuizRecords(),reduceMotion:localStorage.getItem('sc-reduced-motion')==='yes',busy:false};
 const navName=key=>({about:'À propos',rights:'Sources et droits',privacy:'Confidentialité',legal:'Mentions légales',support:'Assistance'}[key]||navItems.find(x=>x[0]===key)?.[2]||'Règles du jeu');
 let openingCards=null,openingStep=0,openingMeta=null;
 let toastTimer,clockTimer,searchTimer,catalogRequestId=0,quizRequestId=0,refreshing=false,detailRequestId=0,actorSearchRequestId=0,lastShowForBack=null,personReturnToShow=false;
@@ -157,10 +157,10 @@ function render(){
  if(restoreCatalog){const input=$('catalogQuery');if(input){input.focus({preventScroll:true});if(cursor!==null)input.setSelectionRange(cursor,cursor)}}
 }
 async function ensureProfile(user){
- let {data,error}=await supa.from('profiles').select('username,bio,favorite_genre,avatar_series_id,banner_series_id,premium_title,premium_frame').eq('id',user.id).maybeSingle();
+ let {data,error}=await supa.from('profiles').select('username,bio,favorite_genre,avatar_series_id,banner_series_id,premium_title,premium_frame,premium_badge').eq('id',user.id).maybeSingle();
  if(error){const fallback=await supa.from('profiles').select('username,bio,favorite_genre').eq('id',user.id).maybeSingle();if(!fallback.error){data=fallback.data;error=null}}
  if(error){toast(publicError(error),true);return}
- if(data?.username){state.username=data.username;state.bio=data.bio||'';state.favoriteGenre=data.favorite_genre||'';state.avatarSeriesId=data.avatar_series_id??null;state.bannerSeriesId=data.banner_series_id??null;state.premiumTitle=data.premium_title||'collectionneur';state.premiumFrame=data.premium_frame||'classic';return}
+ if(data?.username){state.username=data.username;state.bio=data.bio||'';state.favoriteGenre=data.favorite_genre||'';state.avatarSeriesId=data.avatar_series_id??null;state.bannerSeriesId=data.banner_series_id??null;state.premiumTitle=data.premium_title||'collectionneur';state.premiumFrame=data.premium_frame||'classic';state.premiumBadge=data.premium_badge||'star';return}
  const username=(user.user_metadata?.username||'').trim();
  if(username.length>=3&&username.length<=24){
   const out=await supa.from('profiles').upsert({id:user.id,username},{onConflict:'id'});
@@ -244,11 +244,11 @@ async function loadPaymentStatus(){
   const {data,error}=await supa.rpc('my_premium_status');
   state.premiumActive=!error&&data?.[0]?.has_access===true;
  }else state.premiumActive=false;
- if(state.route==='store')render();
+ if(['store','profile'].includes(state.route))render();
 }
 async function startPremiumCheckout(){
  if(!state.user){openAuth();return}
- if(state.paymentBusy||!['test','live'].includes(state.paymentsMode))return;
+ if(state.paymentBusy||state.paymentsMode!=='test')return;
  state.paymentBusy=true;
  try{
   const {data,error}=await supa.functions.invoke('stripe-checkout',{method:'POST',body:{sku:'premium_monthly'}});
@@ -1727,12 +1727,13 @@ async function saveUsername(){
  const avatarValue=$('profileAvatar')?.value||null,bannerValue=$('profileBanner')?.value||null;
  const premiumTitle=state.premiumActive?($('premiumTitle')?.value||'collectionneur'):'collectionneur';
  const premiumFrame=state.premiumActive?($('premiumFrame')?.value||'classic'):'classic';
+ const premiumBadge=state.premiumActive?($('premiumBadge')?.value||'star'):'star';
  const avatarSeriesId=avatarValue?Number(avatarValue):null,bannerSeriesId=bannerValue?Number(bannerValue):null;
  if(bio.length>160||favoriteGenre.length>32){toast('Biographie trop longue.',true);return}
- let {error}=await supa.from('profiles').upsert({id:state.user.id,username:name,bio,favorite_genre:favoriteGenre,avatar_series_id:avatarSeriesId,banner_series_id:bannerSeriesId,premium_title:premiumTitle,premium_frame:premiumFrame},{onConflict:'id'});
+ let {error}=await supa.from('profiles').upsert({id:state.user.id,username:name,bio,favorite_genre:favoriteGenre,avatar_series_id:avatarSeriesId,banner_series_id:bannerSeriesId,premium_title:premiumTitle,premium_frame:premiumFrame,premium_badge:premiumBadge},{onConflict:'id'});
  if(error&&(/bio|favorite_genre|avatar_series_id|banner_series_id|schema cache|column/i.test(error.message))){const fallback=await supa.from('profiles').upsert({id:state.user.id,username:name},{onConflict:'id'});if(!fallback.error){toast('Pseudonyme enregistré. La biographie n’a pas pu être sauvegardée.');state.username=name;render();return}error=fallback.error}
  if(error){toast(error.code==='23505'?'Ce pseudonyme est déjà utilisé.':error.message,true);return}
- state.username=name;state.bio=bio;state.favoriteGenre=favoriteGenre;state.avatarSeriesId=avatarSeriesId;state.bannerSeriesId=bannerSeriesId;state.premiumTitle=premiumTitle;state.premiumFrame=premiumFrame;render();toast('Profil et affiches enregistrés.')
+ state.username=name;state.bio=bio;state.favoriteGenre=favoriteGenre;state.avatarSeriesId=avatarSeriesId;state.bannerSeriesId=bannerSeriesId;state.premiumTitle=premiumTitle;state.premiumFrame=premiumFrame;state.premiumBadge=premiumBadge;render();toast('Profil et affiches enregistrés.')
 }
 function globalChange(e){
  const facet={catalogRarity:'catalogRarity',catalogGenre:'catalogGenre',catalogDecade:'catalogDecade',catalogSort:'catalogSort'}[e.target.id];
