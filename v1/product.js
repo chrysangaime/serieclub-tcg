@@ -10,11 +10,11 @@ export function footerHTML(){
 export function aboutPage(){
  return '<div class="page-content sc1-about">'+
  '<div class="sc1-about-head"><span class="caps">SÉRIESCLUBTCG · V1.0</span><h1>Le club des séries à collectionner.</h1>'+
- '<p>Découvre des séries, ouvre des paquets, organise ta collection et progresse à travers les Saisons.</p>'+
+ '<p>Ouvre des boosters de saisons, complète les albums des séries d’au moins trois saisons et débloque des badges permanents.</p>'+
  '<span class="sc1-about-phase">● En préparation · Accès anticipé</span></div>'+
  '<section class="sc1-about-grid" aria-label="Découvrir le jeu">'+
- '<article><span class="sc1-step">01</span><h2>Découvrir</h2><p>Ouvre un paquet gratuit de cinq séries. Chaque titre dispose de sa rareté officielle dans le catalogue.</p><button data-route="packs" type="button">Choisir un paquet →</button></article>'+
- '<article><span class="sc1-step">02</span><h2>Collectionner</h2><p>Protège tes cartes, complète les Saisons, retrouve tes doublons et organise tes souhaits.</p><button data-route="albums" type="button">Voir les Saisons →</button></article>'+
+ '<article><span class="sc1-step">01</span><h2>Découvrir</h2><p>Ouvre un booster gratuit de cinq cartes de séries. Chaque carte correspond à une saison lorsqu’elle est référencée.</p><button data-route="packs" type="button">Choisir un paquet →</button></article>'+
+ '<article><span class="sc1-step">02</span><h2>Collectionner</h2><p>Protège tes cartes, rassemble les saisons manquantes, termine les albums éligibles et échange tes doublons.</p><button data-route="albums" type="button">Voir mes albums →</button></article>'+
  '<article><span class="sc1-step">03</span><h2>Participer</h2><p>Retrouve les défis, le Comptoir et la communauté. Certaines activités nécessitent une activation serveur.</p><button data-route="games" type="button">Découvrir les défis →</button></article></section>'+
  '<section class="sc1-about-details"><h2>Informations et transparence</h2>'+
  '<div><h3>État du projet</h3><p>La V1.0 est en préparation et n’a pas fait l’objet d’un lancement public. Certaines fonctions peuvent évoluer ou rester momentanément indisponibles.</p></div>'+
