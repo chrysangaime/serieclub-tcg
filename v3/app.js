@@ -668,7 +668,32 @@ async function loadCatalog(reset=false){
    .range(page*36,page*36+35);
   if(request!==catalogRequestId)return;
   if(error)throw error;
-  state.catalog=reset?[...(data||[])]:state.catalog.concat(data||[]);
+  // Une édition de catalogue par saison TVmaze ; source et visuel propres à l'édition.
+  const ids=(data||[]).map(x=>x.id);
+  let editions=[];
+  if(ids.length){
+   const lookup=await supa.from('series_seasons')
+    .select('series_id,season_number,season_name,image_url,premiered')
+    .in('series_id',ids).order('season_number',{ascending:true}).limit(800);
+   if(lookup.error)console.warn('Saisons temporairement indisponibles',lookup.error.message);
+   else editions=lookup.data||[];
+  }
+  if(request!==catalogRequestId)return;
+  const bySeries=new Map();
+  for(const e of editions){
+   if(!Number.isInteger(e.season_number)||e.season_number<1)continue;
+   if(!bySeries.has(e.series_id))bySeries.set(e.series_id,[]);
+   bySeries.get(e.series_id).push(e);
+  }
+  const expanded=(data||[]).flatMap(show=>{
+   const available=bySeries.get(show.id)||[];
+   return available.length?available.map(e=>({
+    ...show,season_number:e.season_number,
+    season:{image_url:e.image_url||show.image_url,premiered:e.premiered},
+    season_name:e.season_name
+   })):[{...show,seasons_pending:true}];
+  });
+  state.catalog=reset?expanded:state.catalog.concat(expanded);
   state.catalogTotal=Number.isSafeInteger(count)?count:null;
   state.catalogMore=(data||[]).length===36 && (state.catalogTotal===null||state.catalog.length<state.catalogTotal);
   state.catalogPage=page+1;
