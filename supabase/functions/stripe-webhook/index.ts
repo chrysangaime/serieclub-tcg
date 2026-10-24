@@ -3,7 +3,7 @@ import Stripe from 'npm:stripe@22.0.0';
 import {createClient} from 'npm:@supabase/supabase-js@2';
 const key=Deno.env.get('STRIPE_SECRET_KEY')||'';
 const signing=Deno.env.get('STRIPE_WEBHOOK_SECRET')||'';
-const priceId=Deno.env.get('STRIPE_PRICE_PREMIUM_MONTHLY')||'';
+const priceId=key.startsWith('sk_test_')?'price_1UU6fzAnJaPjYT5OMtRFbfF3':(Deno.env.get('STRIPE_PRICE_PREMIUM_MONTHLY')||'');
 const stripe=new Stripe(key),cryptoProvider=Stripe.createSubtleCryptoProvider();
 const admin=createClient(Deno.env.get('SUPABASE_URL')||'',Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')||'',{auth:{persistSession:false}});
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
