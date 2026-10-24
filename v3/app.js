@@ -21,7 +21,7 @@ import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=7
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=7.0.0';
 import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=13';
-import{personalAlbumsPage,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.0.0';
+import{personalAlbumsPage,seriesAlbumDetails,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.0.0';
 import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.0.0';
 import{collectionStudio,collectionCSV,deriveCollection}from'../v5/collection.js?v=1.0.0&build=8';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
@@ -403,9 +403,28 @@ async function loadAlbums(){
  state.albumError=errors.length?'Les Saisons personnelles sont temporairement indisponibles.':'';
  state.personalAlbums=own.data||[];state.publicAlbums=shared.data||[];
  state.officialSeasons=official.error?null:official.data||[];
+ const [progressResult,badgeResult]=await Promise.all([
+  supa.rpc('my_series_completion_badges'),
+  supa.from('player_series_badges').select('series_id,unlocked_at,series:series_id(name)')
+   .eq('player_id',state.user.id).limit(500)
+ ]);
+ state.seriesCompletion=progressResult.error?[]:progressResult.data||[];
+ state.permanentSeriesBadges=badgeResult.error?[]:badgeResult.data||[];
  await loadTrackedSeasons();
  state.officialSeasonError=official.error?'Les Saisons officielles sont temporairement indisponibles.':'';
  if(state.route==='albums')render();
+}
+async function openSeriesAlbum(id){
+ if(!state.user){openAuth();return}
+ const show=state.seriesCompletion.find(x=>Number(x.series_id)===Number(id));
+ if(!show)return;
+ const {data,error}=await supa.from('series_seasons')
+  .select('series_id,season_number,season_name,image_url,premiered')
+  .eq('series_id',Number(id)).lte('premiered',new Date().toISOString().slice(0,10))
+  .order('season_number',{ascending:true});
+ if(error){toast('Saisons momentanément indisponibles.',true);return}
+ const overlay=$('overlay');overlay.classList.remove('hidden');
+ overlay.innerHTML=seriesAlbumDetails(show,data||[],state.cards,state.permanentSeriesBadges);
 }
 async function openAlbum(id){
  if(!state.user){openAuth();return}
