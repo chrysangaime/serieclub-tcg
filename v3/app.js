@@ -19,7 +19,7 @@ import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDeta
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=7.1.2';
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=7.0.0';
-import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.0';
+import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.1';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=13';
 import{personalAlbumsPage,seriesAlbumDetails,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.1.1';
 import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.0.0';
