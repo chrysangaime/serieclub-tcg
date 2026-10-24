@@ -80,3 +80,12 @@ Depuis le 23 octobre 2026, les **saisons TV** sont des variantes collectionnable
 - SQL : `supabase/v1_season_collectibles.sql`, `supabase/v1_season_card_backfill.sql`, `supabase/v1_season_booster_rpc.sql` et `supabase/v1_season_credit_booster_rpc.sql`. Source d'import : `scripts/sync-tvmaze-seasons.mjs`. Ces migrations sont appliquées en production.
 
 Cette progression améliore la finition du jeu mais **ne lève pas les obstacles au lancement monétisé** : preuves France anciennement obtenues via TMDB, droits de certaines affiches et marques, nom définitif approuvé, mentions et hébergement adapté. Les 30 premiers résultats SVOD synchronisés avec Movie of the Night ne suffisent pas pour les 2 640 séries ; ne pas promettre une disponibilité confirmée quand les offres du fournisseur n'ont pas été reçues.
+
+
+## Contrôles complémentaires du 24 octobre 2026
+
+- En production, la passerelle de streaming contient **30 relevés non expirés, dont 28 avec une ou plusieurs offres**. Ne pas confondre 30 relevés avec 30 séries disponibles. Aucun des **984** statuts `tmdb_fr_offer` n'a encore été converti vers `streaming_availability_fr`.
+- Le trigger d'attribution `assign_card_season_variant()` n'est plus directement exécutable par `anon` ou `authenticated` ; le service serveur conserve le droit. Script versionné : `supabase/v1_season_trigger_permissions.sql`.
+- L'index de clé étrangère `fr_streaming_api_usage.series_id` a été ajouté en production et versionné dans `supabase/v1_streaming_usage_fk_index.sql`. L'alerte « unindexed_foreign_keys » ne ressort plus.
+- Les cinq RPC anonymes restantes sont des points de lecture publics : classement, titres des albums officiels, rareté, offres de boosters en crédits et albums publics. Leur corps a été inspecté : il ne contient pas de commande de mutation ; le contrôle des règles de confidentialité et la revue de sécurité indépendante demeurent nécessaires.
+- Aucun paiement réel activé, aucune suppression en masse des cartes ou des preuves historiques. Voir `AUDIT_PRELANCEMENT_2026-10-24.md`.
