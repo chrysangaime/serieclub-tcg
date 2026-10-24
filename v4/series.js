@@ -9,7 +9,7 @@ import {whereToWatchLink,amazonSearchLink,amazonIsAffiliate} from '../v3/discove
 import {renderFranceAvailability,getFrenchOriginChannel} from '../v5/fr-watch.js?v=7.1.2';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 import {castFallbackHTML} from '../v5/cast-fr.js?v=7.0.0';
-import {seasonGalleryHTML} from './season-detail.js?v=1.0.1';
+import {seasonGalleryHTML} from './season-detail.js?v=1.0.2';
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
