@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS player_series_badges_series_idx ON public.player_series_badges(series_id); CREATE INDEX IF NOT EXISTS v1_verified_svod_members_series_idx ON public.v1_verified_svod_members(series_id);
