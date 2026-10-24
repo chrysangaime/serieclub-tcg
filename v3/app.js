@@ -915,8 +915,8 @@ async function toggleWishlist(id){
  }
  const reply=exists?await supa.from('player_wishlist').delete().eq('owner_id',state.user.id).eq('series_id',id):await supa.from('player_wishlist').insert({owner_id:state.user.id,series_id:id});
  if(reply.error){toast('Liste de souhaits : '+reply.error.message,true);return}
- const {data}=await supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source,fr_verified)').eq('owner_id',state.user.id).order('created_at',{ascending:false});
- state.wishes=(data||[]).filter(w=>w.series?.fr_verified===true&&w.series?.rarity_source!=='pending');toast(exists?'Série retirée des souhaits.':'Série ajoutée à tes souhaits.');render();
+ const {data}=await supa.from('player_wishlist').select('series_id,series:series_id(id,name,image_url,premiered,rarity,rarity_source,fr_verified,fr_verification_method)').eq('owner_id',state.user.id).order('created_at',{ascending:false});
+ state.wishes=partitionFrenchInventory([],(data||[])).wishes;toast(exists?'Série retirée des souhaits.':'Série ajoutée à tes souhaits.');render();
 }
 async function toggleLock(id,next){
  const {error}=await supa.rpc('set_card_locked',{p_card_id:id,p_locked:next});
