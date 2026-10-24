@@ -3,7 +3,7 @@ import{rightsPage}from'../v1/rights.js?v=1.0.0&build=3';
 import{opportunityData}from'../v1/opportunities.js?v=1.0.0&build=7';
 import{candidates,recycleConfirm,LIMIT as RECYCLE_LIMIT}from'../v1/recycling.js?v=1.0.0&build=5';
 import{demoCards}from'../v1/onboarding.js?v=1.0.0&build=4';
-import{PRODUCT,footerHTML,aboutPage}from'../v1/product.js?v=1.0.0&build=15';
+import{PRODUCT,footerHTML,aboutPage}from'../v1/product.js?v=1.0.0&build=16';
 import{creditThemeName}from'../v21/credit-packs.js?v=21.0.0';
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2.118.0';
 import{storePage}from'../v10/store.js?v=16.0.0&build=2';
