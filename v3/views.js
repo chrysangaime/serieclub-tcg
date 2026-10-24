@@ -8,7 +8,7 @@ import {pixelPreviewHTML} from '../v10/pixel-preview.js?v=10.2.0';
 import {profileArtPanel} from '../v10/profile.js?v=10.0.2';
 import {svodHome} from '../v12/home.js?v=1.0.0&build=10';
 export const navItems=[
- ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Mes Saisons'],
+ ['packs','▤','Paquets'],['collection','▣','Collection'],['albums','▤','Albums de séries'],
  ['catalog','⌕','Catalogue'],['wishlist','☆','Souhaits'],['market','◇','Le Comptoir'],
  ['community','♧','Le Signal'],['games','♜','Jeux & défis'],['quests','✦','Missions'],
  ['fusion','⚒','Fusions'],['rankings','♙','Classement'],['profile','♙','Profil'],
