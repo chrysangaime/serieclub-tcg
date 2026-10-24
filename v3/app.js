@@ -695,7 +695,7 @@ async function loadCatalog(reset=false){
   });
   state.catalog=reset?expanded:state.catalog.concat(expanded);
   state.catalogTotal=Number.isSafeInteger(count)?count:null;
-  state.catalogMore=(data||[]).length===36 && (state.catalogTotal===null||state.catalog.length<state.catalogTotal);
+  state.catalogMore=(data||[]).length===36 && (state.catalogTotal===null||(page+1)*36<state.catalogTotal);
   state.catalogPage=page+1;
  }catch(e){
   if(request!==catalogRequestId)return;
