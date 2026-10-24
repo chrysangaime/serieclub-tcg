@@ -1,0 +1,29 @@
+/* V1 albums de séries — expérience de progression par saisons. */
+.sc-v1-series-library{margin:20px 0 28px}
+.sc-v1-series-library .section-head{align-items:start;gap:16px;flex-wrap:wrap}
+.sc-v1-series-library .section-head p{max-width:58ch;line-height:1.6;color:var(--muted,#a9b6c7)}
+.sc-v1-series-library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px;margin-top:18px}
+.sc-v1-series-album{appearance:none;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:17px;color:var(--text,#f3f8ff);background:var(--panel,#24334c);border:1px solid rgba(138,170,209,.33);min-height:158px;transition:transform .15s,border-color .15s}
+.sc-v1-series-album:hover{transform:translateY(-2px);border-color:#66d8e7}
+.sc-v1-series-album:focus-visible{outline:3px solid #6cdeec;outline-offset:2px}
+.sc-v1-series-album-head{display:flex;align-items:center;gap:11px;min-width:0}
+.sc-v1-series-album-head>div{min-width:0;display:flex;flex-direction:column;gap:5px}
+.sc-v1-series-album-head strong{font-size:1rem;line-height:1.35;overflow-wrap:anywhere}
+.sc-v1-series-album-head small{color:var(--muted,#a9b6c7);font-size:.82rem}
+.sc-v1-series-emblem{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:12px;background:rgba(98,219,231,.13);font-size:1.5rem}
+.sc-v1-series-track{height:9px;border-radius:999px;overflow:hidden;background:rgba(141,167,205,.2)}
+.sc-v1-series-track span{display:block;height:100%;border-radius:inherit;background:#62d6dc}
+.sc-v1-series-album-more{font-size:.78rem;color:var(--muted,#a9b6c7);margin-top:auto}
+.sc-v1-series-dialog{width:min(790px,94vw);max-height:90vh;overflow:auto}
+.sc-v1-series-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px;margin:20px 0}
+.sc-v1-series-slot{border-radius:12px;overflow:hidden;border:1px solid rgba(150,177,212,.3);background:rgba(120,150,190,.1);display:flex;flex-direction:column;padding-bottom:10px;gap:5px}
+.sc-v1-series-slot img,.sc-v1-slot-empty{width:100%;aspect-ratio:2/3;object-fit:cover}
+.sc-v1-slot-empty{display:grid;place-items:center;background:linear-gradient(155deg,#17273c,#2d425b);color:#b6c8da;font-size:2.5rem}
+.sc-v1-series-slot strong,.sc-v1-series-slot small,.sc-v1-series-slot span{padding:0 10px}
+.sc-v1-series-slot strong{font-size:.83rem}
+.sc-v1-series-slot small{color:var(--muted,#a9b6c7);font-size:.74rem;min-height:1em}
+.sc-v1-series-slot span{font-size:.74rem;color:#83dfcc}
+.sc-v1-series-slot.is-missing span{color:#c6cada}
+.sc-v1-badges{display:flex;flex-wrap:wrap;gap:8px}
+.sc-v1-series-badge{border:1px solid rgba(230,193,103,.45);background:rgba(224,180,60,.1);padding:7px 10px;border-radius:999px;font-size:.83rem}
+@media(max-width:540px){.sc-v1-series-library-grid{grid-template-columns:1fr 1fr;gap:8px}.sc-v1-series-album{padding:12px;min-height:150px}.sc-v1-series-emblem{display:none}.sc-v1-series-slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
