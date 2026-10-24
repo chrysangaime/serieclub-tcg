@@ -28,10 +28,14 @@ export function profileArtPanel(s){
  const bannerStyle=banner?' style="background-image:linear-gradient(0deg,#12192388,#1219232a),url(&quot;'+esc(banner.image_url)+'&quot;)"':'';
  const options=selected=>'<option value="">Aucune affiche</option>'+cards.map(c=>
   '<option value="'+esc(c.id)+'"'+(String(selected)===c.id?' selected':'')+'>'+esc(c.name)+'</option>').join('');
- return '<div class="sc10-profile-hero">'+
+ const premium=s.premiumActive===true;
+ const frame=premium&&['gold','neon','cinema'].includes(s.premiumFrame)?s.premiumFrame:'classic';
+ const titles={collectionneur:'Collectionneur',archiviste:'Archiviste des séries',legende:'Légende du Club',curateur:'Curateur de saisons'};
+ const title=premium?(titles[s.premiumTitle]||titles.collectionneur):titles.collectionneur;
+ return '<div class="sc10-profile-hero sc-premium-frame-'+frame+'">'+
   '<div class="sc10-profile-banner"'+bannerStyle+' role="img" aria-label="Bannière de la série '+esc(banner?.name||'SériesClubTCG')+'"></div>'+
   '<div class="sc10-profile-row"><div class="sc10-profile-avatar"'+avatarStyle+' aria-label="Avatar du profil">'+(avatar?'':initial)+'</div>'+
-  '<div><h2>'+esc(s.username||'Mon profil')+'</h2><p>Personnalise ton identité avec tes affiches débloquées.</p>'+
+  '<div><h2>'+esc(s.username||'Mon profil')+'</h2><p>'+esc(title)+(premium?' · ✦ Premium':'')+'</p>'+
    (badges.length?'<div class="sc10-badge-strip">'+badges.map(x=>'<span title="'+esc(x.title)+'">'+esc(x.badge)+'</span>').join('')+'</div>':'')+
   '</div></div></div>'+
   (s.user?'<div class="panel sc-v1-series-badges"><h2>Albums de séries · Mes succès</h2>'+
@@ -43,6 +47,16 @@ export function profileArtPanel(s){
     progress.slice(0,8).map(x=>
      '<p><strong>'+esc(x.title)+'</strong> · '+Number(x.owned_seasons)+' / '+Number(x.required_seasons)+' saisons</p>').join('')+
     '</div>':'')+'</div>':'')+
+  (s.user?'<div class="panel sc-premium-personalization"><h2>Personnalisation du profil</h2>'+
+   '<p>'+(premium?'Choisis ton titre et ton cadre exclusif Premium.':'Les titres et cadres exclusifs sont réservés au Premium. Tu conserves gratuitement tes badges de séries et tes affiches de profil.')+'</p>'+
+   (premium?'<div class="sc-premium-pickers"><label>Titre affiché<select id="premiumTitle" class="input">'+
+    Object.entries(titles).map(([v,l])=>'<option value="'+v+'"'+(s.premiumTitle===v?' selected':'')+'>'+esc(l)+'</option>').join('')+
+    '</select></label><label>Cadre du profil<select id="premiumFrame" class="input">'+
+    [['classic','Classique'],['gold','Doré'],['neon','Néon'],['cinema','Cinéma']].map(([v,l])=>
+    '<option value="'+v+'"'+(s.premiumFrame===v?' selected':'')+'>'+esc(l)+'</option>').join('')+
+    '</select></label></div><small>Enregistre tes choix avec le bouton « Enregistrer mon profil » plus bas.</small>':
+    '<button type="button" class="btn subtle" data-route="store">Découvrir Premium · 3,99 € / mois</button>')+
+   '</div>':'')+
   (s.user?'<div class="panel"><h2>Mes affiches de profil</h2>'+
    '<p>Choisis ton avatar et ta bannière parmi les affiches des séries présentes dans ta collection. Aucune image à téléverser.</p>'+
    '<div class="sc10-profile-art-pickers"><label>Avatar de profil<select class="input" id="profileAvatar">'+options(s.avatarSeriesId)+'</select></label>'+
