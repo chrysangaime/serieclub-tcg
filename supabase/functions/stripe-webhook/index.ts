@@ -29,7 +29,12 @@ Deno.serve(async req=>{
    return Response.json({received:true,ignored:true});
   const customer=typeof sub.customer==='string'?sub.customer:sub.customer.id;
   const state=['active','trialing','past_due','canceled'].includes(sub.status)?sub.status:'inactive';
-  const end=typeof sub.current_period_end==='number'?new Date(sub.current_period_end*1000).toISOString():null;
+  const expiryCandidates=sub.items.data.map(item=>(item as {current_period_end?:number}).current_period_end)
+   .filter((v):v is number=>typeof v==='number'&&Number.isFinite(v));
+  const endSeconds=typeof sub.current_period_end==='number'?sub.current_period_end:
+   (expiryCandidates.length?Math.max(...expiryCandidates):null);
+  const end=typeof endSeconds==='number'?new Date(endSeconds*1000).toISOString():null;
+  if(['active','trialing'].includes(state)&&!end)throw new Error('Période d’abonnement absente');
   const {error}=await admin.rpc('apply_stripe_premium_event',{
    p_event_id:ev.id,p_player_id:user,p_subscription_id:sub.id,p_customer_id:customer,
    p_status:state,p_period_end:end,p_event_created:new Date(ev.created*1000).toISOString()
