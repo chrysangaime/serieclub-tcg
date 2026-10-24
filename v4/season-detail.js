@@ -73,6 +73,24 @@ function castSeasonHTML(showId,season,cast){
   '<small>Répartition vérifiée : HBO et TVmaze. Portraits fournis par TVmaze lorsqu’ils existent.</small></div>';
 }
 
+// Courts résumés éditoriaux en français, sans reproduction du texte source.
+const frenchSeasonNotes=Object.freeze({
+ 30:Object.freeze({
+  1:"Une famille emménage dans une demeure de Los Angeles hantée par un passé violent. Les secrets de la maison vont bouleverser leur vie.",
+  2:"Dans un établissement psychiatrique des années 1960, patients et soignants affrontent de terrifiants secrets.",
+  3:"À La Nouvelle-Orléans, une école de sorcellerie accueille de jeunes femmes aux pouvoirs singuliers, sur fond de rivalités anciennes.",
+  4:"En Floride, dans les années 1950, une troupe de spectacle itinérant lutte pour survivre face aux préjugés et à une série de crimes.",
+  5:"Au cœur de Los Angeles, un hôtel mystérieux cache des occupants inquiétants et des secrets sanglants.",
+  6:"Une histoire de disparition et de hantise autour de Roanoke prend la forme d'un documentaire qui bascule dans l'horreur.",
+  7:"Après une élection américaine, la peur et la manipulation déchirent une petite communauté.",
+  8:"Une catastrophe plonge des survivants dans un refuge où les forces surnaturelles refont surface.",
+  9:"Pendant l'été 1984, un camp de vacances devient le théâtre d'une nouvelle série de meurtres.",
+  10:"Deux récits horrifiques explorent une station balnéaire inquiétante et une conspiration extraterrestre.",
+  11:"Dans le New York des années 1980, une vague de disparitions inquiète une communauté confrontée à de multiples menaces.",
+  12:"Une actrice désireuse de fonder une famille est confrontée à des événements inquiétants qui ébranlent sa réalité."
+ })
+});
+function frenchSeasonNote(showId,number){return frenchSeasonNotes[Number(showId)]?.[Number(number)]||'';}
 export function seasonGalleryHTML(seasons,options={}){
  const rows=normalizeSeasonList(seasons);
  if(!rows.length)return '';
@@ -91,7 +109,7 @@ export function seasonGalleryHTML(seasons,options={}){
    '<div class="sc-season-body">'+
    (s.episodes?'<span class="sc-season-episodes">'+s.episodes+' épisodes</span>':'')+
    (s.network?'<small>Chaîne française : '+html(s.network)+'</small>':'')+
-   (s.summary?'<p class="sc-season-french-note">Le synopsis original de TVmaze n’est pas affiché car aucune traduction française vérifiée n’est disponible.</p>':'<p class="sc-season-french-note">Résumé français non disponible.</p>')+
+   (frenchSeasonNote(options.showId,s.number)?'<p class="sc-season-french-note">'+html(frenchSeasonNote(options.showId,s.number))+'</p>':'')+
    castSeasonHTML(options.showId,s.number,options.cast)+
    '</div></details>'
   ).join('')+'</div>'+
