@@ -1,0 +1,26 @@
+name: V1 quality gate
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: npm run check
+      - name: Run project test suite
+        run: npm test
+      - name: Detect unwanted development artefacts
+        run: |
+          if grep -RnE '<<<<<<< HEAD|=======|>>>>>>> ' --include='*.js' --include='*.html' v1 v3 v4 v5 v6 v7 v8 v10 v11 v12; then
+            echo 'Unresolved merge marker'; exit 1
+          fi
