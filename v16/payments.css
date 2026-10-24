@@ -1,2 +1,11 @@
 .sc16-shop .sc10-premium-card{position:relative;overflow:hidden}.sc16-shop .sc10-premium-card:before{content:'✦';position:absolute;right:18px;top:8px;font-size:80px;color:#dec07720;pointer-events:none}.sc16-terms{font-size:11px!important;line-height:1.6!important;color:var(--tv-sub)!important;margin-top:14px!important}.sc16-shop .sc10-premium-card .btn{margin-top:12px;min-height:44px}.sc16-shop button:disabled{opacity:.65;cursor:not-allowed}
 .sc16-premium-badge{display:inline-flex;align-items:center;gap:10px;padding:11px 16px;margin:1px 0 20px;border:1px solid #c49d58;border-radius:13px;color:#d5ab5f;font-weight:900;font-size:12px;background:color-mix(in srgb,#dba74c 10%,var(--tv-surface))}
+
+.sc-premium-benefits{list-style:none;padding:0;margin:18px 0;display:grid;gap:9px}
+.sc-premium-benefits li{padding:9px 12px;border:1px solid var(--tv-line,rgba(145,170,200,.24));border-radius:10px;color:var(--tv-text,#eef4ff);font-size:.88rem}
+.sc-premium-pickers{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px;margin:14px 0}
+.sc-premium-pickers label{display:grid;gap:6px;font-weight:650}
+.sc10-profile-hero.sc-premium-frame-gold{outline:2px solid #d7ae52;box-shadow:0 0 26px #d7ae522e}
+.sc10-profile-hero.sc-premium-frame-neon{outline:2px solid #58dceb;box-shadow:0 0 29px #58dceb38}
+.sc10-profile-hero.sc-premium-frame-cinema{outline:2px solid #b897f4;box-shadow:0 0 30px #b897f433}
+@media(prefers-reduced-motion:reduce){.sc-premium-pickers *{animation:none!important}}
