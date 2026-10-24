@@ -64,3 +64,13 @@ button.sc-season-cast-actor{cursor:pointer}
  .sc-season-item[open] .sc-season-caption{flex:1;justify-content:center}
  .sc-season-item[open] .sc-season-body{border-left:0;border-top:1px solid rgba(128,165,202,.24);padding:13px 15px}
 }
+
+/* V1.0 — panneau de détail dimensionné sur son contenu, sans vide vertical */
+.sc-season-item[open]{align-items:start;grid-template-columns:150px minmax(0,1fr)}
+.sc-season-item[open] summary>img,.sc-season-item[open] .sc-season-no-poster{height:182px}
+.sc-season-item[open] .sc-season-body{padding:13px 16px}
+.sc-season-body p.sc-season-french-note{margin:5px 0 0;font-size:.86rem;line-height:1.55;color:var(--text,#e7edf6)!important}
+@media(max-width:690px){
+ .sc-season-item[open]{grid-template-columns:minmax(0,1fr)}
+ .sc-season-item[open] summary>img,.sc-season-item[open] .sc-season-no-poster{height:146px}
+}
