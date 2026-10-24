@@ -58,3 +58,22 @@ Les requêtes ci-dessus ne manipulent ni profils ni soldes. Après changement de
 ## Limites de la vérification du 24 octobre
 
 La lecture des données de production et le correctif ponctuel de privilèges sont confirmés ; **aucune recette navigateur réelle, campagne complète de tests automatisés, revue juridique ni simulation d'achat live n'a été accomplie** au cours de cette vérification. Ne pas indiquer « prêt pour lancement » sur cette seule base.
+
+
+## Contrôle complémentaire de provenance — 24 octobre 2026
+
+Le diagnostic SQL en lecture seule `supabase/v1_audit_licences_catalogue.sql` a donné, en production :
+
+| Méthode | Séries vérifiées France | Cartes de cette catégorie déjà possédées | Titres de cette catégorie référencés dans au moins un pack SVOD |
+|---|---:|---:|---:|
+| `tvmaze_fr_origin` | 1 650 | 552 | 36 |
+| `tmdb_fr_offer` | 984 | 74 | 389 |
+| `editorial_fr_history` | 6 | 18 | 6 |
+
+Les 74 cartes sont un dénombrement à la date du contrôle, pas une quantité à supprimer. Les 389 références contaminent l'éligibilité des packs pour un usage commercial ; elles nécessitent une reconstruction de provenance. Les dénombrements sont distincts du total global de cartes, notamment parce que d'autres cartes peuvent appartenir à des titres archivés / non vérifiés.
+
+**Décision de sécurité produit** : ne pas commercialiser les packs SVOD tant que leur source n'est pas reconstruite ; ne pas attribuer automatiquement la qualification « source indépendante » à un titre qui apparaît seulement dans le cache d'offres. Maintenir les crédits virtuels non monétisés et le `noindex,nofollow` de préproduction.
+
+La licence CC BY-SA affichée pour l'API TVmaze doit être respectée (attribution et partage dans les mêmes conditions des données dérivées concernées). Cela n'établit pas automatiquement les droits sur toutes les photographies sous-jacentes. Une licence TMDB à usage commercial n'est pas disponible : supprimer complètement les dérivés avant recettes, publicité, affiliation ou abonnements payants. L'identité légale de l'éditeur, les coordonnées de retrait et le nom de marque définitif exigent encore des informations/décisions réelles.
+
+**Ne pas qualifier ce projet de « 100 % conforme » sans audit indépendant des contenus, des données personnelles et des obligations contractuelles.**
