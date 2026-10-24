@@ -2,8 +2,9 @@ import{esc,photo,money,heading}from'../v3/views.js?v=5.6.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
 import {officialSeasonHTML} from '../v10/seasons.js?v=19.0.0';
 function seriesLibrary(s){
- const progress=Array.isArray(s.seriesCompletion)?s.seriesCompletion:[];
- const earned=new Map((s.permanentSeriesBadges||[]).map(b=>[String(b.series_id),b]));
+ const progress=(Array.isArray(s.seriesCompletion)?s.seriesCompletion:[]).filter(x=>Number(x.required_seasons)>=3);
+ const allowed=new Set(progress.map(x=>String(x.series_id)));
+ const earned=new Map((s.permanentSeriesBadges||[]).filter(b=>allowed.has(String(b.series_id))).map(b=>[String(b.series_id),b]));
  const items=progress.slice().sort((a,b)=>Number(earned.has(String(b.series_id)))-Number(earned.has(String(a.series_id)))||Number(b.owned_seasons)/Math.max(1,Number(b.required_seasons))-Number(a.owned_seasons)/Math.max(1,Number(a.required_seasons)));
  const tile=x=>{
   const count=Number(x.owned_seasons)||0,total=Math.max(1,Number(x.required_seasons)||1),win=earned.has(String(x.series_id));
@@ -13,7 +14,7 @@ function seriesLibrary(s){
    '<span class="sc-v1-series-album-more">Afficher les saisons et les cartes manquantes ↗</span></button>';
  };
  const completed=items.filter(x=>earned.has(String(x.series_id))).length;
- return '<section class="sc-v1-series-library" aria-label="Albums de séries"><div class="section-head"><div><span class="caps">OBJECTIF PRINCIPAL</span><h2>Mes albums de séries</h2><p>Une carte par saison diffusée. Complète un album pour gagner définitivement le badge portant le nom de la série.</p></div><strong>'+completed+' badge'+(completed>1?'s':'')+' débloqué'+(completed>1?'s':'')+'</strong></div>'+
+ return '<section class="sc-v1-series-library" aria-label="Albums de séries"><div class="section-head"><div><span class="caps">OBJECTIF PRINCIPAL</span><h2>Mes albums de séries</h2><p>Albums à partir de 3 saisons diffusées. Une carte par saison. Complète un album pour gagner définitivement le badge portant le nom de la série.</p></div><strong>'+completed+' badge'+(completed>1?'s':'')+' débloqué'+(completed>1?'s':'')+'</strong></div>'+
  (items.length?'<div class="sc-v1-series-library-grid">'+items.map(tile).join('')+'</div>':
  '<div class="empty">Ouvre ton premier booster pour commencer un album de série.</div>')+'</section>';
 }
