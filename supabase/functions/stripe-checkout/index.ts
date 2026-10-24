@@ -3,7 +3,7 @@ import Stripe from 'npm:stripe@22.0.0';
 import {createClient} from 'npm:@supabase/supabase-js@2';
 const key=Deno.env.get('STRIPE_SECRET_KEY')||'';
 const site=(Deno.env.get('PUBLIC_SITE_URL')||'').replace(/\/+$/,'');
-const price=Deno.env.get('STRIPE_PRICE_PREMIUM_MONTHLY')||'';
+const price=(Deno.env.get('STRIPE_SECRET_KEY')||'').startsWith('sk_test_')?'price_1UU6fzAnJaPjYT5OMtRFbfF3':(Deno.env.get('STRIPE_PRICE_PREMIUM_MONTHLY')||'');
 const test=key.startsWith('sk_test_'),live=key.startsWith('sk_live_');
 const ready=Boolean(site.startsWith('https://')&&price&&
  (test&&Deno.env.get('PREMIUM_TEST_ENABLED')==='true'||
