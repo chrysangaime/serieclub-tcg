@@ -8,7 +8,7 @@ const test=key.startsWith('sk_test_'),live=key.startsWith('sk_live_');
 const ready=Boolean(site.startsWith('https://')&&price&&
  (test&&Deno.env.get('PREMIUM_TEST_ENABLED')==='true'||
  live&&Deno.env.get('PREMIUM_LIVE_ENABLED')==='true'));
-const mode=ready?(test?'test':'live'):'disabled';
+const mode=ready&&test?'test':'disabled';
 function headers(req:Request){
  const allowed=site?new URL(site).origin:'null';
  return {'Content-Type':'application/json','Access-Control-Allow-Origin':req.headers.get('origin')===allowed?allowed:'null',
@@ -20,7 +20,7 @@ Deno.serve(async req=>{
  if(req.method==='OPTIONS')return new Response(null,{headers:headers(req)});
  if(req.method==='GET')return send({mode,enabled:ready});
  if(req.method!=='POST')return send({error:'Méthode non autorisée'},405);
- if(!ready)return send({error:'Paiement désactivé'},503);
+ if(!ready||!test)return send({error:'Paiement réel suspendu tant que les droits et les conditions commerciales ne sont pas validés'},503);
  if(req.headers.get('origin')!==new URL(site).origin)return send({error:'Origine interdite'},403);
  let body:{sku?:string};
  try{body=await req.json()}catch{return send({error:'Requête invalide'},400)}
@@ -36,6 +36,8 @@ Deno.serve(async req=>{
   if(dbError)throw dbError;
   if(['active','trialing','past_due'].includes(existing?.status||''))return send({error:'Abonnement déjà existant : utilise le portail client'},409);
   const stripe=new Stripe(key);
+  const configuredPrice=await stripe.prices.retrieve(price);
+  if(configuredPrice.currency!=='eur'||configuredPrice.unit_amount!==399||configuredPrice.recurring?.interval!=='month')return send({error:'Prix Stripe non conforme à 3,99 € mensuels'},503);
   const session=await stripe.checkout.sessions.create({
    mode:'subscription',line_items:[{price,quantity:1}],locale:'fr',
    ...(existing?.stripe_customer_id?{customer:existing.stripe_customer_id}:{customer_email:user.email}),
