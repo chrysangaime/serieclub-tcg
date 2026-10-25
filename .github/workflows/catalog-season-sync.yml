@@ -1,0 +1,32 @@
+name: Synchronisation des saisons TVmaze
+on:
+  schedule:
+    - cron: '23 */4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: catalog-season-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SYNC_URL: https://anjfidksqbqlaggttdop.supabase.co/functions/v1/catalog-season-sync
+      SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - name: Vérifier les autorisations du synchroniseur
+        run: |
+          if [ -z "$SERVICE_KEY" ]; then
+            echo "::error::Secret GitHub SUPABASE_SERVICE_ROLE_KEY absent : synchronisation désactivée"
+            exit 1
+          fi
+      - name: Actualiser les saisons vérifiées (12 séries par passage)
+        run: |
+          curl --fail-with-body --silent --show-error --max-time 490 \
+            --retry 2 --retry-delay 5 \
+            -H "Authorization: Bearer $SERVICE_KEY" \
+            -H "Content-Type: application/json" \
+            -X POST "$SYNC_URL" -d '{"limit":12}' \
+            | python3 -c 'import sys,json; v=json.load(sys.stdin); print("Processed",v.get("processed"),"Next cursor",v.get("next_cursor"),"End of cycle",v.get("completed_cycle")); assert "error" not in v, v.get("error")'
