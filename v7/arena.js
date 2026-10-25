@@ -27,7 +27,7 @@ export function gameCards(status={},records={}){
    '<div class="sc7-mode-meta"><span>5 questions</span><span>'+(active?'80 crédits max':'Sans crédits')+'</span></div>'+ 
    (locked?'<p class="sc8-retry">Disponible le '+esc(next)+'</p>':'')+
    '<button class="btn primary" data-challenge="'+type+'"'+(locked?' disabled':'')+'>'+(resume?'Reprendre':locked?'Indisponible':'Jouer')+' <span aria-hidden="true">↗</span></button>'+
-   (type==='pixel'?'<button type="button" class="btn subtle sc11-preview-entry" data-pixel-preview>◫ Tester les pixels sans jouer</button>':'')+
+
    '</div></article>'
  }).join('')+'</div>';
 }
