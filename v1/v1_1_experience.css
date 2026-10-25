@@ -4,7 +4,7 @@
 .sc12-home .sc12-home-grid{order:-4;margin-bottom:18px}
 .sc12-home .sc12-banner{order:-3;max-height:260px;overflow:hidden;opacity:.93}
 .sc12-home .sc15-strip{order:-2}
-.sc12-home .sc12-pack-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sc12-home .sc12-pack-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:850px}
 .sc12-home .sc12-pack-options>*{min-width:0;box-sizing:border-box}
 .sc12-home .sc12-open-btn{min-height:54px;font-weight:800;box-shadow:0 8px 26px rgba(245,175,84,.15)}
 .sc12-home .sc12-main-head h2{font-size:clamp(26px,4vw,42px)}
