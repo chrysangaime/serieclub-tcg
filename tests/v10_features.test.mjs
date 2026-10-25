@@ -98,12 +98,12 @@ test('avatars et bannières uniquement proposés parmi les affiches de cartes po
  assert.match(profile({...s,wallet:{},bio:'',favoriteGenre:''}),/profileAvatar/);
 });
 test('Premium et achats : prix clairs sans checkout trompeur ou crédits client fictifs',()=>{
- assert.equal(offers.premium.eur,1.99);
- assert.deepEqual(offers.packs.map(x=>x.eur),[0.99,2.49,4.99]);
+ assert.equal(offers.premium.eur,3.99);
+ assert.deepEqual(offers.packs,[]); // aucun crédit virtuel vendu contre euros
  const html=storePage();
- assert.match(html,/1,99 €|1\.99/);
- assert.match(html,/Paiement non activé/);
- assert.match(html,/Abonnement bientôt disponible/);
+ assert.match(html,/3,99 €/);
+ assert.match(html,/Lancement commercial suspendu/);
+ assert.match(html,/Souscription publique en préparation/);
  assert.match(html,/disabled/);
  assert.ok(navItems.some(([key])=>key==='store'));
  const sql=fs.readFileSync('supabase/game_v10_commerce_ready.sql','utf8');
