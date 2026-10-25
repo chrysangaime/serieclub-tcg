@@ -1,6 +1,6 @@
 import{esc,photo,money,heading}from'../v3/views.js?v=5.6.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
-import {officialSeasonHTML} from '../v10/seasons.js?v=19.0.0';
+import {officialSeasonHTML} from '../v10/seasons.js?v=20.1.0';
 function seriesLibrary(s){
  const progress=(Array.isArray(s.seriesCompletion)?s.seriesCompletion:[]).filter(x=>Number(x.required_seasons)>=3);
  const allowed=new Set(progress.map(x=>String(x.series_id)));
