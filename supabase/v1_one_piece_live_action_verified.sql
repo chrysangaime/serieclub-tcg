@@ -1,0 +1,1 @@
+update public.series set fr_verified=true,fr_verification_method='editorial_fr_history',fr_evidence_url='https://www.netflix.com/fr/browse/genre/83',fr_verified_at=now(),content_status='series' where id=46065; select id,name,fr_verification_method from public.series where id in(1505,46065);
