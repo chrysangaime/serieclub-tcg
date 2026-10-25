@@ -14,7 +14,7 @@ import{openingFrame}from'../v7/booster.js?v=1.0.0&build=9';
 import{gameModes}from'../v7/arena.js?v=10.1.1';
 import{trainingModeStatus,canStartTraining,startTraining}from'../v8/game-limits.js?v=8.0.0';
 import{fusionPlan,autoFusion,fusionConfirmation}from'../v6/fusion.js?v=8.0.0';
-import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.2.0&build=25';
+import{navItems,ranks,esc,photo,money,monthHalloween,timecode,foil,card,packs,collection,catalogue,wishlist,albums,rankings,fusions,profile,games,rules,settings,placeholder}from'./views.js?v=1.2.0&build=26';
 import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDetailHTML,frenchSynopsisHTML,stripSummary}from'../v4/series.js?v=6.1.0&build=18';
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=7.1.2';
