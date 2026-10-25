@@ -28,7 +28,7 @@ export function profileArtPanel(s){
  const bannerTheme=['poster','midnight','aurora','cinema'].includes(s.bannerTheme)?s.bannerTheme:'poster';
  const bannerStyle=banner&&bannerTheme==='poster'?' style="background-image:linear-gradient(0deg,#12192388,#1219232a),url(&quot;'+esc(banner.image_url)+'&quot;);background-position:'+Number(s.bannerPositionX??50)+'% '+Number(s.bannerPositionY??50)+'%"':'';
  const options=selected=>'<option value="">Aucune affiche</option>'+cards.map(c=>
-  '<option value="'+esc(c.id)+'"'+(String(selected)===c.id?' selected':'')+'>'+esc(c.name)+'</option>').join('');
+  '<option value="'+esc(c.id)+'" data-image="'+esc(c.image_url)+'"'+(String(selected)===c.id?' selected':'')+'>'+esc(c.name)+'</option>').join('');
  const premium=s.premiumActive===true;
  const frame=premium&&['gold','neon','cinema'].includes(s.premiumFrame)?s.premiumFrame:'classic';
  const titles={collectionneur:'Collectionneur',archiviste:'Archiviste des séries',legende:'Légende du Club',curateur:'Curateur de saisons'};
