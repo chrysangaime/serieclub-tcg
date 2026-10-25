@@ -67,10 +67,10 @@ export function officialSeasonHTML(s={}){
   {...base,...serverById.get(base.id),trackedSeasons:s.trackedSeasons||[]}:{...base,owned:0,claimed:false,trackedSeasons:s.trackedSeasons||[]});
  const old=rows.slice(0,6).map(r=>seasonCard(r,serverById.has(r.id))).join('');
  const new20=rows.slice(6).map(r=>seasonCard(r,serverById.has(r.id))).join('');
- return '<section class="sc10-season-section sc19-season-section" aria-label="Saisons officielles">'+
+ return '<section class="sc10-season-section sc19-season-section" aria-label="Défis thématiques de collection">'+
  '<div class="sc10-season-heading"><div><span class="caps">DÉFIS DE COLLECTION · OFFICIELS</span>'+
- '<h2>Les Saisons à compléter</h2></div><small>12 saisons · défis de 8 ou 20 séries</small></div>'+
- '<p>Collectionne des séries différentes pour progresser. Un badge permanent et des crédits récompensent chaque saison validée une seule fois.</p>'+
+ '<h2>Défis thématiques</h2></div><small>12 défis · collections de 8 ou 20 séries</small></div>'+
+ '<p>Collectionne des séries différentes pour progresser. Un badge permanent et des crédits récompensent chaque défi validé une seule fois.</p>'+
  (s.officialSeasonError?'<div class="sc10-season-unavailable" role="status">'+esc(s.officialSeasonError)+'</div>':'')+
  '<div class="sc19-chapter"><div><span class="caps">PREMIÈRE PARTIE</span><h3>Les défis classiques</h3>'+
  '<p>Six collections de 8 séries pour commencer ton parcours.</p></div><span>01 / 02</span></div>'+
@@ -79,7 +79,7 @@ export function officialSeasonHTML(s={}){
  '<h3>Les Top 20 du Club</h3><p>Six sélections exigeantes, 20 titres précis chacune. Séries diffusées en France, liste fixe pour toute l’édition.</p>'+
  '</div><span>02 / 02</span></div>'+
  '<p class="sc19-editorial-note">Sélections éditoriales classées selon la popularité du catalogue. Il ne s’agit pas des Top 20 officiels de visionnage des plateformes. Les listes sont figées afin de préserver ta progression.</p>'+
- '<div class="sc20-all-toolbar"><div><strong>Préparer toutes mes saisons Top 20</strong><small>Les manquantes vont aux souhaits ; un exemplaire possédé est protégé automatiquement.</small></div>'+ '<button class="btn primary" data-sync-all-seasons type="button" '+(!s.user?'disabled':'')+'>✦ Préparer mes 6 Top 20</button></div>'+ '<div class="sc10-season-grid sc19-top20-grid">'+new20+'</div>'+
+ '<div class="sc20-all-toolbar"><div><strong>Préparer mes collections Top 20</strong><small>Les manquantes vont aux souhaits ; un exemplaire possédé est protégé automatiquement.</small></div>'+ '<button class="btn primary" data-sync-all-seasons type="button" '+(!s.user?'disabled':'')+'>✦ Préparer mes 6 Top 20</button></div>'+ '<div class="sc10-season-grid sc19-top20-grid">'+new20+'</div>'+
  '</section>';
 }
 /** Liste provenant de Supabase : aucun titre inventé dans le client. */
