@@ -72,8 +72,8 @@ export function catalogue(s){
  const genres=[['','Tous les genres'],['Drama','Drame'],['Comedy','Comédie'],['Crime','Policier'],['Thriller','Thriller'],['Mystery','Mystère'],['Science-Fiction','Science-fiction'],['Fantasy','Fantastique'],['Horror','Horreur'],['Action','Action'],['Adventure','Aventure'],['Romance','Romance'],['Animation','Animation'],['Documentary','Documentaire'],['Family','Famille']];
  const decades=[['','Toutes les époques'],['2020','Années 2020'],['2010','Années 2010'],['2000','Années 2000'],['1990','Années 1990'],['1980','Années 1980'],['1970','Années 1970'],['1960','Années 1960'],['1950','Années 1950'],['before1950','Avant 1950']];
  const sorting=[['name','Titre A → Z'],['recent','Plus récentes'],['oldest','Plus anciennes'],['popular','Popularité']];
- const chosen={rarity:s.catalogRarity||'',genre:s.catalogGenre||'',decade:s.catalogDecade||'',sort:s.catalogSort||'name'};
- const active=Boolean((s.catalogQuery||'').trim()||chosen.rarity||chosen.genre||chosen.decade||chosen.sort!=='name');
+ const chosen={rarity:s.catalogRarity||'',genre:s.catalogGenre||'',decade:s.catalogDecade||'',platform:s.catalogPlatform||'',sort:s.catalogSort||'name'};
+ const active=Boolean((s.catalogQuery||'').trim()||chosen.rarity||chosen.genre||chosen.decade||chosen.platform||chosen.sort!=='name');
  const countText=Number.isSafeInteger(s.catalogTotal)
   ?money(s.catalogTotal)+' série'+(s.catalogTotal>1?'s':'')+' éligible'+(s.catalogTotal>1?'s':'')+' en France · '+money((s.catalog||[]).length)+' affichée'+((s.catalog||[]).length===1?'':'s')
   :money((s.catalog||[]).length)+' séries affichées';
@@ -83,9 +83,11 @@ export function catalogue(s){
    '<div class="sc59-filter-grid" aria-label="Filtrer le catalogue">'+
     '<label>Rareté<select id="catalogRarity">'+opt('', 'Toutes les raretés',chosen.rarity)+ranks.map(v=>opt(v,v,chosen.rarity)).join('')+'</select></label>'+
     '<label>Genre<select id="catalogGenre">'+genres.map(([v,l])=>opt(v,l,chosen.genre)).join('')+'</select></label>'+
+    '<label>Plateforme SVOD<select id="catalogPlatform">'+[['','Toutes les plateformes'],['netflix','Netflix · archive'],['prime','Prime Video · archive'],['disney','Disney+ · archive']].map(([v,l])=>opt(v,l,chosen.platform)).join('')+'</select></label>'+
     '<label>Époque<select id="catalogDecade">'+decades.map(([v,l])=>opt(v,l,chosen.decade)).join('')+'</select></label>'+
     '<label>Trier par<select id="catalogSort">'+sorting.map(([v,l])=>opt(v,l,chosen.sort)).join('')+'</select></label>'+
    '</div>';
+ const archiveNotice=chosen.platform?'<div class="notice" role="status">Sélection française historique, non actualisée : la présence d’une série ne garantit pas sa disponibilité actuelle sur la plateforme.</div>':'';
  const results=(s.catalog||[]).length
   ?'<div class="grid sc59-catalog-grid">'+s.catalog.map(c=>card(c,
     (owned.get(c.id)?'<div class="sc52-owned-tag">✓ Dans ta collection · '+money(owned.get(c.id))+' exemplaire'+(owned.get(c.id)>1?'s':'')+'</div>':'')+
