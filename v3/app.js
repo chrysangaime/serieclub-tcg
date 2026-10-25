@@ -414,6 +414,26 @@ async function loadAlbums(){
  state.officialSeasonError=official.error?'Les Saisons officielles sont temporairement indisponibles.':'';
  if(state.route==='albums')render();
 }
+const seasonArtCache=new Map();
+async function seasonalArtwork(showId){
+ const id=Number(showId);
+ if(!Number.isSafeInteger(id)||id<=0)return new Map();
+ if(seasonArtCache.has(id))return seasonArtCache.get(id);
+ const promise=(async()=>{
+  const response=await fetch('https://api.tvmaze.com/shows/'+id+'/seasons',{headers:{Accept:'application/json'}});
+  if(!response.ok)throw Error('Season artwork temporarily unavailable');
+  const data=await response.json();
+  const covers=new Map();
+  for(const item of Array.isArray(data)?data:[]){
+   const picture=item?.image?.original||item?.image?.medium;
+   if(Number.isSafeInteger(item?.number)&&item.number>0&&typeof picture==='string'&&/^https:\/\/static\.tvmaze\.com\//.test(picture))
+    covers.set(item.number,picture);
+  }
+  return covers;
+ })().catch(()=>new Map());
+ seasonArtCache.set(id,promise);
+ return promise;
+}
 async function openSeriesAlbum(id){
  if(!state.user){openAuth();return}
  const show=state.seriesCompletion.find(x=>Number(x.series_id)===Number(id));
@@ -424,7 +444,12 @@ async function openSeriesAlbum(id){
   .order('season_number',{ascending:true});
  if(error){toast('Saisons momentanément indisponibles.',true);return}
  const overlay=$('overlay');overlay.classList.remove('hidden');
- overlay.innerHTML=seriesAlbumDetails(show,data||[],state.cards,state.permanentSeriesBadges);
+ const seasons=Array.isArray(data)?data:[];
+ // Récupération directe uniquement pour l'aperçu : les droits éditoriaux et les
+ // affiches propres aux saisons restent soumis à la source officielle.
+ const coverMap=await seasonalArtwork(id);
+ const enhanced=seasons.map(x=>({...x,image_url:coverMap.get(x.season_number)||x.image_url}));
+ overlay.innerHTML=seriesAlbumDetails(show,enhanced,state.cards,state.permanentSeriesBadges);
 }
 async function openAlbum(id){
  if(!state.user){openAuth();return}
