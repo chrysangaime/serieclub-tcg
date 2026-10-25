@@ -10,13 +10,13 @@ test('V15 replaces V14 styling with distinct night/day palettes',()=>{
  assert.match(s,/:root\[data-theme="day"\]/);
  assert.match(s,/@container sc15packs/);
 });
-test('The cinematic homepage has two real packs and a premium preview',()=>{
+test('The homepage puts the two playable boosters in the foreground',()=>{
  const html=svodHome({isOctober:true,pack:'classic',user:{id:1},cards:[],wallet:{credits:120},
   homeShows:[{id:4,name:'From',genres:['Horror'],image_url:'https://example.com/poster.jpg'}],
   seasonShows:[],stock:{stock:7,maximum:10,recharge_seconds:25}
  },{foil:()=>'<span>OLD</span>',timecode:()=>''});
- for(const x of ['sc15-hero-posters','sc15-strip','sc15-pack-options','sc15-progress','sc15-foil--original','sc15-foil--halloween','sc15-foil--premium','id="openPack"'])assert.ok(html.includes(x),x);
- assert.match(html,/data-pack="classic"/);assert.match(html,/data-pack="halloween"/);
+ for(const x of ['sc15-hero-posters','sc15-strip','sc15-pack-options','sc15-progress','sc15-foil--original','sc15-foil--halloween','id="openPack"'])assert.ok(html.includes(x),x);
+ assert.match(html,/data-pack="classic"/);assert.match(html,/data-pack="halloween"/);assert.doesNotMatch(html,/sc12-pack-premium/);
  assert.doesNotMatch(html,/data-pack="premium"|>OLD</);
 });
 test('Artwork URLs remain safe and empty artwork shows fallback',()=>{
