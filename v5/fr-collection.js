@@ -5,7 +5,7 @@
  */
 export function frenchPlayable(entry){
  return entry?.series?.fr_verified===true&&entry?.series?.rarity_source!=='pending'&&entry?.series?.content_status==='series'&&
- ['tvmaze_fr_origin','streaming_availability_fr'].includes(entry?.series?.fr_verification_method);
+ ['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history'].includes(entry?.series?.fr_verification_method);
 }
 export function partitionFrenchInventory(cards=[],wishes=[]){
  const allCards=Array.isArray(cards)?cards:[];
