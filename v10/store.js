@@ -1,4 +1,4 @@
-/** Premium V1 — offres uniquement cosmétiques ; aucun avantage de tirage. */
+/** SériesClubTCG Premium V1 — offres uniquement cosmétiques ; aucun avantage de tirage. */
 export const offers=Object.freeze({premium:{label:'Premium',eur:3.99,interval:'mois'},packs:[]});
 export function storePage(s={}){
  const active=s.premiumActive===true,test=s.paymentsMode==='test';
