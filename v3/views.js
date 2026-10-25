@@ -75,7 +75,7 @@ export function catalogue(s){
  const chosen={rarity:s.catalogRarity||'',genre:s.catalogGenre||'',decade:s.catalogDecade||'',platform:s.catalogPlatform||'',sort:s.catalogSort||'name'};
  const active=Boolean((s.catalogQuery||'').trim()||chosen.rarity||chosen.genre||chosen.decade||chosen.platform||chosen.sort!=='name');
  const countText=Number.isSafeInteger(s.catalogTotal)
-  ?money(s.catalogTotal)+' séries éligibles en France · '+money((s.catalog||[]).length)+' éditions de saisons affichées
+  ?money(s.catalogTotal)+' séries éligibles en France · '+money((s.catalog||[]).length)+' éditions de saisons affichées'
   :money((s.catalog||[]).length)+' séries affichées';
  const filters='<div class="sc59-search-row"><label class="sr" for="catalogQuery">Rechercher une série</label>'+
    '<div class="sc59-search-input"><span aria-hidden="true">⌕</span><input class="input" type="search" id="catalogQuery" placeholder="Rechercher une série…" autocomplete="off" value="'+esc(s.catalogQuery||'')+'" aria-describedby="catalogFeedback"></div>'+
