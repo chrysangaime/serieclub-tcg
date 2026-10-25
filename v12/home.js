@@ -45,7 +45,7 @@ function progressItem(icon,label,description,value,max,tone){
 }
 function packVisual(type){
  const key=type==='halloween'?'halloween':'original';
- return '<img class="sc-v13-booster-art" src="./v1/packs/'+key+'.svg" loading="eager" alt="Pochette '+(key==='halloween'?'Halloween':'Original')+'">';
+ return '<img class="sc-v13-booster-art" src="./v1/packs/'+key+'.webp" onerror="this.onerror=null;this.src='./v1/packs/'+key+'.svg'" loading="eager" alt="Pochette '+(key==='halloween'?'Halloween':'Original')+'">';
 }
 function heroPosters(shows){
  // Source : séries déjà vérifiées et disponibles dans le catalogue France.
