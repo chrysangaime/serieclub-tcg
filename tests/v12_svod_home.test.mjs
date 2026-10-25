@@ -38,8 +38,8 @@ test('le vrai jeu n’offre que classic et halloween : premium est une vitrine, 
  const html=renderer(demo);
  assert.match(html,/data-pack="classic"/);
  assert.match(html,/data-pack="halloween"/);
- assert.match(html,/data-route="store"/);
- assert.match(html,/EN PRÉPARATION/);
+ assert.match(html,/svod-credit-packs/);
+ assert.match(html,/En préparation/);
  assert.doesNotMatch(html,/data-pack="premium"/);
  assert.match(html,/2 séries classées Horreur/);
 });
