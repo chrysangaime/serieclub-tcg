@@ -707,7 +707,7 @@ async function loadCatalog(reset=false){
   if(ids.length){
    const lookup=await supa.from('series_seasons')
     .select('series_id,season_number,season_name,image_url,premiered')
-    .in('series_id',ids).order('season_number',{ascending:true}).limit(1200);
+    .in('series_id',ids).lte('premiered',new Date().toISOString().slice(0,10)).order('season_number',{ascending:true}).limit(1200);
    if(lookup.error)console.warn('Saisons temporairement indisponibles',lookup.error.message);
    else editions=lookup.data||[];
   }
