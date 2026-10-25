@@ -1,5 +1,5 @@
 import{demoHTML}from'../v1/onboarding.js?v=1.0.0&build=4';
-import{creditThemeShelf}from'../v21/credit-packs.js?v=21.0.0';
+import{creditThemeShelf}from'../v21/credit-packs.js?v=21.1.0';
 /**
  * SériesClubTCG V12 — véritable page d'accueil TV/SVOD.
  * Aucun mécanisme de jeu ni probabilité ne se trouve ici.
