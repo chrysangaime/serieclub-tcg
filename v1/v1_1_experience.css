@@ -1,0 +1,53 @@
+/* V1.1 — Priorité au jeu : paquets avant campagne, mobile-first */
+.hero-packs.sc12-home>.pack-section{display:flex;flex-direction:column;min-width:0}
+.sc12-home #svod-packs{order:-5;margin-top:4px;scroll-margin-top:78px}
+.sc12-home .sc12-home-grid{order:-4;margin-bottom:18px}
+.sc12-home .sc12-banner{order:-3;max-height:260px;overflow:hidden;opacity:.93}
+.sc12-home .sc15-strip{order:-2}
+.sc12-home .sc12-pack-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sc12-home .sc12-pack-options>*{min-width:0;box-sizing:border-box}
+.sc12-home .sc12-open-btn{min-height:54px;font-weight:800;box-shadow:0 8px 26px rgba(245,175,84,.15)}
+.sc12-home .sc12-main-head h2{font-size:clamp(26px,4vw,42px)}
+.sc12-home .sc12-banner h1{font-size:clamp(25px,3vw,48px)}
+.sc12-home .sc12-banner-art{opacity:.5;pointer-events:none}
+.sc12-home .sc12-open-bar{padding:12px 0}
+.sc12-home .sc21-shop{margin-top:26px}
+.sc21-shop-item{transition:transform .16s ease,border-color .16s ease;min-width:0}
+.sc21-shop-item:hover{transform:translateY(-2px);border-color:#d4ad70}
+.sc10-shop-hero{padding-block:32px}
+.sc10-premium-card{box-shadow:0 24px 65px rgba(0,0,0,.12)}
+.sc10-profile-banner.sc-v1-banner-midnight{background-image:radial-gradient(ellipse at 80% 20%,#366098,#11192e 66%,#0c1226)!important}
+.sc10-profile-banner.sc-v1-banner-aurora{background-image:radial-gradient(ellipse at 20% 30%,#58a2ac99,transparent 55%),linear-gradient(115deg,#12334d,#403375,#17273e)!important}
+.sc10-profile-banner.sc-v1-banner-cinema{background-image:repeating-linear-gradient(115deg,transparent 0 70px,#d2a65b16 71px 74px),linear-gradient(120deg,#121721,#402b35,#151c2e)!important}
+.sc-v1-position-editor{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:17px 0}
+.sc-v1-position-editor label{display:flex;flex-direction:column;gap:7px;font-size:.82rem}
+.sc-v1-position-editor input{width:100%}
+.sc-v1-fusion-sort select{min-width:135px}
+.sc59-filter-grid label,.sc-v1-art-search{min-width:0}
+.sc4-page .sc-v1-series-badge{display:inline-flex;align-items:center;gap:8px}
+.sc10-shop .sc-premium-benefits{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.sc7-games .sc7-hero,.sc60-fusion-hero{border-radius:20px}
+.page-content .btn:not(:disabled){transition:transform .12s ease,box-shadow .15s ease}
+.page-content .btn:not(:disabled):hover{transform:translateY(-1px)}
+@media(max-width:760px){
+ .sc12-home .sc12-banner{max-height:180px;min-height:0;padding:9px 12px;margin-top:14px}
+ .sc12-home .sc12-banner-art,.sc12-home .sc13-hero-controls{display:none!important}
+ .sc12-home .sc12-banner-content{padding:12px!important}
+ .sc12-home .sc12-banner h1{font-size:clamp(22px,6vw,30px)!important;margin:6px 0}
+ .sc12-home .sc12-banner p,.sc12-home .sc12-banner-actions{display:none}
+ .sc12-home .sc12-pack-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .sc12-home .sc12-main-head{margin-top:8px}
+ .sc12-home .sc12-home-grid{display:flex;flex-direction:column;gap:12px}
+ .sc12-home .sc15-pack-column{order:0}
+ .sc12-home .sc15-progress{order:2}
+ .sc12-home .sc12-open-bar{position:relative;z-index:2}
+ .sc-v1-position-editor{grid-template-columns:1fr}
+ .sc59-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:420px){
+ .sc12-home .sc12-pack-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sc12-home .sc12-banner{max-height:115px}
+ .sc12-home .sc12-banner strong{display:none}
+ .sc12-home .sc12-banner h1{font-size:23px!important}
+}
+@media(prefers-reduced-motion:reduce){.sc21-shop-item,.page-content .btn{transition:none!important;transform:none!important}}
