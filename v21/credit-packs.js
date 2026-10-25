@@ -22,7 +22,7 @@ export function creditThemeShelf(s={}){
   const action=!available?'En préparation':!s.user?'Se connecter':balance<cost?'Crédits insuffisants':'Ouvrir pour '+cost+' crédits';
   const date=offer?.proof_date?String(offer.proof_date).slice(0,10).split('-').reverse().join('/'):'';
   return '<article class="sc21-shop-item sc21-'+t.tone+'"><div class="sc21-shop-art"><span class="sc21-shop-logo">'+t.mark+'</span><small>SÉLECTION NON OFFICIELLE</small></div>'+
-  '<div class="sc21-shop-info"><h3>'+html(t.name)+'</h3><p>'+html(t.note)+'</p><strong>5 séries <span>· 7 raretés</span></strong></div>'+
+  '<div class="sc21-shop-info"><h3>'+html(t.name)+'</h3><p>'+html(t.note)+'</p><strong>5 cartes <span>· 7 raretés</span></strong></div>'+
   '<div class="sc21-shop-actions"><b>'+(cost?cost+' ◇':'Bientôt')+'</b><button type="button" data-credit-pack="'+t.key+'"'+(allowed?'':' disabled')+'>'+html(action)+' →</button></div>'+
   (date&&!genre?'<small class="sc21-shop-proof">Dernier relevé : '+html(date)+'</small>':'')+'</article>';
  }).join('')+'</div><p class="sc21-shop-legal">Boosters Comédies, Enquêtes, Suspense et Fantastique accessibles en crédits virtuels. Sélections SVOD non officielles temporairement désactivées : preuves françaises périmées, aucune disponibilité actuelle garantie. Aucun crédit vendu contre des euros.</p></section>';
