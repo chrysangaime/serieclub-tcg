@@ -65,12 +65,24 @@ export function profileArtPanel(s){
     '</select></label></div><small>Enregistre tes choix avec le bouton « Enregistrer mon profil » plus bas.</small>':
     '<button type="button" class="btn subtle" data-route="store">Découvrir Premium · 3,99 € / mois</button>')+
    '</div>':'')+
-  (s.user?'<div class="panel"><h2>Mes affiches de profil</h2>'+
-   '<p>Choisis ton avatar et ta bannière parmi les affiches des séries présentes dans ta collection. Aucune image à téléverser.</p>'+
-   '<label>Rechercher une affiche<input class="input" id="profileArtSearch" type="search" placeholder="Titre de série…"></label>'+ 
-   '<div class="sc10-profile-art-pickers"><label>Avatar de profil<select class="input" id="profileAvatar">'+options(s.avatarSeriesId)+'</select></label>'+
-   '<label>Bannière de profil<select class="input" id="profileBanner">'+options(s.bannerSeriesId)+'</select></label></div>'+
-   '<div class="sc-v1-position-editor"><label>Avatar horizontal <input type="range" id="avatarPositionX" min="0" max="100" value="'+Number(s.avatarPositionX??50)+'"></label><label>Avatar vertical <input type="range" id="avatarPositionY" min="0" max="100" value="'+Number(s.avatarPositionY??50)+'"></label><label>Bannière horizontale <input type="range" id="bannerPositionX" min="0" max="100" value="'+Number(s.bannerPositionX??50)+'"></label><label>Bannière verticale <input type="range" id="bannerPositionY" min="0" max="100" value="'+Number(s.bannerPositionY??50)+'"></label></div>'+
-   '<label>Style de bannière<select id="bannerTheme" class="input">'+[['poster','Affiche sélectionnée'],['midnight','Nuit bleue'],['aurora','Aurore colorée'],['cinema','Salle de cinéma']].map(([v,n])=>'<option value="'+v+'"'+(bannerTheme===v?' selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
-   '<small>'+(cards.length?cards.length+' affiches débloquées disponibles. Les modifications sont enregistrées avec ton profil.':'Ouvre des paquets pour débloquer tes premières affiches.')+'</small></div>':'');
+  (s.user?'<section class="panel sc-editor"><div class="sc-editor-head"><span class="caps">STUDIO DU COLLECTIONNEUR</span><h2>Personnalise ton profil</h2><p>Choisis une affiche en image, puis cadre-la directement sur ton aperçu. Les réglages sont gratuits.</p></div>'+
+   '<div class="sc-editor-preview"><div class="sc-editor-banner sc-v1-banner-'+esc(bannerTheme)+'" id="profileBannerPreview"'+bannerStyle+'></div>'+
+   '<div class="sc-editor-avatar" id="profileAvatarPreview"'+avatarStyle+'>'+(avatar?'':initial)+'</div><strong>'+esc(s.username||'Mon profil')+'</strong></div>'+
+   '<div class="sc-editor-targets" role="group" aria-label="Choisir ce que tu souhaites modifier">'+
+   '<button type="button" class="sc-editor-target active" data-editor-target="avatar" aria-pressed="true">◉ Avatar</button>'+
+   '<button type="button" class="sc-editor-target" data-editor-target="banner" aria-pressed="false">▧ Bannière</button></div>'+
+   '<label class="sc-editor-search-label">Rechercher une affiche parmi mes cartes<input class="input" id="profileArtSearch" type="search" placeholder="Ex. True Detective…" autocomplete="off"></label>'+
+   '<div class="sc-editor-gallery" id="profileArtGallery" role="group" aria-label="Affiches disponibles">'+
+   cards.map(c=>'<button type="button" class="sc-editor-poster" data-editor-art="'+esc(c.id)+'" data-editor-image="'+esc(c.image_url)+'" data-editor-name="'+esc(c.name)+'" title="'+esc(c.name)+'">'+
+    '<img src="'+esc(c.image_url)+'" loading="lazy" alt="'+esc(c.name)+'"><small>'+esc(c.name)+'</small></button>').join('')+
+   '</div>'+
+   '<div class="sc-editor-legacy" hidden><select id="profileAvatar">'+options(s.avatarSeriesId)+'</select><select id="profileBanner">'+options(s.bannerSeriesId)+'</select></div>'+
+   '<div class="sc-editor-crop"><h3>Repositionner le visuel</h3><p>Déplace directement l’image dans l’aperçu, ou ajuste finement son cadrage.</p>'+
+   '<div class="sc-editor-positions"><label>Horizontal<input type="range" id="avatarPositionX" min="0" max="100" value="'+Number(s.avatarPositionX??50)+'"></label>'+
+   '<label>Vertical<input type="range" id="avatarPositionY" min="0" max="100" value="'+Number(s.avatarPositionY??50)+'"></label>'+
+   '<label hidden>Horizontal bannière<input type="range" id="bannerPositionX" min="0" max="100" value="'+Number(s.bannerPositionX??50)+'"></label>'+
+   '<label hidden>Vertical bannière<input type="range" id="bannerPositionY" min="0" max="100" value="'+Number(s.bannerPositionY??50)+'"></label></div></div>'+
+   '<label class="sc-editor-theme">Ou utiliser une bannière graphique originale<select id="bannerTheme" class="input">'+
+    [['poster','Affiche de ma collection'],['midnight','Nuit bleue'],['aurora','Aurore'],['cinema','Cinéma']].map(([v,n])=>'<option value="'+v+'"'+(bannerTheme===v?' selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
+   '<p class="sc-editor-help">Tes modifications sont enregistrées avec le bouton « Enregistrer mon profil ».</p></section>':'');;
 }
