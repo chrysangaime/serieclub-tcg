@@ -44,22 +44,8 @@ function progressItem(icon,label,description,value,max,tone){
   '<small>'+esc(description)+'</small><div class="sc12-bar" role="progressbar" aria-label="'+esc(label)+'" aria-valuenow="'+shown+'" aria-valuemin="0" aria-valuemax="'+cap+'"><i style="width:'+Math.round(shown/cap*100)+'%"></i></div></div></div>';
 }
 function packVisual(type){
- // Pochette de booster propre à SériesClubTCG : logo TV et marquage collector.
- const key=type==='premium'?'premium':type==='halloween'?'halloween':'original';
- const label=key==='premium'?'PREMIUM':key==='halloween'?'HALLOWEEN':'ORIGINAL';
- const symbol=key==='halloween'
- ?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M32 7C19 11 13 25 22 35c5 6 12 7 18 5C28 47 11 43 7 29 2 14 16 1 32 7Z" fill="currentColor"/></svg>'
- :key==='premium'
- ?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 2 30.8 17.2 46 24l-15.2 6.8L24 46l-6.8-15.2L2 24l15.2-6.8L24 2Z" fill="currentColor"/></svg>'
- :'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="5" y="8" width="38" height="28" rx="5" stroke="currentColor" stroke-width="2.5"/><path d="m21 16 11 6-11 6V16Z" fill="currentColor"/><path d="M18 42h12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
- const tv='<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="3.5" y="7" width="25" height="18" rx="4.5" stroke="currentColor" stroke-width="2"/><path d="m14 11 8 5-8 5V11Z" fill="currentColor"/><path d="M11 29h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
- return '<span class="sc15-foil sc22-booster sc15-foil--'+key+' sc22-booster--'+key+'">'+
- '<span class="sc15-foil-stripe" aria-hidden="true"></span>'+
- '<span class="sc22-booster-brand">'+tv+
- '<strong class="sc18-foil-brand"><span>SÉRIES<em>CLUB</em></span><small>TCG</small></strong></span>'+
- '<span class="sc22-booster-center">'+symbol+'<small>TRADING CARD GAME</small></span>'+
- '<span class="sc22-booster-footer"><b>'+label+'</b><small>'+(key==='premium'?'STATUT COLLECTOR':'5 CARTES · 7 RARETÉS')+'</small></span>'+
- '<span class="sc15-foil-stripe sc15-foil-stripe-bottom" aria-hidden="true"></span></span>';
+ const key=type==='halloween'?'halloween':'original';
+ return '<img class="sc-v13-booster-art" src="./v1/packs/'+key+'.svg" loading="eager" alt="Pochette '+(key==='halloween'?'Halloween':'Original')+'">';
 }
 function heroPosters(shows){
  // Source : séries déjà vérifiées et disponibles dans le catalogue France.
