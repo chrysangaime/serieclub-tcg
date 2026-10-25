@@ -31,7 +31,7 @@ export function seriesAlbumDetails(show,seasons,cards,badges){
   return '<article class="sc-v1-series-slot '+(has?'is-owned':'is-missing')+'">'+
    (has&&v.image_url?'<img loading="lazy" src="'+esc(v.image_url)+'" alt="Affiche de la saison '+v.season_number+'">':'<div class="sc-v1-slot-empty" aria-hidden="true">'+(has?'✦':'?')+'</div>')+
    '<strong>Saison '+Number(v.season_number)+'</strong><small>'+esc(v.season_name||'')+'</small><span>'+(has?'✓ Possédée':'☆ À obtenir')+'</span></article>';
- }).join('')+'</div></div>';
+ }).join('')+'</div><p class="sc-v1-album-source">Affiches et saisons : <a href="https://www.tvmaze.com/shows/'+Number(show.series_id)+'" target="_blank" rel="noopener noreferrer">TVmaze</a> et sources éditoriales. Les visuels proviennent de leurs ayants droit respectifs.</p></div>';
 }
 export function personalAlbumsPage(s){
  const genreCounts=new Map();
