@@ -1543,6 +1543,7 @@ document.addEventListener('pointermove',e=>{
 document.addEventListener('pointerup',()=>{editorDrag=null});
 document.addEventListener('pointercancel',()=>{editorDrag=null});
 function globalClick(e){
+ if(e.target.closest('[data-save-profile-editor]')){saveUsername();return}
  const targetButton=e.target.closest('[data-editor-target]');
  if(targetButton){editorTarget=targetButton.dataset.editorTarget;editorSync();return}
  const posterButton=e.target.closest('[data-editor-art]');
