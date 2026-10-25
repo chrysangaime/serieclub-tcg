@@ -19,7 +19,7 @@ import{getShowDetails,getPersonFilmography,searchPeople,showDetailHTML,actorDeta
 import{getFrenchSynopsis}from'../v4/synopsis-fr.js?v=5.1.0';
 import{getFrenchOffersByShow,renderFranceAvailability}from'../v5/fr-watch.js?v=7.1.2';
 import{getFrenchCastByShow}from'../v5/cast-fr.js?v=7.0.0';
-import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.1';
+import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.2';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=14';
 import{personalAlbumsPage,seriesAlbumDetails,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.2.1';
 import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.1.0';
@@ -746,7 +746,7 @@ async function loadHomeShows(){
  if(state.homeLoading||state.homeShows.length)return;
  state.homeLoading=true;
  try{
-  const featured=['Stranger Things','The Walking Dead','Breaking Bad','Lost','Wednesday','Friends',
+  const featured=['Stranger Things','Wednesday','The Last of Us','The Bear','Adolescence','Andor','The White Lotus','Breaking Bad','Squid Game','Bridgerton','The Walking Dead','Lost','Friends',
    'The Last of Us','Game of Thrones','The Office','Sherlock','Dark','Outlander',
    'Doctor Who','The X-Files','The Mandalorian','24'];
   const opts=()=>supa.from('series').select('id,name,image_url,genres,premiered')
