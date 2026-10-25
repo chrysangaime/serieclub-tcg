@@ -3,7 +3,7 @@ import{recyclePanel}from'../v1/recycling.js?v=1.0.0&build=5';
  * SérieClub V5.2 — Le Studio de collection
  * 100 % dérivé de l'inventaire Supabase existant (aucune modification SQL).
  * Les doublons sont des exemplaires au-delà de la première copie d'une même
- * série. Une copie engagée ne peut pas être conseillée pour la vente.
+ * saison. Une copie engagée ne peut pas être conseillée pour la vente.
  */
 import {card,esc,money,ranks,photo,officialRarity,raritySlug} from '../v3/views.js?v=5.6.1';
 import {genreFR} from '../v5/fr-text.js?v=5.3.1';
@@ -162,9 +162,9 @@ function statsPanel(view,data){
  const percentage=total>0?Math.min(100,Math.round(100*eligibleOwned/total)):null;
  return '<div class="sc52-stats">'+
   '<div><strong>'+money(data.totalCards)+'</strong><span>Cartes possédées</span></div>'+
-  '<div><strong>'+money(data.unique)+'</strong><span>Séries différentes</span></div>'+
+  '<div><strong>'+money(data.unique)+'</strong><span>Éditions de saisons distinctes</span></div>'+
   '<div><strong>'+money(data.duplicates)+'</strong><span>Exemplaires en doublon</span></div>'+
-  '<div><strong>'+money(data.tradableDuplicates)+'</strong><span>Séries avec doublon vendable</span></div>'+
+  '<div><strong>'+money(data.tradableDuplicates)+'</strong><span>Éditions avec doublon vendable</span></div>'+
   '</div>'+
   (total>0?'<div class="sc52-completion"><div><b>Exploration du catalogue</b><span>'+money(eligibleOwned)+' / '+money(total)+' séries classées possédées · '+percentage+' %</span></div><div class="sc52-progress"><span style="width:'+percentage+'%"></span></div><small>Chaque série différente compte une seule fois.</small></div>':
   '<p class="sc52-stats-note">Ouvre des paquets pour enrichir ta collection.</p>');
@@ -188,7 +188,7 @@ export function collectionStudio(state){
  const rankBars='<div class="sc52-rank-section"><h2>Répartition par rareté officielle</h2>'+
   '<div class="sc52-rank-grid">'+d.rankStats.map(x=>
    '<button data-collection-rank="'+esc(x.rank)+'" class="sc52-rank-stat '+(state.rank===x.rank?'active':'')+'">'+
-   '<b>'+esc(x.rank)+'</b><strong>'+money(x.series)+'</strong><small>séries · '+money(x.cards)+' cartes</small></button>').join('')+
+   '<b>'+esc(x.rank)+'</b><strong>'+money(x.series)+'</strong><small>éditions · '+money(x.cards)+' cartes</small></button>').join('')+
   '</div></div>';
  const type=v.mode==='missing'
   ?(v.entries.length?'<div class="sc52-wish-list">'+v.entries.map(missingCard).join('')+'</div>':'<div class="empty">Toutes les séries de ta liste de souhaits sont déjà dans ta collection, ou aucun souhait n’a été enregistré.</div>')
@@ -212,9 +212,9 @@ export function collectionStudio(state){
   modes.map(([mode,label,n])=>'<button data-collection-mode="'+mode+'" class="'+(v.mode===mode?'active':'')+'" aria-pressed="'+(v.mode===mode)+'">'+esc(label)+' <span>'+money(n)+'</span></button>').join('')+'</div>'+
   (state.genre?'<div class="notice">Genre sélectionné : '+esc(state.genre)+' <button class="btn small subtle" data-clear-genre>Afficher tous les genres</button></div>':'')+
   (v.mode==='duplicates'?recyclePanel({...d,recycleReady:state.recycleReady,recycleRemaining:state.recycleRemaining},state.recycleSelection||[]):'')+filters+'<div class="sc52-results-head"><b>'+money(v.total)+' résultat'+(v.total>1?'s':'')+'</b>'+
-  '<span>'+ (v.mode==='duplicates'?'Un doublon est une copie supplémentaire d’une série déjà détenue. Les exemplaires protégés ou engagés ne sont pas proposés à la vente.':
+  '<span>'+ (v.mode==='duplicates'?'Un doublon est une copie supplémentaire de la même saison déjà détenue. Les exemplaires protégés ou engagés ne sont pas proposés à la vente.':
     v.mode==='missing'?'Ce sont tes souhaits non encore obtenus, et non toutes les séries absentes du catalogue.':
-    v.mode==='unique'?'Chaque série est affichée une seule fois, même avec plusieurs exemplaires.':'Rareté officielle commune à tous les exemplaires d’une série.')+
+    v.mode==='unique'?'Chaque édition de saison est affichée une seule fois, même avec plusieurs exemplaires.':'La rareté est identique pour tous les exemplaires d’une même édition.')+
   '</span></div>'+type+pages+
   (d.totalCards>=3000?'<p class="notice">La collection affichée est limitée aux 3 000 exemplaires les plus récents par session ; la progression peut être incomplète.</p>':'')+
   '</div>';
