@@ -1,0 +1,1 @@
+update public.series set fr_evidence_url='https://www.justwatch.com/fr/serie/suits',fr_verified_at=now() where id=172 and fr_verification_method='editorial_fr_history'; select count(*) eligible_series from public.series where fr_verified and content_status='series' and fr_verification_method in('tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history');
