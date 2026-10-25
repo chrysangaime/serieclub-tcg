@@ -1,0 +1,23 @@
+/* V1.5 — cadrage intégral des boosters et vitrine lisible */
+.sc12-home .sc12-pack-options{align-items:stretch!important;overflow:visible!important}
+.sc12-home .sc12-pack-tile{overflow:visible!important;min-height:0!important}
+.sc12-home .sc12-pack-art{height:auto!important;min-height:420px!important;max-height:none!important;padding:18px 14px 7px!important;overflow:hidden!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.sc12-home .sc12-pack-art .sc-v13-booster-art{position:relative!important;z-index:8!important;display:block!important;flex:none!important;width:auto!important;height:365px!important;max-width:74%!important;max-height:calc(100% - 20px)!important;object-fit:contain!important;object-position:center center!important;transform:rotate(-2deg)!important;filter:drop-shadow(0 20px 18px #000c)!important}
+.sc12-home .sc12-pack-tile:hover .sc-v13-booster-art{transform:rotate(-1deg) translateY(-6px) scale(1.02)!important}
+.sc12-home .sc12-pack-backdrop{pointer-events:none}
+.sc12-home .sc-v14-podium{bottom:4px!important;z-index:3!important;opacity:.82!important}
+.sc12-home .sc12-pack-copy{min-height:205px!important;box-sizing:border-box!important;position:relative!important;z-index:9!important;overflow:visible!important}
+.sc12-home .sc12-pack-tile.is-active{outline-offset:-2px}
+.sc12-home .sc21-shop-rail{align-items:stretch!important}
+.sc12-home .sc21-shop-item{overflow:hidden!important;min-width:0!important}
+.sc12-home .sc21-shop-art:has(.sc-v13-credit-pack-art){height:290px!important;min-height:290px!important;padding:17px 10px 6px!important;box-sizing:border-box!important;overflow:hidden!important}
+.sc12-home .sc21-shop-art .sc-v13-credit-pack-art{display:block!important;height:253px!important;max-height:253px!important;width:auto!important;max-width:86%!important;object-fit:contain!important;object-position:center!important;transform:rotate(-2deg)!important;flex:none!important}
+.sc12-home .sc21-shop-item:hover .sc-v13-credit-pack-art{transform:translateY(-5px) rotate(-1deg)!important}
+.sc12-home .sc21-shop-art:has(.sc-v13-credit-pack-art):after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,#ffffff0a,transparent 40%,#f9cd9612 72%,transparent);z-index:0}
+.sc12-home .sc21-shop-item.sc21-teal .sc21-shop-art{background:radial-gradient(ellipse at 50% 58%,#32edd54a,transparent 60%),linear-gradient(145deg,#14555a,#05151f)!important}
+.sc12-home .sc21-shop-item.sc21-blue .sc21-shop-art{background:radial-gradient(ellipse at 50% 58%,#418cfa66,transparent 60%),linear-gradient(145deg,#224867,#071324)!important}
+.sc12-home .sc21-shop-item.sc21-violet .sc21-shop-art{background:radial-gradient(ellipse at 50% 58%,#9e6cff55,transparent 60%),linear-gradient(145deg,#392254,#111025)!important}
+.sc12-home .sc21-shop-item.sc21-red .sc21-shop-art{background:radial-gradient(ellipse at 50% 58%,#ff6a5663,transparent 60%),linear-gradient(145deg,#571e2d,#170b16)!important}
+@media(max-width:920px){.sc12-home .sc12-pack-art{min-height:340px!important;height:340px!important}.sc12-home .sc12-pack-art .sc-v13-booster-art{height:290px!important;max-height:290px!important}.sc12-home .sc21-shop-art:has(.sc-v13-credit-pack-art){height:255px!important;min-height:255px!important}.sc12-home .sc21-shop-art .sc-v13-credit-pack-art{height:219px!important;max-height:219px!important}}
+@media(max-width:620px){.sc12-home .sc12-pack-art{height:252px!important;min-height:252px!important;padding:8px 5px!important}.sc12-home .sc12-pack-art .sc-v13-booster-art{height:230px!important;max-height:230px!important;max-width:92%!important}.sc12-home .sc12-pack-copy{min-height:195px!important}.sc12-home .sc21-shop-art:has(.sc-v13-credit-pack-art){height:230px!important;min-height:230px!important}.sc12-home .sc21-shop-art .sc-v13-credit-pack-art{height:198px!important;max-height:198px!important}}
+@media(max-width:390px){.sc12-home .sc12-pack-art{height:295px!important;min-height:295px!important}.sc12-home .sc12-pack-art .sc-v13-booster-art{height:267px!important;max-height:267px!important}}
