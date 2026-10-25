@@ -1493,7 +1493,60 @@ function advanceQuiz(){
  }
  render();
 }
+let editorTarget='avatar';
+function editorSync(){
+ const banner=document.getElementById('profileBannerPreview'),avatar=document.getElementById('profileAvatarPreview');
+ const ap=$('profileAvatar')?.selectedOptions?.[0]?.dataset.image||'',bp=$('profileBanner')?.selectedOptions?.[0]?.dataset.image||'';
+ const theme=$('bannerTheme')?.value||'poster';
+ const avx=$('avatarPositionX')?.value??50,avy=$('avatarPositionY')?.value??50;
+ const bpx=$('bannerPositionX')?.value??50,bpy=$('bannerPositionY')?.value??50;
+ if(avatar){avatar.style.backgroundImage=/^https:\/\//.test(ap)?'url('+JSON.stringify(ap)+')':'none';avatar.style.backgroundPosition=avx+'% '+avy+'%';}
+ if(banner){banner.className='sc-editor-banner sc-v1-banner-'+theme;banner.style.backgroundImage=theme==='poster'&&/^https:\/\//.test(bp)?'linear-gradient(0deg,#0b153077,#0b153044),url('+JSON.stringify(bp)+')':'';banner.style.backgroundPosition=bpx+'% '+bpy+'%';}
+ for(const button of document.querySelectorAll('[data-editor-art]')){
+  button.classList.toggle('chosen',button.dataset.editorArt===$(editorTarget==='avatar'?'profileAvatar':'profileBanner')?.value);
+ }
+ for(const button of document.querySelectorAll('[data-editor-target]')){
+  const active=button.dataset.editorTarget===editorTarget;
+  button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
+ }
+ for(const id of ['avatarPositionX','avatarPositionY','bannerPositionX','bannerPositionY']){
+  const el=$(id);if(el?.parentElement)el.parentElement.hidden=id.startsWith('avatar')!==(editorTarget==='banner');
+ }
+ const visual=editorTarget==='avatar'?avatar:banner;
+ document.querySelectorAll('.sc-editor-preview [id$="Preview"]').forEach(el=>el.classList.toggle('editing',el===visual));
+}
+function editorChoose(button){
+ const sel=$(editorTarget==='avatar'?'profileAvatar':'profileBanner');
+ if(!sel)return;
+ sel.value=button.dataset.editorArt;
+ if(sel.value!==button.dataset.editorArt)return;
+ if(editorTarget==='banner'&&$('bannerTheme'))$('bannerTheme').value='poster';
+ editorSync();
+}
+let editorDrag=null;
+document.addEventListener('pointerdown',e=>{
+ const visual=e.target.closest?.('#profileAvatarPreview,#profileBannerPreview');
+ if(!visual||editorTarget!==(visual.id==='profileAvatarPreview'?'avatar':'banner'))return;
+ const x=$(editorTarget==='avatar'?'avatarPositionX':'bannerPositionX'),y=$(editorTarget==='avatar'?'avatarPositionY':'bannerPositionY');
+ if(!x||!y)return;
+ editorDrag={pointer:e.pointerId,x0:e.clientX,y0:e.clientY,vx:Number(x.value),vy:Number(y.value),target:editorTarget,width:visual.clientWidth||120,height:visual.clientHeight||120};
+ visual.setPointerCapture?.(e.pointerId);
+});
+document.addEventListener('pointermove',e=>{
+ if(!editorDrag||e.pointerId!==editorDrag.pointer)return;
+ const d=editorDrag,x=$(d.target==='avatar'?'avatarPositionX':'bannerPositionX'),y=$(d.target==='avatar'?'avatarPositionY':'bannerPositionY');
+ if(!x||!y){editorDrag=null;return}
+ x.value=String(Math.max(0,Math.min(100,Math.round(d.vx+(e.clientX-d.x0)/d.width*100))));
+ y.value=String(Math.max(0,Math.min(100,Math.round(d.vy+(e.clientY-d.y0)/d.height*100))));
+ editorSync();
+});
+document.addEventListener('pointerup',()=>{editorDrag=null});
+document.addEventListener('pointercancel',()=>{editorDrag=null});
 function globalClick(e){
+ const targetButton=e.target.closest('[data-editor-target]');
+ if(targetButton){editorTarget=targetButton.dataset.editorTarget;editorSync();return}
+ const posterButton=e.target.closest('[data-editor-art]');
+ if(posterButton){editorChoose(posterButton);return}
  const railShift=e.target.closest('[data-rail-shift]');
  if(railShift){
   const [id,direction]=String(railShift.dataset.railShift||'').split(':');
@@ -1750,13 +1803,13 @@ async function saveUsername(){
 function globalChange(e){
  const facet={catalogRarity:'catalogRarity',catalogGenre:'catalogGenre',catalogPlatform:'catalogPlatform',catalogDecade:'catalogDecade',catalogSort:'catalogSort'}[e.target.id];
  if(facet){state[facet]=e.target.value;clearTimeout(searchTimer);loadCatalog(true);return}
- if(e.target.id==='profileAvatar'||e.target.id==='profileBanner'){
+ if(e.target.id==='profileAvatar'||e.target.id==='profileBanner'){editorSync();
   const raw=e.target.selectedOptions?.[0]?.dataset.image||'';
   const element=document.querySelector(e.target.id==='profileAvatar'?'.sc10-profile-avatar':'.sc10-profile-banner');
   if(element)element.style.backgroundImage=/^https:\/\//.test(raw)?'url('+JSON.stringify(raw)+')':'none';
   return;
  }
- if(e.target.id==='bannerTheme'){const el=document.querySelector('.sc10-profile-banner');if(el){el.classList.remove('sc-v1-banner-poster','sc-v1-banner-midnight','sc-v1-banner-aurora','sc-v1-banner-cinema');el.classList.add('sc-v1-banner-'+e.target.value)}return}
+ if(e.target.id==='bannerTheme'){editorSync();const el=document.querySelector('.sc10-profile-banner');if(el){el.classList.remove('sc-v1-banner-poster','sc-v1-banner-midnight','sc-v1-banner-aurora','sc-v1-banner-cinema');el.classList.add('sc-v1-banner-'+e.target.value)}return}
  if(e.target.id==='actorOnlyClub'){state.actorOnlyClub=e.target.checked;render();return}
  if(e.target.id==='marketRarity'){state.marketRarity=e.target.value;render();return}
  if(e.target.id==='rarityFilter'){state.rank=e.target.value;state.collectionPage=0;render();return}
@@ -1801,13 +1854,10 @@ document.addEventListener('error',e=>{
 document.addEventListener('change',globalChange);
 document.addEventListener('input',e=>{
  if(e.target.id==='profileArtSearch'){
-  const term=e.target.value.trim().toLocaleLowerCase('fr');
-  for(const id of ['profileAvatar','profileBanner']){
-   const field=$(id);if(!field)continue;
-   for(const opt of field.options)opt.hidden=Boolean(term)&&opt.value!==''&&!opt.textContent.toLocaleLowerCase('fr').includes(term);
-  }
+  const query=e.target.value.toLocaleLowerCase('fr').trim();
+  for(const el of document.querySelectorAll('[data-editor-art]'))el.hidden=!el.dataset.editorName.toLocaleLowerCase('fr').includes(query);
  }
- if(['avatarPositionX','avatarPositionY','bannerPositionX','bannerPositionY'].includes(e.target.id)){
+ if(['avatarPositionX','avatarPositionY','bannerPositionX','bannerPositionY'].includes(e.target.id)){editorSync();
   const avatar=document.querySelector('.sc10-profile-avatar'),banner=document.querySelector('.sc10-profile-banner');
   if(avatar)avatar.style.backgroundPosition=($('avatarPositionX')?.value||50)+'% '+($('avatarPositionY')?.value||50)+'%';
   if(banner)banner.style.backgroundPosition=($('bannerPositionX')?.value||50)+'% '+($('bannerPositionY')?.value||50)+'%';
