@@ -166,13 +166,13 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<div class="sc12-home-grid sc15-home-grid"><div class="sc12-pack-column sc15-pack-column"><div class="pack-options sc12-pack-options sc15-pack-options">'+
   packCard({...s,isOctober:halloween},'classic',foil)+
   packCard({...s,isOctober:halloween},'halloween',foil)+
-  packCard({...s,isOctober:halloween},'premium',foil)+
+
   '</div><div class="sc12-open-bar sc15-open"><div class="sc12-stock"><span class="sc12-stock-icon" aria-hidden="true">◈</span><div><strong><span class="sc12-stock-number">'+esc(stock)+'</span> / '+esc(max)+' paquets</strong>'+
   '<small id="packTimer">'+(stock==='—'?'Connecte-toi pour consulter ta réserve':Number(stock)>=Number(max)?'Réserve pleine':seconds?'Prochain paquet dans '+timecode(seconds):'Disponible')+'</small></div></div>'+
   '<button id="openPack" class="btn primary sc12-open-btn" type="button"'+(s.user&&!available?' disabled':'')+'>'+
   (s.user?esc(mainCTA):'Commencer à jouer<br><small>Créer un compte gratuit</small>')+' <span aria-hidden="true">→</span></button>'+
   '<button class="sc12-daily-btn" type="button" data-daily>✦ Récupérer mes 100 crédits quotidiens ↗</button>'+
-  '</div><p class="sc12-rules-note">Le paquet Halloween garantit 2 séries classées Horreur et une troisième série horreur, suspense, mystère ou surnaturel. Réserve gratuite partagée avec l’Original ; raretés officielles inchangées. Premium : personnalisation du profil uniquement. Les boosters thématiques en crédits sont accessibles plus bas.</p>'+demoHTML(s)+creditThemeShelf(s)+'</div>'+
+  '</div><p class="sc12-rules-note">Le paquet Halloween garantit 2 séries classées Horreur et une troisième série horreur, suspense, mystère ou surnaturel. Réserve gratuite partagée avec l’Original ; raretés officielles inchangées. Premium : personnalisation du profil uniquement. Les boosters thématiques en crédits sont accessibles plus bas.</p>'+creditThemeShelf(s)+demoHTML(s)+'</div>'+
   '<aside class="sc12-profile-column sc15-progress" aria-label="Ma progression"><div class="sc12-progress-card"><div class="sc12-aside-head"><h3>Mon avancement</h3><button data-route="profile" class="sc12-text-link" type="button">Mon profil →</button></div>'+
   progressItem('ϟ','Explorateur','Ouvrir dix paquets',opened,10,'cyan')+
   progressItem('▧','Collectionneur','Détenir cinquante cartes',cards.length,50,'violet')+
