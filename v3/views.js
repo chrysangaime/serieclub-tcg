@@ -66,7 +66,7 @@ export function collection(s){
 export function catalogue(s){
  if(s.catalogMode==='actors')return actorCatalogueView(s);
  const owned=new Map();
- for(const c of s.cards||[])owned.set(c.series_id,(owned.get(c.series_id)||0)+1);
+ for(const c of s.cards||[]){const k=String(c.series_id)+':'+String(c.season_number||0);owned.set(k,(owned.get(k)||0)+1)}
  const wishes=new Set((s.wishes||[]).map(w=>w.series_id));
  const opt=(value,label,current)=>'<option value="'+esc(value)+'"'+(current===value?' selected':'')+'>'+esc(label)+'</option>';
  const genres=[['','Tous les genres'],['Drama','Drame'],['Comedy','Comédie'],['Crime','Policier'],['Thriller','Thriller'],['Mystery','Mystère'],['Science-Fiction','Science-fiction'],['Fantasy','Fantastique'],['Horror','Horreur'],['Action','Action'],['Adventure','Aventure'],['Romance','Romance'],['Animation','Animation'],['Documentary','Documentaire'],['Family','Famille']];
@@ -75,7 +75,7 @@ export function catalogue(s){
  const chosen={rarity:s.catalogRarity||'',genre:s.catalogGenre||'',decade:s.catalogDecade||'',platform:s.catalogPlatform||'',sort:s.catalogSort||'name'};
  const active=Boolean((s.catalogQuery||'').trim()||chosen.rarity||chosen.genre||chosen.decade||chosen.platform||chosen.sort!=='name');
  const countText=Number.isSafeInteger(s.catalogTotal)
-  ?money(s.catalogTotal)+' série'+(s.catalogTotal>1?'s':'')+' éligible'+(s.catalogTotal>1?'s':'')+' en France · '+money((s.catalog||[]).length)+' affichée'+((s.catalog||[]).length===1?'':'s')
+  ?money(s.catalogTotal)+' séries éligibles en France · '+money((s.catalog||[]).length)+' éditions de saisons affichées
   :money((s.catalog||[]).length)+' séries affichées';
  const filters='<div class="sc59-search-row"><label class="sr" for="catalogQuery">Rechercher une série</label>'+
    '<div class="sc59-search-input"><span aria-hidden="true">⌕</span><input class="input" type="search" id="catalogQuery" placeholder="Rechercher une série…" autocomplete="off" value="'+esc(s.catalogQuery||'')+'" aria-describedby="catalogFeedback"></div>'+
@@ -90,7 +90,7 @@ export function catalogue(s){
  const archiveNotice=chosen.platform?'<div class="notice" role="status">Sélection française historique, non actualisée : la présence d’une série ne garantit pas sa disponibilité actuelle sur la plateforme.</div>':'';
  const results=(s.catalog||[]).length
   ?'<div class="grid sc59-catalog-grid">'+s.catalog.map(c=>card(c,
-    (owned.get(c.id)?'<div class="sc52-owned-tag">✓ Dans ta collection · '+money(owned.get(c.id))+' exemplaire'+(owned.get(c.id)>1?'s':'')+'</div>':'')+
+    (owned.get(String(c.id)+':'+String(c.season_number||0))?'<div class="sc52-owned-tag">✓ Saison possédée · '+money(owned.get(String(c.id)+':'+String(c.season_number||0)))+' exemplaire(s)</div>':'')+
     '<button class="card-action" data-series="'+esc(c.id)+'">✧ Découvrir · où regarder</button>'+
     '<button class="card-action" data-wish="'+esc(c.id)+'" aria-pressed="'+wishes.has(c.id)+'">'+
      (wishes.has(c.id)?'★ Retirer des souhaits':'☆ Ajouter aux souhaits')+'</button>')).join('')+'</div>'
