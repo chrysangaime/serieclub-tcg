@@ -10,7 +10,9 @@ Deno.serve(async req=>{
  const db=createClient(url,role,{auth:{autoRefreshToken:false,persistSession:false}});
  let input:{cursor?:number;limit?:number}={};
  try{input=await req.json()}catch{return json({error:'Invalid JSON'},400)}
- const cursor=Number.isSafeInteger(input.cursor)&&Number(input.cursor)>=0?Number(input.cursor):0;
+ const {data:checkpoint,error:checkpointError}=await db.from('catalog_sync_state').select('cursor_id').eq('sync_key','tvmaze_seasons').single();
+ if(checkpointError)return json({error:'Checkpoint unavailable'},500);
+ const cursor=Number.isSafeInteger(input.cursor)&&Number(input.cursor)>=0?Number(input.cursor):Number(checkpoint?.cursor_id)||0;
  const limit=Math.max(1,Math.min(12,Number(input.limit)||8));
  const {data:shows,error:queryError}=await db.from('series')
   .select('id,name,content_status,fr_verified,fr_verification_method')
@@ -69,5 +71,10 @@ Deno.serve(async req=>{
   }catch(e){results.push({id:show.id,status:'request_error',message:String(e).slice(0,100)})}
   await new Promise(resolve=>setTimeout(resolve,650));
  }
- return json({processed:(shows||[]).length,next_cursor:shows?.at(-1)?.id??cursor,results});
+ const nextCursor=shows?.length?Number(shows.at(-1).id):0;
+ if(input.cursor===undefined){
+  const {error:saveError}=await db.from('catalog_sync_state').update({cursor_id:nextCursor,updated_at:new Date().toISOString()}).eq('sync_key','tvmaze_seasons');
+  if(saveError)return json({error:'Checkpoint save failed',results},500);
+ }
+ return json({processed:(shows||[]).length,next_cursor:nextCursor,completed_cycle:!(shows?.length),results});
 });
