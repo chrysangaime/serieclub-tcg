@@ -24,8 +24,9 @@ export function profileArtPanel(s){
  }));
  const progress=seriesBadges.filter(x=>!x.unlocked);
  const initial=esc((s.username||'S').slice(0,1).toUpperCase());
- const avatarStyle=avatar?' style="background-image:url(&quot;'+esc(avatar.image_url)+'&quot;)"':'';
- const bannerStyle=banner?' style="background-image:linear-gradient(0deg,#12192388,#1219232a),url(&quot;'+esc(banner.image_url)+'&quot;)"':'';
+ const avatarStyle=avatar?' style="background-image:url(&quot;'+esc(avatar.image_url)+'&quot;);background-position:'+Number(s.avatarPositionX??50)+'% '+Number(s.avatarPositionY??50)+'%"':'';
+ const bannerTheme=['poster','midnight','aurora','cinema'].includes(s.bannerTheme)?s.bannerTheme:'poster';
+ const bannerStyle=banner&&bannerTheme==='poster'?' style="background-image:linear-gradient(0deg,#12192388,#1219232a),url(&quot;'+esc(banner.image_url)+'&quot;);background-position:'+Number(s.bannerPositionX??50)+'% '+Number(s.bannerPositionY??50)+'%"':'';
  const options=selected=>'<option value="">Aucune affiche</option>'+cards.map(c=>
   '<option value="'+esc(c.id)+'"'+(String(selected)===c.id?' selected':'')+'>'+esc(c.name)+'</option>').join('');
  const premium=s.premiumActive===true;
@@ -35,7 +36,7 @@ export function profileArtPanel(s){
  const marks={star:'✦',crown:'♛',diamond:'◆',spotlight:'✺'};
  const premiumMark=premium?(marks[s.premiumBadge]||marks.star):'';
  return '<div class="sc10-profile-hero sc-premium-frame-'+frame+'">'+
-  '<div class="sc10-profile-banner"'+bannerStyle+' role="img" aria-label="Bannière de la série '+esc(banner?.name||'SériesClubTCG')+'"></div>'+
+  '<div class="sc10-profile-banner sc-v1-banner-'+esc(bannerTheme)+'"'+bannerStyle+' role="img" aria-label="Bannière de la série '+esc(banner?.name||'SériesClubTCG')+'"></div>'+
   '<div class="sc10-profile-row"><div class="sc10-profile-avatar"'+avatarStyle+' aria-label="Avatar du profil">'+(avatar?'':initial)+'</div>'+
   '<div><h2>'+esc(s.username||'Mon profil')+'</h2><p>'+esc(title)+(premium?' · '+premiumMark+' Premium':'')+'</p>'+
    (badges.length?'<div class="sc10-badge-strip">'+badges.map(x=>'<span title="'+esc(x.title)+'">'+esc(x.badge)+'</span>').join('')+'</div>':'')+
@@ -64,7 +65,10 @@ export function profileArtPanel(s){
    '</div>':'')+
   (s.user?'<div class="panel"><h2>Mes affiches de profil</h2>'+
    '<p>Choisis ton avatar et ta bannière parmi les affiches des séries présentes dans ta collection. Aucune image à téléverser.</p>'+
+   '<label>Rechercher une affiche<input class="input" id="profileArtSearch" type="search" placeholder="Titre de série…"></label>'+ 
    '<div class="sc10-profile-art-pickers"><label>Avatar de profil<select class="input" id="profileAvatar">'+options(s.avatarSeriesId)+'</select></label>'+
    '<label>Bannière de profil<select class="input" id="profileBanner">'+options(s.bannerSeriesId)+'</select></label></div>'+
+   '<div class="sc-v1-position-editor"><label>Avatar horizontal <input type="range" id="avatarPositionX" min="0" max="100" value="'+Number(s.avatarPositionX??50)+'"></label><label>Avatar vertical <input type="range" id="avatarPositionY" min="0" max="100" value="'+Number(s.avatarPositionY??50)+'"></label><label>Bannière horizontale <input type="range" id="bannerPositionX" min="0" max="100" value="'+Number(s.bannerPositionX??50)+'"></label><label>Bannière verticale <input type="range" id="bannerPositionY" min="0" max="100" value="'+Number(s.bannerPositionY??50)+'"></label></div>'+
+   '<label>Style de bannière<select id="bannerTheme" class="input">'+[['poster','Affiche sélectionnée'],['midnight','Nuit bleue'],['aurora','Aurore colorée'],['cinema','Salle de cinéma']].map(([v,n])=>'<option value="'+v+'"'+(bannerTheme===v?' selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
    '<small>'+(cards.length?cards.length+' affiches débloquées disponibles. Les modifications sont enregistrées avec ton profil.':'Ouvre des paquets pour débloquer tes premières affiches.')+'</small></div>':'');
 }
