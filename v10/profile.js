@@ -84,5 +84,5 @@ export function profileArtPanel(s){
    '<label hidden>Vertical bannière<input type="range" id="bannerPositionY" min="0" max="100" value="'+Number(s.bannerPositionY??50)+'"></label></div></div>'+
    '<label class="sc-editor-theme">Ou utiliser une bannière graphique originale<select id="bannerTheme" class="input">'+
     [['poster','Affiche de ma collection'],['midnight','Nuit bleue'],['aurora','Aurore'],['cinema','Cinéma']].map(([v,n])=>'<option value="'+v+'"'+(bannerTheme===v?' selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
-   '<p class="sc-editor-help">Tes modifications sont enregistrées avec le bouton « Enregistrer mon profil ».</p></section>':'');;
+   '<div class="sc-editor-save"><button type="button" class="btn primary" data-save-profile-editor>✦ Enregistrer mon avatar et ma bannière</button><small>Les choix seront synchronisés sur ton compte.</small></div></section>':'');
 }
