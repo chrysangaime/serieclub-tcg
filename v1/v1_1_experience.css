@@ -105,3 +105,34 @@ body:has(.sc12-home) .sc12-global-search{display:none!important}
 @media(max-width:1000px){.sc-v11-perk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.sc-v11-perk-grid,.sc-v11-compare-cols{grid-template-columns:1fr}.sc-v11-premium-hero{padding:23px}.sc12-home .sc12-pack-art{min-height:160px}.sc12-home .sc15-foil{min-width:72px}.sc-v1-earned-poster-badge{min-width:150px}}
 @media(prefers-reduced-motion:reduce){.sc12-home .sc15-foil,.sc7-games .sc7-mode{transition:none!important;transform:none!important}}
+
+/* Studio collection — palettes, étiquettes et contrôles cohérents avec les albums. */
+.sc52-collection .sc52-heading{border-bottom:1px solid var(--tv-line,#58677b);padding-bottom:22px;margin-bottom:20px}
+.sc52-collection .sc52-heading h1{letter-spacing:-.05em}
+.sc52-collection .sc52-heading-actions{display:flex;flex-wrap:wrap;gap:8px}
+.sc52-collection .sc52-heading-actions .btn,.sc52-collection .sc52-group-actions .btn{border-radius:11px;min-height:40px}
+.sc52-collection .sc52-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.sc52-collection .sc52-tabs button{border-radius:13px!important;padding:10px 14px!important;border:1px solid var(--tv-line,#637184)!important;background:var(--tv-surface,#223348)!important;display:inline-flex;align-items:center;gap:8px;transition:background .15s,border-color .15s,transform .15s}
+.sc52-collection .sc52-tabs button.active,.sc52-collection .sc52-rank-stat.active{background:color-mix(in srgb,#d3a563 20%,var(--tv-surface,#223348))!important;border-color:#d2a461!important}
+.sc52-collection .sc52-tabs button>span{padding:2px 7px;border-radius:999px;background:#8883;font-size:.77rem}
+.sc52-collection .sc52-controls{display:grid;grid-template-columns:minmax(230px,2fr) repeat(2,minmax(150px,1fr));gap:10px;margin:16px 0}
+.sc52-collection .sc52-controls>*{width:100%;min-height:44px;border-radius:12px!important}
+.sc52-collection .sc52-rank-stat{border-radius:12px!important;overflow:hidden}
+.sc52-collection .sc52-group-card{border-radius:17px;overflow:hidden}
+.sc52-collection .sc52-group-actions{display:flex;flex-wrap:wrap;gap:8px}
+.sc52-collection .sc52-copy-count,.sc52-collection .sc-season-card-badge{border-radius:8px}
+.sc4-quest-hero,.sc7-games .sc7-hero{border-radius:22px;overflow:hidden}
+.sc7-games .sc7-mode-grid{gap:15px}
+.sc7-games .sc7-mode{border-radius:18px;overflow:hidden;border:1px solid var(--tv-line,#637184)}
+.sc7-games .sc7-mode-content{padding:16px}
+.sc7-games .sc7-mode-content>h2{font-size:clamp(19px,2.5vw,25px);line-height:1.15}
+.sc7-games .sc7-mode-content>p{line-height:1.55}
+.sc4-page .sc4-quest-hero{border-color:#e0b66f50}
+.sc12-home .sc12-pack-tile{color:#f3eddf}
+.sc12-home .sc12-pack-copy p{color:#d4d0ce}
+.sc12-home .sc12-pack-copy .sc12-pack-action{color:#f1d29b}
+.sc-v1-series-album .sc-v1-album-poster{width:50px;height:75px;border-radius:8px;object-fit:cover;flex:none;box-shadow:0 6px 13px #0005}
+.sc-v1-series-album:has(.sc-v1-album-poster) .sc-v1-series-album-head{align-items:center}
+.sc-v1-series-library .sc-v1-series-album:has(.sc-v1-album-poster){background:linear-gradient(130deg,#172639,#2a3446)}
+@media(max-width:820px){.sc52-collection .sc52-controls{grid-template-columns:1fr 1fr}.sc52-collection .sc52-controls input{grid-column:1/-1}}
+@media(max-width:480px){.sc52-collection .sc52-tabs{gap:6px}.sc52-collection .sc52-tabs button{padding:8px 10px!important;font-size:.76rem}.sc52-collection .sc52-controls{grid-template-columns:1fr}.sc52-collection .sc52-controls input{grid-column:auto}}
