@@ -50,3 +50,7 @@
 :root[data-theme="day"] .sc-editor-banner.sc-v1-banner-midnight,:root[data-theme="day"] .sc-editor-banner.sc-v1-banner-aurora,:root[data-theme="day"] .sc-editor-banner.sc-v1-banner-cinema{color:white}
 @media(max-width:570px){.sc-editor-preview{min-height:215px}.sc-editor-banner{height:150px}.sc-editor-avatar{width:78px;height:78px;top:106px;left:14px}.sc-editor-preview>strong{margin-left:104px}.sc-editor-gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-height:320px}.sc-editor-positions{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.sc-editor-poster,.sc-editor-target,.page-content .btn{transition:none!important;transform:none!important}}
+
+.sc-editor-save{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:flex-start;margin-top:22px;padding-top:20px;border-top:1px solid var(--tv-line,#758295)}
+.sc-editor-save .btn{min-height:50px!important;padding:13px 21px!important}
+.sc-editor-save small{font-size:12px;opacity:.75}
