@@ -1750,6 +1750,12 @@ async function saveUsername(){
 function globalChange(e){
  const facet={catalogRarity:'catalogRarity',catalogGenre:'catalogGenre',catalogPlatform:'catalogPlatform',catalogDecade:'catalogDecade',catalogSort:'catalogSort'}[e.target.id];
  if(facet){state[facet]=e.target.value;clearTimeout(searchTimer);loadCatalog(true);return}
+ if(e.target.id==='profileAvatar'||e.target.id==='profileBanner'){
+  const raw=e.target.selectedOptions?.[0]?.dataset.image||'';
+  const element=document.querySelector(e.target.id==='profileAvatar'?'.sc10-profile-avatar':'.sc10-profile-banner');
+  if(element)element.style.backgroundImage=/^https:\/\//.test(raw)?'url('+JSON.stringify(raw)+')':'none';
+  return;
+ }
  if(e.target.id==='bannerTheme'){const el=document.querySelector('.sc10-profile-banner');if(el){el.classList.remove('sc-v1-banner-poster','sc-v1-banner-midnight','sc-v1-banner-aurora','sc-v1-banner-cinema');el.classList.add('sc-v1-banner-'+e.target.value)}return}
  if(e.target.id==='actorOnlyClub'){state.actorOnlyClub=e.target.checked;render();return}
  if(e.target.id==='marketRarity'){state.marketRarity=e.target.value;render();return}
