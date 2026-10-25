@@ -72,7 +72,7 @@ function packCard(s,type,foil){
  const shots=[source[start%Math.max(source.length,1)],source[(start+1)%Math.max(source.length,1)]].filter(Boolean);
  const background=shots.map((show,i)=>'<img class="sc12-pack-backdrop sc12-pack-backdrop-'+i+'" src="'+photo(show.image_url)+'" alt="" loading="lazy">').join('');
  return '<article class="sc12-pack-tile sc12-pack-'+type+(type==='classic'?' sc12-pack-original':'')+(selected?' is-active':'')+(disabled?' is-disabled':'')+'">'+
-  '<div class="sc12-pack-art sc15-pack-art" aria-hidden="true">'+background+'<span class="sc12-pack-glow"></span>'+emblem+'</div>'+
+  '<div class="sc12-pack-art sc15-pack-art" aria-hidden="true">'+background+'<span class="sc-v14-cinematic-scene"></span><span class="sc-v14-podium"></span><span class="sc12-pack-glow"></span>'+emblem+'</div>'+
   '<div class="sc12-pack-copy sc15-pack-copy"><span class="sc12-pack-badge sc23-pack-label">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span><h3>'+title+'</h3><p>'+text+'</p>'+ (premium?'<div class="sc18-premium-perks"><span>✦ 3,99 € / mois</span><span>✓ Badge de membre</span><span>✓ Aucun avantage de rareté</span></div>':'') +action+'</div></article>';
 }
 function posterShelf(shows){
@@ -149,7 +149,7 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '</div><div class="sc12-banner-art sc15-hero-art" aria-hidden="true">'+heroPosters(shows)+'<span class="sc12-orbit sc12-orbit-a">▣</span><span class="sc12-orbit sc12-orbit-b">✦</span></div></div>'+
   '<div class="sc15-strip"><span>● LE CLUB DES SÉRIES</span><span>SÉRIES EN FRANCE</span><span>5 CARTES PAR PAQUET</span><span>7 RARETÉS</span></div>'+
   '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton <em>paquet.</em></h2><p>5 cartes de saisons par paquet · 7 niveaux de rareté · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
-  '<div class="sc12-home-grid sc15-home-grid"><div class="sc12-pack-column sc15-pack-column"><div class="pack-options sc12-pack-options sc15-pack-options">'+
+  '<div class="sc12-home-grid sc15-home-grid sc-v14-storefront"><div class="sc12-pack-column sc15-pack-column"><div class="pack-options sc12-pack-options sc15-pack-options">'+
   packCard({...s,isOctober:halloween},'classic',foil)+
   packCard({...s,isOctober:halloween},'halloween',foil)+
 
