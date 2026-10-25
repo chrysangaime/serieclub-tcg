@@ -1743,6 +1743,7 @@ async function saveUsername(){
 function globalChange(e){
  const facet={catalogRarity:'catalogRarity',catalogGenre:'catalogGenre',catalogDecade:'catalogDecade',catalogSort:'catalogSort'}[e.target.id];
  if(facet){state[facet]=e.target.value;clearTimeout(searchTimer);loadCatalog(true);return}
+ if(e.target.id==='bannerTheme'){const el=document.querySelector('.sc10-profile-banner');if(el){el.classList.remove('sc-v1-banner-poster','sc-v1-banner-midnight','sc-v1-banner-aurora','sc-v1-banner-cinema');el.classList.add('sc-v1-banner-'+e.target.value)}return}
  if(e.target.id==='actorOnlyClub'){state.actorOnlyClub=e.target.checked;render();return}
  if(e.target.id==='marketRarity'){state.marketRarity=e.target.value;render();return}
  if(e.target.id==='rarityFilter'){state.rank=e.target.value;state.collectionPage=0;render();return}
@@ -1786,6 +1787,18 @@ document.addEventListener('error',e=>{
 },true);
 document.addEventListener('change',globalChange);
 document.addEventListener('input',e=>{
+ if(e.target.id==='profileArtSearch'){
+  const term=e.target.value.trim().toLocaleLowerCase('fr');
+  for(const id of ['profileAvatar','profileBanner']){
+   const field=$(id);if(!field)continue;
+   for(const opt of field.options)opt.hidden=Boolean(term)&&opt.value!==''&&!opt.textContent.toLocaleLowerCase('fr').includes(term);
+  }
+ }
+ if(['avatarPositionX','avatarPositionY','bannerPositionX','bannerPositionY'].includes(e.target.id)){
+  const avatar=document.querySelector('.sc10-profile-avatar'),banner=document.querySelector('.sc10-profile-banner');
+  if(avatar)avatar.style.backgroundPosition=($('avatarPositionX')?.value||50)+'% '+($('avatarPositionY')?.value||50)+'%';
+  if(banner)banner.style.backgroundPosition=($('bannerPositionX')?.value||50)+'% '+($('bannerPositionY')?.value||50)+'%';
+ }
  if(e.target.id==='collectionSearch'){state.filter=e.target.value;state.collectionPage=0;const position=e.target.selectionStart;render();const input=$('collectionSearch');input?.focus();input?.setSelectionRange(position,position)}
  if(e.target.id==='catalogQuery'){
   state.catalogQuery=e.target.value;
