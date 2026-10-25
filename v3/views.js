@@ -107,7 +107,7 @@ export function catalogue(s){
   '<div class="sc59-results" id="catalogFeedback" role="status" aria-live="polite">'+
    '<span>'+(s.catalogLoading?'Recherche en cours…':esc(s.catalogError||countText))+'</span>'+
    (active?'<button class="sc59-clear" id="catalogReset">Effacer les filtres ×</button>':'')+
-  '</div></section>'+
+  '</div></section>'+archiveNotice+
   results+
   (s.catalogMore?'<div class="sc59-more"><button class="btn primary" id="catalogMore"'+(s.catalogLoading?' disabled':'')+'>Charger davantage de séries ↓</button></div>':'')+
  '</div>';
