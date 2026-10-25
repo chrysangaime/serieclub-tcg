@@ -512,7 +512,7 @@ async function loadCollectionGoal(){
  loadCollectionGoal.pending=true;
  try{
   const {count,error}=await supa.from('series').select('id',{count:'exact',head:true})
-   .neq('rarity_source','pending').eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).not('image_url','is',null);
+   .neq('rarity_source','pending').eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).not('image_url','is',null);
   state.collectionEligibleTotal=!error&&Number.isFinite(count)?count:0;
  }catch{state.collectionEligibleTotal=0}
  finally{
@@ -672,7 +672,7 @@ async function loadCatalog(reset=false){
  try{
   let query=supa.from('series')
     .select('id,name,image_url,premiered,genres,rarity,rarity_source,fr_verified,fr_verification_method,fr_evidence_url',{count:'exact'})
-    .eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).neq('rarity_source','pending')
+    .eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).neq('rarity_source','pending')
     .not('image_url','is',null);
   if(state.catalogPlatform){
    const lookup=await supa.rpc('catalog_provider_series_ids',{p_platform:state.catalogPlatform});
@@ -750,7 +750,7 @@ async function loadHomeShows(){
    'The Last of Us','Game of Thrones','The Office','Sherlock','Dark','Outlander',
    'Doctor Who','The X-Files','The Mandalorian','24'];
   const opts=()=>supa.from('series').select('id,name,image_url,genres,premiered')
-    .eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).neq('rarity_source','pending')
+    .eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).neq('rarity_source','pending')
     .not('image_url','is',null);
   const [curated,popular]=await Promise.all([
    opts().in('name',featured).limit(22),
@@ -779,8 +779,8 @@ async function loadSeasonShows(){
  try{
   const desired=['Wednesday','Stranger Things','The Haunting of Hill House','Midnight Mass','From','American Horror Story','The Last of Us','Penny Dreadful','The Walking Dead'];
   const [curated,genre]=await Promise.all([
-   supa.from('series').select('id,name,image_url,premiered,genres').in('name',desired).eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).neq('rarity_source','pending').not('image_url','is',null).limit(12),
-   supa.from('series').select('id,name,image_url,premiered,genres').overlaps('genres',['Horror','Thriller','Supernatural','Mystery']).eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).neq('rarity_source','pending').not('image_url','is',null).order('premiered',{ascending:false}).limit(30)
+   supa.from('series').select('id,name,image_url,premiered,genres').in('name',desired).eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).neq('rarity_source','pending').not('image_url','is',null).limit(12),
+   supa.from('series').select('id,name,image_url,premiered,genres').overlaps('genres',['Horror','Thriller','Supernatural','Mystery']).eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).neq('rarity_source','pending').not('image_url','is',null).order('premiered',{ascending:false}).limit(30)
   ]);
   const pool=[...(curated.data||[]),...(genre.data||[])];
   const seen=new Set();state.seasonShows=pool.filter(x=>x?.image_url&&(!seen.has(x.id))&&seen.add(x.id)).slice(0,6);
@@ -800,7 +800,7 @@ async function catalogueMatches(shows){
  const ids=shows.map(show=>Number(show.id)).filter(id=>Number.isSafeInteger(id)&&id>0).slice(0,120);
  if(!ids.length)return [];
  try{
-  const {data,error}=await supa.from('series').select('id').in('id',ids).eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).neq('rarity_source','pending');
+  const {data,error}=await supa.from('series').select('id').in('id',ids).eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).neq('rarity_source','pending');
   return error?[]:(data||[]).map(x=>x.id);
  }catch{return []}
 }
@@ -968,7 +968,7 @@ async function toggleWishlist(id){
  const exists=state.wishes.some(w=>String(w.series_id)===String(id));
  if(!exists){
   const check=await supa.from('series').select('id')
-   .eq('id',id).eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).neq('rarity_source','pending').maybeSingle();
+   .eq('id',id).eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).neq('rarity_source','pending').maybeSingle();
   if(check.error||!check.data){toast('Cette série attend une preuve de diffusion française avant d’être ajoutée aux souhaits.',true);return}
  }
  const reply=exists?await supa.from('player_wishlist').delete().eq('owner_id',state.user.id).eq('series_id',id):await supa.from('player_wishlist').insert({owner_id:state.user.id,series_id:id});
@@ -1381,7 +1381,7 @@ async function openPixelPreview(){
   const owned=state.cards.map(c=>c.series).filter(x=>x?.image_url&&/^https:\/\//.test(x.image_url));
   const listed=state.catalog.filter(x=>x?.image_url&&/^https:\/\//.test(x.image_url));
   const {data,error}=await supa.from('series')
-    .select('id,name,image_url').eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr'])
+    .select('id,name,image_url').eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history'])
     .neq('rarity_source','pending').not('image_url','is',null)
     .order('id',{ascending:false}).limit(50);
   // Un fournisseur temporairement indisponible ne doit pas effacer
@@ -1439,10 +1439,10 @@ async function chooseChallenge(type){
   // on choisit un échantillon aléatoire des séries réellement certifiées FR.
   const base=()=>supa.from('series')
    .select('id,name,image_url,premiered,fr_verified')
-   .eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).neq('rarity_source','pending')
+   .eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).neq('rarity_source','pending')
    .not('image_url','is',null).not('premiered','is',null);
   const countRequest=await supa.from('series').select('id',{count:'exact',head:true})
-   .eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr']).neq('rarity_source','pending')
+   .eq('fr_verified',true).eq('content_status','series').in('fr_verification_method',['tvmaze_fr_origin','streaming_availability_fr','editorial_fr_history']).neq('rarity_source','pending')
    .not('image_url','is',null).not('premiered','is',null);
   if(countRequest.error)throw countRequest.error;
   const total=countRequest.count||0;
