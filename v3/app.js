@@ -274,7 +274,7 @@ async function loadOfficialSeasons(){
  const seriesResult=await supa.rpc('my_series_completion_badges');
  state.seriesCompletion=seriesResult.error?[]:seriesResult.data||[];
  const badgesResult=await supa.from('v1_eligible_player_series_badges')
-  .select('series_id,unlocked_at,series_name')
+  .select('series_id,unlocked_at,series_name,image_url')
   .eq('player_id',state.user.id).order('unlocked_at',{ascending:false}).limit(500);
  state.permanentSeriesBadges=badgesResult.error?[]:badgesResult.data||[];
  const {data,error}=await supa.rpc('my_official_seasons');
@@ -405,7 +405,7 @@ async function loadAlbums(){
  state.officialSeasons=official.error?null:official.data||[];
  const [progressResult,badgeResult]=await Promise.all([
   supa.rpc('my_series_completion_badges'),
-  supa.from('v1_eligible_player_series_badges').select('series_id,unlocked_at,series_name')
+  supa.from('v1_eligible_player_series_badges').select('series_id,unlocked_at,series_name,image_url')
    .eq('player_id',state.user.id).limit(500)
  ]);
  state.seriesCompletion=progressResult.error?[]:progressResult.data||[];
