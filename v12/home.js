@@ -58,7 +58,7 @@ function packVisual(type){
  '<span class="sc22-booster-brand">'+tv+
  '<strong class="sc18-foil-brand"><span>SÉRIES<em>CLUB</em></span><small>TCG</small></strong></span>'+
  '<span class="sc22-booster-center">'+symbol+'<small>TRADING CARD GAME</small></span>'+
- '<span class="sc22-booster-footer"><b>'+label+'</b><small>'+(key==='premium'?'STATUT COLLECTOR':'5 SÉRIES · 7 RARETÉS')+'</small></span>'+
+ '<span class="sc22-booster-footer"><b>'+label+'</b><small>'+(key==='premium'?'STATUT COLLECTOR':'5 CARTES · 7 RARETÉS')+'</small></span>'+
  '<span class="sc15-foil-stripe sc15-foil-stripe-bottom" aria-hidden="true"></span></span>';
 }
 function heroPosters(shows){
@@ -87,7 +87,7 @@ function packCard(s,type,foil){
  const background=shots.map((show,i)=>'<img class="sc12-pack-backdrop sc12-pack-backdrop-'+i+'" src="'+photo(show.image_url)+'" alt="" loading="lazy">').join('');
  return '<article class="sc12-pack-tile sc12-pack-'+type+(type==='classic'?' sc12-pack-original':'')+(selected?' is-active':'')+(disabled?' is-disabled':'')+'">'+
   '<div class="sc12-pack-art sc15-pack-art" aria-hidden="true">'+background+'<span class="sc12-pack-glow"></span>'+emblem+'</div>'+
-  '<div class="sc12-pack-copy sc15-pack-copy"><span class="sc12-pack-badge sc23-pack-label">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span><h3>'+title+'</h3><p>'+text+'</p>'+ (premium?'<div class="sc18-premium-perks"><span>✦ 1,99 € / mois</span><span>✓ Badge de membre</span><span>✓ Aucun avantage de rareté</span></div>':'') +action+'</div></article>';
+  '<div class="sc12-pack-copy sc15-pack-copy"><span class="sc12-pack-badge sc23-pack-label">'+(premium?'EN PRÉPARATION':halloween?'ÉDITION SAISONNIÈRE':'COLLECTION ORIGINALE')+'</span><h3>'+title+'</h3><p>'+text+'</p>'+ (premium?'<div class="sc18-premium-perks"><span>✦ 3,99 € / mois</span><span>✓ Badge de membre</span><span>✓ Aucun avantage de rareté</span></div>':'') +action+'</div></article>';
 }
 function posterShelf(shows){
  const display=shows.slice(0,12);
@@ -121,8 +121,8 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
    action:'Explorer les séries',target:'catalog'},
   {tag:'DÉFIS · COLLECTION',title:'Une saison.',highlight:'Une légende.',
    strap:'Complète les collections thématiques pour débloquer des badges.',
-   intro:'Des Saisons officielles et personnalisées : retrouve tes séries et avance à ton rythme.',
-   action:'Mes Saisons',target:'albums'}
+   intro:'Des albums à compléter : une carte par saison et un badge par série terminée.',
+   action:'Mes albums',target:'albums'}
  ]:[
   {tag:'LE CLUB DES SÉRIES TV',title:'Tes séries.',highlight:'Ton univers.',
    strap:'La collection prend vie à chaque découverte.',
@@ -134,8 +134,8 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
    action:'Parcourir le catalogue',target:'catalog'},
   {tag:'COLLECTION · SAISONS',title:'L’histoire.',highlight:'C’est toi.',
    strap:'Retrouve tes séries, accumule des cartes et gagne des badges.',
-   intro:'Les Saisons proposent des objectifs thématiques pour donner encore plus de sens à ta collection.',
-   action:'Découvrir les Saisons',target:'albums'}
+   intro:'Les albums de séries proposent des objectifs pour donner encore plus de sens à ta collection.',
+   action:'Découvrir les albums',target:'albums'}
  ];
  const slide=((Number(s.heroSlide)||0)%slides.length+slides.length)%slides.length;
  const hero=slides[slide];
@@ -162,7 +162,7 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<button class="sc12-hero-secondary" type="button" data-route="catalog">Explorer les séries ↗</button></div>'+
   '</div><div class="sc12-banner-art sc15-hero-art" aria-hidden="true">'+heroPosters(shows)+'<span class="sc12-orbit sc12-orbit-a">▣</span><span class="sc12-orbit sc12-orbit-b">✦</span></div></div>'+
   '<div class="sc15-strip"><span>● LE CLUB DES SÉRIES</span><span>SÉRIES EN FRANCE</span><span>5 CARTES PAR PAQUET</span><span>7 RARETÉS</span></div>'+
-  '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton <em>paquet.</em></h2><p>5 séries par paquet · 7 niveaux de rareté · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
+  '<div id="svod-packs" class="sc12-main-head"><div><span class="sc12-eyebrow">DÉCOUVERTE</span><h2>Choisis ton <em>paquet.</em></h2><p>5 cartes de saisons par paquet · 7 niveaux de rareté · Gratuit</p></div><button type="button" class="sc12-text-link" data-route="rules">Comprendre les paquets →</button></div>'+
   '<div class="sc12-home-grid sc15-home-grid"><div class="sc12-pack-column sc15-pack-column"><div class="pack-options sc12-pack-options sc15-pack-options">'+
   packCard({...s,isOctober:halloween},'classic',foil)+
   packCard({...s,isOctober:halloween},'halloween',foil)+
@@ -172,14 +172,14 @@ export function svodHome(s,{foil,platformStrip=()=>'',seasonShelf=()=>'',timecod
   '<button id="openPack" class="btn primary sc12-open-btn" type="button"'+(s.user&&!available?' disabled':'')+'>'+
   (s.user?esc(mainCTA):'Commencer à jouer<br><small>Créer un compte gratuit</small>')+' <span aria-hidden="true">→</span></button>'+
   '<button class="sc12-daily-btn" type="button" data-daily>✦ Récupérer mes 100 crédits quotidiens ↗</button>'+
-  '</div><p class="sc12-rules-note">Le paquet Halloween garantit 2 séries classées Horreur et une troisième série horreur, suspense, mystère ou surnaturel. Réserve gratuite partagée avec l’Original ; raretés officielles inchangées. Premium : aperçu uniquement.</p>'+demoHTML(s)+creditThemeShelf(s)+'</div>'+
+  '</div><p class="sc12-rules-note">Le paquet Halloween garantit 2 séries classées Horreur et une troisième série horreur, suspense, mystère ou surnaturel. Réserve gratuite partagée avec l’Original ; raretés officielles inchangées. Premium : personnalisation du profil uniquement. Les boosters thématiques en crédits sont accessibles plus bas.</p>'+demoHTML(s)+creditThemeShelf(s)+'</div>'+
   '<aside class="sc12-profile-column sc15-progress" aria-label="Ma progression"><div class="sc12-progress-card"><div class="sc12-aside-head"><h3>Mon avancement</h3><button data-route="profile" class="sc12-text-link" type="button">Mon profil →</button></div>'+
   progressItem('ϟ','Explorateur','Ouvrir dix paquets',opened,10,'cyan')+
   progressItem('▧','Collectionneur','Détenir cinquante cartes',cards.length,50,'violet')+
   progressItem('✦','Sérievore','Découvrir dix séries différentes',uniq,10,'blue')+
   '</div><div class="sc12-credit-card"><div><small>✦ Mes crédits</small><strong>'+nfmt(s.wallet?.credits)+'</strong></div><button type="button" data-scroll-credit-packs>Utiliser mes crédits →</button></div>'+
-  '<div class="sc12-quick-card"><strong>Ton prochain épisode</strong><p>Découvre des séries, complète tes Saisons officielles et débloque des badges.</p>'+
-  '<button type="button" data-route="albums">Voir mes Saisons →</button></div></aside></div>'+
+  '<div class="sc12-quick-card"><strong>Ton prochain épisode</strong><p>Collectionne une carte par saison, complète les albums de séries et débloque des badges.</p>'+
+  '<button type="button" data-route="albums">Voir mes albums →</button></div></aside></div>'+
   '<div class="sc12-shelf-head"><div><span class="sc12-eyebrow">TON PROGRAMME</span><h2>À découvrir ce soir</h2><p>Une sélection par univers, comme sur une plateforme de streaming.</p></div><button type="button" class="sc12-text-link" data-route="catalog">Voir le catalogue →</button></div>'+
   '<div class="sc13-rail-wrap"><div class="sc13-rail-controls" aria-label="Parcourir les genres"><button type="button" data-rail-shift="sc13-genre-rail:-1" aria-label="Genres précédents">‹</button><button type="button" data-rail-shift="sc13-genre-rail:1" aria-label="Genres suivants">›</button></div>'+
   '<div class="sc12-genre-rail" id="sc13-genre-rail" role="list">'+
