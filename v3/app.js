@@ -23,7 +23,7 @@ import{partitionFrenchInventory}from'../v5/fr-collection.js?v=5.5.1';
 import{marketPage,communityPage,questsPage,tradeDialog}from'../v4/club.js?v=1.0.0&build=13';
 import{personalAlbumsPage,seriesAlbumDetails,albumDialog,albumSeriesSearchResults}from'../v4/albums.js?v=20.2.1';
 import{officialSeasonCatalog,officialSeasonDetailsHTML}from'../v10/seasons.js?v=20.1.0';
-import{collectionStudio,collectionCSV,deriveCollection}from'../v5/collection.js?v=1.0.0&build=8';
+import{collectionStudio,collectionCSV,deriveCollection}from'../v5/collection.js?v=1.0.0&build=9';
 const supa=createClient('https://anjfidksqbqlaggttdop.supabase.co','sb_publishable_wPFasufNG20maU1rokgPLA_7nyagxY3');
 function readQuizRecords(){
  try{
