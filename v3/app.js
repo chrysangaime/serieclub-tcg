@@ -1525,13 +1525,13 @@ function globalClick(e){
  }
  const homeGenre=e.target.closest('[data-home-genre]');
  if(homeGenre){
-  state.catalogGenre=homeGenre.dataset.homeGenre;
+  state.catalogGenre=homeGenre.dataset.homeGenre;state.catalogPlatform='';
   state.catalogQuery='';state.catalogDecade='';state.catalogRarity='';
   state.catalog=[];state.catalogPage=0;change('catalog');return;
  }
  const homeEra=e.target.closest('[data-home-decade]');
  if(homeEra){
-  state.catalogDecade=homeEra.dataset.homeDecade;
+  state.catalogDecade=homeEra.dataset.homeDecade;state.catalogPlatform='';
   state.catalogGenre='';state.catalogQuery='';state.catalogRarity='';
   state.catalog=[];state.catalogPage=0;change('catalog');return;
  }
