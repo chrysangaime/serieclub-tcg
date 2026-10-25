@@ -20,7 +20,7 @@ export function profileArtPanel(s){
  const permanent=Array.isArray(s.permanentSeriesBadges)?s.permanentSeriesBadges:[];
  const unlockedSeries=permanent.map(x=>({
    title:x.series_name||seriesBadges.find(v=>String(v.series_id)===String(x.series_id))?.title||'Série complète',
-   unlocked_at:x.unlocked_at
+   unlocked_at:x.unlocked_at,image_url:x.image_url
  }));
  const progress=seriesBadges.filter(x=>!x.unlocked);
  const initial=esc((s.username||'S').slice(0,1).toUpperCase());
@@ -44,7 +44,9 @@ export function profileArtPanel(s){
   (s.user?'<div class="panel sc-v1-series-badges"><h2>Albums de séries · Mes succès</h2>'+
    '<p>Chaque série est un album. Collecte une édition de chaque saison d’une série ayant au moins 3 saisons diffusées pour obtenir son badge définitif. Les doublons ne comptent pas ; les badges restent acquis après un échange.</p>'+
    (unlockedSeries.length?'<div class="sc-v1-badges">'+unlockedSeries.map(x=>
-    '<span class="sc-v1-series-badge" title="'+esc(x.owned_seasons)+' saisons collectionnées">✦ '+esc(x.title)+'</span>').join('')+'</div>':
+    '<span class="sc-v1-series-badge sc-v1-earned-poster-badge" title="Badge de collection obtenu">'+
+    (safeImage(x.image_url)?'<img src="'+esc(x.image_url)+'" loading="lazy" alt="">':'<span class="sc-v1-badge-noimage">✦</span>')+
+    '<span><b>ALBUM COMPLÉTÉ</b>'+esc(x.title)+'</span></span>').join('')+'</div>':
     '<p>Ton premier badge de série complète reste à débloquer.</p>')+
    (progress.length?'<div class="sc-v1-progress">'+
     progress.slice(0,8).map(x=>
