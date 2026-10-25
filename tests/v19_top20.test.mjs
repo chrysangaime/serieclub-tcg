@@ -11,7 +11,7 @@ test('Historique et Top20 coexistent sans confondre 8 et 20 séries',()=>{
 });
 test('Sans migration, les Top20 sont des aperçus, jamais des récompenses activées',()=>{
  const h=officialSeasonHTML({officialSeasons:officialSeasonCatalog.slice(0,6).map(x=>({...x,owned:8,claimed:true}))});
- assert.match(h,/12 saisons/);
+ assert.match(h,/12 défis/);
  assert.match(h,/Top 20 Netflix France/);
  assert.match(h,/Top 20 Prime Video France/);
  assert.match(h,/Top 20 Disney\+ France/);
