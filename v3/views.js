@@ -124,7 +124,14 @@ export function fusions(s){
  const preserve=s.fusionProtectLast!==false;
  const plan=fusionPlan(s.cards||[],s.fusionRank,s.fusionSelected||[],s.marketActivity||[],preserve);
  const current=plan.selected.length,target=plan.target||'—';
- const all=plan.allowed,perPage=24,totalPages=Math.max(1,Math.ceil(all.length/perPage));
+ const order=s.fusionSort||'duplicates';
+ const all=[...plan.allowed].sort((a,b)=>{
+  const an=(a.series?.name||'').toLocaleLowerCase('fr'),bn=(b.series?.name||'').toLocaleLowerCase('fr');
+  if(order==='name')return an.localeCompare(bn,'fr');
+  if(order==='recent')return String(b.obtained_at||'').localeCompare(String(a.obtained_at||''));
+  return Number(a.isLast)-Number(b.isLast)||an.localeCompare(bn,'fr');
+ });
+ const perPage=24,totalPages=Math.max(1,Math.ceil(all.length/perPage));
  const page=Math.min(Math.max(0,Number(s.fusionPage)||0),totalPages-1);
  const subset=all.slice(page*perPage,(page+1)*perPage);
  const chips=fusionRanks.slice(0,6).map(rank=>{
@@ -155,6 +162,7 @@ export function fusions(s){
  '<div class="sc60-rank-row" aria-label="Rareté de départ">'+chips+'</div>'+
  '<div class="sc60-fusion-tools"><div><strong>'+plan.duplicates+' doublons disponibles</strong><p>'+plan.uniqueOnly+' dernières copies · '+(plan.missing?'il manque '+plan.missing+' carte'+(plan.missing>1?'s':''):'sélection complète')+'</p></div>'+
  '<label class="sc60-protect"><input type="checkbox" id="fusionProtectLast" '+(preserve?'checked':'')+'> Préserver mes dernières copies</label>'+
+ '<label class="sc-fusion-sort">Trier<select id="fusionSort"><option value="duplicates"'+(order==='duplicates'?' selected':'')+'>Doublons en premier</option><option value="name"'+(order==='name'?' selected':'')+'>Titre A–Z</option><option value="recent"'+(order==='recent'?' selected':'')+'>Plus récentes</option></select></label>'+ 
  '<button class="btn subtle" id="fusionAuto" '+(!plan.allowed.length?'disabled':'')+'>✦ Sélection intelligente</button>'+
  '<button class="btn subtle" id="fusionClear" '+(!current?'disabled':'')+'>Effacer</button></div>'+
  (current?'<div class="sc60-progress" role="progressbar" aria-label="Cartes sélectionnées" aria-valuemin="0" aria-valuemax="10" aria-valuenow="'+current+'"><span style="width:'+current*10+'%"></span></div>':'')+tray+
