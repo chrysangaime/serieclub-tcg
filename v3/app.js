@@ -659,6 +659,7 @@ async function claimQuest(key){
  }catch(e){toast('Mission : '+e.message,true)}
  finally{state.busy=false}
 }
+const CATALOG_SERIES_PAGE_SIZE=60;
 async function loadCatalog(reset=false){
  // Toute nouvelle recherche peut remplacer une précédente en cours.
  // Une pagination simultanée, en revanche, ne doit pas charger deux fois la même page.
@@ -697,7 +698,7 @@ async function loadCatalog(reset=false){
    default:query=query.order('name',{ascending:true});break;
   }
   const {data,error,count}=await query.order('id',{ascending:true})
-   .range(page*36,page*36+35);
+   .range(page*CATALOG_SERIES_PAGE_SIZE,page*CATALOG_SERIES_PAGE_SIZE+CATALOG_SERIES_PAGE_SIZE-1);
   if(request!==catalogRequestId)return;
   if(error)throw error;
   // Une édition de catalogue par saison TVmaze ; source et visuel propres à l'édition.
@@ -706,7 +707,7 @@ async function loadCatalog(reset=false){
   if(ids.length){
    const lookup=await supa.from('series_seasons')
     .select('series_id,season_number,season_name,image_url,premiered')
-    .in('series_id',ids).order('season_number',{ascending:true}).limit(800);
+    .in('series_id',ids).order('season_number',{ascending:true}).limit(1200);
    if(lookup.error)console.warn('Saisons temporairement indisponibles',lookup.error.message);
    else editions=lookup.data||[];
   }
@@ -727,7 +728,7 @@ async function loadCatalog(reset=false){
   });
   state.catalog=reset?expanded:state.catalog.concat(expanded);
   state.catalogTotal=Number.isSafeInteger(count)?count:null;
-  state.catalogMore=(data||[]).length===36 && (state.catalogTotal===null||(page+1)*36<state.catalogTotal);
+  state.catalogMore=(data||[]).length===CATALOG_SERIES_PAGE_SIZE && (state.catalogTotal===null||(page+1)*CATALOG_SERIES_PAGE_SIZE<state.catalogTotal);
   state.catalogPage=page+1;
  }catch(e){
   if(request!==catalogRequestId)return;
