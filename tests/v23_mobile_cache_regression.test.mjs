@@ -18,10 +18,10 @@ test('Les libellés ne recouvrent plus les pochettes',()=>{
   stock:{stock:8,maximum:10},isOctober:true},{});
  assert.match(html,/sc22-booster--original/);
  assert.match(html,/sc22-booster--halloween/);
- assert.match(html,/sc22-booster--premium/);
+ assert.doesNotMatch(html,/sc12-pack-premium/);
  assert.match(html,/sc23-pack-label/);
  // Pas de libellé enfant direct entre <article> et .sc15-pack-art.
- const titles=['sc12-pack-original','sc12-pack-halloween','sc12-pack-premium'];
+ const titles=['sc12-pack-original','sc12-pack-halloween'];
  for(const title of titles){
   const at=html.indexOf('sc12-pack-tile sc12-pack-'+(title==='sc12-pack-original'?'classic':title.replace('sc12-pack-','')));
   assert.ok(at>=0,title);
