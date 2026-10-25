@@ -71,7 +71,7 @@ test('nuit par défaut et jour mémorisé et accessibles sans compte',()=>{
 test('saisons officielles visibles, revendication réservée aux joueurs ayant atteint le seuil',()=>{
  assert.equal(officialSeasonCatalog.length,12);
  const preview=officialSeasonHTML({});
- assert.match(preview,/Les Saisons à compléter/);
+ assert.match(preview,/Défis thématiques/);
  assert.match(preview,/Retour dans les années 90/);
  assert.match(preview,/data-claim-season="comedies" disabled/);
  const active=officialSeasonCatalog.map(x=>({...x,owned:3,claimed:false}));
