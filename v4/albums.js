@@ -8,8 +8,12 @@ function seriesLibrary(s){
  const items=progress.slice().sort((a,b)=>Number(earned.has(String(b.series_id)))-Number(earned.has(String(a.series_id)))||Number(b.owned_seasons)/Math.max(1,Number(b.required_seasons))-Number(a.owned_seasons)/Math.max(1,Number(a.required_seasons)));
  const tile=x=>{
   const count=Number(x.owned_seasons)||0,total=Math.max(1,Number(x.required_seasons)||1),win=earned.has(String(x.series_id));
+  const poster=(earned.get(String(x.series_id))?.image_url||(s.cards||[]).find(c=>Number(c.series_id)===Number(x.series_id))?.series?.image_url)||'';
   return '<button type="button" class="sc-v1-series-album" data-series-album="'+esc(x.series_id)+'" aria-label="Voir les saisons de '+esc(x.title)+'">'+
-   '<div class="sc-v1-series-album-head"><span class="sc-v1-series-emblem" aria-hidden="true">'+(win?'🏅':'▣')+'</span><div><strong>'+esc(x.title)+'</strong><small>'+(win?'Badge obtenu · ':'')+count+' / '+total+' saisons</small></div></div>'+
+   '<div class="sc-v1-series-album-head">'+(poster&&/^https:\/\//.test(poster)?
+    '<img class="sc-v1-album-poster" loading="lazy" src="'+esc(poster)+'" alt="">':
+    '<span class="sc-v1-series-emblem" aria-hidden="true">'+(win?'🏅':'▣')+'</span>')+
+    '<div><strong>'+esc(x.title)+'</strong><small>'+(win?'🏅 Badge de série obtenu · ':'')+count+' / '+total+' saisons</small></div></div>'+
    '<div class="sc-v1-series-track" role="progressbar" aria-label="Progression de '+esc(x.title)+'" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+Math.min(count,total)+'"><span style="width:'+Math.min(100,Math.round(count/total*100))+'%"></span></div>'+
    '<span class="sc-v1-series-album-more">Afficher les saisons et les cartes manquantes ↗</span></button>';
  };
